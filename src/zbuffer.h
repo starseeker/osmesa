@@ -30,56 +30,21 @@
 #define ZB_MODE_RGB24   4  /* 24 bit rgb mode */
 #define ZB_NB_COLORS    225 /* number of colors for 8 bit display */
 
-#if TGL_FEATURE_RENDER_BITS == 15
-
-#define RGB_TO_PIXEL(r,g,b) \
-  ((((r) >> 1) & 0x7c00) | (((g) >> 6) & 0x03e0) | ((b) >> 11))
-typedef unsigned short PIXEL;
-/* bytes per pixel */
-#define PSZB 2 
-/* bits per pixel = (1 << PSZH) */
-#define PSZSH 4 
-
-#elif TGL_FEATURE_RENDER_BITS == 16
-
-/* 16 bit mode */
-#define RGB_TO_PIXEL(r,g,b) \
-  (((r) & 0xF800) | (((g) >> 5) & 0x07E0) | ((b) >> 11))
-typedef unsigned short PIXEL;
-#define PSZB 2 
-#define PSZSH 4 
-
-#elif TGL_FEATURE_RENDER_BITS == 24
-
-#define RGB_TO_PIXEL(r,g,b) \
-  ((((r) << 8) & 0xff0000) | ((g) & 0xff00) | ((b) >> 8))
-typedef unsigned char PIXEL;
-#define PSZB 3
-#define PSZSH 5
-
-#elif TGL_FEATURE_RENDER_BITS == 32
-
 #define RGB_TO_PIXEL(r,g,b) \
   ((((r) << 8) & 0xff0000) | ((g) & 0xff00) | ((b) >> 8))
 typedef unsigned int PIXEL;
 #define PSZB 4
 #define PSZSH 5
 
-#else
-
-#error Incorrect number of bits per pixel
-
-#endif
-
 typedef struct {
     int xsize,ysize;
     int linesize; /* line size, in bytes */
     int mode;
-    
+
     unsigned short *zbuf;
     PIXEL *pbuf;
     int frame_buffer_allocated;
-    
+
     int nb_colors;
     unsigned char *dctable;
     int *ctable;
@@ -90,7 +55,7 @@ typedef struct {
   int x,y,z;     /* integer coordinates in the zbuffer */
   int s,t;       /* coordinates for the mapping */
   int r,g,b;     /* color indexes */
-  
+
   float sz,tz;   /* temporary coordinates for mapping */
 } ZBufferPoint;
 
