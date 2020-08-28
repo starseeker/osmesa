@@ -32,7 +32,7 @@
 extern "C" {
 #include "tcl.h"
 #include "tk.h"
-#include "zgl.h"
+#include "tgl.h"
 }
 
 const char *DM_PHOTO = ".dm0.photo";
@@ -99,7 +99,7 @@ struct img_data {
     std::uniform_int_distribution<int> *vals;
 
     // The rendering memory used to actually generate the DM scene contents.
-    SRContext *gl_context;
+    GLContext *gl_context;
 
     long dm_buff_size;
     unsigned char *dmpixel;
