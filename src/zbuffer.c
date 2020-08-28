@@ -28,9 +28,7 @@ ZBuffer *ZB_open(int xsize, int ysize, int mode,
     zb->linesize = (xsize * PSZB + 3) & ~3;
 
     switch (mode) {
-#ifdef TGL_FEATURE_32_BITS
     case ZB_MODE_RGBA:
-#endif
     case ZB_MODE_5R6G5B:
 	zb->nb_colors = 0;
 	break;
@@ -124,11 +122,9 @@ void ZB_copyFrameBuffer(ZBuffer * zb, void *buf,
 			int linesize)
 {
     switch (zb->mode) {
-#ifdef TGL_FEATURE_32_BITS
     case ZB_MODE_RGBA:
 	ZB_copyBuffer(zb, buf, linesize);
 	break;
-#endif
     default:
 	assert(0);
     }
