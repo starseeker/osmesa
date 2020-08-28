@@ -31,9 +31,6 @@ ZBuffer *ZB_open(int xsize, int ysize, int mode,
 #ifdef TGL_FEATURE_32_BITS
     case ZB_MODE_RGBA:
 #endif
-#ifdef TGL_FEATURE_24_BITS
-    case ZB_MODE_RGB24:
-#endif
     case ZB_MODE_5R6G5B:
 	zb->nb_colors = 0;
 	break;
