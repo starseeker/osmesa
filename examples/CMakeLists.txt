@@ -21,6 +21,13 @@ target_link_libraries(gears tinygl ${X11_LIBRARIES} ${M_LIBRARY})
 add_executable(spin spin.c ${ui_srcs})
 target_link_libraries(spin tinygl ${X11_LIBRARIES} ${X11_Xext_LIB} ${M_LIBRARY})
 
+include_directories(
+  ${TCL_INCLUDE_PATH}
+  )
+
+add_executable(tcltest tcl.cpp)
+target_link_libraries(tcltest tinygl ${TCL_LIBRARY} ${TK_LIBRARY} ${M_LIBRARY})
+
 # Local Variables:
 # tab-width: 8
 # mode: cmake
