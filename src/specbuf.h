@@ -15,8 +15,8 @@ typedef struct GLSpecBuf {
   struct GLSpecBuf *next;
 } GLSpecBuf;
 
-GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, 
+GLSpecBuf *specbuf_get_buffer(SRContext *c, const int shininess_i, 
                               const float shininess);
-void specbuf_cleanup(GLContext *c); /* free all memory used */
+void specbuf_cleanup(SRContext *c); /* free all memory used */
 
 #endif /* _tgl_specbuf_h_ */

@@ -1,9 +1,9 @@
 #include "zgl.h"
 
-GLContext *gl_ctx;
+SRContext *gl_ctx;
 
 
-void initSharedState(GLContext *c)
+void initSharedState(SRContext *c)
 {
   GLSharedState *s=&c->shared_state;
   s->lists=gl_zalloc(sizeof(GLList *) * MAX_DISPLAY_LISTS);
@@ -13,7 +13,7 @@ void initSharedState(GLContext *c)
   alloc_texture(c,0);
 }
 
-void endSharedState(GLContext *c)
+void endSharedState(SRContext *c)
 {
   GLSharedState *s=&c->shared_state;
   int i;
@@ -30,11 +30,11 @@ void endSharedState(GLContext *c)
 void glInit(void *zbuffer1)
 {
   ZBuffer *zbuffer=(ZBuffer *)zbuffer1;
-  GLContext *c;
+  SRContext *c;
   GLViewport *v;
   int i;
 
-  c=gl_zalloc(sizeof(GLContext));
+  c=gl_zalloc(sizeof(SRContext));
   gl_ctx=c;
 
   c->zb=zbuffer;
@@ -183,7 +183,7 @@ void glInit(void *zbuffer1)
 
 void glClose(void)
 {
-  GLContext *c=gl_get_context();
+  SRContext *c=gl_get_context();
   endSharedState(c);
   gl_free(c);
 }

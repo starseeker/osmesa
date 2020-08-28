@@ -1,20 +1,20 @@
 #include "zgl.h"
 
 
-void glopClearColor(GLContext *c,GLParam *p)
+void glopClearColor(SRContext *c,GLParam *p)
 {
   c->clear_color.v[0]=p[1].f;
   c->clear_color.v[1]=p[2].f;
   c->clear_color.v[2]=p[3].f;
   c->clear_color.v[3]=p[4].f;
 }
-void glopClearDepth(GLContext *c,GLParam *p)
+void glopClearDepth(SRContext *c,GLParam *p)
 {
   c->clear_depth=p[1].f;
 }
 
 
-void glopClear(GLContext *c,GLParam *p)
+void glopClear(SRContext *c,GLParam *p)
 {
   int mask=p[1].i;
   int z=0;

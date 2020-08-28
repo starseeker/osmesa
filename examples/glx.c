@@ -6,7 +6,7 @@
 #include "zgl.h"
 
 typedef struct {
-  GLContext *gl_context;
+  SRContext *gl_context;
   Display *display;
   XVisualInfo visual_info;
   int xsize,ysize;
@@ -217,7 +217,7 @@ static void free_ximage(TinyGLXContext *ctx)
 /* resize the glx viewport : we try to use the xsize and ysize
    given. We return the effective size which is guaranted to be smaller */
 
-int glX_resize_viewport(GLContext *c,int *xsize_ptr,int *ysize_ptr)
+int glX_resize_viewport(SRContext *c,int *xsize_ptr,int *ysize_ptr)
 {
   TinyGLXContext *ctx;
   int xsize,ysize;
@@ -371,7 +371,7 @@ static Bool WaitForShmCompletion(Display *dpy, XEvent *event, char *arg)
 
 void glXSwapBuffers( Display *dpy, GLXDrawable drawable )
 {
-  GLContext *gl_context;
+  SRContext *gl_context;
   TinyGLXContext *ctx;
 
   /* retrieve the current GLXContext */

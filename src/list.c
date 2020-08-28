@@ -7,7 +7,7 @@ static char *op_table_str[]=
 #include "opinfo.h"
 };
 
-static void (*op_table_func[])(GLContext *,GLParam *)=
+static void (*op_table_func[])(SRContext *,GLParam *)=
 {
 #define ADD_OP(a,b,c) glop ## a ,
 
@@ -22,17 +22,17 @@ static int op_table_size[]=
 };
 
 
-GLContext *gl_get_context(void)
+SRContext *gl_get_context(void)
 {
   return gl_ctx;
 }
 
-static GLList *find_list(GLContext *c,unsigned int list)
+static GLList *find_list(SRContext *c,unsigned int list)
 {
   return c->shared_state.lists[list];
 }
 
-static void delete_list(GLContext *c,int list)
+static void delete_list(SRContext *c,int list)
 {
   GLParamBuffer *pb,*pb1;
   GLList *l;
@@ -52,7 +52,7 @@ static void delete_list(GLContext *c,int list)
   c->shared_state.lists[list]=NULL;
 }
 
-static GLList *alloc_list(GLContext *c,int list)
+static GLList *alloc_list(SRContext *c,int list)
 {
   GLList *l;
   GLParamBuffer *ob;
@@ -99,7 +99,7 @@ void gl_print_op(FILE *f,GLParam *p)
 }
 
 
-void gl_compile_op(GLContext *c,GLParam *p)
+void gl_compile_op(SRContext *c,GLParam *p)
 {
   int op,op_size;
   GLParamBuffer *ob,*ob1;
@@ -134,7 +134,7 @@ void gl_compile_op(GLContext *c,GLParam *p)
 
 void gl_add_op(GLParam *p)
 {
-  GLContext *c=gl_get_context();
+  SRContext *c=gl_get_context();
   int op;
 
   op=p[0].op;
@@ -150,19 +150,19 @@ void gl_add_op(GLParam *p)
 }
 
 /* this opcode is never called directly */
-void glopEndList(GLContext *c,GLParam *p)
+void glopEndList(SRContext *c,GLParam *p)
 {
   assert(0);
 }
 
 /* this opcode is never called directly */
-void glopNextBuffer(GLContext *c,GLParam *p)
+void glopNextBuffer(SRContext *c,GLParam *p)
 {
   assert(0);
 }
 
 
-void glopCallList(GLContext *c,GLParam *p)
+void glopCallList(SRContext *c,GLParam *p)
 {
   GLList *l;
   int list,op;
@@ -189,7 +189,7 @@ void glopCallList(GLContext *c,GLParam *p)
 void glNewList(unsigned int list,int mode)
 {
   GLList *l;
-  GLContext *c=gl_get_context();
+  SRContext *c=gl_get_context();
 
   assert(mode == GL_COMPILE || mode == GL_COMPILE_AND_EXECUTE);
   assert(c->compile_flag == 0);
@@ -207,7 +207,7 @@ void glNewList(unsigned int list,int mode)
 
 void glEndList(void)
 {
-  GLContext *c=gl_get_context();
+  SRContext *c=gl_get_context();
   GLParam p[1];
 
   assert(c->compile_flag == 1);
@@ -222,7 +222,7 @@ void glEndList(void)
 
 int glIsList(unsigned int list)
 {
-  GLContext *c=gl_get_context();
+  SRContext *c=gl_get_context();
   GLList *l;
   l=find_list(c,list);
   return (l != NULL);
@@ -230,7 +230,7 @@ int glIsList(unsigned int list)
 
 unsigned int glGenLists(int range)
 {
-  GLContext *c=gl_get_context();
+  SRContext *c=gl_get_context();
   int count,i,list;
   GLList **lists;
 

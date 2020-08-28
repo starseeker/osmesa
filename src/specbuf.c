@@ -16,7 +16,7 @@ static void calc_buf(GLSpecBuf *buf, const float shininess)
 }
 
 GLSpecBuf *
-specbuf_get_buffer(GLContext *c, const int shininess_i, 
+specbuf_get_buffer(SRContext *c, const int shininess_i, 
                    const float shininess)
 {
   GLSpecBuf *found, *oldest;

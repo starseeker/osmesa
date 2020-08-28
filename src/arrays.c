@@ -8,7 +8,7 @@
 #define TEXCOORD_ARRAY 0x0008
 
 void
-glopArrayElement(GLContext *c, GLParam *param)
+glopArrayElement(SRContext *c, GLParam *param)
 {
   int i;
   int states = c->client_states;
@@ -62,7 +62,7 @@ glArrayElement(GLint i)
 
 
 void
-glopEnableClientState(GLContext *c, GLParam *p)
+glopEnableClientState(SRContext *c, GLParam *p)
 {
   c->client_states |= p[1].i;
 }
@@ -94,7 +94,7 @@ glEnableClientState(GLenum array)
 }
 
 void
-glopDisableClientState(GLContext *c, GLParam *p)
+glopDisableClientState(SRContext *c, GLParam *p)
 {
   c->client_states &= p[1].i;
 }
@@ -126,7 +126,7 @@ glDisableClientState(GLenum array)
 }
 
 void
-glopVertexPointer(GLContext *c, GLParam *p)
+glopVertexPointer(SRContext *c, GLParam *p)
 {
   c->vertex_array_size = p[1].i;
   c->vertex_array_stride = p[2].i;
@@ -147,7 +147,7 @@ glVertexPointer(GLint size, GLenum type, GLsizei stride,
 }
 
 void
-glopColorPointer(GLContext *c, GLParam *p)
+glopColorPointer(SRContext *c, GLParam *p)
 {
   c->color_array_size = p[1].i;
   c->color_array_stride = p[2].i;
@@ -168,7 +168,7 @@ glColorPointer(GLint size, GLenum type, GLsizei stride,
 }
 
 void
-glopNormalPointer(GLContext *c, GLParam *p)
+glopNormalPointer(SRContext *c, GLParam *p)
 {
   c->normal_array_stride = p[1].i;
   c->normal_array = p[2].p;  
@@ -190,7 +190,7 @@ glNormalPointer(GLenum type, GLsizei stride,
 }
 
 void
-glopTexCoordPointer(GLContext *c, GLParam *p)
+glopTexCoordPointer(SRContext *c, GLParam *p)
 {
   c->texcoord_array_size = p[1].i;
   c->texcoord_array_stride = p[2].i;

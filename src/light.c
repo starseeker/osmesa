@@ -1,7 +1,7 @@
 #include "zgl.h"
 #include "msghandling.h"
 
-void glopMaterial(GLContext *c,GLParam *p)
+void glopMaterial(SRContext *c,GLParam *p)
 {
   int mode=p[1].i;
   int type=p[2].i;
@@ -49,7 +49,7 @@ void glopMaterial(GLContext *c,GLParam *p)
   }
 }
 
-void glopColorMaterial(GLContext *c,GLParam *p)
+void glopColorMaterial(SRContext *c,GLParam *p)
 {
   int mode=p[1].i;
   int type=p[2].i;
@@ -58,7 +58,7 @@ void glopColorMaterial(GLContext *c,GLParam *p)
   c->current_color_material_type=type;
 }
 
-void glopLight(GLContext *c,GLParam *p)
+void glopLight(SRContext *c,GLParam *p)
 {
   int light=p[1].i;
   int type=p[2].i;
@@ -131,7 +131,7 @@ void glopLight(GLContext *c,GLParam *p)
 }
   
 
-void glopLightModel(GLContext *c,GLParam *p)
+void glopLightModel(SRContext *c,GLParam *p)
 {
   int pname=p[1].i;
   float *v=&p[2].f;
@@ -163,7 +163,7 @@ static inline float clampf(float a,float min,float max)
   else return a;
 }
 
-void gl_enable_disable_light(GLContext *c,int light,int v)
+void gl_enable_disable_light(SRContext *c,int light,int v)
 {
   GLLight *l=&c->lights[light];
   if (v && !l->enabled) {
@@ -180,7 +180,7 @@ void gl_enable_disable_light(GLContext *c,int light,int v)
 }
 
 /* non optimized lightening model */
-void gl_shade_vertex(GLContext *c,GLVertex *v)
+void gl_shade_vertex(SRContext *c,GLVertex *v)
 {
   float R,G,B,A;
   GLMaterial *m;

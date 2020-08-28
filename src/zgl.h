@@ -148,14 +148,14 @@ typedef struct GLSharedState {
   GLTexture **texture_hash_table;
 } GLSharedState;
 
-struct GLContext;
+struct SRContext;
 
-typedef void (*gl_draw_triangle_func)(struct GLContext *c,
+typedef void (*gl_draw_triangle_func)(struct SRContext *c,
                                       GLVertex *p0,GLVertex *p1,GLVertex *p2);
 
 /* display context */
 
-typedef struct GLContext {
+typedef struct SRContext {
   /* Z buffer */
   ZBuffer *zb;
 
@@ -255,13 +255,13 @@ typedef struct GLContext {
   int texcoord_array_size;
   int texcoord_array_stride;
   int client_states;
-  
+
   /* opengl 1.1 polygon offset */
   float offset_factor;
   float offset_units;
   int offset_states;
-  
-  /* specular buffer. could probably be shared between contexts, 
+
+  /* specular buffer. could probably be shared between contexts,
     but that wouldn't be 100% thread safe */
   GLSpecBuf *specbuf_first;
   int specbuf_used_counter;
@@ -270,45 +270,45 @@ typedef struct GLContext {
   /* opaque structure for user's use */
   void *opaque;
   /* resize viewport function */
-  int (*gl_resize_viewport)(struct GLContext *c,int *xsize,int *ysize);
+  int (*gl_resize_viewport)(struct SRContext *c,int *xsize,int *ysize);
 
   /* depth test */
   int depth_test;
-} GLContext;
+} SRContext;
 
-extern GLContext *gl_ctx;
+extern SRContext *gl_ctx;
 
 void gl_add_op(GLParam *p);
 
 /* clip.c */
-void gl_transform_to_viewport(GLContext *c,GLVertex *v);
-void gl_draw_triangle(GLContext *c,GLVertex *p0,GLVertex *p1,GLVertex *p2);
-void gl_draw_line(GLContext *c,GLVertex *p0,GLVertex *p1);
-void gl_draw_point(GLContext *c,GLVertex *p0);
+void gl_transform_to_viewport(SRContext *c,GLVertex *v);
+void gl_draw_triangle(SRContext *c,GLVertex *p0,GLVertex *p1,GLVertex *p2);
+void gl_draw_line(SRContext *c,GLVertex *p0,GLVertex *p1);
+void gl_draw_point(SRContext *c,GLVertex *p0);
 
-void gl_draw_triangle_point(GLContext *c,
+void gl_draw_triangle_point(SRContext *c,
                             GLVertex *p0,GLVertex *p1,GLVertex *p2);
-void gl_draw_triangle_line(GLContext *c,
+void gl_draw_triangle_line(SRContext *c,
                            GLVertex *p0,GLVertex *p1,GLVertex *p2);
-void gl_draw_triangle_fill(GLContext *c,
+void gl_draw_triangle_fill(SRContext *c,
                            GLVertex *p0,GLVertex *p1,GLVertex *p2);
-void gl_draw_triangle_select(GLContext *c,
+void gl_draw_triangle_select(SRContext *c,
                              GLVertex *p0,GLVertex *p1,GLVertex *p2);
 
 /* matrix.c */
 void gl_print_matrix(const float *m);
 /*
-void glopLoadIdentity(GLContext *c,GLParam *p);
-void glopTranslate(GLContext *c,GLParam *p);*/
+void glopLoadIdentity(SRContext *c,GLParam *p);
+void glopTranslate(SRContext *c,GLParam *p);*/
 
 /* light.c */
-void gl_add_select(GLContext *c,unsigned int zmin,unsigned int zmax);
-void gl_enable_disable_light(GLContext *c,int light,int v);
-void gl_shade_vertex(GLContext *c,GLVertex *v);
+void gl_add_select(SRContext *c,unsigned int zmin,unsigned int zmax);
+void gl_enable_disable_light(SRContext *c,int light,int v);
+void gl_shade_vertex(SRContext *c,GLVertex *v);
 
-void glInitTextures(GLContext *c);
-void glEndTextures(GLContext *c);
-GLTexture *alloc_texture(GLContext *c,int h);
+void glInitTextures(SRContext *c);
+void glEndTextures(SRContext *c);
+GLTexture *alloc_texture(SRContext *c,int h);
 
 /* image_util.c */
 void gl_convertRGB_to_5R6G5B(unsigned short *pixmap,unsigned char *rgb,
@@ -320,13 +320,13 @@ void gl_resizeImage(unsigned char *dest,int xsize_dest,int ysize_dest,
 void gl_resizeImageNoInterpolate(unsigned char *dest,int xsize_dest,int ysize_dest,
                                  unsigned char *src,int xsize_src,int ysize_src);
 
-GLContext *gl_get_context(void);
+SRContext *gl_get_context(void);
 
 void gl_fatal_error(char *format, ...);
 
 
 /* specular buffer "api" */
-GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, 
+GLSpecBuf *specbuf_get_buffer(SRContext *c, const int shininess_i, 
                               const float shininess);
 
 #ifdef __BEOS__
@@ -348,7 +348,7 @@ void dprintf(const char *, ...);
 
 /* glopXXX functions */
 
-#define ADD_OP(a,b,c) void glop ## a (GLContext *,GLParam *);
+#define ADD_OP(a,b,c) void glop ## a (SRContext *,GLParam *);
 #include "opinfo.h"
 
 /* this clip epsilon is needed to avoid some rounding errors after
@@ -365,7 +365,7 @@ static inline int gl_clipcode(float x,float y,float z,float w1)
     ((x>w)<<1) |
     ((y<-w)<<2) |
     ((y>w)<<3) |
-    ((z<-w)<<4) | 
+    ((z<-w)<<4) |
     ((z>w)<<5) ;
 }
 

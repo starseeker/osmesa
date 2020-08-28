@@ -664,7 +664,7 @@ void glHint(int target,int mode)
 
 void glDebug(int mode)
 {
-  GLContext *c=gl_get_context();
+  SRContext *c=gl_get_context();
   c->print_flag=mode;
 }
 

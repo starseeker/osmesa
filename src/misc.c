@@ -1,7 +1,7 @@
 #include "zgl.h"
 #include "msghandling.h"
 
-void glopViewport(GLContext *c,GLParam *p)
+void glopViewport(SRContext *c,GLParam *p)
 {
   int xsize,ysize,xmin,ymin,xsize_req,ysize_req;
   
@@ -42,7 +42,7 @@ void glopViewport(GLContext *c,GLParam *p)
   }
 }
 
-void glopEnableDisable(GLContext *c,GLParam *p)
+void glopEnableDisable(SRContext *c,GLParam *p)
 {
   int code=p[1].i;
   int v=p[2].i;
@@ -90,25 +90,25 @@ void glopEnableDisable(GLContext *c,GLParam *p)
   }
 }
 
-void glopShadeModel(GLContext *c,GLParam *p)
+void glopShadeModel(SRContext *c,GLParam *p)
 {
   int code=p[1].i;
   c->current_shade_model=code;
 }
 
-void glopCullFace(GLContext *c,GLParam *p)
+void glopCullFace(SRContext *c,GLParam *p)
 {
   int code=p[1].i;
   c->current_cull_face=code;
 }
 
-void glopFrontFace(GLContext *c,GLParam *p)
+void glopFrontFace(SRContext *c,GLParam *p)
 {
   int code=p[1].i;
   c->current_front_face=code;
 }
 
-void glopPolygonMode(GLContext *c,GLParam *p)
+void glopPolygonMode(SRContext *c,GLParam *p)
 {
   int face=p[1].i;
   int mode=p[2].i;
@@ -129,7 +129,7 @@ void glopPolygonMode(GLContext *c,GLParam *p)
   }
 }
 
-void glopHint(GLContext *c,GLParam *p)
+void glopHint(SRContext *c,GLParam *p)
 {
 #if 0
   int target=p[1].i;
@@ -140,7 +140,7 @@ void glopHint(GLContext *c,GLParam *p)
 }
 
 void 
-glopPolygonOffset(GLContext *c, GLParam *p)
+glopPolygonOffset(SRContext *c, GLParam *p)
 {
   c->offset_factor = p[1].f;
   c->offset_units = p[2].f;

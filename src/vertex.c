@@ -1,7 +1,7 @@
 #include <string.h>
 #include "zgl.h"
 
-void glopNormal(GLContext * c, GLParam * p)
+void glopNormal(SRContext * c, GLParam * p)
 {
     V3 v;
 
@@ -15,7 +15,7 @@ void glopNormal(GLContext * c, GLParam * p)
     c->current_normal.W = 0;
 }
 
-void glopTexCoord(GLContext * c, GLParam * p)
+void glopTexCoord(SRContext * c, GLParam * p)
 {
     c->current_tex_coord.X = p[1].f;
     c->current_tex_coord.Y = p[2].f;
@@ -23,12 +23,12 @@ void glopTexCoord(GLContext * c, GLParam * p)
     c->current_tex_coord.W = p[4].f;
 }
 
-void glopEdgeFlag(GLContext * c, GLParam * p)
+void glopEdgeFlag(SRContext * c, GLParam * p)
 {
     c->current_edge_flag = p[1].i;
 }
 
-void glopColor(GLContext * c, GLParam * p)
+void glopColor(SRContext * c, GLParam * p)
 {
 
     c->current_color.X = p[1].f;
@@ -53,7 +53,7 @@ void glopColor(GLContext * c, GLParam * p)
 }
 
 
-void gl_eval_viewport(GLContext * c)
+void gl_eval_viewport(SRContext * c)
 {
     GLViewport *v;
     float zsize = (1 << (ZB_Z_BITS + ZB_POINT_Z_FRAC_BITS));
@@ -69,7 +69,7 @@ void gl_eval_viewport(GLContext * c)
     v->scale.Z = -((zsize - 0.5) / 2.0);
 }
 
-void glopBegin(GLContext * c, GLParam * p)
+void glopBegin(SRContext * c, GLParam * p)
 {
     int type;
     M4 tmp;
@@ -143,7 +143,7 @@ void glopBegin(GLContext * c, GLParam * p)
 
 /* coords, tranformation , clip code and projection */
 /* TODO : handle all cases */
-static inline void gl_vertex_transform(GLContext * c, GLVertex * v)
+static inline void gl_vertex_transform(SRContext * c, GLVertex * v)
 {
     float *m;
     V4 *n;
@@ -204,7 +204,7 @@ static inline void gl_vertex_transform(GLContext * c, GLVertex * v)
     v->clip_code = gl_clipcode(v->pc.X, v->pc.Y, v->pc.Z, v->pc.W);
 }
 
-void glopVertex(GLContext * c, GLParam * p)
+void glopVertex(SRContext * c, GLParam * p)
 {
     GLVertex *v;
     int n, i, cnt;
@@ -346,7 +346,7 @@ void glopVertex(GLContext * c, GLParam * p)
     c->vertex_n = n;
 }
 
-void glopEnd(GLContext * c, GLParam * param)
+void glopEnd(SRContext * c, GLParam * param)
 {
     assert(c->in_begin == 1);
 

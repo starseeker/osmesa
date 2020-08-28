@@ -9,13 +9,13 @@ void gl_print_matrix( const float *m)
    }
 }
 
-static inline void gl_matrix_update(GLContext *c)
+static inline void gl_matrix_update(SRContext *c)
 {
   c->matrix_model_projection_updated=(c->matrix_mode<=1);
 }
 
 
-void glopMatrixMode(GLContext *c,GLParam *p)
+void glopMatrixMode(SRContext *c,GLParam *p)
 {
   int mode=p[1].i;
   switch(mode) {
@@ -33,7 +33,7 @@ void glopMatrixMode(GLContext *c,GLParam *p)
   }
 }
 
-void glopLoadMatrix(GLContext *c,GLParam *p)
+void glopLoadMatrix(SRContext *c,GLParam *p)
 {
   M4 *m;
   int i;
@@ -54,7 +54,7 @@ void glopLoadMatrix(GLContext *c,GLParam *p)
   gl_matrix_update(c);
 }
 
-void glopLoadIdentity(GLContext *c,GLParam *p)
+void glopLoadIdentity(SRContext *c,GLParam *p)
 {
 
   gl_M4_Id(c->matrix_stack_ptr[c->matrix_mode]);
@@ -62,7 +62,7 @@ void glopLoadIdentity(GLContext *c,GLParam *p)
   gl_matrix_update(c);
 }
 
-void glopMultMatrix(GLContext *c,GLParam *p)
+void glopMultMatrix(SRContext *c,GLParam *p)
 {
   M4 m;
   int i;
@@ -84,7 +84,7 @@ void glopMultMatrix(GLContext *c,GLParam *p)
 }
 
 
-void glopPushMatrix(GLContext *c,GLParam *p)
+void glopPushMatrix(SRContext *c,GLParam *p)
 {
   int n=c->matrix_mode;
   M4 *m;
@@ -99,7 +99,7 @@ void glopPushMatrix(GLContext *c,GLParam *p)
   gl_matrix_update(c);
 }
 
-void glopPopMatrix(GLContext *c,GLParam *p)
+void glopPopMatrix(SRContext *c,GLParam *p)
 {
   int n=c->matrix_mode;
 
@@ -109,7 +109,7 @@ void glopPopMatrix(GLContext *c,GLParam *p)
 }
 
 
-void glopRotate(GLContext *c,GLParam *p)
+void glopRotate(SRContext *c,GLParam *p)
 {
   M4 m;
   float u[3];
@@ -179,7 +179,7 @@ void glopRotate(GLContext *c,GLParam *p)
   gl_matrix_update(c);
 }
 
-void glopScale(GLContext *c,GLParam *p)
+void glopScale(SRContext *c,GLParam *p)
 {
   float *m;
   float x=p[1].f,y=p[2].f,z=p[3].f;
@@ -193,7 +193,7 @@ void glopScale(GLContext *c,GLParam *p)
   gl_matrix_update(c);
 }
 
-void glopTranslate(GLContext *c,GLParam *p)
+void glopTranslate(SRContext *c,GLParam *p)
 {
   float *m;
   float x=p[1].f,y=p[2].f,z=p[3].f;
@@ -209,7 +209,7 @@ void glopTranslate(GLContext *c,GLParam *p)
 }
 
 
-void glopFrustum(GLContext *c,GLParam *p)
+void glopFrustum(SRContext *c,GLParam *p)
 {
   float *r;
   M4 m;

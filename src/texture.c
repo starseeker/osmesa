@@ -4,7 +4,7 @@
 
 #include "zgl.h"
 
-static GLTexture *find_texture(GLContext *c,int h)
+static GLTexture *find_texture(SRContext *c,int h)
 {
   GLTexture *t;
 
@@ -16,7 +16,7 @@ static GLTexture *find_texture(GLContext *c,int h)
   return NULL;
 }
 
-static void free_texture(GLContext *c,int h)
+static void free_texture(SRContext *c,int h)
 {
   GLTexture *t,**ht;
   GLImage *im;
@@ -40,7 +40,7 @@ static void free_texture(GLContext *c,int h)
   gl_free(t);
 }
 
-GLTexture *alloc_texture(GLContext *c,int h)
+GLTexture *alloc_texture(SRContext *c,int h)
 {
   GLTexture *t,**ht;
   
@@ -59,7 +59,7 @@ GLTexture *alloc_texture(GLContext *c,int h)
 }
 
 
-void glInitTextures(GLContext *c)
+void glInitTextures(SRContext *c)
 {
   /* textures */
 
@@ -69,7 +69,7 @@ void glInitTextures(GLContext *c)
 
 void glGenTextures(int n, unsigned int *textures)
 {
-  GLContext *c=gl_get_context();
+  SRContext *c=gl_get_context();
   int max,i;
   GLTexture *t;
 
@@ -90,7 +90,7 @@ void glGenTextures(int n, unsigned int *textures)
 
 void glDeleteTextures(int n, const unsigned int *textures)
 {
-  GLContext *c=gl_get_context();
+  SRContext *c=gl_get_context();
   int i;
   GLTexture *t;
 
@@ -106,7 +106,7 @@ void glDeleteTextures(int n, const unsigned int *textures)
 }
 
 
-void glopBindTexture(GLContext *c,GLParam *p)
+void glopBindTexture(SRContext *c,GLParam *p)
 {
   int target=p[1].i;
   int texture=p[2].i;
@@ -121,7 +121,7 @@ void glopBindTexture(GLContext *c,GLParam *p)
   c->current_texture=t;
 }
 
-void glopTexImage2D(GLContext *c,GLParam *p)
+void glopTexImage2D(SRContext *c,GLParam *p)
 {
   int target=p[1].i;
   int level=p[2].i;
@@ -181,7 +181,7 @@ void glopTexImage2D(GLContext *c,GLParam *p)
 
 
 /* TODO: not all tests are done */
-void glopTexEnv(GLContext *c,GLParam *p)
+void glopTexEnv(SRContext *c,GLParam *p)
 {
   int target=p[1].i;
   int pname=p[2].i;
@@ -198,7 +198,7 @@ void glopTexEnv(GLContext *c,GLParam *p)
 }
 
 /* TODO: not all tests are done */
-void glopTexParameter(GLContext *c,GLParam *p)
+void glopTexParameter(SRContext *c,GLParam *p)
 {
   int target=p[1].i;
   int pname=p[2].i;
@@ -217,7 +217,7 @@ void glopTexParameter(GLContext *c,GLParam *p)
   }
 }
 
-void glopPixelStore(GLContext *c,GLParam *p)
+void glopPixelStore(SRContext *c,GLParam *p)
 {
   int pname=p[1].i;
   int param=p[2].i;

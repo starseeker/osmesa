@@ -2,7 +2,7 @@
 
 int glRenderMode(int mode)
 {
-  GLContext *c=gl_get_context();
+  SRContext *c=gl_get_context();
   int result=0;
   
   switch(c->render_mode) {
@@ -41,7 +41,7 @@ int glRenderMode(int mode)
 
 void glSelectBuffer(int size,unsigned int *buf)
 {
-  GLContext *c=gl_get_context();
+  SRContext *c=gl_get_context();
 
   assert(c->render_mode != GL_SELECT);
   
@@ -50,7 +50,7 @@ void glSelectBuffer(int size,unsigned int *buf)
 }
 
 
-void glopInitNames(GLContext *c,GLParam *p)
+void glopInitNames(SRContext *c,GLParam *p)
 {
   if (c->render_mode == GL_SELECT) {
     c->name_stack_size=0;
@@ -58,7 +58,7 @@ void glopInitNames(GLContext *c,GLParam *p)
   }
 }
 
-void glopPushName(GLContext *c,GLParam *p)
+void glopPushName(SRContext *c,GLParam *p)
 {
   if (c->render_mode == GL_SELECT) {
     assert(c->name_stack_size<MAX_NAME_STACK_DEPTH);
@@ -67,7 +67,7 @@ void glopPushName(GLContext *c,GLParam *p)
   }
 }
 
-void glopPopName(GLContext *c,GLParam *p)
+void glopPopName(SRContext *c,GLParam *p)
 {
   if (c->render_mode == GL_SELECT) {
     assert(c->name_stack_size>0);
@@ -76,7 +76,7 @@ void glopPopName(GLContext *c,GLParam *p)
   }
 }
 
-void glopLoadName(GLContext *c,GLParam *p)
+void glopLoadName(SRContext *c,GLParam *p)
 {
   if (c->render_mode == GL_SELECT) {
    assert(c->name_stack_size>0);
@@ -85,7 +85,7 @@ void glopLoadName(GLContext *c,GLParam *p)
   }
 }
 
-void gl_add_select(GLContext *c,unsigned int zmin,unsigned int zmax)
+void gl_add_select(SRContext *c,unsigned int zmin,unsigned int zmax)
 {
   unsigned int *ptr;
   int n,i;
