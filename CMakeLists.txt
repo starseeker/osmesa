@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 3.12)
 # Set CMake project name
 project(TINYGL)
 
+# Tell CMake where to look for local CMake modules
+list(APPEND CMAKE_MODULE_PATH "${TINYGL_SOURCE_DIR}/CMake")
+
 if (NOT BIN_DIR)
   set(BIN_DIR bin)
 endif (NOT BIN_DIR)
@@ -21,8 +24,6 @@ check_library_exists(m cos "" HAVE_M_LIBRARY)
 if (HAVE_M_LIBRARY)
   set(M_LIBRARY m)
 endif (HAVE_M_LIBRARY)
-
-find_package(X11 REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(examples)

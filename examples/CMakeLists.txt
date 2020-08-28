@@ -9,6 +9,9 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
+find_package(X11 REQUIRED)
+find_package(TCL REQUIRED)
+
 add_executable(mech mech.c glu.c ${ui_srcs})
 target_link_libraries(mech tinygl ${X11_LIBRARIES} ${M_LIBRARY})
 add_executable(texobj texobj.c ${ui_srcs})
