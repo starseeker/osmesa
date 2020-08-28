@@ -28,11 +28,6 @@ ZBuffer *ZB_open(int xsize, int ysize, int mode,
     zb->linesize = (xsize * PSZB + 3) & ~3;
 
     switch (mode) {
-#ifdef TGL_FEATURE_8_BITS
-    case ZB_MODE_INDEX:
-	ZB_initDither(zb, nb_colors, color_indexes, color_table);
-	break;
-#endif
 #ifdef TGL_FEATURE_32_BITS
     case ZB_MODE_RGBA:
 #endif
@@ -74,10 +69,6 @@ ZBuffer *ZB_open(int xsize, int ysize, int mode,
 
 void ZB_close(ZBuffer * zb)
 {
-#ifdef TGL_FEATURE_8_BITS
-    if (zb->mode == ZB_MODE_INDEX)
-	ZB_closeDither(zb);
-#endif
 
     if (zb->frame_buffer_allocated)
 	gl_free(zb->pbuf);
