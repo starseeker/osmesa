@@ -120,47 +120,10 @@ static void ZB_copyBuffer(ZBuffer * zb,
     }
 }
 
-
-
-
-#define RGB32_TO_RGB16(v) \
-  (((v >> 8) & 0xf800) | (((v) >> 5) & 0x07e0) | (((v) & 0xff) >> 3))
-
-/* XXX: not optimized */
-static void ZB_copyFrameBuffer5R6G5B(ZBuffer * zb, 
-                                     void *buf, int linesize) 
-{
-    PIXEL *q;
-    unsigned short *p, *p1;
-    int y, n;
-
-    q = zb->pbuf;
-    p1 = (unsigned short *) buf;
-
-    for (y = 0; y < zb->ysize; y++) {
-	p = p1;
-	n = zb->xsize >> 2;
-	do {
-            p[0] = RGB32_TO_RGB16(q[0]);
-            p[1] = RGB32_TO_RGB16(q[1]);
-            p[2] = RGB32_TO_RGB16(q[2]);
-            p[3] = RGB32_TO_RGB16(q[3]);
-	    q += 4;
-	    p += 4;
-	} while (--n > 0);
-	p1 = (unsigned short *)((char *)p1 + linesize);
-    }
-}
-
 void ZB_copyFrameBuffer(ZBuffer * zb, void *buf,
 			int linesize)
 {
     switch (zb->mode) {
-#ifdef TGL_FEATURE_16_BITS
-    case ZB_MODE_5R6G5B:
-	ZB_copyFrameBuffer5R6G5B(zb, buf, linesize);
-	break;
-#endif
 #ifdef TGL_FEATURE_32_BITS
     case ZB_MODE_RGBA:
 	ZB_copyBuffer(zb, buf, linesize);
@@ -170,8 +133,6 @@ void ZB_copyFrameBuffer(ZBuffer * zb, void *buf,
 	assert(0);
     }
 }
-
-
 
 /*
  * adr must be aligned on an 'int'
