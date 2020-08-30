@@ -106,7 +106,7 @@ static void vbo_bind_vertex_list( GLcontext *ctx,
    struct vbo_context *vbo = vbo_context(ctx);
    struct vbo_save_context *save = &vbo->save;
    struct gl_client_array *arrays = save->arrays;
-   GLuint data = node->buffer_offset;
+   GLuint buffer_offset = node->buffer_offset;
    const GLuint *map;
    GLuint attr;
 
@@ -135,7 +135,7 @@ static void vbo_bind_vertex_list( GLcontext *ctx,
       GLuint src = map[attr];
 
       if (node->attrsz[src]) {
-	 arrays[attr].Ptr = (const GLubyte *)data;
+	 arrays[attr].Ptr = (const GLubyte *)NULL + buffer_offset;
 	 arrays[attr].Size = node->attrsz[src];
 	 arrays[attr].StrideB = node->vertex_size * sizeof(GLfloat);
 	 arrays[attr].Stride = node->vertex_size * sizeof(GLfloat);
@@ -143,10 +143,10 @@ static void vbo_bind_vertex_list( GLcontext *ctx,
 	 arrays[attr].Enabled = 1;
 	 arrays[attr].BufferObj = node->vertex_store->bufferobj;
 	 arrays[attr]._MaxElement = node->count; /* ??? */
-	 
+
 	 assert(arrays[attr].BufferObj->Name);
 
-	 data += node->attrsz[src] * sizeof(GLfloat);
+	 buffer_offset += node->attrsz[src] * sizeof(GLfloat);
       }
    }
 }

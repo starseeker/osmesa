@@ -29,8 +29,9 @@
 /* Compile-time assertions.  If the expression is zero, try to declare an
  * array of size [-1] to cause compilation error.
  */
-#define static_assert(expr) do { int _array[(expr) ? 1 : -1]; (void) _array[0]; } while (0)
-
+#ifndef static_assert
+#  define static_assert(expr) do { int _array[(expr) ? 1 : -1]; (void) _array[0]; } while (0)
+#endif
 
 #define slang_string_compare(str1, str2) _mesa_strcmp (str1, str2)
 #define slang_string_copy(dst, src) _mesa_strcpy (dst, src)
