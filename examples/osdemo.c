@@ -21,9 +21,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "GL/gl.h"
 #include "GL/osmesa.h"
-#include "GL/glu.h"
+//#include "GL/glu.h"
 
+#if 0
 void Sphere(float radius, int slices, int stacks)
 {
    GLUquadric *q = gluNewQuadric();
@@ -42,7 +44,7 @@ Cone(float base, float height, int slices, int stacks)
    gluCylinder(q, base, 0.0, height, slices, stacks);
    gluDeleteQuadric(q);
 }
-
+#endif
 
 static void
 Torus(float innerRadius, float outerRadius, int sides, int rings)
@@ -126,13 +128,13 @@ void render_image(void)
    glTranslatef(-0.75, -0.5, 0.0);
    glRotatef(270.0, 1.0, 0.0, 0.0);
    glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, green_mat );
-   Cone(1.0, 2.0, 16, 1);
+   //Cone(1.0, 2.0, 16, 1);
    glPopMatrix();
 
    glPushMatrix();
    glTranslatef(0.75, 0.0, -1.0);
    glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, blue_mat );
-   Sphere(1.0, 20, 20);
+   //Sphere(1.0, 20, 20);
    glPopMatrix();
 
    glPopMatrix();
@@ -150,7 +152,7 @@ void sph(double angle)
    glPushMatrix();
        glTranslatef(0.75, 0.0, 0);
        glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, blue_mat );
-       Sphere(1.0, 20, 20);
+       //Sphere(1.0, 20, 20);
    glPopMatrix();
 
    glFinish();
@@ -252,7 +254,6 @@ void free_context()
    OSMesaDestroyContext( ctx );
 }
 
-/*
 int
 main(int argc, char *argv[])
 {
@@ -315,4 +316,3 @@ main(int argc, char *argv[])
 
    return 0;
 }
-*/

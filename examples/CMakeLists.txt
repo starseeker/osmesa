@@ -4,11 +4,8 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
-
-add_executable(pixeltest pixeltest.c)
-
 add_executable(osdemo osdemo.c)
-target_link_libraries(osdemo swrast ${M_LIBRARY})
+target_link_libraries(osdemo swrast ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 
 find_package(SDL)
 

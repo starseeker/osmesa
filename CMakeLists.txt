@@ -35,7 +35,7 @@ endif (HAVE_M_LIBRARY)
 include(CheckIncludeFiles)
 check_include_files(endian.h HAVE_ENDIAN_H)
 if (HAVE_ENDIAN_H)
-  add_definitions(-DHAVE_ENDIAN_H=1)
+  add_definitions(-DPTHREADS)
 endif (HAVE_ENDIAN_H)
 
 include(CheckFunctionExists)
