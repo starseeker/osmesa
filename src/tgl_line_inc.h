@@ -14,14 +14,15 @@
     register int z, zz;
 #endif
 
-    if (p1->y > p2->y || (p1->y == p2->y && p1->x > p2->x)) {
+    if (p1->y > p2->y || (p1->y == p2->y && p1->x > p2->x))
+    {
 	ZBufferPoint *tmp;
 	tmp = p1;
 	p1 = p2;
 	p2 = tmp;
     }
     sx = zb->xsize;
-    pp = (PIXEL *) ((char *) zb->pbuf + zb->linesize * p1->y + p1->x * PSZB);
+    pp = (PIXEL *)((char *) zb->pbuf + zb->linesize * p1->y + p1->x * PSZB);
 #ifdef INTERP_Z
     pz = zb->zbuf + (p1->y * sx + p1->x);
     z = p1->z;
@@ -33,27 +34,14 @@
     r = p2->r << 8;
     g = p2->g << 8;
     b = p2->b << 8;
-#elif TGL_FEATURE_RENDER_BITS == 24
-    /* for 24 bits, we store the colors in different variables */
-    r = p2->r >> 8;
-    g = p2->g >> 8;
-    b = p2->b >> 8;
 #endif
 
 #ifdef INTERP_RGB
 #define RGB(x) x
-#if TGL_FEATURE_RENDER_BITS == 24
-#define RGBPIXEL pp[0] = r >> 16, pp[1] = g >> 16, pp[2] = b >> 16
-#else
 #define RGBPIXEL *pp = RGB_TO_PIXEL(r >> 8,g >> 8,b >> 8)
-#endif
 #else /* INTERP_RGB */
 #define RGB(x)
-#if TGL_FEATURE_RENDER_BITS == 24
-#define RGBPIXEL pp[0] = r, pp[1] = g, pp[2] = b
-#else
 #define RGBPIXEL *pp = color
-#endif
 #endif /* INTERP_RGB */
 
 #ifdef INTERP_Z
@@ -90,11 +78,13 @@
 	else { pp=(PIXEL *)((char *)pp + pp_inc_2); ZZ(pz+=(inc_2)); a+=dy; }\
     } while (--n >= 0);
 
-/* fin macro */
+    /* fin macro */
 
-    if (dx == 0 && dy == 0) {
+    if (dx == 0 && dy == 0)
+    {
 	PUTPIXEL();
-    } else if (dx > 0) {
+    } else if (dx > 0)
+    {
 	if (dx >= dy) {
 	    DRAWLINE(dx, dy, sx + 1, 1);
 	} else {
@@ -102,7 +92,8 @@
 	}
     } else {
 	dx = -dx;
-	if (dx >= dy) {
+	if (dx >= dy)
+	{
 	    DRAWLINE(dx, dy, sx - 1, -1);
 	} else {
 	    DRAWLINE(dy, dx, sx - 1, sx);
@@ -118,4 +109,14 @@
 #undef PUTPIXEL
 #undef ZZ
 #undef RGB
-#undef RGBPIXEL 
+#undef RGBPIXEL
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

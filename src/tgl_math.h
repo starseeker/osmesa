@@ -9,31 +9,26 @@
 
 /* Matrix & Vertex */
 
-typedef struct
-{
-	float m[4][4];
+typedef struct {
+    float m[4][4];
 } M4;
 
-typedef struct
-{
-	float m[3][3];
+typedef struct {
+    float m[3][3];
 } M3;
 
-typedef struct
-{
-	 float m[3][4];
+typedef struct {
+    float m[3][4];
 } M34;
 
-typedef struct
-{
-	float X,Y,Z;
+typedef struct {
+    float X,Y,Z;
 } V3;
 
-typedef struct 
-{
-	float X,Y,Z,W;
+typedef struct {
+    float X,Y,Z,W;
 } V4;
-	
+
 void gl_M4_Id(M4 *a);
 int gl_M4_IsId(M4 *a);
 void gl_M4_Move(M4 *a,M4 *b);
@@ -56,3 +51,13 @@ V4 gl_V4_New(float x,float y,float z,float w);
 int gl_Matrix_Inv(float *r,float *m,int n);
 
 #endif // __TGL_MAT_H_
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */
