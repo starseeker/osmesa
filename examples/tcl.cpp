@@ -35,6 +35,8 @@ extern "C" {
 #include "tgl.h"
 }
 
+
+
 const char *DM_PHOTO = ".dm0.photo";
 const char *DM_CANVAS = ".dm0";
 
@@ -100,6 +102,9 @@ struct img_data {
 
     // The rendering memory used to actually generate the DM scene contents.
     GLContext *gl_context;
+    ZBuffer *zb;
+    int x;
+    double t;
 
     long dm_buff_size;
     unsigned char *dmpixel;
@@ -377,6 +382,7 @@ Dm_Render(ClientData clientData)
     // Rendering operation - this is where the work of a DM/FB render pass
     // would occur in a real application
     //////////////////////////////////////////////////////////////////////////////
+#if 0 
     // To get a little visual variation and make it easer to see changes,
     // randomly turn on/off the individual colors for each pass.
     int r = (*idata->colors)((*idata->gen));
@@ -397,10 +403,59 @@ Dm_Render(ClientData clientData)
 	// happening with the buffer data...)
 	idata->dmpixel[i+3] = 255;
     }
+#endif
+
+    // Clear color buffer
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Select and setup the projection matrix
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity();
+    gluPerspective( 65.0f, (GLfloat)idata->screen_width/(GLfloat)idata->screen_height, 1.0f, 100.0f );
+
+    // Select and setup the modelview matrix
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
+    glRotatef(-90, 1,0,0);
+    glTranslatef(0,0,-1.0f);
+
+    // Draw a rotating colorful triangle
+    glTranslatef( 0.0f, 14.0f, 0.0f );
+    glRotatef( 0.3*(GLfloat)idata->x + (GLfloat)idata->t*100.0f, 0.0f, 0.0f, 1.0f );
+    glBegin( GL_TRIANGLES );
+    glColor3f( 1.0f, 0.0f, 0.0f );
+    glVertex3f( -5.0f, 0.0f, -4.0f );
+    glColor3f( 0.0f, 1.0f, 0.0f );
+    glVertex3f( 5.0f, 0.0f, -4.0f );
+    glColor3f( 0.0f, 0.0f, 1.0f );
+    glVertex3f( 0.0f, 0.0f, 6.0f );
+    glEnd();
+
+    //ZB_copyFrameBuffer(idata->zb, idata->dmpixel, idata->dm_width * 4);
+    for (int i = 0; i < idata->zb->xsize * idata->zb->ysize; i++) {
+	if (idata->zb->zbuf[i]) {
+	    int r = (unsigned int)(idata->zb->zbuf[i]) >> 24 & 0xFF;
+	    int g = (unsigned int)(idata->zb->zbuf[i]) >> 16 & 0xFF;
+	    int b = (unsigned int)(idata->zb->zbuf[i]) >> 8 & 0xFF;
+	    int a = (unsigned int)(idata->zb->zbuf[i]) & 0xFF;
+	    std::cout << idata->zb->zbuf[i] << ": " << r << "," << g << "," << b << "," << a << "\n";
+	    idata->dmpixel[i*4+0] = r;
+	    idata->dmpixel[i*4+1] = g;
+	    idata->dmpixel[i*4+2] = b;
+	    idata->dmpixel[i*4+3] = a;
+	} else {
+	    idata->dmpixel[i*4+0] = 0;
+	    idata->dmpixel[i*4+1] = 0;
+	    idata->dmpixel[i*4+2] = 0;
+	    idata->dmpixel[i*4+3] = 255;
+
+	}
+    }
+
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
 
-    std::cout << "DM update: " << r << "," << g << "," << b << "\n";
+    //std::cout << "DM update: " << r << "," << g << "," << b << "\n";
 
     // Update done - let the parent structure know.  We don't clear the
     // render_needed flag here, since the parent window may have changed
@@ -537,14 +592,19 @@ Dm_Update_Manager(ClientData clientData)
     idata->colors = &colors;
     idata->vals = &vals;
 
-    ZBuffer *zb = ZB_open(idata->screen_width,idata->screen_height, ZB_MODE_RGBA, 0,NULL,NULL,NULL);
-    glInit(zb);
+    idata->zb = ZB_open(idata->dm_width,idata->dm_height, ZB_MODE_RGBA, 0,NULL,NULL,NULL);
+    glInit(idata->zb);
     idata->gl_context = gl_get_context();
     if (!idata->gl_context) {
 	std::cerr << "Failed to get rendering context!\n";
 	exit(1);
     }
     idata->gl_context->opaque = (void *)idata;
+    idata->x = 0;
+    idata->t = 0;
+
+    glViewport( 0, 0, idata->dm_width, idata->dm_height);
+    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 
     // Until we're shutting down, check for and process events - this thread will persist
     // for the life of the application.
