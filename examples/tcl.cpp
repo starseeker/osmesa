@@ -431,26 +431,7 @@ Dm_Render(ClientData clientData)
     glVertex3f( 0.0f, 0.0f, 6.0f );
     glEnd();
 
-    //ZB_copyFrameBuffer(idata->zb, idata->dmpixel, idata->dm_width * 4);
-    for (int i = 0; i < idata->zb->xsize * idata->zb->ysize; i++) {
-	if (idata->zb->zbuf[i]) {
-	    int r = (unsigned int)(idata->zb->zbuf[i]) >> 24 & 0xFF;
-	    int g = (unsigned int)(idata->zb->zbuf[i]) >> 16 & 0xFF;
-	    int b = (unsigned int)(idata->zb->zbuf[i]) >> 8 & 0xFF;
-	    int a = (unsigned int)(idata->zb->zbuf[i]) & 0xFF;
-	    std::cout << idata->zb->zbuf[i] << ": " << r << "," << g << "," << b << "," << a << "\n";
-	    idata->dmpixel[i*4+0] = r;
-	    idata->dmpixel[i*4+1] = g;
-	    idata->dmpixel[i*4+2] = b;
-	    idata->dmpixel[i*4+3] = a;
-	} else {
-	    idata->dmpixel[i*4+0] = 0;
-	    idata->dmpixel[i*4+1] = 0;
-	    idata->dmpixel[i*4+2] = 0;
-	    idata->dmpixel[i*4+3] = 255;
-
-	}
-    }
+    ZB_copyFrameBuffer(idata->zb, idata->dmpixel, idata->dm_width * 4);
 
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////

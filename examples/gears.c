@@ -9,9 +9,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <TGL/gl.h>
+#include "GL/gl.h"
+#include "GL/osmesa.h"
 #include <SDL/SDL.h>
-#include <tgl.h>
 
 #ifndef M_PI
 #  define M_PI 3.14159265
@@ -221,15 +221,6 @@ int main(int argc, char **argv)
     // initialize TinyGL:
     pitch = screen->pitch;
     switch (screen->format->BitsPerPixel) {
-	case  8:
-	    fprintf(stderr,"ERROR: Palettes are currently not supported.\n");
-	    return 1;
-	case 16:
-	    mode = ZB_MODE_5R6G5B;
-	    break;
-	case 24:
-	    mode = ZB_MODE_RGB24;
-	    break;
 	case 32:
 	    mode = ZB_MODE_RGBA;
 	    break;

@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Set CMake project name
-project(TINYGL)
+project(SWRAST)
 
 add_definitions(-g)
 
@@ -21,11 +21,26 @@ if (NOT DEFINED LIB_DIR)
   set(LIB_DIR lib)
 endif (NOT DEFINED LIB_DIR)
 
+find_package(Threads REQUIRED)
+if (CMAKE_USE_PTHREADS_INIT)
+  add_definitions(-DHAVE_PTHREAD)
+endif (CMAKE_USE_PTHREADS_INIT)
+
 include(CheckLibraryExists)
 check_library_exists(m cos "" HAVE_M_LIBRARY)
 if (HAVE_M_LIBRARY)
   set(M_LIBRARY m)
 endif (HAVE_M_LIBRARY)
+
+include(CheckIncludeFiles)
+check_include_files(endian.h HAVE_ENDIAN_H)
+if (HAVE_ENDIAN_H)
+  add_definitions(-DHAVE_ENDIAN_H=1)
+endif (HAVE_ENDIAN_H)
+
+include(CheckFunctionExists)
+# TODO - check for the following
+add_definitions(-DHAVE_TIMESPEC_GET=1)
 
 add_subdirectory(src)
 add_subdirectory(examples)

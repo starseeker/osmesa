@@ -4,19 +4,24 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
+
+add_executable(pixeltest pixeltest.c)
+
+add_executable(osdemo osdemo.c)
+target_link_libraries(osdemo swrast ${M_LIBRARY})
+
 find_package(SDL)
 
 if (SDL_FOUND)
-  add_executable(texobj texobj.c)
-  target_link_libraries(texobj tinygl ${SDL_LIBRARY} ${M_LIBRARY})
-  add_executable(gears gears.c)
-  target_link_libraries(gears tinygl ${SDL_LIBRARY} ${M_LIBRARY})
-  add_executable(triangle triangle.c)
-  target_link_libraries(triangle tinygl ${SDL_LIBRARY} ${M_LIBRARY})
+  #add_executable(texobj texobj.c)
+  #target_link_libraries(texobj tinygl ${SDL_LIBRARY} ${M_LIBRARY})
+  #add_executable(gears gears.c)
+  #target_link_libraries(gears swrast ${SDL_LIBRARY} ${M_LIBRARY})
+  #add_executable(triangle triangle.c)
+  #target_link_libraries(triangle tinygl ${SDL_LIBRARY} ${M_LIBRARY})
 endif (SDL_FOUND)
 
-find_package(TCL)
-
+#find_package(TCL)
 if (TCL_FOUND)
   include_directories(
     ${TCL_INCLUDE_PATH}
