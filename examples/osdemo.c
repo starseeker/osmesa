@@ -23,28 +23,7 @@
 #include <string.h>
 #include "GL/gl.h"
 #include "GL/osmesa.h"
-//#include "GL/glu.h"
-
-#if 0
-void Sphere(float radius, int slices, int stacks)
-{
-   GLUquadric *q = gluNewQuadric();
-   gluQuadricNormals(q, GLU_SMOOTH);
-   gluSphere(q, radius, slices, stacks);
-   gluDeleteQuadric(q);
-}
-
-
-static void
-Cone(float base, float height, int slices, int stacks)
-{
-   GLUquadric *q = gluNewQuadric();
-   gluQuadricDrawStyle(q, GLU_FILL);
-   gluQuadricNormals(q, GLU_SMOOTH);
-   gluCylinder(q, base, 0.0, height, slices, stacks);
-   gluDeleteQuadric(q);
-}
-#endif
+#include "svpng.h"
 
 static void
 Torus(float innerRadius, float outerRadius, int sides, int rings)
@@ -86,7 +65,6 @@ Torus(float innerRadius, float outerRadius, int sides, int rings)
    }
 }
 
-
 void render_image(void)
 {
    GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
@@ -124,19 +102,6 @@ void render_image(void)
    Torus(0.275, 0.85, 20, 20);
    glPopMatrix();
 
-   glPushMatrix();
-   glTranslatef(-0.75, -0.5, 0.0);
-   glRotatef(270.0, 1.0, 0.0, 0.0);
-   glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, green_mat );
-   //Cone(1.0, 2.0, 16, 1);
-   glPopMatrix();
-
-   glPushMatrix();
-   glTranslatef(0.75, 0.0, -1.0);
-   glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, blue_mat );
-   //Sphere(1.0, 20, 20);
-   glPopMatrix();
-
    glPopMatrix();
 
    /* This is very important!!!
@@ -145,60 +110,16 @@ void render_image(void)
    glFinish();
 }
 
-void sph(double angle)
-{
-   GLfloat blue_mat[]  = { 1, 1, 0, 1 };
-
-   glPushMatrix();
-       glTranslatef(0.75, 0.0, 0);
-       glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, blue_mat );
-       //Sphere(1.0, 20, 20);
-   glPopMatrix();
-
-   glFinish();
-}
-
 static void
-write_ppm(const char *filename, const GLubyte *buffer, int width, int height)
+write_png(const char *filename, const GLubyte *buffer, int width, int height)
 {
    const int binary = 0;
    FILE *f = fopen( filename, "w" );
+
    if (f) {
-      int i, x, y;
-      const GLubyte *ptr = buffer;
-      if (binary) {
-         fprintf(f,"P6\n");
-         fprintf(f,"# ppm-file created by osdemo.c\n");
-         fprintf(f,"%i %i\n", width,height);
-         fprintf(f,"255\n");
-         fclose(f);
-         f = fopen( filename, "ab" );  /* reopen in binary append mode */
-         for (y=height-1; y>=0; y--) {
-            for (x=0; x<width; x++) {
-               i = (y*width + x) * 4;
-               fputc(ptr[i], f);   /* write red */
-               fputc(ptr[i+1], f); /* write green */
-               fputc(ptr[i+2], f); /* write blue */
-            }
-         }
-      }
-      else {
-         /*ASCII*/
-         int counter = 0;
-         fprintf(f,"P3\n");
-         fprintf(f,"# ascii ppm file created by osdemo.c\n");
-         fprintf(f,"%i %i\n", width, height);
-         fprintf(f,"255\n");
-         for (y=height-1; y>=0; y--) {
-            for (x=0; x<width; x++) {
-               i = (y*width + x) * 4;
-               fprintf(f, " %3d %3d %3d", ptr[i], ptr[i+1], ptr[i+2]);
-               counter++;
-               if (counter % 5 == 0)
-                  fprintf(f, "\n");
-            }
-         }
-      }
+      // TODO - upside down, need to invert
+      svpng(f, width, height, buffer, 1);
+
       fclose(f);
    }
 }
@@ -232,7 +153,6 @@ int init_context(int w, int h)
       return -1;
    }
 
-
    {
       int z, s, a;
       glGetIntegerv(GL_DEPTH_BITS, &z);
@@ -241,17 +161,6 @@ int init_context(int w, int h)
       printf("Depth=%d Stencil=%d Accum=%d\n", z, s, a);
    }
    return 0;
-}
-
-void free_context()
-{
-   write_ppm("a.ppm", buffer, Width, Height);
-
-   printf("all done\n");
-
-   free( buffer );
-
-   OSMesaDestroyContext( ctx );
 }
 
 int
@@ -302,10 +211,10 @@ main(int argc, char *argv[])
    render_image();
 
    if (filename != NULL) {
-      write_ppm(filename, buffer, Width, Height);
+      write_png(filename, buffer, Width, Height);
    }
    else {
-      printf("Specify a filename if you want to make an image file\n");
+      printf("Need filename\n");
    }
 
    printf("all done\n");
