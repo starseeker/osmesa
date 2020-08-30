@@ -8,6 +8,7 @@
 #include <TGL/gl.h>
 #include <tgl.h>
 #include <SDL/SDL.h>
+#include "svpng.h"
 
 int main(int argc, char **argv)
 {
@@ -115,6 +116,14 @@ int main(int argc, char **argv)
 	}
 
 	ZB_copyFrameBuffer(frameBuffer, screen->pixels, pitch);
+
+#if 0
+	// Doesn't work just feeding in screen->pixels... generates invalid pngs
+	char fname[20000];
+	sprintf(fname, "frame%.5d.png", frames);
+	FILE *fp = fopen(fname, "wb");
+	svpng(fp, winSizeX, winSizeY, screen->pixels, 1);
+#endif
 
 	if (SDL_MUSTLOCK(screen)) {
 	    SDL_UnlockSurface(screen);
