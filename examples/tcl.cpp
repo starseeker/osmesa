@@ -25,6 +25,7 @@
 #include <climits>
 #include <random>
 #include <iostream>
+#include <cstring>
 #include <string>
 #include <stdlib.h>
 #include <errno.h>
@@ -193,7 +194,7 @@ UpdateProc(Tcl_Event *evPtr, int mask)
     dm_data.pixelPtr = idata->dmpixel;
     Tk_PhotoPutBlock(interp, dm_img, &dm_data, 0, 0, dm_data.width, dm_data.height, TK_PHOTO_COMPOSITE_SET);
 
-
+#if 0
     // Now overlay the framebuffer.
     Tk_PhotoImageBlock fb_data;
     Tk_PhotoGetImage(dm_img, &fb_data);
@@ -202,7 +203,7 @@ UpdateProc(Tcl_Event *evPtr, int mask)
     fb_data.pitch = fb_data.width * 4;
     fb_data.pixelPtr = idata->fbpixel;
     Tk_PhotoPutBlock(interp, dm_img, &fb_data, 0, 0, idata->fb_width, idata->fb_height, TK_PHOTO_COMPOSITE_OVERLAY);
-
+#endif
     Tcl_MutexUnlock(&dilock);
     Tcl_MutexUnlock(&fblock);
 
@@ -423,28 +424,6 @@ Dm_Render(ClientData clientData)
     // Rendering operation - this is where the work of a DM/FB render pass
     // would occur in a real application
     //////////////////////////////////////////////////////////////////////////////
-#if 0 
-    // To get a little visual variation and make it easer to see changes,
-    // randomly turn on/off the individual colors for each pass.
-    int r = (*idata->colors)((*idata->gen));
-    int g = (*idata->colors)((*idata->gen));
-    int b = (*idata->colors)((*idata->gen));
-
-    // For each pixel, get a random color value and set it in the image memory buffer.
-    // This alters the actual data, but Tcl/Tk doesn't know about it yet.
-    for (int i = 0; i < b_minsize; i+=4) {
-	// Red
-	idata->dmpixel[i] = (r) ? (*idata->vals)((*idata->gen)) : 0;
-	// Green
-	idata->dmpixel[i+1] = (g) ? (*idata->vals)((*idata->gen)) : 0;
-	// Blue
-	idata->dmpixel[i+2] = (b) ? (*idata->vals)((*idata->gen)) : 0;
-	// Alpha stays at 255 (Don't really need to set it since it should
-	// already be set, just doing so for local clarity about what should be
-	// happening with the buffer data...)
-	idata->dmpixel[i+3] = 255;
-    }
-#endif
 
     // Clear color buffer
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -453,9 +432,11 @@ Dm_Render(ClientData clientData)
     GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
-    GLfloat red_mat[]   = { 1.0, 0.2, 0.2, 1.0 };
-    GLfloat green_mat[] = { 0.2, 1.0, 0.2, 1.0 };
-    GLfloat blue_mat[]  = { 0.2, 0.2, 1.0, 1.0 };
+
+    float r = (*idata->colors)((*idata->gen));
+    float g = (*idata->colors)((*idata->gen));
+    float b = (*idata->colors)((*idata->gen));
+    GLfloat rand_mat[]  = { r, g, b, 1.0 };
 
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
@@ -480,7 +461,7 @@ Dm_Render(ClientData clientData)
     glPushMatrix();
     glTranslatef(-0.75, 0.5, 0.0);
     glRotatef(90.0, 1.0, 0.0, 0.0);
-    glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, blue_mat );
+    glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, rand_mat );
     Torus(0.275, 0.85, 20, 20);
     glPopMatrix();
 
@@ -493,6 +474,8 @@ Dm_Render(ClientData clientData)
 
 
     const GLubyte *ptr = (const GLubyte *)idata->os_b;
+    memcpy(idata->dmpixel, idata->os_b, b_minsize);
+#if 0
     for (int i = 0; i < b_minsize; i+=4) {
 	// Red
 	idata->dmpixel[i] = ptr[i];
@@ -503,6 +486,7 @@ Dm_Render(ClientData clientData)
 	// Alpha
 	idata->dmpixel[i+3] = ptr[i+3];
     }
+#endif
 
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
