@@ -32,7 +32,8 @@
 extern "C" {
 #include "tcl.h"
 #include "tk.h"
-#include "tgl.h"
+#include "GL/gl.h"
+#include "GL/osmesa.h"
 }
 
 
@@ -101,8 +102,8 @@ struct img_data {
     std::uniform_int_distribution<int> *vals;
 
     // The rendering memory used to actually generate the DM scene contents.
-    GLContext *gl_context;
-    ZBuffer *zb;
+    OSMesaContext ctx;
+    void *os_b;
     int x;
     double t;
 
@@ -334,6 +335,46 @@ image_paint_xy(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     return TCL_OK;
 }
 
+static void
+Torus(float innerRadius, float outerRadius, int sides, int rings)
+{  
+    /* from GLUT... */
+    int i, j;
+    GLfloat theta, phi, theta1;
+    GLfloat cosTheta, sinTheta;
+    GLfloat cosTheta1, sinTheta1; 
+    const GLfloat ringDelta = 2.0 * M_PI / rings;
+    const GLfloat sideDelta = 2.0 * M_PI / sides;
+
+    theta = 0.0;
+    cosTheta = 1.0;
+    sinTheta = 0.0;
+    for (i = rings - 1; i >= 0; i--) {
+	theta1 = theta + ringDelta;
+	cosTheta1 = cos(theta1);
+	sinTheta1 = sin(theta1);
+	glBegin(GL_QUAD_STRIP);
+	phi = 0.0;
+	for (j = sides; j >= 0; j--) {
+	    GLfloat cosPhi, sinPhi, dist;
+
+	    phi += sideDelta;
+	    cosPhi = cos(phi); 
+	    sinPhi = sin(phi); 
+	    dist = outerRadius + innerRadius * cosPhi;
+
+	    glNormal3f(cosTheta1 * cosPhi, -sinTheta1 * cosPhi, sinPhi);
+	    glVertex3f(cosTheta1 * dist, -sinTheta1 * dist, innerRadius * sinPhi);
+	    glNormal3f(cosTheta * cosPhi, -sinTheta * cosPhi, sinPhi); 
+	    glVertex3f(cosTheta * dist, -sinTheta * dist,  innerRadius * sinPhi);
+	}
+	glEnd();
+	theta = theta1;
+	cosTheta = cosTheta1;
+	sinTheta = sinTheta1;
+    }
+}
+
 static Tcl_ThreadCreateType
 Dm_Render(ClientData clientData)
 {
@@ -408,30 +449,60 @@ Dm_Render(ClientData clientData)
     // Clear color buffer
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Select and setup the projection matrix
-    glMatrixMode( GL_PROJECTION );
+    GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+    GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+    GLfloat red_mat[]   = { 1.0, 0.2, 0.2, 1.0 };
+    GLfloat green_mat[] = { 0.2, 1.0, 0.2, 1.0 };
+    GLfloat blue_mat[]  = { 0.2, 0.2, 1.0, 1.0 };
+
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_DEPTH_TEST);
+
+    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective( 65.0f, (GLfloat)idata->screen_width/(GLfloat)idata->screen_height, 1.0f, 100.0f );
+    glOrtho(-2.5, 2.5, -2.5, 2.5, -10.0, 10.0);
+    glMatrixMode(GL_MODELVIEW);
 
-    // Select and setup the modelview matrix
-    glMatrixMode( GL_MODELVIEW );
-    glLoadIdentity();
-    glRotatef(-90, 1,0,0);
-    glTranslatef(0,0,-1.0f);
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    // Draw a rotating colorful triangle
-    glTranslatef( 0.0f, 14.0f, 0.0f );
-    glRotatef( 0.3*(GLfloat)idata->x + (GLfloat)idata->t*100.0f, 0.0f, 0.0f, 1.0f );
-    glBegin( GL_TRIANGLES );
-    glColor3f( 1.0f, 0.0f, 0.0f );
-    glVertex3f( -5.0f, 0.0f, -4.0f );
-    glColor3f( 0.0f, 1.0f, 0.0f );
-    glVertex3f( 5.0f, 0.0f, -4.0f );
-    glColor3f( 0.0f, 0.0f, 1.0f );
-    glVertex3f( 0.0f, 0.0f, 6.0f );
-    glEnd();
+    glPushMatrix();
+    glRotatef(20.0, 1.0, 0.0, 0.0);
 
-    ZB_copyFrameBuffer(idata->zb, idata->dmpixel, idata->dm_width * 4);
+    glPushMatrix();
+    glTranslatef(-0.75, 0.5, 0.0);
+    glRotatef(90.0, 1.0, 0.0, 0.0);
+    glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, blue_mat );
+    Torus(0.275, 0.85, 20, 20);
+    glPopMatrix();
+
+    glPopMatrix();
+
+    /* This is very important!!!
+     * Make sure buffered commands are finished!!!
+     */
+    glFinish();
+
+
+    const GLubyte *ptr = (const GLubyte *)idata->os_b;
+    for (int i = 0; i < b_minsize; i+=4) {
+	// Red
+	idata->dmpixel[i] = ptr[i];
+	// Green
+	idata->dmpixel[i+1] = ptr[i+1];
+	// Blue
+	idata->dmpixel[i+2] = ptr[i+2];
+	// Alpha
+	idata->dmpixel[i+3] = ptr[i+3];
+    }
 
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
@@ -573,14 +644,21 @@ Dm_Update_Manager(ClientData clientData)
     idata->colors = &colors;
     idata->vals = &vals;
 
-    idata->zb = ZB_open(idata->dm_width,idata->dm_height, ZB_MODE_RGBA, 0,NULL,NULL,NULL);
-    glInit(idata->zb);
-    idata->gl_context = gl_get_context();
-    if (!idata->gl_context) {
-	std::cerr << "Failed to get rendering context!\n";
+    idata->ctx = OSMesaCreateContextExt( OSMESA_RGBA, 16, 0, 0, NULL );
+    if (!idata->ctx) {
+	printf("OSMesaCreateContext failed!\n");
 	exit(1);
     }
-    idata->gl_context->opaque = (void *)idata;
+    idata->os_b = malloc(idata->dm_width * idata->dm_height * sizeof(long));
+    if (!idata->os_b) {
+	printf("buffer allocation failed!\n");
+	exit(1);
+    }
+    if (!OSMesaMakeCurrent(idata->ctx, idata->os_b, GL_UNSIGNED_BYTE, idata->dm_width, idata->dm_height)) {
+	printf("OSMesaMakeCurrent failed!\n");
+	exit(1);
+    }
+
     idata->x = 0;
     idata->t = 0;
 
@@ -906,6 +984,7 @@ main(int argc, const char *argv[])
 
 
 	    // Clean up memory and exit
+	    OSMesaDestroyContext( idata->ctx );
 	    free(idata);
 	    exit(0);
 	}
