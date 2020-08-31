@@ -1,7 +1,8 @@
 This is an extraction of the Mesa 3-D library's software rasterizer and
 offscreen rendering implementation of OpenGL 2.1 style APIs.  For ease
 of setup and compilation, the 7.0.4 release of Mesa was used as a basis.
-(This fork is not affiliated with the Mesa project.)
+(This fork is not affiliated with the Mesa project - for the modern
+implementation see https://mesa3d.org)
 
 The goals of this particular fork are NOT speed, but rather a portable,
 reliable cross platform rendering method that does not require any outside
