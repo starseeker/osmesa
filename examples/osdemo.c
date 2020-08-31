@@ -23,7 +23,28 @@
 #include <string.h>
 #include "OSMesa/gl.h"
 #include "OSMesa/osmesa.h"
+#include "OSMesa/glu.h"
 #include "svpng.h"
+
+void Sphere(float radius, int slices, int stacks)
+{
+   GLUquadric *q = gluNewQuadric();
+   gluQuadricNormals(q, GLU_SMOOTH);
+   gluSphere(q, radius, slices, stacks);
+   gluDeleteQuadric(q);
+}
+
+
+static void
+Cone(float base, float height, int slices, int stacks)
+{
+   GLUquadric *q = gluNewQuadric();
+   gluQuadricDrawStyle(q, GLU_FILL);
+   gluQuadricNormals(q, GLU_SMOOTH);
+   gluCylinder(q, base, 0.0, height, slices, stacks);
+   gluDeleteQuadric(q);
+}
+
 
 static void
 Torus(float innerRadius, float outerRadius, int sides, int rings)
@@ -65,6 +86,7 @@ Torus(float innerRadius, float outerRadius, int sides, int rings)
    }
 }
 
+
 void render_image(void)
 {
    GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
@@ -102,11 +124,37 @@ void render_image(void)
    Torus(0.275, 0.85, 20, 20);
    glPopMatrix();
 
+   glPushMatrix();
+   glTranslatef(-0.75, -0.5, 0.0);
+   glRotatef(270.0, 1.0, 0.0, 0.0);
+   glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, green_mat );
+   Cone(1.0, 2.0, 16, 1);
+   glPopMatrix();
+
+   glPushMatrix();
+   glTranslatef(0.75, 0.0, -1.0);
+   glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, blue_mat );
+   Sphere(1.0, 20, 20);
+   glPopMatrix();
+
    glPopMatrix();
 
    /* This is very important!!!
     * Make sure buffered commands are finished!!!
     */
+   glFinish();
+}
+
+void sph(double angle)
+{
+   GLfloat blue_mat[]  = { 1, 1, 0, 1 };
+
+   glPushMatrix();
+       glTranslatef(0.75, 0.0, 0);
+       glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, blue_mat );
+       Sphere(1.0, 20, 20);
+   glPopMatrix();
+
    glFinish();
 }
 
@@ -166,6 +214,8 @@ main(int argc, char *argv[])
       return 0;
    }
 
+    // Flip for PNG export - reverse the Y direction
+    glScalef(1,-1,1);
 
    {
       int z, s, a;
