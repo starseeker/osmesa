@@ -54,6 +54,7 @@
 #include "glapi.h"
 #include "glapioffsets.h"
 #include "glapitable.h"
+#include "glthread.h"
 
 /***** BEGIN NO-OP DISPATCH *****/
 

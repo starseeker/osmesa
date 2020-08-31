@@ -39,7 +39,7 @@
 /* XXX some of the stuff in glheader.h should be moved into this file.
  */
 #include "glheader.h"
-#include <GL/internal/glcore.h>
+#include "OSMesa/internal/glcore.h"
 
 
 #ifdef __cplusplus

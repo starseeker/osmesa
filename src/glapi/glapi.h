@@ -47,8 +47,6 @@
 
 #include "OSMesa/gl.h"
 #include "glapitable.h"
-#include "glthread.h"
-
 
 typedef void (*_glapi_warning_func)(void *ctx, const char *str, ...);
 
