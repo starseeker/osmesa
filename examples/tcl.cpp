@@ -22,13 +22,16 @@
  *
  */
 
-#include <climits>
 #include <random>
 #include <iostream>
 #include <cstring>
 #include <string>
+#include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+
+
 
 extern "C" {
 #include "tcl.h"
