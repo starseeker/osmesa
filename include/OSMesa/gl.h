@@ -30,44 +30,32 @@
 #include "gl_mangle.h"
 #endif
 
-
-/**********************************************************************
- * Begin system-specific stuff. Do not do any of this when building
- * for SciTech SNAP, as this is all done before this header file is
- * included. 
- */
-
-#if defined(__BEOS__)
-#include <stdlib.h>     /* to get some BeOS-isms */
-#endif
-
-#if !defined(OPENSTEP) && (defined(NeXT) || defined(NeXT_PDO))
-#define OPENSTEP
-#endif
-
 #if defined(_WIN32) && !defined(__WIN32__) && !defined(__CYGWIN__)
 #define __WIN32__
 #endif
 
-#if !defined(OPENSTEP) && (defined(__WIN32__) && !defined(__CYGWIN__))
-#  if (defined(_MSC_VER) || defined(__MINGW32__)) && defined(BUILD_GL32) /* tag specify we're building mesa as a DLL */
-#    define GLAPI __declspec(dllexport)
-#  elif (defined(_MSC_VER) || defined(__MINGW32__)) && defined(_DLL) /* tag specifying we're building for DLL runtime support */
-#    define GLAPI __declspec(dllimport)
-#  else /* for use with static link lib build of Win32 edition only */
-#    define GLAPI extern
-#  endif /* _STATIC_MESA support */
+#if defined(_MSC_VER)
+#  define COMPILER_DLLEXPORT __declspec(dllexport)
+#  define COMPILER_DLLIMPORT __declspec(dllimport)
 #  define GLAPIENTRY __stdcall
-#elif defined(__CYGWIN__) && defined(USE_OPENGL32) /* use native windows opengl32 */
-#  define GLAPI extern
-#  define GLAPIENTRY __stdcall
-#elif defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__) >= 303
-#  define GLAPI __attribute__((visibility("default")))
-#  define GLAPIENTRY
-#endif /* WIN32 && !CYGWIN */
+#elif defined(__GNUC__) || defined(__clang__)
+#  define COMPILER_DLLEXPORT __attribute__ ((visibility ("default")))
+#  define COMPILER_DLLIMPORT __attribute__ ((visibility ("default")))
+#else
+#  define COMPILER_DLLEXPORT
+#  define COMPILER_DLLIMPORT
+#endif
 
-#if (defined(__BEOS__) && defined(__POWERPC__)) || defined(__QUICKDRAW__)
-#  define PRAGMA_EXPORT_SUPPORTED		1
+#ifndef GL_EXPORT
+#  if defined(GL_DLL_EXPORTS) && defined(GL_DLL_IMPORTS)
+#    error "Only GL_DLL_EXPORTS or GL_DLL_IMPORTS can be defined, not both."
+#  elif defined(GL_DLL_EXPORTS)
+#    define GLAPI COMPILER_DLLEXPORT
+#  elif defined(GL_DLL_IMPORTS)
+#    define GLAPI COMPILER_DLLIMPORT
+#  else
+#    define GLAPI
+#  endif
 #endif
 
 /*
@@ -81,15 +69,6 @@
 #if defined(_WIN32) && !defined(APIENTRY) && !defined(__CYGWIN__)
 #define WIN32_LEAN_AND_MEAN 1
 #include <windows.h>
-#endif
-
-#if defined(_WIN32) && !defined(_WINGDI_) && !defined(_GNU_H_WINDOWS32_DEFINES) \
-     && !defined(OPENSTEP) && !defined(__CYGWIN__) || defined(__MINGW32__)
-#include "OSMesa/mesa_wgl.h"
-#endif
-
-#if defined(macintosh) && PRAGMA_IMPORT_SUPPORTED
-#pragma import on
 #endif
 
 #ifndef GLAPI

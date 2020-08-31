@@ -2,12 +2,12 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Set CMake project name
-project(SWRAST)
+project(OSMESA)
 
 add_definitions(-g)
 
 # Tell CMake where to look for local CMake modules
-list(APPEND CMAKE_MODULE_PATH "${TINYGL_SOURCE_DIR}/CMake")
+list(APPEND CMAKE_MODULE_PATH "${OSMESA_SOURCE_DIR}/CMake")
 
 if (NOT BIN_DIR)
   set(BIN_DIR bin)

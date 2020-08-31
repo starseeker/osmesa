@@ -5,7 +5,8 @@ include_directories(
   )
 
 add_executable(osdemo osdemo.c)
-target_link_libraries(osdemo swrast ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(osdemo osmesa ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+set_property(TARGET osdemo APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
 
 find_package(SDL)
 
@@ -24,7 +25,8 @@ if (TCL_FOUND)
     ${TCL_INCLUDE_PATH}
     )
   add_executable(tcltest tcl.cpp)
-  target_link_libraries(tcltest swrast ${TCL_LIBRARY} ${TK_LIBRARY} ${M_LIBRARY})
+  target_link_libraries(tcltest osmesa ${TCL_LIBRARY} ${TK_LIBRARY} ${M_LIBRARY})
+  set_property(TARGET tcltest APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
 endif (TCL_FOUND)
 
 
