@@ -33,8 +33,8 @@
 extern "C" {
 #include "tcl.h"
 #include "tk.h"
-#include "GL/gl.h"
-#include "GL/osmesa.h"
+#include "OSMesa/gl.h"
+#include "OSMesa/osmesa.h"
 }
 
 
@@ -76,8 +76,8 @@ struct img_data {
 
     // DM thread id
     Tcl_ThreadId dm_id;
-   
-    // FB thread_id 
+
+    // FB thread_id
     Tcl_ThreadId fb_id;
 
     // Screen width and height.  Maximum possible
@@ -455,8 +455,6 @@ Dm_Render(ClientData clientData)
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-    //glScalef(1,-1,1);
-
     glPushMatrix();
     glRotatef(20.0, 1.0, 0.0, 0.0);
 
@@ -630,6 +628,9 @@ Dm_Update_Manager(ClientData clientData)
 	printf("OSMesaMakeCurrent failed!\n");
 	exit(1);
     }
+
+    // Flip for Tk to reverse the Y direction
+    glScalef(1,-1,1);
 
     idata->x = 0;
     idata->t = 0;

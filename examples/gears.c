@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "GL/gl.h"
-#include "GL/osmesa.h"
+#include "OSMesa/gl.h"
+#include "OSMesa/osmesa.h"
 #include <SDL/SDL.h>
 
 #ifndef M_PI

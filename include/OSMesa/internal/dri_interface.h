@@ -38,7 +38,7 @@
 #ifndef DRI_INTERFACE_H
 #define DRI_INTERFACE_H
 
-#include <GL/internal/glcore.h>
+#include "OSMesh/internal/glcore.h"
 #include <drm.h>
 
 /**

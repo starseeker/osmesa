@@ -147,8 +147,8 @@
 
 
 #define GL_GLEXT_PROTOTYPES
-#include "GL/gl.h"
-#include "GL/glext.h"
+#include "OSMesa/gl.h"
+#include "OSMesa/glext.h"
 
 
 #if !defined(CAPI) && defined(WIN32) && !defined(BUILD_FOR_SNAP)

@@ -5,8 +5,8 @@
 //
 
 #include <stdio.h>
-#include <TGL/gl.h>
-#include <tgl.h>
+#include "OSMesa/gl.h"
+#include "OSMesa/osmesh.h"
 #include <SDL/SDL.h>
 #include "svpng.h"
 

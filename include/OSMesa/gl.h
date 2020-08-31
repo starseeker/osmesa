@@ -86,7 +86,7 @@
 
 #if defined(_WIN32) && !defined(_WINGDI_) && !defined(_GNU_H_WINDOWS32_DEFINES) \
      && !defined(OPENSTEP) && !defined(__CYGWIN__) || defined(__MINGW32__)
-#include <GL/mesa_wgl.h>
+#include "OSMesa/mesa_wgl.h"
 #endif
 
 #if defined(macintosh) && PRAGMA_IMPORT_SUPPORTED
@@ -2147,7 +2147,7 @@ typedef void (APIENTRYP PFNGLMULTITEXCOORD4SVARBPROC) (GLenum target, const GLsh
 
 #else  /* GL_GLEXT_LEGACY */
 
-#include <GL/glext.h>
+#include "OSMesa/glext.h"
 
 #endif  /* GL_GLEXT_LEGACY */
 

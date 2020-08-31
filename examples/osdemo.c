@@ -21,8 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "GL/gl.h"
-#include "GL/osmesa.h"
+#include "OSMesa/gl.h"
+#include "OSMesa/osmesa.h"
 #include "svpng.h"
 
 static void
@@ -129,39 +129,6 @@ void *buffer;
 static int Width = 400;
 static int Height = 400;
 
-
-
-int init_context(int w, int h)
-{
-    Width = w;
-    Height = h;
-
-   ctx = OSMesaCreateContextExt( OSMESA_RGBA, 16, 0, 0, NULL );
-   if (!ctx) {
-      printf("OSMesaCreateContext failed!\n");
-      return -1;
-   }
-
-   buffer = malloc( Width * Height * 4 * sizeof(GLubyte) );
-   if (!buffer) {
-      printf("Alloc image buffer failed!\n");
-      return -1;
-   }
-
-   if (!OSMesaMakeCurrent( ctx, buffer, GL_UNSIGNED_BYTE, Width, Height )) {
-      printf("OSMesaMakeCurrent failed!\n");
-      return -1;
-   }
-
-   {
-      int z, s, a;
-      glGetIntegerv(GL_DEPTH_BITS, &z);
-      glGetIntegerv(GL_STENCIL_BITS, &s);
-      glGetIntegerv(GL_ACCUM_RED_BITS, &a);
-      printf("Depth=%d Stencil=%d Accum=%d\n", z, s, a);
-   }
-   return 0;
-}
 
 int
 main(int argc, char *argv[])

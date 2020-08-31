@@ -76,10 +76,6 @@
 # define THREADS
 #endif
 
-#ifdef VMS
-#include <GL/vms_x_fix.h>
-#endif
-
 /*
  * POSIX threads. This should be your choice in the Unix world
  * whenever possible.  When building with POSIX threads, be sure

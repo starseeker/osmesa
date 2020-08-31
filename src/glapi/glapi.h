@@ -45,7 +45,7 @@
 #define _GLAPI_H
 
 
-#include "GL/gl.h"
+#include "OSMesa/gl.h"
 #include "glapitable.h"
 #include "glthread.h"
 

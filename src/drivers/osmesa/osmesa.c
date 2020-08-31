@@ -34,7 +34,7 @@
 
 
 #include "glheader.h"
-#include "GL/osmesa.h"
+#include "OSMesa/osmesa.h"
 #include "context.h"
 #include "extensions.h"
 #include "framebuffer.h"
