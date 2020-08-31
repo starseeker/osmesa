@@ -114,7 +114,7 @@ static void
 write_png(const char *filename, const GLubyte *buffer, int width, int height)
 {
    const int binary = 0;
-   FILE *f = fopen( filename, "w" );
+   FILE *f = fopen( filename, "wb" );
 
    if (f) {
       // TODO - upside down, need to invert
