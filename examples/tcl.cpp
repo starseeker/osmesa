@@ -197,7 +197,6 @@ UpdateProc(Tcl_Event *evPtr, int mask)
     dm_data.pixelPtr = idata->dmpixel;
     Tk_PhotoPutBlock(interp, dm_img, &dm_data, 0, 0, dm_data.width, dm_data.height, TK_PHOTO_COMPOSITE_SET);
 
-#if 0
     // Now overlay the framebuffer.
     Tk_PhotoImageBlock fb_data;
     Tk_PhotoGetImage(dm_img, &fb_data);
@@ -206,7 +205,7 @@ UpdateProc(Tcl_Event *evPtr, int mask)
     fb_data.pitch = fb_data.width * 4;
     fb_data.pixelPtr = idata->fbpixel;
     Tk_PhotoPutBlock(interp, dm_img, &fb_data, 0, 0, idata->fb_width, idata->fb_height, TK_PHOTO_COMPOSITE_OVERLAY);
-#endif
+
     Tcl_MutexUnlock(&dilock);
     Tcl_MutexUnlock(&fblock);
 
@@ -622,7 +621,7 @@ Dm_Update_Manager(ClientData clientData)
 	printf("OSMesaCreateContext failed!\n");
 	exit(1);
     }
-    idata->os_b = malloc(idata->dm_width * idata->dm_height * sizeof(long));
+    idata->os_b = malloc(idata->screen_width * idata->screen_height * sizeof(long));
     if (!idata->os_b) {
 	printf("buffer allocation failed!\n");
 	exit(1);
@@ -686,8 +685,14 @@ Dm_Update_Manager(ClientData clientData)
 	    continue;
 	}
 
-	// If we need a render and aren't already running, it's time to go to work.
-
+	// If we need a render and aren't already running, it's time to go to
+	// work.  We may have had a resize event, so call make current again to
+	// get up to date with the latest dm sizes.
+	if (!OSMesaMakeCurrent(idata->ctx, idata->os_b, GL_UNSIGNED_BYTE, idata->dm_width, idata->dm_height)) {
+	    printf("OSMesaMakeCurrent failed!\n");
+	    exit(1);
+	}
+	glViewport( 0, 0, idata->dm_width, idata->dm_height);
 
 	// Start a rendering thread.
 	Tcl_ThreadId threadID;
