@@ -18,13 +18,13 @@ if (SDL_FOUND)
   #target_link_libraries(triangle tinygl ${SDL_LIBRARY} ${M_LIBRARY})
 endif (SDL_FOUND)
 
-#find_package(TCL)
+find_package(TCL)
 if (TCL_FOUND)
   include_directories(
     ${TCL_INCLUDE_PATH}
     )
   add_executable(tcltest tcl.cpp)
-  target_link_libraries(tcltest tinygl ${TCL_LIBRARY} ${TK_LIBRARY} ${M_LIBRARY})
+  target_link_libraries(tcltest swrast ${TCL_LIBRARY} ${TK_LIBRARY} ${M_LIBRARY})
 endif (TCL_FOUND)
 
 

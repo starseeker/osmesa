@@ -455,6 +455,8 @@ Dm_Render(ClientData clientData)
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+    //glScalef(1,-1,1);
+
     glPushMatrix();
     glRotatef(20.0, 1.0, 0.0, 0.0);
 
@@ -472,21 +474,7 @@ Dm_Render(ClientData clientData)
      */
     glFinish();
 
-
-    const GLubyte *ptr = (const GLubyte *)idata->os_b;
-    memcpy(idata->dmpixel, idata->os_b, b_minsize);
-#if 0
-    for (int i = 0; i < b_minsize; i+=4) {
-	// Red
-	idata->dmpixel[i] = ptr[i];
-	// Green
-	idata->dmpixel[i+1] = ptr[i+1];
-	// Blue
-	idata->dmpixel[i+2] = ptr[i+2];
-	// Alpha
-	idata->dmpixel[i+3] = ptr[i+3];
-    }
-#endif
+    glReadPixels(0, 0, idata->dm_width, idata->dm_height, GL_RGBA, GL_UNSIGNED_BYTE, idata->dmpixel);
 
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
