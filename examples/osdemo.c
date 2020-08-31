@@ -16,7 +16,7 @@
  * Usage: osdemo [filename]
  */
 
-
+#define _USE_MATH_DEFINES /* for M_PI */
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
