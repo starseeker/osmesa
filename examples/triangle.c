@@ -109,6 +109,24 @@ int main(int argc, char **argv)
 
 	glReadPixels(0, 0, winSizeX, winSizeY, GL_RGBA, GL_UNSIGNED_BYTE, screen->pixels);
 
+	// Image will be upside-down from SDL's perspective, flip manually using an RGBA
+	// variation of the math from:
+	// https://github.com/vallentin/GLCollection/blob/master/screenshot.cpp
+	//
+	// Apparently this is necessary, since OpenGL doesn't provide a built-in way
+	// to handle this:
+	// https://www.opengl.org/archives/resources/features/KilgardTechniques/oglpitfall/
+	for (int y = 0; y < winSizeY / 2; ++y) {
+	    for (int x = 0; x < winSizeX; ++x) {
+		int top = (x + y * winSizeX) * 4;
+		int bottom = (x + (winSizeY - y - 1) * winSizeX) * 4;
+		char rgba[4];
+		memcpy(rgba, screen->pixels + top, sizeof(rgba));
+		memcpy(screen->pixels + top, screen->pixels + bottom, sizeof(rgba));
+		memcpy(screen->pixels + bottom, rgba, sizeof(rgba));
+	    }
+	}
+
 	if (SDL_MUSTLOCK(screen)) {
 	    SDL_UnlockSurface(screen);
 	}

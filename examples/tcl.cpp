@@ -476,6 +476,24 @@ Dm_Render(ClientData clientData)
 
     glReadPixels(0, 0, idata->dm_width, idata->dm_height, GL_RGBA, GL_UNSIGNED_BYTE, idata->dmpixel);
 
+    // Image will be upside-down from SDL's perspective, flip manually using an RGBA
+    // variation of the math from:
+    // https://github.com/vallentin/GLCollection/blob/master/screenshot.cpp
+    //
+    // Apparently this is necessary, since OpenGL doesn't provide a built-in way
+    // to handle this:
+    // https://www.opengl.org/archives/resources/features/KilgardTechniques/oglpitfall/
+    for (int y = 0; y < idata->dm_height / 2; ++y) {
+	for (int x = 0; x < idata->dm_width; ++x) {
+	    int top = (x + y * idata->dm_width) * 4;
+	    int bottom = (x + (idata->dm_height - y - 1) * idata->dm_width) * 4;
+	    char rgba[4];
+	    memcpy(rgba, idata->dmpixel + top, sizeof(rgba));
+	    memcpy(idata->dmpixel + top, idata->dmpixel + bottom, sizeof(rgba));
+	    memcpy(idata->dmpixel + bottom, rgba, sizeof(rgba));
+	}
+    }
+
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
 
@@ -630,9 +648,6 @@ Dm_Update_Manager(ClientData clientData)
 	printf("OSMesaMakeCurrent failed!\n");
 	exit(1);
     }
-
-    // Flip for Tk to reverse the Y direction
-    glScalef(1,-1,1);
 
     idata->x = 0;
     idata->t = 0;
