@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "OSMesa/gl.h"
+#include "OSMesa/glu.h"
 #include "OSMesa/osmesa.h"
 #include <SDL/SDL.h>
 
@@ -194,7 +195,8 @@ int main(int argc, char **argv)
     int	mode;
     int winSizeX = 640;
     int winSizeY = 480;
-    ZBuffer *frameBuffer;
+    OSMesaContext ctx;
+    void *frameBuffer;
     GLfloat h;
     unsigned int frames;
     unsigned int tNow;
@@ -218,18 +220,17 @@ int main(int argc, char **argv)
     //SDL_ShowCursor(SDL_DISABLE);
     SDL_WM_SetCaption(glGetString(GL_RENDERER),0);
 
-    // initialize TinyGL:
-    pitch = screen->pitch;
-    switch (screen->format->BitsPerPixel) {
-	case 32:
-	    mode = ZB_MODE_RGBA;
-	    break;
-	default:
-	    return 1;
-	    break;
+    ctx = OSMesaCreateContextExt( OSMESA_RGBA, 16, 0, 0, NULL );
+    if (!ctx) {
+	printf("OSMesaCreateContext failed!\n");
+	exit(1);
     }
-    frameBuffer = ZB_open(winSizeX, winSizeY, mode, 0, 0, 0, 0);
-    glInit(frameBuffer);
+
+    frameBuffer = malloc(winSizeX * winSizeY * sizeof(long));
+    if (!OSMesaMakeCurrent(ctx, frameBuffer, GL_UNSIGNED_BYTE, winSizeX, winSizeY)) {
+	printf("OSMesaMakeCurrent failed!\n");
+	exit(1);
+    }
 
     // initialize GL:
     glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -295,7 +296,9 @@ int main(int argc, char **argv)
 	    fprintf(stderr, "SDL ERROR: Can't lock screen: %s\n", SDL_GetError());
 	    return 1;
 	}
-	ZB_copyFrameBuffer(frameBuffer, screen->pixels, pitch);
+
+	glReadPixels(0, 0, winSizeX, winSizeY, GL_RGBA, GL_UNSIGNED_BYTE, screen->pixels);
+
 	if (SDL_MUSTLOCK(screen)) {
 	    SDL_UnlockSurface(screen);
 	}
@@ -318,8 +321,8 @@ int main(int argc, char **argv)
     printf("%i frames in %f secs, %f frames per second.\n",frames,(float)(tNow-tLastFps)*0.001f,(float)frames*1000.0f/(float)(tNow-tLastFps));
 
     // cleanup:
-
-    ZB_close(frameBuffer);
+    OSMesaDestroyContext( ctx );
+    free(frameBuffer);
 
     if (SDL_WasInit(SDL_INIT_VIDEO)) {
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);

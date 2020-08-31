@@ -167,7 +167,8 @@ int main(int argc, char **argv)
     double t, t0, fps;
     char titlestr[ 200 ];
     int running;
-    ZBuffer *frameBuffer;
+    OSMesaContext ctx;
+    void *frameBuffer;
     SDL_Event evt;
     const SDL_VideoInfo* info;
 
@@ -182,31 +183,21 @@ int main(int argc, char **argv)
 	return 1;
     }
 
-    // initialize TinyGL:
-    pitch = screen->pitch;
-    switch (screen->format->BitsPerPixel) {
-	case 8:
-	    fprintf(stderr,"ERROR: Palettes are currently not supported.\n");
-	    return 1;
-	case 16:
-	    mode = ZB_MODE_5R6G5B;
-	    break;
-	case 24:
-	    mode = ZB_MODE_RGB24;
-	    break;
-	case 32:
-	    mode = ZB_MODE_RGBA;
-	    break;
-	default:
-	    return 1;
-	    break;
+    ctx = OSMesaCreateContextExt( OSMESA_RGBA, 16, 0, 0, NULL );
+    if (!ctx) {
+	printf("OSMesaCreateContext failed!\n");
+	exit(1);
     }
-    frameBuffer = ZB_open(winSizeX, winSizeY, mode, 0, 0, 0, 0);
-    glInit(frameBuffer);
+    frameBuffer = malloc(winSizeX * winSizeY * sizeof(long));
+    if (!OSMesaMakeCurrent(ctx, frameBuffer, GL_UNSIGNED_BYTE, winSizeX, winSizeY)) {
+	printf("OSMesaMakeCurrent failed!\n");
+	exit(1);
+    }
 
     init();
     reshape(winSizeX, winSizeY);
 
+    glScalef(1,-1,1);
     // main loop:
     frames = 0;
     x = 0;
@@ -232,7 +223,7 @@ int main(int argc, char **argv)
 	    return 1;
 	}
 
-	ZB_copyFrameBuffer(frameBuffer, screen->pixels, pitch);
+	glReadPixels(0, 0, winSizeX, winSizeY, GL_RGBA, GL_UNSIGNED_BYTE, screen->pixels);
 
 	if (SDL_MUSTLOCK(screen)) {
 	    SDL_UnlockSurface(screen);
@@ -256,7 +247,8 @@ int main(int argc, char **argv)
     }
 
     // cleanup:
-    ZB_close(frameBuffer);
+    OSMesaDestroyContext( ctx );
+    free(frameBuffer);
     if (SDL_WasInit(SDL_INIT_VIDEO)) {
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
     }
