@@ -36,7 +36,6 @@
  * for SciTech SNAP, as this is all done before this header file is
  * included. 
  */
-#if !defined(__SCITECH_SNAP__)
 
 #if defined(__BEOS__)
 #include <stdlib.h>     /* to get some BeOS-isms */
@@ -122,7 +121,6 @@
 #pragma export on
 #endif
 
-#endif /* !__SCITECH_SNAP__ */
 /*
  * End system-specific stuff.
  **********************************************************************/
