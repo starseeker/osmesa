@@ -31,20 +31,20 @@ int debug = 0;
 
 void dash(float dx, float dy)
 {
-	glBegin(GL_LINES);
-	glColor4ub(0,0,0,128);
-	glVertex2f(dx-5,dy);
-	glVertex2f(dx-10,dy);
-	glEnd();
+    glBegin(GL_LINES);
+    glColor4ub(0,0,0,128);
+    glVertex2f(dx-5,dy);
+    glVertex2f(dx-10,dy);
+    glEnd();
 }
 
 void line(float sx, float sy, float ex, float ey)
 {
-	glBegin(GL_LINES);
-	glColor4ub(0,0,0,128);
-	glVertex2f(sx,sy);
-	glVertex2f(ex,ey);
-	glEnd();
+    glBegin(GL_LINES);
+    glColor4ub(0,0,0,128);
+    glVertex2f(sx,sy);
+    glVertex2f(ex,ey);
+    glEnd();
 }
 
 int main(int argc, char **argv)
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 	exit(1);
     }
 
-    frameBuffer = malloc(width * height * sizeof(long));
+    frameBuffer = malloc(width * height * sizeof(char)*4);
     if (!OSMesaMakeCurrent(ctx, frameBuffer, GL_UNSIGNED_BYTE, width, height)) {
 	printf("OSMesaMakeCurrent failed!\n");
 	exit(1);
