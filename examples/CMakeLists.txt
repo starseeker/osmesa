@@ -4,6 +4,8 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
+add_subdirectory(fontstash)
+
 add_executable(osdemo osdemo.c)
 target_link_libraries(osdemo osmesa ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 set_property(TARGET osdemo APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
