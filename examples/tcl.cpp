@@ -2,25 +2,29 @@
  * BRL-CAD
  *
  * Published in 2020 by the United States Government.
- * This work is in the public domain.
- *
+ * This work is in the public domain, except as noted
+ * below.
  */
 /** @file tcl_img.cpp
  *
  * Self contained example of working with image data
  * in Tcl/Tk in C/C++
- *
- * Eventually this should probably turn into a Togl-esque
- * widget that we properly include, so we ensure that our
- * window is behaving the way Tk expects it to for things
- * like refresh.  Our current behavior in that regard is
- * a bit iffy - ogl works but I'm not convinced that's
- * because we're doing the Tcl/Tk bits right, and X is
- * doing low level blitting and other X calls (which
- * isn't great for maintainability/portability and
- * can be a headache for debugging.)
- *
  */
+
+// Code from the fontstash example is copyright Mikko Mononen:
+// This software is provided 'as-is', without any express or implied
+// warranty.  In no event will the authors be held liable for any damages
+// arising from the use of this software.
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+// 1. The origin of this software must not be misrepresented; you must not
+//      claim that you wrote the original software. If you use this software
+//      in a product, an acknowledgment in the product documentation would be
+//      appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//      misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 
 #include <random>
 #include <iostream>
@@ -38,8 +42,11 @@ extern "C" {
 #include "tk.h"
 #include "OSMesa/gl.h"
 #include "OSMesa/osmesa.h"
+#define FONTSTASH_IMPLEMENTATION
+#include "fontstash/fontstash.h"
+#define GLFONTSTASH_IMPLEMENTATION
+#include "fontstash/glfontstash.h"
 }
-
 
 
 const char *DM_PHOTO = ".dm0.photo";
@@ -340,12 +347,12 @@ image_paint_xy(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 
 static void
 Torus(float innerRadius, float outerRadius, int sides, int rings)
-{  
+{
     /* from GLUT... */
     int i, j;
     GLfloat theta, phi, theta1;
     GLfloat cosTheta, sinTheta;
-    GLfloat cosTheta1, sinTheta1; 
+    GLfloat cosTheta1, sinTheta1;
     const GLfloat ringDelta = 2.0 * M_PI / rings;
     const GLfloat sideDelta = 2.0 * M_PI / sides;
 
@@ -362,13 +369,13 @@ Torus(float innerRadius, float outerRadius, int sides, int rings)
 	    GLfloat cosPhi, sinPhi, dist;
 
 	    phi += sideDelta;
-	    cosPhi = cos(phi); 
-	    sinPhi = sin(phi); 
+	    cosPhi = cos(phi);
+	    sinPhi = sin(phi);
 	    dist = outerRadius + innerRadius * cosPhi;
 
 	    glNormal3f(cosTheta1 * cosPhi, -sinTheta1 * cosPhi, sinPhi);
 	    glVertex3f(cosTheta1 * dist, -sinTheta1 * dist, innerRadius * sinPhi);
-	    glNormal3f(cosTheta * cosPhi, -sinTheta * cosPhi, sinPhi); 
+	    glNormal3f(cosTheta * cosPhi, -sinTheta * cosPhi, sinPhi);
 	    glVertex3f(cosTheta * dist, -sinTheta * dist,  innerRadius * sinPhi);
 	}
 	glEnd();
@@ -376,6 +383,193 @@ Torus(float innerRadius, float outerRadius, int sides, int rings)
 	cosTheta = cosTheta1;
 	sinTheta = sinTheta1;
     }
+}
+
+void
+DrawText(int width, int height)
+{
+    int fontNormal = FONS_INVALID;
+    int fontItalic = FONS_INVALID;
+    int fontBold = FONS_INVALID;
+    int fontJapanese = FONS_INVALID;
+    FONScontext* fs = NULL;
+    fs = glfonsCreate(width, height, FONS_ZERO_TOPLEFT);
+    if (fs == NULL) {
+	printf("Could not create stash.\n");
+	return;
+    }
+    fontNormal = fonsAddFont(fs, "sans", "../examples/fontstash/DroidSerif-Regular.ttf");
+    if (fontNormal == FONS_INVALID) {
+	printf("Could not add font normal.\n");
+	return;
+    }
+    fontItalic = fonsAddFont(fs, "sans-italic", "../examples/fontstash/DroidSerif-Italic.ttf");
+    if (fontItalic == FONS_INVALID) {
+	printf("Could not add font italic.\n");
+	return;
+    }
+    fontBold = fonsAddFont(fs, "sans-bold", "../examples/fontstash/DroidSerif-Bold.ttf");
+    if (fontBold == FONS_INVALID) {
+	printf("Could not add font bold.\n");
+	return;
+    }
+    fontJapanese = fonsAddFont(fs, "sans-jp", "../examples/fontstash/DroidSansJapanese.ttf");
+    if (fontJapanese == FONS_INVALID) {
+	printf("Could not add font japanese.\n");
+	return;
+    }
+
+    glDisable(GL_LIGHTING);
+
+    float sx, sy, dx, dy, lh = 0;
+    unsigned int white,black,brown,blue;
+    // Update and render
+    glViewport(0, 0, width, height);
+    glClearColor(0.3f, 0.3f, 0.32f, 1.0f);
+    //glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_TEXTURE_2D);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0,width,height,0,-1,1);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glDisable(GL_DEPTH_TEST);
+    glColor4ub(255,255,255,255);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_CULL_FACE);
+
+    white = glfonsRGBA(255,255,255,255);
+    brown = glfonsRGBA(192,128,0,128);
+    blue = glfonsRGBA(0,192,255,255);
+    black = glfonsRGBA(0,0,0,255);
+
+    sx = 50; sy = 50;
+
+    dx = sx; dy = sy;
+
+    //dash(dx,dy);
+
+    fonsClearState(fs);
+
+    fonsSetSize(fs, 124.0f);
+    fonsSetFont(fs, fontNormal);
+    fonsVertMetrics(fs, NULL, NULL, &lh);
+    dx = sx;
+    dy += lh;
+    //dash(dx,dy);
+
+    fonsSetSize(fs, 124.0f);
+    fonsSetFont(fs, fontNormal);
+    fonsSetColor(fs, white);
+    dx = fonsDrawText(fs, dx,dy,"The quick ",NULL);
+
+    fonsSetSize(fs, 48.0f);
+    fonsSetFont(fs, fontItalic);
+    fonsSetColor(fs, brown);
+    dx = fonsDrawText(fs, dx,dy,"brown ",NULL);
+
+    fonsSetSize(fs, 24.0f);
+    fonsSetFont(fs, fontNormal);
+    fonsSetColor(fs, white);
+    dx = fonsDrawText(fs, dx,dy,"fox ",NULL);
+
+    fonsVertMetrics(fs, NULL, NULL, &lh);
+    dx = sx;
+    dy += lh*1.2f;
+    //dash(dx,dy);
+    fonsSetFont(fs, fontItalic);
+    dx = fonsDrawText(fs, dx,dy,"jumps over ",NULL);
+    fonsSetFont(fs, fontBold);
+    dx = fonsDrawText(fs, dx,dy,"the lazy ",NULL);
+    fonsSetFont(fs, fontNormal);
+    dx = fonsDrawText(fs, dx,dy,"dog.",NULL);
+
+    dx = sx;
+    dy += lh*1.2f;
+    //dash(dx,dy);
+    fonsSetSize(fs, 12.0f);
+    fonsSetFont(fs, fontNormal);
+    fonsSetColor(fs, blue);
+    fonsDrawText(fs, dx,dy,"Now is the time for all good men to come to the aid of the party.",NULL);
+
+    fonsVertMetrics(fs, NULL,NULL,&lh);
+    dx = sx;
+    dy += lh*1.2f*2;
+    //dash(dx,dy);
+    fonsSetSize(fs, 18.0f);
+    fonsSetFont(fs, fontItalic);
+    fonsSetColor(fs, white);
+    fonsDrawText(fs, dx,dy,"Ég get etið gler án þess að meiða mig.",NULL);
+
+    fonsVertMetrics(fs, NULL,NULL,&lh);
+    dx = sx;
+    dy += lh*1.2f;
+    //dash(dx,dy);
+    fonsSetFont(fs, fontJapanese);
+    fonsDrawText(fs, dx,dy,"私はガラスを食べられます。それは私を傷つけません。",NULL);
+
+    // Font alignment
+    fonsSetSize(fs, 18.0f);
+    fonsSetFont(fs, fontNormal);
+    fonsSetColor(fs, white);
+
+    dx = 50; dy = 350;
+    //line(dx-10,dy,dx+250,dy);
+    fonsSetAlign(fs, FONS_ALIGN_LEFT | FONS_ALIGN_TOP);
+    dx = fonsDrawText(fs, dx,dy,"Top",NULL);
+    dx += 10;
+    fonsSetAlign(fs, FONS_ALIGN_LEFT | FONS_ALIGN_MIDDLE);
+    dx = fonsDrawText(fs, dx,dy,"Middle",NULL);
+    dx += 10;
+    fonsSetAlign(fs, FONS_ALIGN_LEFT | FONS_ALIGN_BASELINE);
+    dx = fonsDrawText(fs, dx,dy,"Baseline",NULL);
+    dx += 10;
+    fonsSetAlign(fs, FONS_ALIGN_LEFT | FONS_ALIGN_BOTTOM);
+    fonsDrawText(fs, dx,dy,"Bottom",NULL);
+
+    dx = 150; dy = 400;
+    //line(dx,dy-30,dx,dy+80.0f);
+    fonsSetAlign(fs, FONS_ALIGN_LEFT | FONS_ALIGN_BASELINE);
+    fonsDrawText(fs, dx,dy,"Left",NULL);
+    dy += 30;
+    fonsSetAlign(fs, FONS_ALIGN_CENTER | FONS_ALIGN_BASELINE);
+    fonsDrawText(fs, dx,dy,"Center",NULL);
+    dy += 30;
+    fonsSetAlign(fs, FONS_ALIGN_RIGHT | FONS_ALIGN_BASELINE);
+    fonsDrawText(fs, dx,dy,"Right",NULL);
+
+    // Blur
+    dx = 500; dy = 350;
+    fonsSetAlign(fs, FONS_ALIGN_LEFT | FONS_ALIGN_BASELINE);
+
+    fonsSetSize(fs, 60.0f);
+    fonsSetFont(fs, fontItalic);
+    fonsSetColor(fs, white);
+    fonsSetSpacing(fs, 5.0f);
+    fonsSetBlur(fs, 10.0f);
+    fonsDrawText(fs, dx,dy,"Blurry...",NULL);
+
+    dy += 50.0f;
+
+    fonsSetSize(fs, 18.0f);
+    fonsSetFont(fs, fontBold);
+    fonsSetColor(fs, black);
+    fonsSetSpacing(fs, 0.0f);
+    fonsSetBlur(fs, 3.0f);
+    fonsDrawText(fs, dx,dy+2,"DROP THAT SHADOW",NULL);
+
+    fonsSetColor(fs, white);
+    fonsSetBlur(fs, 0);
+    fonsDrawText(fs, dx,dy,"DROP THAT SHADOW",NULL);
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+
 }
 
 static Tcl_ThreadCreateType
@@ -466,8 +660,10 @@ Dm_Render(ClientData clientData)
     glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, rand_mat );
     Torus(0.275, 0.85, 20, 20);
     glPopMatrix();
-
     glPopMatrix();
+
+
+    DrawText(idata->dm_width, idata->dm_height);
 
     /* This is very important!!!
      * Make sure buffered commands are finished!!!
