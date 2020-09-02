@@ -74,18 +74,6 @@ void vbo_exec_eval_update( struct vbo_exec_context *exec )
       clear_active_eval2( exec, attr );
    }
 
-   /* _NEW_PROGRAM */
-   if (ctx->VertexProgram._Enabled) {
-      for (attr = 0; attr < VBO_ATTRIB_FIRST_MATERIAL; attr++) {
-	 /* _NEW_EVAL */
-	 if (ctx->Eval.Map1Attrib[attr]) 
-	    set_active_eval1( exec, attr, 4, &ctx->EvalMap.Map1Attrib[attr] );
-
-	 if (ctx->Eval.Map2Attrib[attr]) 
-	    set_active_eval2( exec, attr, 4, &ctx->EvalMap.Map2Attrib[attr] );
-      }
-   }
-
    if (ctx->Eval.Map1Color4) 
       set_active_eval1( exec, VBO_ATTRIB_COLOR0, 4, &ctx->EvalMap.Map1Color4 );
       
@@ -125,6 +113,23 @@ void vbo_exec_eval_update( struct vbo_exec_context *exec )
       set_active_eval2( exec, VBO_ATTRIB_POS, 4, &ctx->EvalMap.Map2Vertex4 );
    else if (ctx->Eval.Map2Vertex3) 
       set_active_eval2( exec, VBO_ATTRIB_POS, 3, &ctx->EvalMap.Map2Vertex3 );
+
+   /* _NEW_PROGRAM */
+   if (ctx->VertexProgram._Enabled) {
+      /* These are the 16 evaluators which GL_NV_vertex_program defines.
+       * They alias and override the conventional vertex attributs.
+       */
+      for (attr = 0; attr < 16; attr++) {
+         /* _NEW_EVAL */
+         assert(attr < Elements(ctx->Eval.Map1Attrib));
+         if (ctx->Eval.Map1Attrib[attr]) 
+            set_active_eval1( exec, attr, 4, &ctx->EvalMap.Map1Attrib[attr] );
+
+         assert(attr < Elements(ctx->Eval.Map2Attrib));
+         if (ctx->Eval.Map2Attrib[attr]) 
+            set_active_eval2( exec, attr, 4, &ctx->EvalMap.Map2Attrib[attr] );
+      }
+   }
 
    exec->eval.recalculate_maps = 0;
 }
