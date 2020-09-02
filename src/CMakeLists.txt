@@ -303,6 +303,10 @@ set_property(TARGET osmesa APPEND PROPERTY COMPILE_DEFINITIONS "UTIL_ARCH_LITTLE
 set_property(TARGET osmesa APPEND PROPERTY COMPILE_DEFINITIONS "LIBRARYBUILD")
 set_property(TARGET osmesa APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_EXPORTS")
 set_property(TARGET osmesa APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
+if (O3_COMPILER_FLAG)
+  # If we have the O3 flag, use it
+  target_compile_options(osmesa PRIVATE "-O3")
+endif (O3_COMPILER_FLAG)
 
 if (BUILD_STATIC_LIBS)
   add_library(osmesa-static STATIC ${osmesa_srcs})
@@ -310,6 +314,10 @@ if (BUILD_STATIC_LIBS)
     RUNTIME DESTINATION ${BIN_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
     ARCHIVE DESTINATION ${LIB_DIR})
+  if (O3_COMPILER_FLAG)
+    # If we have the O3 flag, use it
+    target_compile_options(osmesa-static PRIVATE "-O3")
+  endif (O3_COMPILER_FLAG)
 endif (BUILD_STATIC_LIBS)
 
 # Local Variables:

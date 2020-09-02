@@ -4,7 +4,9 @@ cmake_minimum_required(VERSION 3.12)
 # Set CMake project name
 project(OSMESA)
 
-add_definitions(-g)
+#add_definitions(-g)
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag(-O3 O3_COMPILER_FLAG)
 
 # Tell CMake where to look for local CMake modules
 list(APPEND CMAKE_MODULE_PATH "${OSMESA_SOURCE_DIR}/CMake")
