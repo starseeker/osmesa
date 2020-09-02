@@ -268,6 +268,10 @@ affine_span(GLcontext *ctx, SWspan *span,
             struct affine_info *info)
 {
    GLchan sample[4];  /* the filtered texture sample */
+   const GLuint texEnableSave = ctx->Texture._EnabledUnits;
+
+   /* Disable tex units so they're not re-applied in swrast_write_rgba_span */
+   ctx->Texture._EnabledUnits = 0x0;
 
    /* Instead of defining a function for each mode, a test is done
     * between the outer and inner loops. This is to reduce code size
@@ -498,7 +502,11 @@ affine_span(GLcontext *ctx, SWspan *span,
    }
    span->interpMask &= ~SPAN_RGBA;
    ASSERT(span->arrayMask & SPAN_RGBA);
+
    _swrast_write_rgba_span(ctx, span);
+
+   /* re-enable texture units */
+   ctx->Texture._EnabledUnits = texEnableSave;
 
 #undef SPAN_NEAREST
 #undef SPAN_LINEAR
