@@ -290,7 +290,8 @@ int main(int argc, char **argv)
 	glEnable(GL_DEPTH_TEST);
 
 
-	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, screen->pixels);
+	// SDL pixel buffer expects BGRA data, not RGBA data - read accordingly
+	glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, screen->pixels);
 
 	// Image will be upside-down from SDL's perspective, flip manually using an RGBA
 	// variation of the math from:
