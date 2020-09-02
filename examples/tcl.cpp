@@ -438,7 +438,7 @@ Dm_Render(ClientData clientData)
     float r = (*idata->colors)((*idata->gen));
     float g = (*idata->colors)((*idata->gen));
     float b = (*idata->colors)((*idata->gen));
-    GLfloat rand_mat[]  = { r, 0, 0, 1.0 };
+    GLfloat rand_mat[]  = { r, g, b, 1.0 };
 
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
@@ -629,7 +629,7 @@ Dm_Update_Manager(ClientData clientData)
     // set up in the managing thread
     std::default_random_engine gen;
     std::uniform_int_distribution<int> colors(0,1);
-    std::uniform_int_distribution<int> vals(0,255);
+    std::uniform_int_distribution<int> vals(50,255);
     idata->gen = &gen;
     idata->colors = &colors;
     idata->vals = &vals;
