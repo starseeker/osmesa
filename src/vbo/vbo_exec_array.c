@@ -111,7 +111,7 @@ static void bind_array_obj( GLcontext *ctx )
    for (i = 0; i < 8; i++)
       exec->array.legacy_array[VERT_ATTRIB_TEX0 + i] = &ctx->Array.ArrayObj->TexCoord[i];
 
-   for (i = 0; i < VERT_ATTRIB_MAX; i++)
+   for (i = 0; i < MAX_VERTEX_ATTRIBS; i++)
       exec->array.generic_array[i] = &ctx->Array.ArrayObj->VertexAttrib[i];
    
    exec->array.array_obj = ctx->Array.ArrayObj->Name;
