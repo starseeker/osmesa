@@ -197,7 +197,6 @@ int main(int argc, char **argv)
     int winSizeY = 480;
     OSMesaContext ctx;
     void *frameBuffer;
-    void *frameBuffer_inv;
     GLfloat h;
     unsigned int frames;
     unsigned int tNow;
@@ -227,12 +226,11 @@ int main(int argc, char **argv)
 	exit(1);
     }
 
-    frameBuffer = malloc(winSizeX * winSizeY * sizeof(long));
+    frameBuffer = calloc(winSizeX * winSizeY, sizeof(GLubyte)*4);
     if (!OSMesaMakeCurrent(ctx, frameBuffer, GL_UNSIGNED_BYTE, winSizeX, winSizeY)) {
 	printf("OSMesaMakeCurrent failed!\n");
 	exit(1);
     }
-    frameBuffer_inv = malloc(winSizeX * winSizeY * sizeof(long));
 
     // initialize GL:
     glClearColor(0.0, 0.0, 0.0, 0.0);

@@ -219,7 +219,7 @@ main(int argc, char *argv[])
       return 0;
    }
 
-   buffer = malloc( Width * Height * 4 * sizeof(GLubyte) );
+   buffer = calloc(Width * Height, sizeof(GLubyte)*4);
    if (!buffer) {
       printf("Alloc image buffer failed!\n");
       return 0;

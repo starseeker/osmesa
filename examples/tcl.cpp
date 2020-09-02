@@ -639,7 +639,7 @@ Dm_Update_Manager(ClientData clientData)
 	printf("OSMesaCreateContext failed!\n");
 	exit(1);
     }
-    idata->os_b = malloc(idata->screen_width * idata->screen_height * sizeof(long));
+    idata->os_b = calloc(idata->screen_width * idata->screen_height, sizeof(GLubyte)*4);
     if (!idata->os_b) {
 	printf("buffer allocation failed!\n");
 	exit(1);

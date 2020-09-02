@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 	exit(1);
     }
 
-    frameBuffer = malloc(winSizeX * winSizeY * sizeof(long));
+    frameBuffer = calloc(winSizeX * winSizeY, sizeof(GLubyte)*4);
     if (!OSMesaMakeCurrent(ctx, frameBuffer, GL_UNSIGNED_BYTE, winSizeX, winSizeY)) {
 	printf("OSMesaMakeCurrent failed!\n");
 	exit(1);
