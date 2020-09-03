@@ -398,22 +398,22 @@ DrawText(int width, int height)
 	printf("Could not create stash.\n");
 	return;
     }
-    fontNormal = fonsAddFont(fs, "sans", "../examples/fontstash/DroidSerif-Regular.ttf");
+    fontNormal = fonsAddFont(fs, "sans", "../../examples/fontstash/DroidSerif-Regular.ttf");
     if (fontNormal == FONS_INVALID) {
 	printf("Could not add font normal.\n");
 	return;
     }
-    fontItalic = fonsAddFont(fs, "sans-italic", "../examples/fontstash/DroidSerif-Italic.ttf");
+    fontItalic = fonsAddFont(fs, "sans-italic", "../../examples/fontstash/DroidSerif-Italic.ttf");
     if (fontItalic == FONS_INVALID) {
 	printf("Could not add font italic.\n");
 	return;
     }
-    fontBold = fonsAddFont(fs, "sans-bold", "../examples/fontstash/DroidSerif-Bold.ttf");
+    fontBold = fonsAddFont(fs, "sans-bold", "../../examples/fontstash/DroidSerif-Bold.ttf");
     if (fontBold == FONS_INVALID) {
 	printf("Could not add font bold.\n");
 	return;
     }
-    fontJapanese = fonsAddFont(fs, "sans-jp", "../examples/fontstash/DroidSansJapanese.ttf");
+    fontJapanese = fonsAddFont(fs, "sans-jp", "../../examples/fontstash/DroidSansJapanese.ttf");
     if (fontJapanese == FONS_INVALID) {
 	printf("Could not add font japanese.\n");
 	return;

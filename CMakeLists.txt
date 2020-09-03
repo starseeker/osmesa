@@ -11,17 +11,7 @@ check_cxx_compiler_flag(-O3 O3_COMPILER_FLAG)
 # Tell CMake where to look for local CMake modules
 list(APPEND CMAKE_MODULE_PATH "${OSMESA_SOURCE_DIR}/CMake")
 
-if (NOT BIN_DIR)
-  set(BIN_DIR bin)
-endif (NOT BIN_DIR)
-
-if (NOT INCLUDE_DIR)
-  set(INCLUDE_DIR include)
-endif (NOT INCLUDE_DIR)
-
-if (NOT DEFINED LIB_DIR)
-  set(LIB_DIR lib)
-endif (NOT DEFINED LIB_DIR)
+include(Path_Setup)
 
 find_package(Threads REQUIRED)
 if (CMAKE_USE_PTHREADS_INIT)
