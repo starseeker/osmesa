@@ -95,7 +95,9 @@ int main(int argc, char **argv)
     int fontBold = FONS_INVALID;
     int fontJapanese = FONS_INVALID;
     FONScontext* fs = NULL;
-    fs = glfonsCreate(width, height, FONS_ZERO_TOPLEFT);
+    int glfons_width = (width > 800) ? 800 : width;
+    int glfons_height = (height > 800) ? 800 : height;
+    fs = glfonsCreate(glfons_width, glfons_height, FONS_ZERO_TOPLEFT);
     if (fs == NULL) {
 	printf("Could not create stash.\n");
 	return -1;
