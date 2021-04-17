@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.12)
 # Set CMake project name
 project(OSMESA)
 
-#add_definitions(-g)
+add_definitions(-g)
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-O3 O3_COMPILER_FLAG)
 
@@ -33,6 +33,11 @@ endif (HAVE_ENDIAN_H)
 include(CheckFunctionExists)
 # TODO - check for the following
 add_definitions(-DHAVE_TIMESPEC_GET=1)
+
+# The point is to be separate from system OpenGL,
+# so define the mangling headers to produce mgl_
+# prefixing
+add_definitions(-DUSE_MGL_NAMESPACES)
 
 add_subdirectory(src)
 add_subdirectory(examples)
