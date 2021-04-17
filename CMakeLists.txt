@@ -37,7 +37,7 @@ add_definitions(-DHAVE_TIMESPEC_GET=1)
 # The point is to be separate from system OpenGL,
 # so define the mangling headers to produce mgl_
 # prefixing
-add_definitions(-DUSE_MGL_NAMESPACES)
+add_definitions(-DUSE_MGL_NAMESPACE)
 
 add_subdirectory(src)
 add_subdirectory(examples)
