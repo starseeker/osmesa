@@ -37,12 +37,22 @@
 
 
 extern void GLAPIENTRY
-_mesa_LineWidth( GLfloat width );
+_mesa_LineWidth(GLfloat width);
 
 extern void GLAPIENTRY
-_mesa_LineStipple( GLint factor, GLushort pattern );
+_mesa_LineStipple(GLint factor, GLushort pattern);
 
-extern void GLAPIENTRY 
-_mesa_init_line( GLcontext * ctx );
+extern void GLAPIENTRY
+_mesa_init_line(GLcontext * ctx);
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

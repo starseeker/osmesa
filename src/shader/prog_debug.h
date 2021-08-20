@@ -33,12 +33,22 @@
 
 extern void
 _mesa_ProgramCallbackMESA(GLenum target, GLprogramcallbackMESA callback,
-                          GLvoid *data);
+			  GLvoid *data);
 
 extern void
 _mesa_GetProgramRegisterfvMESA(GLenum target, GLsizei len,
-                               const GLubyte *registerName, GLfloat *v);
+			       const GLubyte *registerName, GLfloat *v);
 
 
 
 #endif /* PROG_DEBUG_H */
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

@@ -29,14 +29,24 @@
 
 #include "mtypes.h"
 
-extern GLboolean _ae_create_context( GLcontext *ctx );
-extern void _ae_destroy_context( GLcontext *ctx );
-extern void _ae_invalidate_state( GLcontext *ctx, GLuint new_state );
-extern void GLAPIENTRY _ae_loopback_array_elt( GLint elt );
+extern GLboolean _ae_create_context(GLcontext *ctx);
+extern void _ae_destroy_context(GLcontext *ctx);
+extern void _ae_invalidate_state(GLcontext *ctx, GLuint new_state);
+extern void GLAPIENTRY _ae_loopback_array_elt(GLint elt);
 
 /* May optionally be called before a batch of element calls:
  */
-extern void _ae_map_vbos( GLcontext *ctx );
-extern void _ae_unmap_vbos( GLcontext *ctx );
+extern void _ae_map_vbos(GLcontext *ctx);
+extern void _ae_unmap_vbos(GLcontext *ctx);
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

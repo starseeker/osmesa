@@ -32,8 +32,8 @@
 
 extern void
 _mesa_parse_nv_vertex_program(GLcontext *ctx, GLenum target,
-                              const GLubyte *str, GLsizei len,
-                              struct gl_vertex_program *program);
+			      const GLubyte *str, GLsizei len,
+			      struct gl_vertex_program *program);
 
 extern void
 _mesa_print_nv_vertex_instruction(const struct prog_instruction *inst);
@@ -48,3 +48,13 @@ extern const char *
 _mesa_nv_vertex_output_register_name(GLuint i);
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

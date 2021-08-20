@@ -33,7 +33,17 @@
 
 extern GLint
 _slang_alloc_statevar(slang_ir_node *n,
-                      struct gl_program_parameter_list *paramList);
+		      struct gl_program_parameter_list *paramList);
 
 
 #endif /* SLANG_BUILTIN_H */
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

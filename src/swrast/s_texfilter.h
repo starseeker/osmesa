@@ -32,8 +32,18 @@
 
 
 extern texture_sample_func
-_swrast_choose_texture_sample_func( GLcontext *ctx,
-				    const struct gl_texture_object *tObj );
+_swrast_choose_texture_sample_func(GLcontext *ctx,
+				   const struct gl_texture_object *tObj);
 
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

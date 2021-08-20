@@ -1,20 +1,18 @@
-/* DO NOT EDIT - This file generated automatically by gl_table.py (from Mesa) script */
-
 /*
  * (C) Copyright IBM Corporation 2005
  * All Rights Reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sub license,
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice (including the next
  * paragraph) shall be included in all copies or substantial portions of the
  * Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.  IN NO EVENT SHALL
@@ -40,7 +38,7 @@
  */
 
 #define CALL_by_offset(disp, cast, offset, parameters) \
-    (*(cast (GET_by_offset(disp, offset)))) parameters
+    if (offset >= 0) (*(cast (GET_by_offset(disp, offset))))(parameters)
 #define GET_by_offset(disp, offset) \
     (offset >= 0) ? (((_glapi_proc *)(disp))[offset]) : NULL
 #define SET_by_offset(disp, offset, fn) \
@@ -3848,3 +3846,13 @@ extern int driDispatchRemapTable[ driDispatchRemapTable_size ];
 #endif /* !defined(IN_DRI_DRIVER) */
 
 #endif /* !defined( _DISPATCH_H_ ) */
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

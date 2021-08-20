@@ -36,10 +36,20 @@ extern GLfloat
 _swrast_z_to_fogfactor(GLcontext *ctx, GLfloat z);
 
 extern void
-_swrast_fog_rgba_span( const GLcontext *ctx, SWspan *span );
+_swrast_fog_rgba_span(const GLcontext *ctx, SWspan *span);
 
 extern void
-_swrast_fog_ci_span( const GLcontext *ctx, SWspan *span );
+_swrast_fog_ci_span(const GLcontext *ctx, SWspan *span);
 
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

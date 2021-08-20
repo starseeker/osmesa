@@ -33,17 +33,27 @@
 
 #include "mtypes.h"
 
-extern void GLAPIENTRY 
-_mesa_ClipPlane( GLenum plane, const GLdouble *equation );
+extern void GLAPIENTRY
+_mesa_ClipPlane(GLenum plane, const GLdouble *equation);
 
-extern void GLAPIENTRY 
-_mesa_GetClipPlane( GLenum plane, GLdouble *equation );
+extern void GLAPIENTRY
+_mesa_GetClipPlane(GLenum plane, GLdouble *equation);
 
-extern void GLAPIENTRY 
-_mesa_CullParameterfvEXT (GLenum cap, GLfloat *v);
+extern void GLAPIENTRY
+_mesa_CullParameterfvEXT(GLenum cap, GLfloat *v);
 
-extern void GLAPIENTRY 
-_mesa_CullParameterdvEXT (GLenum cap, GLdouble *v);
+extern void GLAPIENTRY
+_mesa_CullParameterdvEXT(GLenum cap, GLdouble *v);
 
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

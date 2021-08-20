@@ -35,7 +35,17 @@ _mesa_parse_arb_vertex_program(GLcontext *ctx, GLenum target,
 
 extern void
 _mesa_parse_arb_fragment_program(GLcontext *ctx, GLenum target,
-                                 const GLvoid *str, GLsizei len,
-                                 struct gl_fragment_program *program);
+				 const GLvoid *str, GLsizei len,
+				 struct gl_fragment_program *program);
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

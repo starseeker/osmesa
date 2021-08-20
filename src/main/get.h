@@ -36,24 +36,34 @@
 
 
 extern void GLAPIENTRY
-_mesa_GetBooleanv( GLenum pname, GLboolean *params );
+_mesa_GetBooleanv(GLenum pname, GLboolean *params);
 
 extern void GLAPIENTRY
-_mesa_GetDoublev( GLenum pname, GLdouble *params );
+_mesa_GetDoublev(GLenum pname, GLdouble *params);
 
 extern void GLAPIENTRY
-_mesa_GetFloatv( GLenum pname, GLfloat *params );
+_mesa_GetFloatv(GLenum pname, GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_GetIntegerv( GLenum pname, GLint *params );
+_mesa_GetIntegerv(GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetPointerv( GLenum pname, GLvoid **params );
+_mesa_GetPointerv(GLenum pname, GLvoid **params);
 
 extern const GLubyte * GLAPIENTRY
-_mesa_GetString( GLenum name );
+_mesa_GetString(GLenum name);
 
 extern GLenum GLAPIENTRY
-_mesa_GetError( void );
+_mesa_GetError(void);
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

@@ -34,8 +34,18 @@
 
 #include "mtypes.h"
 
-extern void _mesa_UpdateTexEnvProgram( GLcontext *ctx );
-extern void _mesa_TexEnvProgramCacheInit( GLcontext *ctx );
-extern void _mesa_TexEnvProgramCacheDestroy( GLcontext *ctx );
+extern void _mesa_UpdateTexEnvProgram(GLcontext *ctx);
+extern void _mesa_TexEnvProgramCacheInit(GLcontext *ctx);
+extern void _mesa_TexEnvProgramCacheDestroy(GLcontext *ctx);
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

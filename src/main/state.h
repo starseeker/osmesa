@@ -37,13 +37,23 @@ extern void
 _mesa_init_exec_table(struct _glapi_table *exec);
 
 extern void
-_mesa_update_state( GLcontext *ctx );
+_mesa_update_state(GLcontext *ctx);
 
-/* As above but can only be called between _mesa_lock_context_textures() and 
+/* As above but can only be called between _mesa_lock_context_textures() and
  * _mesa_unlock_context_textures().
  */
 extern void
-_mesa_update_state_locked( GLcontext *ctx );
+_mesa_update_state_locked(GLcontext *ctx);
 
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

@@ -30,16 +30,26 @@
 
 extern void
 _slang_link(GLcontext *ctx, GLhandleARB h,
-            struct gl_shader_program *shProg);
+	    struct gl_shader_program *shProg);
 
 extern void
 _slang_resolve_samplers(struct gl_shader_program *shProg,
-                        struct gl_program *prog);
+			struct gl_program *prog);
 
 extern void
 _slang_remap_attribute(struct gl_program *prog, GLuint oldAttrib,
-                       GLuint newAttrib);
+		       GLuint newAttrib);
 
 
 #endif
 
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

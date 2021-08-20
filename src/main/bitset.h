@@ -27,7 +27,7 @@
  * \brief Bitset of arbitrary size definitions.
  * \author Michal Krol
  */
- 
+
 /****************************************************************************
  * generic bitset implementation
  */
@@ -77,7 +77,7 @@
 /****************************************************************************
  * 64-bit bitset implementation
  */
- 
+
 #define BITSET64_WORD GLuint
 #define BITSET64_WORDBITS (sizeof (BITSET64_WORD) * 8)
 
@@ -120,3 +120,13 @@
    ((x)[BITSET64_BITWORD(b)] &= ~BITSET64_RANGE(b, e)) : \
    (assert (!"BITSET64_CLEAR_RANGE: bit range crosses word boundary"), 0))
 
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

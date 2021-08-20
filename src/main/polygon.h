@@ -40,27 +40,37 @@ _mesa_polygon_stipple(GLcontext *ctx, const GLubyte *pattern);
 
 
 extern void GLAPIENTRY
-_mesa_CullFace( GLenum mode );
+_mesa_CullFace(GLenum mode);
 
 extern void GLAPIENTRY
-_mesa_FrontFace( GLenum mode );
+_mesa_FrontFace(GLenum mode);
 
 extern void GLAPIENTRY
-_mesa_PolygonMode( GLenum face, GLenum mode );
+_mesa_PolygonMode(GLenum face, GLenum mode);
 
 extern void GLAPIENTRY
-_mesa_PolygonOffset( GLfloat factor, GLfloat units );
+_mesa_PolygonOffset(GLfloat factor, GLfloat units);
 
 extern void GLAPIENTRY
-_mesa_PolygonOffsetEXT( GLfloat factor, GLfloat bias );
+_mesa_PolygonOffsetEXT(GLfloat factor, GLfloat bias);
 
 extern void GLAPIENTRY
-_mesa_PolygonStipple( const GLubyte *mask );
+_mesa_PolygonStipple(const GLubyte *mask);
 
 extern void GLAPIENTRY
-_mesa_GetPolygonStipple( GLubyte *mask );
+_mesa_GetPolygonStipple(GLubyte *mask);
 
-extern void 
-_mesa_init_polygon( GLcontext * ctx );
+extern void
+_mesa_init_polygon(GLcontext * ctx);
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

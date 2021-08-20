@@ -177,7 +177,6 @@ set(osmesa_srcs
   tnl/t_vb_vertex.c
   tnl/t_vertex.c
   tnl/t_vertex_generic.c
-  tnl/t_vertex_sse.c
   tnl/t_vp_build.c
   vbo/vbo_context.c
   vbo/vbo_exec.c
@@ -193,12 +192,6 @@ set(osmesa_srcs
   vbo/vbo_split.c
   vbo/vbo_split_copy.c
   vbo/vbo_split_inplace.c
-  x86-64/x86-64.c
-  x86/3dnow.c
-  x86/common_x86.c
-  x86/rtasm/x86sse.c
-  x86/sse.c
-  x86/x86.c
   )
 
 # Bundle the glu functionality as well

@@ -1,7 +1,7 @@
 /**
  * \file enums.h
  * Enumeration name/number lookup functions.
- * 
+ *
  * \if subset
  * (No-op)
  *
@@ -39,8 +39,8 @@
 
 #if defined(_HAVE_FULL_GL) && _HAVE_FULL_GL
 
-extern const char *_mesa_lookup_enum_by_nr( int nr );
-extern int _mesa_lookup_enum_by_name( const char *symbol );
+extern const char *_mesa_lookup_enum_by_nr(int nr);
+extern int _mesa_lookup_enum_by_name(const char *symbol);
 
 #else
 
@@ -53,3 +53,13 @@ extern int _mesa_lookup_enum_by_name( const char *symbol );
 #endif
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

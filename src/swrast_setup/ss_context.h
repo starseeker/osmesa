@@ -35,12 +35,22 @@
 #include "tnl/t_context.h"
 
 typedef struct {
-   GLuint NewState;
-   GLenum render_prim;
-   DECLARE_RENDERINPUTS(last_index_bitset);
-   SWvertex *verts;
+    GLuint NewState;
+    GLenum render_prim;
+    DECLARE_RENDERINPUTS(last_index_bitset);
+    SWvertex *verts;
 } SScontext;
 
 #define SWSETUP_CONTEXT(ctx) ((SScontext *)ctx->swsetup_context)
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

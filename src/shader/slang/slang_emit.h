@@ -42,8 +42,18 @@ _slang_new_ir_storage(enum register_file file, GLint index, GLint size);
 
 extern GLboolean
 _slang_emit_code(slang_ir_node *n, slang_var_table *vartable,
-                 struct gl_program *prog, GLboolean withEnd,
-                 slang_info_log *log);
+		 struct gl_program *prog, GLboolean withEnd,
+		 slang_info_log *log);
 
 
 #endif /* SLANG_EMIT_H */
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

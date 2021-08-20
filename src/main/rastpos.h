@@ -185,9 +185,19 @@ _mesa_WindowPos4ivMESA(const GLint *v);
 extern void GLAPIENTRY
 _mesa_WindowPos4svMESA(const GLshort *v);
 
-extern void 
-_mesa_init_rastpos( GLcontext * ctx );
+extern void
+_mesa_init_rastpos(GLcontext * ctx);
 
 /*@}*/
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

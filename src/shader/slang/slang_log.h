@@ -27,11 +27,10 @@
 #define SLANG_LOG_H
 
 
-typedef struct slang_info_log_
-{
-   char *text;
-   GLboolean dont_free_text;
-   GLboolean error_flag;
+typedef struct slang_info_log_ {
+    char *text;
+    GLboolean dont_free_text;
+    GLboolean error_flag;
 } slang_info_log;
 
 
@@ -55,3 +54,13 @@ slang_info_log_memory(slang_info_log *);
 
 
 #endif /* SLANG_LOG_H */
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

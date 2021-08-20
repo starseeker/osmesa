@@ -30,23 +30,33 @@
 
 extern void
 _mesa_generate_mipmap(GLcontext *ctx, GLenum target,
-                      const struct gl_texture_unit *texUnit,
-                      struct gl_texture_object *texObj);
+		      const struct gl_texture_unit *texUnit,
+		      struct gl_texture_object *texObj);
 
 
 extern void
 _mesa_rescale_teximage2d(GLuint bytesPerPixel,
-                         GLuint srcStrideInPixels,
-                         GLuint dstRowStride,
-                         GLint srcWidth, GLint srcHeight,
-                         GLint dstWidth, GLint dstHeight,
-                         const GLvoid *srcImage, GLvoid *dstImage);
+			 GLuint srcStrideInPixels,
+			 GLuint dstRowStride,
+			 GLint srcWidth, GLint srcHeight,
+			 GLint dstWidth, GLint dstHeight,
+			 const GLvoid *srcImage, GLvoid *dstImage);
 
 extern void
 _mesa_upscale_teximage2d(GLsizei inWidth, GLsizei inHeight,
-                         GLsizei outWidth, GLsizei outHeight,
-                         GLint comps, const GLchan *src, GLint srcRowStride,
-                         GLchan *dest);
+			 GLsizei outWidth, GLsizei outHeight,
+			 GLint comps, const GLchan *src, GLint srcRowStride,
+			 GLchan *dest);
 
 
 #endif /* MIPMAP_H */
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

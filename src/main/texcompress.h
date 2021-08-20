@@ -33,14 +33,14 @@ extern GLuint
 _mesa_get_compressed_formats(GLcontext *ctx, GLint *formats, GLboolean all);
 
 extern GLuint
-_mesa_compressed_texture_size( GLcontext *ctx,
-                               GLsizei width, GLsizei height, GLsizei depth,
-                               GLuint mesaFormat );
+_mesa_compressed_texture_size(GLcontext *ctx,
+			      GLsizei width, GLsizei height, GLsizei depth,
+			      GLuint mesaFormat);
 
 extern GLuint
 _mesa_compressed_texture_size_glenum(GLcontext *ctx,
-                                     GLsizei width, GLsizei height,
-                                     GLsizei depth, GLenum glformat);
+				     GLsizei width, GLsizei height,
+				     GLsizei depth, GLenum glformat);
 
 extern GLint
 _mesa_compressed_row_stride(GLuint mesaFormat, GLsizei width);
@@ -48,15 +48,15 @@ _mesa_compressed_row_stride(GLuint mesaFormat, GLsizei width);
 
 extern GLubyte *
 _mesa_compressed_image_address(GLint col, GLint row, GLint img,
-                               GLuint mesaFormat,
-                               GLsizei width, const GLubyte *image);
+			       GLuint mesaFormat,
+			       GLsizei width, const GLubyte *image);
 
 
 extern void
-_mesa_init_texture_s3tc( GLcontext *ctx );
+_mesa_init_texture_s3tc(GLcontext *ctx);
 
 extern void
-_mesa_init_texture_fxt1( GLcontext *ctx );
+_mesa_init_texture_fxt1(GLcontext *ctx);
 
 
 #else /* _HAVE_FULL_GL */
@@ -72,3 +72,13 @@ _mesa_init_texture_fxt1( GLcontext *ctx );
 #endif /* _HAVE_FULL_GL */
 
 #endif /* TEXCOMPRESS_H */
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */

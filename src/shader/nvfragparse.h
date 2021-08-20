@@ -33,8 +33,8 @@
 
 extern void
 _mesa_parse_nv_fragment_program(GLcontext *ctx, GLenum target,
-                                const GLubyte *str, GLsizei len,
-                                struct gl_fragment_program *program);
+				const GLubyte *str, GLsizei len,
+				struct gl_fragment_program *program);
 
 
 extern void
@@ -50,3 +50,13 @@ _mesa_nv_fragment_output_register_name(GLuint i);
 
 
 #endif
+
+/*
+ * Local Variables:
+ * tab-width: 8
+ * mode: C
+ * indent-tabs-mode: t
+ * c-file-style: "stroustrup"
+ * End:
+ * ex: shiftwidth=4 tabstop=8
+ */
