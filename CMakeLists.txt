@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 3.12)
 # Set CMake project name
 project(OSMESA)
 
-add_definitions(-g)
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-O3 O3_COMPILER_FLAG)
 
