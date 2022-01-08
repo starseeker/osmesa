@@ -39,14 +39,28 @@ add_definitions(-DHAVE_TIMESPEC_GET=1)
 # prefixing
 add_definitions(-DUSE_MGL_NAMESPACE)
 
-option(OSMESA_BUNDLE_GLU "Incorporate GLU into library" ON)
-option(OSMESA_BUILD_EXAMPLES "Build example programs" ON)
+# If we have a stripped down source tree, need to default
+# to off for extras
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/glu)
+  set(GLU_OPT_DEFAULT ON)
+else()
+  set(GLU_OPT_DEFAULT OFF)
+endif()
+if (GLU_OPT_DEFAULT AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples)
+  set(EX_OPT_DEFAULT ON)
+else()
+  set(EX_OPT_DEFAULT OFF)
+endif()
+
+# Optional component settings
+option(OSMESA_BUNDLE_GLU "Incorporate GLU into library" ${GLU_OPT_DEFAULT})
+option(OSMESA_BUILD_EXAMPLES "Build example programs" ${EX_OPT_DEFAULT})
 
 add_subdirectory(src)
 
-if (OSMESA_BUILD_EXAMPLES AND OSMESA_BUNDLE_GLU)
+if (OSMESA_BUILD_EXAMPLES)
   add_subdirectory(examples)
-endif (OSMESA_BUILD_EXAMPLES AND OSMESA_BUNDLE_GLU)
+endif (OSMESA_BUILD_EXAMPLES)
 
 # Local Variables:
 # tab-width: 8
