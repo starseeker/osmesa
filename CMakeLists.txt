@@ -8,10 +8,12 @@ add_definitions(-g)
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-O3 O3_COMPILER_FLAG)
 
-# Tell CMake where to look for local CMake modules
-list(APPEND CMAKE_MODULE_PATH "${OSMESA_SOURCE_DIR}/CMake")
-
-include(Path_Setup)
+# Tell CMake where to look for local CMake modules,
+# if we have them
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
+  list(APPEND CMAKE_MODULE_PATH "${OSMESA_SOURCE_DIR}/CMake")
+  include(Path_Setup)
+endif (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 
 find_package(Threads REQUIRED)
 if (CMAKE_USE_PTHREADS_INIT)
