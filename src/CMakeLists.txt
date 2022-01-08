@@ -310,18 +310,6 @@ if (O3_COMPILER_FLAG)
   target_compile_options(osmesa PRIVATE "-O3")
 endif (O3_COMPILER_FLAG)
 
-if (BUILD_STATIC_LIBS)
-  add_library(osmesa-static STATIC ${osmesa_srcs})
-  install(TARGETS osmesa-static
-    RUNTIME DESTINATION ${BIN_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    ARCHIVE DESTINATION ${LIB_DIR})
-  if (O3_COMPILER_FLAG)
-    # If we have the O3 flag, use it
-    target_compile_options(osmesa-static PRIVATE "-O3")
-  endif (O3_COMPILER_FLAG)
-endif (BUILD_STATIC_LIBS)
-
 # Local Variables:
 # tab-width: 8
 # mode: cmake
