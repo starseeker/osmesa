@@ -9,8 +9,6 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/swrast_setup
   ${CMAKE_CURRENT_SOURCE_DIR}/shader/grammar
   ${CMAKE_CURRENT_SOURCE_DIR}/shader/slang
-  ${CMAKE_CURRENT_SOURCE_DIR}/x86-64
-  ${CMAKE_CURRENT_SOURCE_DIR}/x86
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
