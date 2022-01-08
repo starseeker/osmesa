@@ -628,6 +628,7 @@ static void
 program_error2(GLcontext *ctx, GLint position, const char *descrip,
 	       const char *var)
 {
+    char *str = NULL;
     if (descrip) {
 	const char *prefix = "glProgramString(", *suffix = ")";
 	char *str = (char *) _mesa_malloc(_mesa_strlen(descrip) +
@@ -640,18 +641,17 @@ program_error2(GLcontext *ctx, GLint position, const char *descrip,
 	    _mesa_error(ctx, GL_INVALID_OPERATION, str);
 	    _mesa_free(str);
 	}
-    }
-    {
-	char *str = (char *) _mesa_malloc(_mesa_strlen(descrip) +
+
+	str = (char *) _mesa_malloc(_mesa_strlen(descrip) +
 					  _mesa_strlen(": ") +
 					  _mesa_strlen(var) + 1);
 	if (str) {
 	    _mesa_sprintf(str, "%s: %s", descrip, var);
 	}
-	_mesa_set_program_error(ctx, position, str);
-	if (str) {
-	    _mesa_free(str);
-	}
+    }
+    _mesa_set_program_error(ctx, position, str);
+    if (str) {
+	_mesa_free(str);
     }
 }
 
@@ -1611,9 +1611,12 @@ parse_result_binding(GLcontext *ctx, const GLubyte **inst,
 {
     const GLubyte token = *(*inst)++;
 
+    // Sanity
+    if (!outputReg)
+	return 1;
+
     // Initialize
-    if (outputReg)
-	*outputReg = -1;
+    *outputReg = -1;
 
     switch (token) {
 	case FRAGMENT_RESULT_COLOR:
@@ -3610,7 +3613,8 @@ enable_parser_extensions(GLcontext *ctx, grammar id)
 
 #if 1
     /* hack for Warcraft (see bug 8060) */
-    enable_ext(ctx, id, "vertex_blend");
+    if (!enable_ext(ctx, id, "vertex_blend"))
+	_mesa_error(ctx, GL_INVALID_OPERATION, "Failed to enable vertex_blend");
 #endif
 
     return GL_TRUE;

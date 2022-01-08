@@ -226,9 +226,10 @@ reg_string(enum register_file f, GLint index, gl_prog_print_mode mode,
 		    sprintf(str, "uniform[%d]", index);
 		    break;
 		case PROGRAM_STATE_VAR: {
-		    struct gl_program_parameter *param
-			    = prog->Parameters->Parameters + index;
-		    sprintf(str, "%s", _mesa_program_state_string(param->StateIndexes));
+		    struct gl_program_parameter *param = prog->Parameters->Parameters + index;
+		    char *sstr = _mesa_program_state_string(param->StateIndexes);
+		    sprintf(str, "%s", sstr);
+		    _mesa_free(sstr);
 		}
 		break;
 		case PROGRAM_ADDRESS:
@@ -511,7 +512,7 @@ _mesa_print_instruction_opt(const struct prog_instruction *inst, GLint indent,
 
     switch (inst->Opcode) {
 	case OPCODE_PRINT:
-	    _mesa_printf("PRINT '%s'", inst->Data);
+	    _mesa_printf("PRINT '%p'", inst->Data);
 	    if (inst->SrcReg[0].File != PROGRAM_UNDEFINED) {
 		_mesa_printf(", ");
 		_mesa_printf("%s[%d]%s",

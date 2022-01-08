@@ -25,7 +25,6 @@
  *    Keith Whitwell <keith@tungstengraphics.com>
  */
 
-
 static void TAG(triangle)(GLcontext *ctx, GLuint e0, GLuint e1, GLuint e2)
 {
     SWvertex *verts = SWSETUP_CONTEXT(ctx)->verts;
@@ -34,9 +33,16 @@ static void TAG(triangle)(GLcontext *ctx, GLuint e0, GLuint e1, GLuint e2)
     GLfloat offset = 0.0;
     GLenum mode = GL_FILL;
     GLuint facing = 0;
+#ifdef __clang_analyzer__
     GLchan saved_color[3][4];
     GLchan saved_spec[3][4];
     GLfloat saved_index[3];
+#else
+    /* Clang thinks these are dead stores, but Coverity disagrees. */
+    GLchan saved_color[3][4] = {0};
+    GLchan saved_spec[3][4] = {0};
+    GLfloat saved_index[3] = {0};
+#endif
 
     v[0] = &verts[e0];
     v[1] = &verts[e1];
