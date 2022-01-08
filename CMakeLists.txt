@@ -39,8 +39,14 @@ add_definitions(-DHAVE_TIMESPEC_GET=1)
 # prefixing
 add_definitions(-DUSE_MGL_NAMESPACE)
 
+option(OSMESA_BUNDLE_GLU "Incorporate GLU into library" ON)
+option(OSMESA_BUILD_EXAMPLES "Build example programs" ON)
+
 add_subdirectory(src)
-add_subdirectory(examples)
+
+if (OSMESA_BUILD_EXAMPLES AND OSMESA_BUNDLE_GLU)
+  add_subdirectory(examples)
+endif (OSMESA_BUILD_EXAMPLES AND OSMESA_BUNDLE_GLU)
 
 # Local Variables:
 # tab-width: 8
