@@ -532,7 +532,11 @@ emit_op(struct texenv_fragment_program *p,
 
     /* Accounting for indirection tracking:
      */
+#ifdef __clang_analyzer__
     if (dest.file == PROGRAM_TEMPORARY && dest.idx >= 0 && dest.idx < INT_MAX)
+#else
+    if (dest.file == PROGRAM_TEMPORARY && dest.idx < INT_MAX)
+#endif
 	p->temps_output |= 1 << dest.idx;
 
     return inst;
@@ -561,7 +565,11 @@ static struct ureg emit_arith(struct texenv_fragment_program *p,
     if (!is_undef(src2) && src2.file == PROGRAM_TEMPORARY)
 	p->alu_temps |= 1 << src2.idx;
 
+#ifdef __clang_analyzer__
     if (dest.idx >= 0 && dest.idx < INT_MAX && dest.file == PROGRAM_TEMPORARY)
+#else
+    if (dest.idx < INT_MAX && dest.file == PROGRAM_TEMPORARY)
+#endif
 	p->alu_temps |= 1 << dest.idx;
 
     p->program->Base.NumAluInstructions++;
@@ -590,7 +598,7 @@ static struct ureg emit_texld(struct texenv_fragment_program *p,
 
     /* Is this a texture indirection?
      */
-    if (coord.idx >= 0 && coord.idx < INT_MAX && dest.idx >= 0 && dest.idx < INT_MAX ) {
+    if (coord.idx < INT_MAX && dest.idx < INT_MAX ) {
 	if ((coord.file == PROGRAM_TEMPORARY &&
 		    (p->temps_output & (1<<coord.idx))) ||
 		(dest.file == PROGRAM_TEMPORARY &&
@@ -1328,7 +1336,7 @@ void _mesa_TexEnvProgramCacheInit(GLcontext *ctx)
     ctx->Texture.env_fp_cache.n_items = 0;
     ctx->Texture.env_fp_cache.items = (struct texenvprog_cache_item **)
 				      _mesa_calloc(ctx->Texture.env_fp_cache.size *
-					      sizeof(struct texenvprog_cache_item));
+					      sizeof(struct texenvprog_cache_item *));
 }
 
 

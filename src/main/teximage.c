@@ -3022,6 +3022,9 @@ compressed_texture_error_check(GLcontext *ctx, GLint dimensions,
 	return GL_INVALID_ENUM;
     }
 
+    if (maxLevels <= 0)
+	return GL_INVALID_ENUM;
+
     maxTextureSize = 1 << (maxLevels - 1);
 
     /* This will detect any invalid internalFormat value */
@@ -3064,16 +3067,6 @@ compressed_texture_error_check(GLcontext *ctx, GLint dimensions,
 		   depth, internalFormat);
     if (expectedSize != imageSize)
 	return GL_INVALID_VALUE;
-
-#if FEATURE_EXT_texture_sRGB
-    if ((internalFormat == GL_COMPRESSED_SRGB_S3TC_DXT1_EXT ||
-	 internalFormat == GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT ||
-	 internalFormat == GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT ||
-	 internalFormat == GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT)
-	&& border != 0) {
-	return GL_INVALID_OPERATION;
-    }
-#endif
 
     return GL_NO_ERROR;
 }
@@ -3120,6 +3113,9 @@ compressed_subtexture_error_check(GLcontext *ctx, GLint dimensions,
 	/* 3D compressed textures not allowed */
 	return GL_INVALID_ENUM;
     }
+
+    if (maxLevels <= 0)
+	return GL_INVALID_ENUM;
 
     maxTextureSize = 1 << (maxLevels - 1);
 
