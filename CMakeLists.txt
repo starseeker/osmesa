@@ -23,20 +23,20 @@ endif (HAVE_M_LIBRARY)
 # prefixing
 add_definitions(-DUSE_MGL_NAMESPACE)
 
-
+# The primarly libosmesa library
 add_subdirectory(src)
 
-
-set(EX_OPT_DEFAULT ON)
-if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples)
-  set(EX_OPT_DEFAULT OFF)
-endif (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples)
-
-option(OSMESA_BUILD_EXAMPLES "Build example programs" ${EX_OPT_DEFAULT})
-
-if (OSMESA_BUILD_EXAMPLES)
-  add_subdirectory(examples)
-endif (OSMESA_BUILD_EXAMPLES)
+# For testing purposes, the build defines a number
+# of (relatively) self-contained OpenGL examples.
+# These are very much optional - in case a distribution
+# does not wish to include them, allow for the examples
+# directory to have been removed
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples)
+  option(OSMESA_BUILD_EXAMPLES "Build example programs" ON)
+  if (OSMESA_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+  endif (OSMESA_BUILD_EXAMPLES)
+endif (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/examples)
 
 # Local Variables:
 # tab-width: 8
