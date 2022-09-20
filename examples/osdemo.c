@@ -13,6 +13,9 @@
  * PPM output provided by Joerg Schmalzl.
  * ASCII PPM output added by Brian Paul.
  *
+ * The original osdemo code was adjusted to output a PNG file rather than PPM, and uses
+ * Milo Yip's svpng to do so - see svpng.h
+ *
  * Usage: osdemo [filename]
  */
 
