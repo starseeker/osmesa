@@ -104,7 +104,7 @@ int main(int argc, char **argv)
     }
     fontNormal = fonsAddFont(fs, "sans", "../../examples/fontstash/DroidSerif-Regular.ttf");
     if (fontNormal == FONS_INVALID) {
-	printf("Could not add font normal.\n");
+	printf("Could not add font normal - probably running executable from incorrect directory.\n");
 	return -1;
     }
     fontItalic = fonsAddFont(fs, "sans-italic", "../../examples/fontstash/DroidSerif-Italic.ttf");
