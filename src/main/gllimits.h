@@ -1,5 +1,5 @@
 /**
- * \file config.h
+ * \file gllimits.h
  * Tunable configuration parameters.
  */
 
@@ -28,8 +28,8 @@
  */
 
 
-#ifndef MESA_CONFIG_H_INCLUDED
-#define MESA_CONFIG_H_INCLUDED
+#ifndef MESA_GLLIMITS_H_INCLUDED
+#define MESA_GLLIMITS_H_INCLUDED
 
 /**
  * \name OpenGL implementation limits
@@ -70,11 +70,7 @@
 #define MAX_AUX_BUFFERS 4
 
 /** Maximum order (degree) of curves */
-#ifdef AMIGA
-#   define MAX_EVAL_ORDER 12
-#else
 #   define MAX_EVAL_ORDER 30
-#endif
 
 /** Maximum Name stack depth */
 #define MAX_NAME_STACK_DEPTH 64
@@ -320,7 +316,7 @@
 #define MAX_CLIPPED_VERTICES ((2 * (6 + MAX_CLIP_PLANES))+1)
 
 
-#endif /* MESA_CONFIG_H_INCLUDED */
+#endif /* MESA_GLLIMITS_H_INCLUDED */
 
 /*
  * Local Variables:
