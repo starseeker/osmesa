@@ -25,6 +25,7 @@ add_definitions(-DUSE_MGL_NAMESPACE)
 
 # The primary libosmesa library
 add_subdirectory(src)
+add_subdirectory(include)
 
 # For testing purposes, the build defines a number
 # of (relatively) self-contained OpenGL examples.
