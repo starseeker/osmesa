@@ -1325,7 +1325,7 @@ _mesa_execute_program(GLcontext * ctx,
 	    }
 	    break;
 	    case OPCODE_UP2H: {      /* unpack two 16-bit floats */
-		GLfloat a[4], result[4];
+		GLfloat a[4] = {0.0}, result[4] = {0.0};
 		const GLuint *rawBits = (const GLuint *) a;
 		GLhalfNV hx, hy;
 		fetch_vector1(&inst->SrcReg[0], machine, a);
@@ -1337,7 +1337,7 @@ _mesa_execute_program(GLcontext * ctx,
 	    }
 	    break;
 	    case OPCODE_UP2US: {     /* unpack two GLushorts */
-		GLfloat a[4], result[4];
+		GLfloat a[4] = {0.0}, result[4] = {0.0};
 		const GLuint *rawBits = (const GLuint *) a;
 		GLushort usx, usy;
 		fetch_vector1(&inst->SrcReg[0], machine, a);
@@ -1349,7 +1349,7 @@ _mesa_execute_program(GLcontext * ctx,
 	    }
 	    break;
 	    case OPCODE_UP4B: {      /* unpack four GLbytes */
-		GLfloat a[4], result[4];
+		GLfloat a[4] = {0.0}, result[4] = {0.0};
 		const GLuint *rawBits = (const GLuint *) a;
 		fetch_vector1(&inst->SrcReg[0], machine, a);
 		result[0] = (((rawBits[0] >> 0) & 0xff) - 128) / 127.0F;
@@ -1360,7 +1360,7 @@ _mesa_execute_program(GLcontext * ctx,
 	    }
 	    break;
 	    case OPCODE_UP4UB: {     /* unpack four GLubytes */
-		GLfloat a[4], result[4];
+		GLfloat a[4] = {0.0}, result[4] = {0.0};
 		const GLuint *rawBits = (const GLuint *) a;
 		fetch_vector1(&inst->SrcReg[0], machine, a);
 		result[0] = ((rawBits[0] >> 0) & 0xff) / 255.0F;
@@ -1371,7 +1371,7 @@ _mesa_execute_program(GLcontext * ctx,
 	    }
 	    break;
 	    case OPCODE_XPD: {       /* cross product */
-		GLfloat a[4], b[4], result[4];
+		GLfloat a[4] = {0.0}, b[4] = {0.0}, result[4] = {0.0};
 		fetch_vector4(&inst->SrcReg[0], machine, a);
 		fetch_vector4(&inst->SrcReg[1], machine, b);
 		result[0] = a[1] * b[2] - a[2] * b[1];
@@ -1387,7 +1387,7 @@ _mesa_execute_program(GLcontext * ctx,
 	    }
 	    break;
 	    case OPCODE_X2D: {       /* 2-D matrix transform */
-		GLfloat a[4], b[4], c[4], result[4];
+		GLfloat a[4] = {0.0}, b[4] = {0.0}, c[4] = {0.0}, result[4] = {0.0};
 		fetch_vector4(&inst->SrcReg[0], machine, a);
 		fetch_vector4(&inst->SrcReg[1], machine, b);
 		fetch_vector4(&inst->SrcReg[2], machine, c);
@@ -1399,7 +1399,7 @@ _mesa_execute_program(GLcontext * ctx,
 	    }
 	    break;
 	    case OPCODE_PRINT: {
-		 GLfloat a[4];
+		 GLfloat a[4] = {0.0};
 		 fetch_vector4(&inst->SrcReg[0], machine, a);
 		 _mesa_printf("%s%g, %g, %g, %g\n", (const char *) inst->Data,
 				 a[0], a[1], a[2], a[3]);
