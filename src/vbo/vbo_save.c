@@ -86,23 +86,6 @@ void vbo_save_destroy(GLcontext *ctx)
     }
 }
 
-
-
-
-/* Note that this can occur during the playback of a display list:
- */
-void vbo_save_fallback(GLcontext *ctx, GLboolean fallback)
-{
-    struct vbo_save_context *save = &vbo_context(ctx)->save;
-
-    if (fallback)
-	save->replay_flags |= VBO_SAVE_FALLBACK;
-    else
-	save->replay_flags &= ~VBO_SAVE_FALLBACK;
-}
-
-
-
 /*
  * Local Variables:
  * tab-width: 8

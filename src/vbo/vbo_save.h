@@ -149,7 +149,6 @@ struct vbo_save_context {
 
 void vbo_save_init(GLcontext *ctx);
 void vbo_save_destroy(GLcontext *ctx);
-void vbo_save_fallback(GLcontext *ctx, GLboolean fallback);
 
 /* save_loopback.c:
  */

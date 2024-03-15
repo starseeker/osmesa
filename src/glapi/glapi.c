@@ -169,15 +169,6 @@ static GLboolean ThreadSafe = GL_FALSE;  /**< In thread-safe mode? */
 _glthread_TSD _gl_DispatchTSD;           /**< Per-thread dispatch pointer */
 static _glthread_TSD ContextTSD;         /**< Per-thread context pointer */
 
-#if defined(WIN32_THREADS)
-void FreeTSD(_glthread_TSD *p);
-void FreeAllTSD(void)
-{
-    FreeTSD(&_gl_DispatchTSD);
-    FreeTSD(&ContextTSD);
-}
-#endif /* defined(WIN32_THREADS) */
-
 #endif /* defined(THREADS) */
 
 PUBLIC struct _glapi_table *_glapi_Dispatch =
@@ -185,23 +176,6 @@ PUBLIC struct _glapi_table *_glapi_Dispatch =
 PUBLIC void *_glapi_Context = NULL;
 
 /*@}*/
-
-
-/**
- * strdup() is actually not a standard ANSI C or POSIX routine.
- * Irix will not define it if ANSI mode is in effect.
- */
-static char *
-str_dup(const char *str)
-{
-    char *copy;
-    copy = (char*) malloc(strlen(str) + 1);
-    if (!copy)
-	return NULL;
-    strcpy(copy, str);
-    return copy;
-}
-
 
 
 /**

@@ -73,18 +73,6 @@ REBASE(GLuint)
 REBASE(GLushort)
 REBASE(GLubyte)
 
-GLboolean vbo_all_varyings_in_vbos(const struct gl_client_array *arrays[])
-{
-    GLuint i;
-
-    for (i = 0; i < VERT_ATTRIB_MAX; i++)
-	if (arrays[i]->StrideB &&
-	    arrays[i]->BufferObj->Name == 0)
-	    return GL_FALSE;
-
-    return GL_TRUE;
-}
-
 /* Adjust primitives, indices and vertex definitions so that min_index
  * becomes zero. There are lots of reasons for wanting to do this, eg:
  *

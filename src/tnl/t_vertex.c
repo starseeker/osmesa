@@ -77,31 +77,6 @@ static GLboolean search_fastpath_emit(struct tnl_clipspace *vtx)
     return GL_FALSE;
 }
 
-void _tnl_register_fastpath(struct tnl_clipspace *vtx,
-			    GLboolean match_strides)
-{
-    struct tnl_clipspace_fastpath *fastpath = CALLOC_STRUCT(tnl_clipspace_fastpath);
-    GLuint i;
-
-    fastpath->vertex_size = vtx->vertex_size;
-    fastpath->attr_count = vtx->attr_count;
-    fastpath->match_strides = match_strides;
-    fastpath->func = vtx->emit;
-    fastpath->attr = (struct tnl_attr_type *)
-		     malloc(vtx->attr_count * sizeof(fastpath->attr[0]));
-
-    for (i = 0; i < vtx->attr_count; i++) {
-	fastpath->attr[i].format = vtx->attr[i].format;
-	fastpath->attr[i].stride = vtx->attr[i].inputstride;
-	fastpath->attr[i].size = vtx->attr[i].inputsize;
-	fastpath->attr[i].offset = vtx->attr[i].vertoffset;
-    }
-
-    fastpath->next = vtx->fastpath;
-    vtx->fastpath = fastpath;
-}
-
-
 
 /***********************************************************************
  * Build codegen functions or return generic ones:

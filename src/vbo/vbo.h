@@ -102,8 +102,6 @@ void vbo_split_prims(GLcontext *ctx,
 
 /* Helpers for dealing translating away non-zero min_index.
  */
-GLboolean vbo_all_varyings_in_vbos(const struct gl_client_array *arrays[]);
-
 void vbo_rebase_prims(GLcontext *ctx,
 		      const struct gl_client_array *arrays[],
 		      const struct _mesa_prim *prim,

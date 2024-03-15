@@ -133,12 +133,6 @@ extern void _tnl_notify_pipeline_output_change(GLcontext *ctx);
 
 #define GET_VERTEX_STATE(ctx)  &(TNL_CONTEXT(ctx)->clipspace)
 
-/* Internal function:
- */
-void _tnl_register_fastpath(struct tnl_clipspace *vtx,
-			    GLboolean match_strides);
-
-
 /* t_vertex_generic.c -- Internal functions for t_vertex.c
  */
 void _tnl_generic_copy_pv_extras(GLcontext *ctx,

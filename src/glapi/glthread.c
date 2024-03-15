@@ -185,14 +185,6 @@ _glthread_SetTSD(_glthread_TSD *tsd, void *ptr)
  */
 #ifdef WIN32_THREADS
 
-void FreeTSD(_glthread_TSD *p)
-{
-    if (p->initMagic==INIT_MAGIC) {
-	TlsFree(p->key);
-	p->initMagic=0;
-    }
-}
-
 void InsteadOf_exit(int nCode)
 {
     DWORD dwErr=GetLastError();

@@ -93,7 +93,6 @@ set(osmesa_srcs
   shader/nvfragparse.c
   shader/nvprogram.c
   shader/nvvertparse.c
-  shader/prog_debug.c
   shader/prog_execute.c
   shader/prog_instruction.c
   shader/prog_parameter.c
