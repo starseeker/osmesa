@@ -453,7 +453,7 @@ _mesa_validate_pbo_access(GLuint dimensions,
 			       format, type, depth-1, height-1, width);
 
     /* buffer size, cast to a pointer */
-    const GLubyte *sizeAddr = (const GLubyte *)pack->BufferObj->Size;
+    const GLubyte *sizeAddr = ((const GLubyte *) 0) + pack->BufferObj->Size;
 
     if (start > sizeAddr) {
 	/* This will catch negative values / wrap-around */
