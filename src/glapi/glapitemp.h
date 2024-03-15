@@ -1710,12 +1710,10 @@ KEYWORD1 GLboolean KEYWORD2 NAME(AreTexturesResident)(GLsizei n, const GLuint * 
     RETURN_DISPATCH(AreTexturesResident, (n, textures, residences), (F, "glAreTexturesResident(%d, %p, %p);\n", n, (const void *) textures, (const void *) residences));
 }
 
-#ifndef GLX_INDIRECT_RENDERING
 KEYWORD1 GLboolean KEYWORD2 NAME(AreTexturesResidentEXT)(GLsizei n, const GLuint * textures, GLboolean * residences)
 {
     RETURN_DISPATCH(AreTexturesResident, (n, textures, residences), (F, "glAreTexturesResidentEXT(%d, %p, %p);\n", n, (const void *) textures, (const void *) residences));
 }
-#endif /* GLX_INDIRECT_RENDERING */
 
 KEYWORD1 void KEYWORD2 NAME(CopyTexImage1D)(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border)
 {
@@ -1762,24 +1760,20 @@ KEYWORD1 void KEYWORD2 NAME(DeleteTextures)(GLsizei n, const GLuint * textures)
     DISPATCH(DeleteTextures, (n, textures), (F, "glDeleteTextures(%d, %p);\n", n, (const void *) textures));
 }
 
-#ifndef GLX_INDIRECT_RENDERING
 KEYWORD1 void KEYWORD2 NAME(DeleteTexturesEXT)(GLsizei n, const GLuint * textures)
 {
     DISPATCH(DeleteTextures, (n, textures), (F, "glDeleteTexturesEXT(%d, %p);\n", n, (const void *) textures));
 }
-#endif /* GLX_INDIRECT_RENDERING */
 
 KEYWORD1 void KEYWORD2 NAME(GenTextures)(GLsizei n, GLuint * textures)
 {
     DISPATCH(GenTextures, (n, textures), (F, "glGenTextures(%d, %p);\n", n, (const void *) textures));
 }
 
-#ifndef GLX_INDIRECT_RENDERING
 KEYWORD1 void KEYWORD2 NAME(GenTexturesEXT)(GLsizei n, GLuint * textures)
 {
     DISPATCH(GenTextures, (n, textures), (F, "glGenTexturesEXT(%d, %p);\n", n, (const void *) textures));
 }
-#endif /* GLX_INDIRECT_RENDERING */
 
 KEYWORD1 void KEYWORD2 NAME(GetPointerv)(GLenum pname, GLvoid ** params)
 {
@@ -1796,12 +1790,10 @@ KEYWORD1 GLboolean KEYWORD2 NAME(IsTexture)(GLuint texture)
     RETURN_DISPATCH(IsTexture, (texture), (F, "glIsTexture(%d);\n", texture));
 }
 
-#ifndef GLX_INDIRECT_RENDERING
 KEYWORD1 GLboolean KEYWORD2 NAME(IsTextureEXT)(GLuint texture)
 {
     RETURN_DISPATCH(IsTexture, (texture), (F, "glIsTextureEXT(%d);\n", texture));
 }
-#endif /* GLX_INDIRECT_RENDERING */
 
 KEYWORD1 void KEYWORD2 NAME(PrioritizeTextures)(GLsizei n, const GLuint * textures, const GLclampf * priorities)
 {
@@ -1903,36 +1895,30 @@ KEYWORD1 void KEYWORD2 NAME(GetColorTable)(GLenum target, GLenum format, GLenum 
     DISPATCH(GetColorTable, (target, format, type, table), (F, "glGetColorTable(0x%x, 0x%x, 0x%x, %p);\n", target, format, type, (const void *) table));
 }
 
-#ifndef GLX_INDIRECT_RENDERING
 KEYWORD1 void KEYWORD2 NAME(GetColorTableEXT)(GLenum target, GLenum format, GLenum type, GLvoid * table)
 {
     DISPATCH(GetColorTable, (target, format, type, table), (F, "glGetColorTableEXT(0x%x, 0x%x, 0x%x, %p);\n", target, format, type, (const void *) table));
 }
-#endif /* GLX_INDIRECT_RENDERING */
 
 KEYWORD1 void KEYWORD2 NAME(GetColorTableParameterfv)(GLenum target, GLenum pname, GLfloat * params)
 {
     DISPATCH(GetColorTableParameterfv, (target, pname, params), (F, "glGetColorTableParameterfv(0x%x, 0x%x, %p);\n", target, pname, (const void *) params));
 }
 
-#ifndef GLX_INDIRECT_RENDERING
 KEYWORD1 void KEYWORD2 NAME(GetColorTableParameterfvEXT)(GLenum target, GLenum pname, GLfloat * params)
 {
     DISPATCH(GetColorTableParameterfv, (target, pname, params), (F, "glGetColorTableParameterfvEXT(0x%x, 0x%x, %p);\n", target, pname, (const void *) params));
 }
-#endif /* GLX_INDIRECT_RENDERING */
 
 KEYWORD1 void KEYWORD2 NAME(GetColorTableParameteriv)(GLenum target, GLenum pname, GLint * params)
 {
     DISPATCH(GetColorTableParameteriv, (target, pname, params), (F, "glGetColorTableParameteriv(0x%x, 0x%x, %p);\n", target, pname, (const void *) params));
 }
 
-#ifndef GLX_INDIRECT_RENDERING
 KEYWORD1 void KEYWORD2 NAME(GetColorTableParameterivEXT)(GLenum target, GLenum pname, GLint * params)
 {
     DISPATCH(GetColorTableParameteriv, (target, pname, params), (F, "glGetColorTableParameterivEXT(0x%x, 0x%x, %p);\n", target, pname, (const void *) params));
 }
-#endif /* GLX_INDIRECT_RENDERING */
 
 KEYWORD1 void KEYWORD2 NAME(ColorSubTable)(GLenum target, GLsizei start, GLsizei count, GLenum format, GLenum type, const GLvoid * data)
 {
@@ -6108,23 +6094,15 @@ static _glapi_proc UNUSED_TABLE_NAME[] = {
     TABLE_ENTRY(ArrayElementEXT),
     TABLE_ENTRY(BindTextureEXT),
     TABLE_ENTRY(DrawArraysEXT),
-#ifndef GLX_INDIRECT_RENDERING
     TABLE_ENTRY(AreTexturesResidentEXT),
-#endif
     TABLE_ENTRY(CopyTexImage1DEXT),
     TABLE_ENTRY(CopyTexImage2DEXT),
     TABLE_ENTRY(CopyTexSubImage1DEXT),
     TABLE_ENTRY(CopyTexSubImage2DEXT),
-#ifndef GLX_INDIRECT_RENDERING
     TABLE_ENTRY(DeleteTexturesEXT),
-#endif
-#ifndef GLX_INDIRECT_RENDERING
     TABLE_ENTRY(GenTexturesEXT),
-#endif
     TABLE_ENTRY(GetPointervEXT),
-#ifndef GLX_INDIRECT_RENDERING
     TABLE_ENTRY(IsTextureEXT),
-#endif
     TABLE_ENTRY(PrioritizeTexturesEXT),
     TABLE_ENTRY(TexSubImage1DEXT),
     TABLE_ENTRY(TexSubImage2DEXT),
@@ -6132,15 +6110,9 @@ static _glapi_proc UNUSED_TABLE_NAME[] = {
     TABLE_ENTRY(BlendEquationEXT),
     TABLE_ENTRY(DrawRangeElementsEXT),
     TABLE_ENTRY(ColorTableEXT),
-#ifndef GLX_INDIRECT_RENDERING
     TABLE_ENTRY(GetColorTableEXT),
-#endif
-#ifndef GLX_INDIRECT_RENDERING
     TABLE_ENTRY(GetColorTableParameterfvEXT),
-#endif
-#ifndef GLX_INDIRECT_RENDERING
     TABLE_ENTRY(GetColorTableParameterivEXT),
-#endif
     TABLE_ENTRY(TexImage3DEXT),
     TABLE_ENTRY(TexSubImage3DEXT),
     TABLE_ENTRY(CopyTexSubImage3DEXT),

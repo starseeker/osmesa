@@ -33,20 +33,16 @@
 
 typedef struct {
     GLint Name_offset;
-#if defined(NEED_FUNCTION_POINTER) || defined(GLX_INDIRECT_RENDERING)
+#if defined(NEED_FUNCTION_POINTER)
     _glapi_proc Address;
 #endif
     GLuint Offset;
 } glprocs_table_t;
 
-#if   !defined(NEED_FUNCTION_POINTER) && !defined(GLX_INDIRECT_RENDERING)
+#if   !defined(NEED_FUNCTION_POINTER)
 #  define NAME_FUNC_OFFSET(n,f1,f2,f3,o) { n , o }
-#elif  defined(NEED_FUNCTION_POINTER) && !defined(GLX_INDIRECT_RENDERING)
+#elif  defined(NEED_FUNCTION_POINTER)
 #  define NAME_FUNC_OFFSET(n,f1,f2,f3,o) { n , (_glapi_proc) f1 , o }
-#elif  defined(NEED_FUNCTION_POINTER) &&  defined(GLX_INDIRECT_RENDERING)
-#  define NAME_FUNC_OFFSET(n,f1,f2,f3,o) { n , (_glapi_proc) f2 , o }
-#elif !defined(NEED_FUNCTION_POINTER) &&  defined(GLX_INDIRECT_RENDERING)
-#  define NAME_FUNC_OFFSET(n,f1,f2,f3,o) { n , (_glapi_proc) f3 , o }
 #endif
 
 
@@ -1154,7 +1150,7 @@ static const char gl_string_table[] =
 
 
 /* FIXME: Having these (incorrect) prototypes here is ugly. */
-#if defined(NEED_FUNCTION_POINTER) || defined(GLX_INDIRECT_RENDERING)
+#if defined(NEED_FUNCTION_POINTER)
 extern void gl_dispatch_stub_343(void);
 extern void gl_dispatch_stub_344(void);
 extern void gl_dispatch_stub_345(void);
@@ -1201,7 +1197,7 @@ extern void gl_dispatch_stub_769(void);
 extern void gl_dispatch_stub_770(void);
 extern void gl_dispatch_stub_771(void);
 extern void gl_dispatch_stub_772(void);
-#endif /* defined(NEED_FUNCTION_POINTER) || defined(GLX_INDIRECT_RENDERING) */
+#endif /* defined(NEED_FUNCTION_POINTER) */
 
 static const glprocs_table_t static_functions[] = {
     NAME_FUNC_OFFSET(0, glNewList, glNewList, NULL, _gloffset_NewList),

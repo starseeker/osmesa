@@ -370,12 +370,7 @@ get_static_proc_address(const char *funcName)
 {
     const glprocs_table_t * const f = find_entry(funcName);
     if (f) {
-#if defined(DISPATCH_FUNCTION_SIZE) && defined(GLX_INDIRECT_RENDERING)
-	return (f->Address == NULL)
-	       ? (_glapi_proc)(gl_dispatch_functions_start
-			       + (DISPATCH_FUNCTION_SIZE * f->Offset))
-	       : f->Address;
-#elif defined(DISPATCH_FUNCTION_SIZE)
+#if   defined(DISPATCH_FUNCTION_SIZE)
 	return (_glapi_proc)(gl_dispatch_functions_start
 			     + (DISPATCH_FUNCTION_SIZE * f->Offset));
 #else
