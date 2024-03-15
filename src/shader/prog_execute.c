@@ -53,16 +53,8 @@
 /**
  * Set x to positive or negative infinity.
  */
-#if defined(USE_IEEE) || defined(_WIN32)
 #define SET_POS_INFINITY(x)  ( x = INFINITY )
 #define SET_NEG_INFINITY(x)  ( x = -INFINITY )
-#elif defined(VMS)
-#define SET_POS_INFINITY(x)  x = __MAXFLOAT
-#define SET_NEG_INFINITY(x)  x = -__MAXFLOAT
-#else
-#define SET_POS_INFINITY(x)  x = (GLfloat) HUGE_VAL
-#define SET_NEG_INFINITY(x)  x = (GLfloat) -HUGE_VAL
-#endif
 
 static const GLfloat ZeroVec[4] = { 0.0F, 0.0F, 0.0F, 0.0F };
 
@@ -789,15 +781,7 @@ _mesa_execute_program(GLcontext * ctx,
 		fetch_vector1(&inst->SrcReg[0], machine, t);
 		abs_t0 = FABSF(t[0]);
 		if (abs_t0 != 0.0F) {
-		    /* Since we really can't handle infinite values on VMS
-		     * like other OSes we'll use __MAXFLOAT to represent
-		     * infinity.  This may need some tweaking.
-		     */
-#ifdef VMS
-		    if (abs_t0 == __MAXFLOAT)
-#else
 		    if (IS_INF_OR_NAN(abs_t0))
-#endif
 		    {
 			SET_POS_INFINITY(q[0]);
 			q[1] = 1.0F;
