@@ -106,18 +106,6 @@ _glapi_set_dispatch(struct _glapi_table *dispatch);
 extern struct _glapi_table *
 _glapi_get_dispatch(void);
 
-
-extern int
-_glapi_begin_dispatch_override(struct _glapi_table *override);
-
-
-extern void
-_glapi_end_dispatch_override(int layer);
-
-
-struct _glapi_table *
-_glapi_get_override_dispatch(int layer);
-
 #endif
 
 /*
