@@ -36,7 +36,7 @@
 
 
 #include "glheader.h"
-#include "OSMesa/internal/glcore.h"	/* __GLcontextModes (GLvisual) */
+#include "glcontext.h"	/* __GLcontextModes (GLvisual) */
 #include "gllimits.h"		/* Hardwired parameters */
 #include "glapitable.h"
 #include "glthread.h"

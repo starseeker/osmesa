@@ -39,8 +39,7 @@
 /* XXX some of the stuff in glheader.h should be moved into this file.
  */
 #include "glheader.h"
-#include "OSMesa/internal/glcore.h"
-
+#include "glcontext.h"
 
 #ifdef __cplusplus
 extern "C" {
