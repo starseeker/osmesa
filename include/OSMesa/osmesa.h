@@ -100,12 +100,6 @@ extern "C" {
 
 typedef struct osmesa_context *OSMesaContext;
 
-
-#if defined(__BEOS__) || defined(__QUICKDRAW__)
-#pragma export on
-#endif
-
-
 /*
  * Create an Off-Screen Mesa rendering context.  The only attribute needed is
  * an RGBA vs Color-Index mode flag.
@@ -264,12 +258,6 @@ typedef void (*OSMESAproc)();
  */
 GLAPI void GLAPIENTRY
 OSMesaColorClamp(GLboolean enable);
-
-
-#if defined(__BEOS__) || defined(__QUICKDRAW__)
-#pragma export off
-#endif
-
 
 #ifdef __cplusplus
 }
