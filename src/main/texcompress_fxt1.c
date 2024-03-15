@@ -1130,47 +1130,6 @@ fxt1_quantize_MIXED0(GLuint *cc,
 
     GLint minColL = 0, maxColL = 0;
     GLint minColR = 0, maxColR = 0;
-#if 0
-    GLint minSum;
-    GLint maxSum;
-
-    /* Our solution here is to find the darkest and brightest colors in
-     * the 4x4 tile and use those as the two representative colors.
-     * There are probably better algorithms to use (histogram-based).
-     */
-    minSum = 2000; /* big enough */
-    maxSum = -1; /* small enough */
-    for (k = 0; k < N_TEXELS / 2; k++) {
-	GLint sum = 0;
-	for (i = 0; i < n_comp; i++) {
-	    sum += input[k][i];
-	}
-	if (minSum > sum) {
-	    minSum = sum;
-	    minColL = k;
-	}
-	if (maxSum < sum) {
-	    maxSum = sum;
-	    maxColL = k;
-	}
-    }
-    minSum = 2000; /* big enough */
-    maxSum = -1; /* small enough */
-    for (; k < N_TEXELS; k++) {
-	GLint sum = 0;
-	for (i = 0; i < n_comp; i++) {
-	    sum += input[k][i];
-	}
-	if (minSum > sum) {
-	    minSum = sum;
-	    minColR = k;
-	}
-	if (maxSum < sum) {
-	    maxSum = sum;
-	    maxColR = k;
-	}
-    }
-#else
     GLint minVal;
     GLint maxVal;
     GLint maxVarL = fxt1_variance(NULL, input, n_comp, N_TEXELS / 2);
@@ -1205,7 +1164,6 @@ fxt1_quantize_MIXED0(GLuint *cc,
 	    maxColR = k;
 	}
     }
-#endif
 
     /* left microtile */
     cc[0] = 0;

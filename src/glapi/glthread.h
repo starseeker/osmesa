@@ -71,7 +71,7 @@
 
 
 #if (defined(PTHREADS) || defined(SOLARIS_THREADS) ||\
-     defined(WIN32_THREADS) || defined(USE_XTHREADS) || defined(BEOS_THREADS)) \
+     defined(WIN32_THREADS) || defined(USE_XTHREADS)) \
     && !defined(THREADS)
 # define THREADS
 #endif
@@ -213,40 +213,6 @@ typedef xmutex_rec _glthread_Mutex;
    (void) xmutex_unlock(&(name))
 
 #endif /* USE_XTHREADS */
-
-
-
-/*
- * BeOS threads. R5.x required.
- */
-#ifdef BEOS_THREADS
-
-#include <kernel/OS.h>
-#include <support/TLS.h>
-
-typedef struct {
-    int32        key;
-    int          initMagic;
-} _glthread_TSD;
-
-typedef thread_id _glthread_Thread;
-
-/* Use Benaphore, aka speeder semaphore */
-typedef struct {
-    int32   lock;
-    sem_id  sem;
-} benaphore;
-typedef benaphore _glthread_Mutex;
-
-#define _glthread_DECLARE_STATIC_MUTEX(name)  static _glthread_Mutex name = { 0, 0 }
-#define _glthread_INIT_MUTEX(name)    	name.sem = create_sem(0, #name"_benaphore"), name.lock = 0
-#define _glthread_DESTROY_MUTEX(name) 	delete_sem(name.sem), name.lock = 0
-#define _glthread_LOCK_MUTEX(name)    	if (name.sem == 0) _glthread_INIT_MUTEX(name); \
-									  	if (atomic_add(&(name.lock), 1) >= 1) acquire_sem(name.sem)
-#define _glthread_UNLOCK_MUTEX(name)  	if (atomic_add(&(name.lock), -1) > 1) release_sem(name.sem)
-
-#endif /* BEOS_THREADS */
-
 
 
 #ifndef THREADS
