@@ -499,7 +499,7 @@ void
 _mesa_drawbuffers(GLcontext *ctx, GLuint n, const GLenum *buffers,
 		  const GLbitfield *destMask)
 {
-    GLbitfield mask[MAX_DRAW_BUFFERS];
+    GLbitfield mask[MAX_DRAW_BUFFERS] = {0};
     GLuint output;
 
     if (!destMask) {
