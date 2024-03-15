@@ -258,16 +258,6 @@ OSMesaGetColorBuffer(OSMesaContext c, GLint *width, GLint *height,
 typedef void (*OSMESAproc)();
 
 
-/*
- * Return pointer to the named function.
- * New in Mesa 4.1
- * Return OSMESAproc in 6.3.
- */
-GLAPI OSMESAproc GLAPIENTRY
-OSMesaGetProcAddress(const char *funcName);
-
-
-
 /**
  * Enable/disable color clamping, off by default.
  * New in Mesa 6.4.2

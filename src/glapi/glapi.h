@@ -118,23 +118,6 @@ _glapi_end_dispatch_override(int layer);
 struct _glapi_table *
 _glapi_get_override_dispatch(int layer);
 
-
-extern int
-_glapi_add_dispatch(const char * const * function_names,
-		    const char * parameter_signature);
-
-extern GLint
-_glapi_get_proc_offset(const char *funcName);
-
-
-extern _glapi_proc
-_glapi_get_proc_address(const char *funcName);
-
-
-extern const char *
-_glapi_get_proc_name(GLuint offset);
-
-
 #endif
 
 /*
