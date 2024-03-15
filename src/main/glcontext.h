@@ -39,27 +39,9 @@
 #include <sys/types.h>
 
 /*
-** This file defines the interface between the GL core and the surrounding
-** "operating system" that supports it (currently the GLX or WGL extensions).
-**
-** Members (data and function pointers) are documented as imported or
-** exported according to how they are used by the core rendering functions.
-** Imported members are initialized by the "operating system" and used by
-** the core functions.  Exported members are initialized by the core functions
-** and used by the "operating system".
-*/
-
-/**
- * Mode and limit information for a context.  This information is
- * kept around in the context so that values can be used during
- * command execution, and for returning information about the
- * context to the application.
- *
- * Instances of this structure are shared by the driver and the loader.  To
- * maintain binary compatability, new fields \b must be added only to the
- * end of the structure.
- *
- * \sa _gl_context_modes_create
+ * This file defines the interface between the GL core and the surrounding
+ * "operating system" that supports it.  For the offscreen render, this
+ * consists of mode and limit information.
  */
 
 typedef struct __GLcontextRec __GLcontext;
