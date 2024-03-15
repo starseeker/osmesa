@@ -202,8 +202,8 @@ static int test_cliptest_function(clip_func func, int np,
 				  int psize, long *cycles)
 {
     GLvector4f source[1], dest[1], ref[1];
-    GLubyte dm[TEST_COUNT], dco, dca;
-    GLubyte rm[TEST_COUNT], rco, rca;
+    GLubyte dm[TEST_COUNT] = {0}, dco, dca;
+    GLubyte rm[TEST_COUNT] = {0}, rco, rca;
     int i, j;
 #ifdef  RUN_DEBUG_BENCHMARK
     int cycle_i;                /* the counter for the benchmarks we run */
