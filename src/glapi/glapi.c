@@ -57,7 +57,7 @@
 static GLboolean WarnFlag = GL_FALSE;
 static _glapi_warning_func warning_func;
 
-#if defined(PTHREADS) || defined(GLX_USE_TLS)
+#if defined(PTHREADS)
 static void init_glapi_relocs(void);
 #endif
 
@@ -211,7 +211,7 @@ str_dup(const char *str)
 void
 _glapi_check_multithread(void)
 {
-#if defined(THREADS) && !defined(GLX_USE_TLS)
+#if defined(THREADS)
     if (!ThreadSafe) {
 	static unsigned long knownID;
 	static GLboolean firstCall = GL_TRUE;
@@ -280,7 +280,7 @@ _glapi_get_context(void)
 PUBLIC void
 _glapi_set_dispatch(struct _glapi_table *dispatch)
 {
-#if defined(PTHREADS) || defined(GLX_USE_TLS)
+#if defined(PTHREADS)
     static pthread_once_t once_control = PTHREAD_ONCE_INIT;
     pthread_once(& once_control, init_glapi_relocs);
 #endif
@@ -317,7 +317,7 @@ _glapi_get_dispatch(void)
     return api;
 }
 
-#if defined(PTHREADS) || defined(GLX_USE_TLS)
+#if defined(PTHREADS)
 /**
  * Perform platform-specific GL API entry-point fixups.
  */
@@ -325,7 +325,7 @@ static void
 init_glapi_relocs(void)
 {
 }
-#endif /* defined(PTHREADS) || defined(GLX_USE_TLS) */
+#endif /* defined(PTHREADS) */
 
 /*
  * Local Variables:
