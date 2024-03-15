@@ -37,8 +37,6 @@
  * \author Brian Paul <brian@precisioninsight.com>
  */
 
-#ifndef GLX_USE_APPLEGL
-
 #include "glheader.h"
 #include "glapi.h"
 #include "glapitable.h"
@@ -91,8 +89,6 @@
 #include "glapitemp.h"
 
 #endif /* USE_X86_ASM */
-
-#endif /* !GLX_USE_APPLEGL */
 
 /*
  * Local Variables:
