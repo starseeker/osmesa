@@ -56,7 +56,6 @@ set(osmesa_srcs
   main/lines.c
   main/matrix.c
   main/mipmap.c
-  #main/mm.c
   main/pixel.c
   main/points.c
   main/polygon.c
