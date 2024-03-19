@@ -430,7 +430,7 @@ stencil_and_ztest_span(GLcontext *ctx, SWspan *span, GLuint face)
      * Some fragments passed the stencil test, apply depth test to them
      * and apply Zpass and Zfail stencil ops.
      */
-    if (ctx->Depth.Test == GL_FALSE) {
+    if (ctx->Depth.Test == GL_FALSE || ctx->DrawBuffer->_DepthBuffer == NULL) {
 	/*
 	 * No depth buffer, just apply zpass stencil function to active pixels.
 	 */
