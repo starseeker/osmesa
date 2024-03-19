@@ -1234,6 +1234,7 @@ opt_sample_rgb_2d(GLcontext *ctx,
 	rgba[k][RCOMP] = texel[0];
 	rgba[k][GCOMP] = texel[1];
 	rgba[k][BCOMP] = texel[2];
+	rgba[k][ACOMP] = 1.0F;
     }
 }
 
