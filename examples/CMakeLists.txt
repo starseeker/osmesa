@@ -6,39 +6,37 @@ include_directories(
   )
 
 add_subdirectory(glu)
-
 add_subdirectory(fontstash)
-
 
 add_executable(osdemo osdemo.c)
 target_link_libraries(osdemo osmesa glu ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 set_property(TARGET osdemo APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
 
-find_package(SDL)
+find_package(SDL2)
 
-if (SDL_FOUND)
+if (SDL2_FOUND)
   add_executable(texobj texobj.c)
-  target_link_libraries(texobj osmesa ${SDL_LIBRARY} ${M_LIBRARY})
+  target_link_libraries(texobj osmesa ${SDL2_LIBRARIES} ${M_LIBRARY})
   set_property(TARGET texobj APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
   if (O3_COMPILER_FLAG)
     # If we have the O3 flag, use it
     target_compile_options(texobj PRIVATE "-O3")
   endif (O3_COMPILER_FLAG)
   add_executable(gears gears.c)
-  target_link_libraries(gears osmesa ${SDL_LIBRARY} ${M_LIBRARY})
+  target_link_libraries(gears osmesa ${SDL2_LIBRARIES} ${M_LIBRARY})
   set_property(TARGET gears APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
   if (O3_COMPILER_FLAG)
     # If we have the O3 flag, use it
     target_compile_options(gears PRIVATE "-O3")
   endif (O3_COMPILER_FLAG)
   add_executable(triangle triangle.c)
-  target_link_libraries(triangle osmesa glu ${SDL_LIBRARY} ${M_LIBRARY})
+  target_link_libraries(triangle osmesa glu ${SDL2_LIBRARIES} ${M_LIBRARY})
   set_property(TARGET triangle APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
   if (O3_COMPILER_FLAG)
     # If we have the O3 flag, use it
     target_compile_options(triangle PRIVATE "-O3")
   endif (O3_COMPILER_FLAG)
-endif (SDL_FOUND)
+endif (SDL2_FOUND)
 
 find_package(TCL)
 if (TCL_FOUND)
