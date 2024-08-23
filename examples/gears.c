@@ -12,7 +12,7 @@
 #include "OSMesa/gl.h"
 #include "OSMesa/glu.h"
 #include "OSMesa/osmesa.h"
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #ifndef M_PI
 #  define M_PI 3.14159265
@@ -191,6 +191,7 @@ void draw()
 int main(int argc, char **argv)
 {
     SDL_Surface* screen;
+    SDL_Window* window;
     unsigned int pitch;
     int	mode;
     int winSizeX = 640;
@@ -203,22 +204,30 @@ int main(int argc, char **argv)
     unsigned int tLastFps;
     int isRunning;
     SDL_Event evt;
-    char* sdl_error;
-    const SDL_VideoInfo* info;
+    const char* sdl_error;
 
     // initialize SDL video:
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 	fprintf(stderr,"ERROR: cannot initialize SDL video.\n");
 	return 1;
     }
-    screen = NULL;
-    info = SDL_GetVideoInfo();
-    if ((screen=SDL_SetVideoMode(winSizeX, winSizeY, info->vfmt->BitsPerPixel, SDL_SWSURFACE)) == 0) {
-	fprintf(stderr,"ERROR: Video mode set failed.\n");
-	return 1;
+
+    window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+			      winSizeX, winSizeY, SDL_WINDOW_SHOWN);
+    if (!window) {
+	fprintf(stderr, "ERROR: Window creation failed. SDL_Error: %s\n",
+		SDL_GetError());
+	exit(1);
     }
+
+    screen = SDL_GetWindowSurface(window);
+    if (!screen) {
+	fprintf(stderr, "ERROR: Getting window surface failed. SDL_Error: %s\n",
+		SDL_GetError());
+	exit(1);
+    }
+
     //SDL_ShowCursor(SDL_DISABLE);
-    SDL_WM_SetCaption(glGetString(GL_RENDERER),0);
 
     ctx = OSMesaCreateContextExt( OSMESA_RGBA, 16, 0, 0, NULL );
     if (!ctx) {
@@ -249,6 +258,8 @@ int main(int argc, char **argv)
     frames = 0;
     tNow = SDL_GetTicks();
     tLastFps = tNow;
+
+    SDL_SetWindowTitle(window, glGetString(GL_RENDERER));
 
     // main loop:
     isRunning = 1;
@@ -321,7 +332,7 @@ int main(int argc, char **argv)
 	if (SDL_MUSTLOCK(screen)) {
 	    SDL_UnlockSurface(screen);
 	}
-	SDL_Flip(screen);
+	SDL_UpdateWindowSurface(window);
 
 	// check for error conditions:
 	sdl_error = SDL_GetError();

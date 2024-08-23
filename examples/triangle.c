@@ -8,7 +8,7 @@
 #include "OSMesa/gl.h"
 #include "OSMesa/glu.h"
 #include "OSMesa/osmesa.h"
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "svpng.h"
 
 int main(int argc, char **argv)
@@ -16,6 +16,7 @@ int main(int argc, char **argv)
     // initialize SDL video:
     int winSizeX = 640;
     int winSizeY = 480;
+    SDL_Window* window;
     SDL_Surface* screen;
     unsigned int pitch;
     int	mode;
@@ -27,19 +28,25 @@ int main(int argc, char **argv)
     OSMesaContext ctx;
     void *frameBuffer;
     SDL_Event evt;
-    const SDL_VideoInfo* info;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 	fprintf(stderr,"ERROR: cannot initialize SDL video.\n");
 	return 1;
     }
 
-    info = SDL_GetVideoInfo();
+    window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+			      winSizeX, winSizeY, SDL_WINDOW_SHOWN);
+    if (!window) {
+	fprintf(stderr, "ERROR: Window creation failed. SDL_Error: %s\n",
+		SDL_GetError());
+	exit(1);
+    }
 
-    screen = NULL;
-    if ((screen=SDL_SetVideoMode(winSizeX, winSizeY, info->vfmt->BitsPerPixel, SDL_SWSURFACE)) == 0) {
-	fprintf(stderr,"ERROR: Video mode set failed.\n");
-	return 1;
+    screen = SDL_GetWindowSurface(window);
+    if (!screen) {
+	fprintf(stderr, "ERROR: Getting window surface failed. SDL_Error: %s\n",
+		SDL_GetError());
+	exit(1);
     }
 
     ctx = OSMesaCreateContextExt( OSMESA_RGBA, 16, 0, 0, NULL );
@@ -69,7 +76,7 @@ int main(int argc, char **argv)
 	if ((t-t0) > 1.0 || frames == 0) {
 	    fps = (double)frames / (t-t0);
 	    sprintf(titlestr, "Spinning Triangle (%.1f FPS)", fps);
-	    SDL_WM_SetCaption(titlestr,0);
+	    SDL_SetWindowTitle(window, titlestr);
 	    t0 = t;
 	    frames = 0;
 	}
@@ -131,7 +138,7 @@ int main(int argc, char **argv)
 	if (SDL_MUSTLOCK(screen)) {
 	    SDL_UnlockSurface(screen);
 	}
-	SDL_Flip(screen);
+	SDL_UpdateWindowSurface(window);
 
 	// check if the ESC key was pressed or the window was closed:
 
