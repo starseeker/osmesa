@@ -1,6 +1,6 @@
-find_package(SDL REQUIRED)
+find_package(SDL2 REQUIRED)
 add_executable(fontstash fontstash.c)
-target_link_libraries(fontstash ${SDL_LIBRARY} osmesa ${M_LIBRARY} )
+target_link_libraries(fontstash ${SDL2_LIBRARIES} osmesa ${M_LIBRARY} )
 set_property(TARGET fontstash APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
 if (O3_COMPILER_FLAG)
 	# If we have the O3 flag, use it
