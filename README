@@ -1,20 +1,34 @@
 This is an extraction of the Mesa 3-D library's software rasterizer and
-offscreen rendering implementation of OpenGL 2.1 style APIs.  For ease of setup
-and compilation, the 7.0.4 release of Mesa was used as a basis.  (This fork is
-not affiliated with the Mesa project - for the modern implementation see
+offscreen rendering implementation of OpenGL 2.1 style APIs.  The 7.0.4 release
+of Mesa is the original source of this code, although it has been scrubbed down
+and modded a little for the purposes of minimalism.  (This fork is not
+affiliated with the Mesa project - for the modern implementation see
 https://mesa3d.org)
 
 The goals of this particular fork are NOT speed, but rather a portable,
-reliable cross platform rendering method that does not require any outside
-support from the OS or graphics hardware.  The idea is to guarantee an
-application's ability to produce scene rasterizations as images even when the
-primary graphics stack of the machine is unavailable.
+reliable, self contained, cross platform rendering method that does not require
+ANY outside support from the OS or graphics hardware.  The idea is to guarantee
+an application's ability to produce scene rasterizations as image data even
+when the primary graphics stack of the machine is unavailable. It also aims to
+be as trouble free as possible when it comes to things like API stability and
+maintenance requirements.
 
-The examples directory may simply be removed if a project bundling the
+The core libosmesa library deliberately does not have ANY external dependencies
+on any libraries beyond the core C/C++ system libraries - this makes it as
+insensitive as possible to changes in operating system environments.  Because
+displaying the image data on screen is outside the scope of libosmesa, it is
+also not tied to any operating system's window system API.  It just hands the
+caller the rasterized image data - any subsequent display is up to higher
+layers of the application's library stack.
+
+The examples directory DOES have some external dependencies on graphical
+toolkits, in order to provide some graphical application example.  The example
+building may be disabled by setting -DOSMESA_BUILD_EXAMPLES=OFF.  The examples
+directory itself may also be removed completely if a project bundling the
 libosmesa sources doesn't wish to include it - the build system will adapt
 appropriately.
 
-Changes are (or at least are intended to be) relatively minor and include
-things like static analyzer clean-ups and updating header includes to avoid
-accidentally including system versions of gl.h.
+Source code changes are (or at least are intended to be) relatively minor and
+include things like static analyzer clean-ups and updating header includes to
+avoid accidentally including system versions of gl.h.
 
