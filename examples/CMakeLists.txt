@@ -16,6 +16,7 @@ find_package(SDL2)
 
 if (SDL2_FOUND)
   add_executable(texobj texobj.c)
+  include_directories(${SDL2_INCLUDE_DIRS})
   target_link_libraries(texobj osmesa ${SDL2_LIBRARIES} ${M_LIBRARY})
   set_property(TARGET texobj APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
   if (O3_COMPILER_FLAG)
@@ -38,15 +39,19 @@ if (SDL2_FOUND)
   endif (O3_COMPILER_FLAG)
 endif (SDL2_FOUND)
 
-find_package(TCL)
-if (TCL_FOUND)
-  include_directories(
-    ${TCL_INCLUDE_PATH}
-    )
-  add_executable(tcltest tcl.cpp)
-  target_link_libraries(tcltest osmesa ${TCL_LIBRARY} ${TK_LIBRARY} ${M_LIBRARY})
-  set_property(TARGET tcltest APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
-endif (TCL_FOUND)
+find_package(X11)
+if (X11_FOUND)
+  find_package(TCL)
+  if (TCL_FOUND)
+    include_directories(
+      ${TCL_INCLUDE_PATH}
+      ${X11_INCLUDE_DIR}
+      )
+    add_executable(tcltest tcl.cpp)
+    target_link_libraries(tcltest osmesa ${TCL_LIBRARY} ${TK_LIBRARY} ${M_LIBRARY} ${X11_LIBRARIES})
+    set_property(TARGET tcltest APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
+  endif (TCL_FOUND)
+endif (X11_FOUND)
 
 
 # Local Variables:
