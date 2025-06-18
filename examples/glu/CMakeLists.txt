@@ -19,6 +19,10 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/libnurbs/nurbtess
 	)
 
+link_directories(
+  ${CMAKE_BINARY_DIR}/src
+)
+
 # Bundle the glu functionality as well
 set(glu_srcs
   libutil/error.c
@@ -113,9 +117,10 @@ set(glu_srcs
   )
 
 add_library(glu SHARED ${glu_srcs})
+target_link_libraries(glu osmesa)
 set_property(TARGET glu APPEND PROPERTY COMPILE_DEFINITIONS "UTIL_ARCH_LITTLE_ENDIAN=1")
 set_property(TARGET glu APPEND PROPERTY COMPILE_DEFINITIONS "LIBRARYBUILD")
-set_property(TARGET glu APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_EXPORTS")
+# set_property(TARGET glu APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_EXPORTS")
 set_property(TARGET glu APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
 if (O3_COMPILER_FLAG)
   # If we have the O3 flag, use it
