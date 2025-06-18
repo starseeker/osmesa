@@ -338,7 +338,8 @@ Torus(float innerRadius, float outerRadius, int sides, int rings)
 }
 
 
-void render_image(void)
+void
+render_image(void)
 {
     GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
     GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
@@ -396,7 +397,8 @@ void render_image(void)
     glFinish();
 }
 
-void sph(double angle)
+void
+sph(double angle)
 {
     GLfloat blue_mat[]  = { 1, 1, 0, 1 };
 
@@ -409,7 +411,7 @@ void sph(double angle)
     glFinish();
 }
 
-    static void
+static void
 write_png(const char *filename, GLubyte *buffer, int width, int height)
 {
     const int binary = 0;
@@ -439,7 +441,7 @@ write_png(const char *filename, GLubyte *buffer, int width, int height)
     }
 }
 
-    int
+int
 main(int argc, const char *argv[])
 {
     OSMesaContext ctx;
