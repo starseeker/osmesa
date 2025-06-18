@@ -1,10 +1,7 @@
 /*
  * Demo of off-screen Mesa rendering
  *
- * See Mesa/include/GL/osmesa.h for documentation of the OSMesa functions.
- *
- * If you want to render BIG images you'll probably have to increase
- * MAX_WIDTH and MAX_Height in src/config.h.
+ * See OSMesa/osmesa.h for documentation of the OSMesa functions.
  *
  * This program is in the public domain.
  *
@@ -13,8 +10,8 @@
  * PPM output provided by Joerg Schmalzl.
  * ASCII PPM output added by Brian Paul.
  *
- * The original osdemo code was adjusted to output a PNG file rather than PPM, and uses
- * Milo Yip's svpng to do so - see svpng.h
+ * The original osdemo code was adjusted to output a PNG file rather than PPM,
+ * and uses Milo Yip's svpng to do so - see svpng.h
  *
  * Usage: osdemo [filename]
  */
@@ -191,18 +188,14 @@ write_png(const char *filename, GLubyte *buffer, int width, int height)
    }
 }
 
-OSMesaContext ctx;
-void *buffer;
-static int Width = 400;
-static int Height = 400;
-
-
 int
-main(int argc, char *argv[])
+main(int argc, const char *argv[])
 {
    OSMesaContext ctx;
    void *buffer;
-   char *filename = NULL;
+   int Width = 400;
+   int Height = 400;
+   const char *filename = NULL;
 
    if (argc < 2) {
       fprintf(stderr, "Usage:\n");

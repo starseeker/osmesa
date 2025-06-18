@@ -22,7 +22,7 @@ caller the rasterized image data - any subsequent display is up to higher
 layers of the application's library stack.
 
 The examples directory DOES have some external dependencies on graphical
-toolkits, in order to provide some graphical application example.  The example
+toolkits, in order to provide some graphical application examples.  The example
 building may be disabled by setting -DOSMESA_BUILD_EXAMPLES=OFF.  The examples
 directory itself may also be removed completely if a project bundling the
 libosmesa sources doesn't wish to include it - the build system will adapt
