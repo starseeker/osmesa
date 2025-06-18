@@ -1,15 +1,13 @@
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../include
   ${CMAKE_CURRENT_SOURCE_DIR}/../src
-  ${CMAKE_CURRENT_SOURCE_DIR}/glu/include
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
-add_subdirectory(glu)
 add_subdirectory(fontstash)
 
 add_executable(osdemo osdemo.c)
-target_link_libraries(osdemo osmesa glu ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(osdemo osmesa ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 set_property(TARGET osdemo APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
 
 find_package(SDL2)
@@ -31,7 +29,7 @@ if (SDL2_FOUND)
     target_compile_options(gears PRIVATE "-O3")
   endif (O3_COMPILER_FLAG)
   add_executable(triangle triangle.c)
-  target_link_libraries(triangle osmesa glu ${SDL2_LIBRARIES} ${M_LIBRARY})
+  target_link_libraries(triangle osmesa ${SDL2_LIBRARIES} ${M_LIBRARY})
   set_property(TARGET triangle APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
   if (O3_COMPILER_FLAG)
     # If we have the O3 flag, use it

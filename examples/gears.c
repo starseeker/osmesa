@@ -10,7 +10,6 @@
 #include <string.h>
 
 #include "OSMesa/gl.h"
-#include "OSMesa/glu.h"
 #include "OSMesa/osmesa.h"
 #include <SDL2/SDL.h>
 
