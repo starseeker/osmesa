@@ -1,4 +1,3 @@
-find_package(SDL2 REQUIRED)
 add_executable(fontstash fontstash.c)
 include_directories(${SDL2_INCLUDE_DIRS})
 target_link_libraries(fontstash ${SDL2_LIBRARIES} osmesa ${M_LIBRARY} )
