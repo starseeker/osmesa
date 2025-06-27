@@ -1545,9 +1545,23 @@ static struct name_function functions[] = {
     { "OSMesaGetIntegerv", (OSMESAproc) OSMesaGetIntegerv },
     { "OSMesaGetDepthBuffer", (OSMESAproc) OSMesaGetDepthBuffer },
     { "OSMesaGetColorBuffer", (OSMESAproc) OSMesaGetColorBuffer },
+    { "OSMesaGetProcAddress", (OSMESAproc) OSMesaGetProcAddress },
     { "OSMesaColorClamp", (OSMESAproc) OSMesaColorClamp },
     { NULL, NULL }
 };
+
+
+GLAPI OSMESAproc GLAPIENTRY
+OSMesaGetProcAddress(const char *funcName)
+{
+    int i;
+    for (i = 0; functions[i].Name; i++) {
+	if (strcmp(functions[i].Name, funcName) == 0)
+	    return functions[i].Function;
+    }
+    return _glapi_get_proc_address(funcName);
+}
+
 
 GLAPI void GLAPIENTRY
 OSMesaColorClamp(GLboolean enable)
