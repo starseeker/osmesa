@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.18)
 # Set CMake project name
 project(OSMESA)
 
+add_definitions(-g)
+
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-O2 O2_COMPILER_FLAG)
 
@@ -18,10 +20,13 @@ if (HAVE_M_LIBRARY)
   set(M_LIBRARY m)
 endif (HAVE_M_LIBRARY)
 
-# The point is to be separate from system OpenGL,
-# so define the mangling headers to produce mgl_
-# prefixing
-add_definitions(-DUSE_MGL_NAMESPACE)
+# The point is to be separate from system OpenGL, so define the mangling
+# headers to produce mgl prefixing by default.  The glew example doesn't like
+# the mangling, so to build glew you must disable this option.
+option(OSMESA_NAME_MANGLING "Use OpenGL name prefixing to avoid conflicts.  (Note - incompatible with glew example.)" ON)
+if (OSMESA_NAME_MANGLING)
+  add_definitions(-DUSE_MGL_NAMESPACE)
+endif ()
 
 # The primary libosmesa library
 add_subdirectory(src)

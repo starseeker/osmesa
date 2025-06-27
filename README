@@ -1,5 +1,5 @@
 This is an extraction of the Mesa 3-D library's software rasterizer and
-offscreen rendering implementation of OpenGL 2.1 style APIs.  The 7.0.4 release
+offscreen rendering implementation of OpenGL 2.0 style APIs.  The 7.0.4 release
 of Mesa is the original source of this code, although it has been scrubbed down
 and modded a little for the purposes of minimalism.  (This fork is not
 affiliated with the Mesa project - for the modern implementation see

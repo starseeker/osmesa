@@ -480,8 +480,11 @@ add_function_name(const char * funcName)
 	_glapi_proc entrypoint = generate_entrypoint(~0);
 	if (entrypoint != NULL) {
 	    entry = & ExtEntryTable[NumExtEntryPoints];
-
-	    ExtEntryTable[NumExtEntryPoints].name = str_dup(funcName);
+	    size_t nlen = strlen(funcName);
+	    char *ncpy = (char *)malloc(nlen + 1);
+	    strncpy(ncpy, funcName, nlen);
+	    ncpy[nlen] = '\0';
+	    ExtEntryTable[NumExtEntryPoints].name = ncpy;
 	    ExtEntryTable[NumExtEntryPoints].parameter_signature = NULL;
 	    ExtEntryTable[NumExtEntryPoints].dispatch_offset = ~0;
 	    ExtEntryTable[NumExtEntryPoints].dispatch_stub = entrypoint;
@@ -626,7 +629,11 @@ _glapi_add_dispatch(const char * const * function_names,
 		}
 	    }
 
-	    entry[i]->parameter_signature = str_dup(real_sig);
+	    size_t nlen = strlen(real_sig);
+	    char *ncpy = (char *)malloc(nlen + 1);
+	    strncpy(ncpy, real_sig, nlen);
+	    ncpy[nlen] = '\0';
+	    entry[i]->parameter_signature = ncpy;
 	    fill_in_entrypoint_offset(entry[i]->dispatch_stub, offset);
 	    entry[i]->dispatch_offset = offset;
 	}
