@@ -198,15 +198,7 @@ typedef _W64 int ptrdiff_t;
  * GLEW_BUILD  is defined for building the DLL library.
  */
 
-#ifdef GLEW_STATIC
-#  define GLEWAPI extern
-#else
-#  ifdef GLEW_BUILD
-#    define GLEWAPI extern __declspec(dllexport)
-#  else
-#    define GLEWAPI extern __declspec(dllimport)
-#  endif
-#endif
+#define GLEWAPI extern
 
 #else /* _UNIX */
 
@@ -248,17 +240,7 @@ typedef _W64 int ptrdiff_t;
  * GLEW_STATIC is defined for static library.
  */
 
-#ifdef GLEW_STATIC
-#  define GLEWAPI extern
-#else
-#  if defined(__GNUC__) && __GNUC__>=4
-#   define GLEWAPI extern __attribute__ ((visibility("default")))
-#  elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
-#   define GLEWAPI extern __global
-#  else
-#   define GLEWAPI extern
-#  endif
-#endif
+#define GLEWAPI extern
 
 /* <glu.h> */
 #ifndef GLAPI
