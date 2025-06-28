@@ -1100,9 +1100,6 @@ static const char gl_string_table[] =
 
 
 #ifdef USE_MGL_NAMESPACE
-#define gl_dispatch_stub_343 mgl_dispatch_stub_343
-#define gl_dispatch_stub_344 mgl_dispatch_stub_344
-#define gl_dispatch_stub_345 mgl_dispatch_stub_345
 #define gl_dispatch_stub_356 mgl_dispatch_stub_356
 #define gl_dispatch_stub_357 mgl_dispatch_stub_357
 #define gl_dispatch_stub_358 mgl_dispatch_stub_358
@@ -1151,9 +1148,6 @@ static const char gl_string_table[] =
 
 /* FIXME: Having these (incorrect) prototypes here is ugly. */
 #if defined(NEED_FUNCTION_POINTER)
-extern void gl_dispatch_stub_343(void);
-extern void gl_dispatch_stub_344(void);
-extern void gl_dispatch_stub_345(void);
 extern void gl_dispatch_stub_356(void);
 extern void gl_dispatch_stub_357(void);
 extern void gl_dispatch_stub_358(void);
