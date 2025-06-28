@@ -37,7 +37,7 @@ jobs:
           cmake --build build --config Release
 
   windows_ninja:
-    name: Windows Ninja build
+    name: Windows Ninja
     runs-on: windows-latest
     strategy:
       fail-fast: true
