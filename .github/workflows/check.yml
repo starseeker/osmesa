@@ -36,6 +36,43 @@ jobs:
           call "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
           cmake --build build --config Release
 
+  windows_ninja:
+    name: Windows Ninja build
+    runs-on: windows-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Setup - CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Add cl.exe to PATH
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add github workspace to path
+        # https://github.community/t/deprecated-add-path/136621
+        run: echo "$ENV{GITHUB_WORKSPACE}" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+
+      - name: Build Directory setup
+        shell: powershell
+        run: |
+          cmake -E make_directory ./build_ninja
+
+      - name: Configure
+        shell: powershell
+        run: |
+          cmake -G Ninja -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe"  -S . -B build_ninja
+
+      - name: Build
+        shell: powershell
+        run: |
+          cd build_ninja; ninja -j1 -v
+
   linux:
     name: Ubuntu Latest GCC
     runs-on: ubuntu-latest
