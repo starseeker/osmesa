@@ -1,11 +1,11 @@
-name: OSMESA
+name: OSMESA No Name Mangling
 
 on: [push]
 
 jobs:
 
   windows:
-    name: Windows
+    name: Windows No Name Mangling
     runs-on: windows-latest
     strategy:
       fail-fast: true
@@ -37,7 +37,7 @@ jobs:
           cmake --build build --config Release
 
   linux:
-    name: Ubuntu Latest GCC
+    name: Ubuntu Latest GCC No Name Mangling
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -75,7 +75,7 @@ jobs:
           cmake --build build
 
   osx:
-    name: macOS Latest Clang
+    name: macOS Latest Clang No Name Mangling
     runs-on: macos-latest
     strategy:
       fail-fast: true
