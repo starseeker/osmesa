@@ -296,11 +296,7 @@ _glapi_get_dispatch(void)
  *** The rest of this file is pretty much concerned with GetProcAddress
  *** functionality.
  ***/
-#define NEED_FUNCTION_POINTER
-
-/* The code in this file is auto-generated with Python */
 #include "glprocs.h"
-
 
 /**
  * Search the table of static entrypoint functions for the named function
