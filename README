@@ -32,9 +32,21 @@ Source code changes are (or at least are intended to be) relatively minor and
 include things like static analyzer clean-ups and updating header includes to
 avoid accidentally including system versions of gl.h.
 
-For more detailed info, here's what a (slightly modified) glewinfo reports when
-compiled against libosmesa (see examples/glew for the version used to produce
-this output):
+
+
+A note about supported OpenGL versions:
+
+Most documentation for the 7.x series of Mesa3D mentions OpenGL 2.1.  The reason
+libosmesa does not report that version is the ARB_shading_language_120 feature
+was "not quite done" in Mesa3D v7.0.4.  ARB_pixel_buffer_object and
+EXT_texture_sRGB ARE present, but without GLSL v1.20 proper OpenGL v2.1 support
+is a no-go.  Implementing what is missing (or backporting it from newer Mesa3D
+versions) would most likely be a significant effort, and is not currently in
+the scope of the libosmesa effort.
+
+For more detailed info about what is supported, here's what a (slightly
+modified) glewinfo reports when compiled against libosmesa (see examples/glew
+for the version used to produce this output):
 
 ---------------------------
     GLEW Extension Info
