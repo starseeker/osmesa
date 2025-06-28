@@ -37,7 +37,11 @@ typedef struct {
     GLuint Offset;
 } glprocs_table_t;
 
-#define NAME_FUNC_OFFSET(n,f1,o) { n , (_glapi_proc) f1 , o }
+#ifdef USE_MGL_NAMESPACE
+#define NAME_FUNC_OFFSET(n,f,o) { n , (_glapi_proc) m##f , o }
+#else
+#define NAME_FUNC_OFFSET(n,f,o) { n , (_glapi_proc) f , o }
+#endif
 
 static const char gl_string_table[] =
     "glNewList\0"
@@ -2180,7 +2184,7 @@ static const glprocs_table_t static_functions[] = {
     NAME_FUNC_OFFSET(18698, glPointParameterivNV, _gloffset_PointParameterivNV),
     NAME_FUNC_OFFSET(18717, gl_dispatch_stub_749, _gloffset_BlendEquationSeparateEXT),
     NAME_FUNC_OFFSET(18741, gl_dispatch_stub_749, _gloffset_BlendEquationSeparateEXT),
-    NAME_FUNC_OFFSET(-1, NULL, 0)
+    {-1, NULL, 0}
 };
 
 #undef NAME_FUNC_OFFSET
