@@ -6,6 +6,8 @@ project(OSMESA)
 
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-O2 O2_COMPILER_FLAG)
+check_cxx_compiler_flag(-O3 O3_COMPILER_FLAG)
+option(OSMESA_FAST "Use faster math (with reduced consistency cross platform)" ON)
 
 find_package(Threads REQUIRED)
 if (CMAKE_USE_PTHREADS_INIT)

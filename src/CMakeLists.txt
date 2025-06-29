@@ -194,10 +194,11 @@ set_property(TARGET osmesa APPEND PROPERTY COMPILE_DEFINITIONS "UTIL_ARCH_LITTLE
 set_property(TARGET osmesa APPEND PROPERTY COMPILE_DEFINITIONS "LIBRARYBUILD")
 set_property(TARGET osmesa APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_EXPORTS")
 set_property(TARGET osmesa APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
-if (O2_COMPILER_FLAG)
-  # If we have the O2 flag, use it
+if (OSMESA_FAST AND O3_COMPILER_FLAG)
+  target_compile_options(osmesa PRIVATE "-O3")
+elseif (O2_COMPILER_FLAG)
   target_compile_options(osmesa PRIVATE "-O2")
-endif (O2_COMPILER_FLAG)
+endif ()
 
 # Local Variables:
 # tab-width: 8
