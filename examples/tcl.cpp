@@ -55,6 +55,15 @@ const char *DM_CANVAS = ".dm0";
 TCL_DECLARE_MUTEX(dilock)
 TCL_DECLARE_MUTEX(fblock)
 TCL_DECLARE_MUTEX(threadMutex)
+TCL_DECLARE_MUTEX(DmMutex)
+
+struct font_info {
+    int fontNormal = FONS_INVALID;
+    int fontItalic = FONS_INVALID;
+    int fontBold = FONS_INVALID;
+    int fontJapanese = FONS_INVALID;
+    FONScontext* fs = NULL;
+};
 
 /* Container holding image generation information - need to be able
  * to pass these to the update command */
@@ -94,6 +103,9 @@ struct img_data {
     // buffer size needed.
     int screen_width;
     int screen_height;
+
+    // Font info
+    struct font_info f;
 
     // Image info.  Reflects the currently requested parent image
     // size - the render thread may have a different size during
@@ -386,41 +398,9 @@ Torus(float innerRadius, float outerRadius, int sides, int rings)
 }
 
 void
-DrawText(int width, int height)
+DrawText(struct font_info *f, int width, int height)
 {
-    int fontNormal = FONS_INVALID;
-    int fontItalic = FONS_INVALID;
-    int fontBold = FONS_INVALID;
-    int fontJapanese = FONS_INVALID;
-    FONScontext* fs = NULL;
-    int glfons_width = (width > 800) ? 800 : width;
-    int glfons_height = (height > 800) ? 800 : height;
-    fs = glfonsCreate(glfons_width, glfons_height, FONS_ZERO_TOPLEFT);
-    if (fs == NULL) {
-	printf("Could not create stash.\n");
-	return;
-    }
-    fontNormal = fonsAddFont(fs, "sans", "../../examples/fontstash/DroidSerif-Regular.ttf");
-    if (fontNormal == FONS_INVALID) {
-	printf("Could not add font normal.\n");
-	return;
-    }
-    fontItalic = fonsAddFont(fs, "sans-italic", "../../examples/fontstash/DroidSerif-Italic.ttf");
-    if (fontItalic == FONS_INVALID) {
-	printf("Could not add font italic.\n");
-	return;
-    }
-    fontBold = fonsAddFont(fs, "sans-bold", "../../examples/fontstash/DroidSerif-Bold.ttf");
-    if (fontBold == FONS_INVALID) {
-	printf("Could not add font bold.\n");
-	return;
-    }
-    fontJapanese = fonsAddFont(fs, "sans-jp", "../../examples/fontstash/DroidSansJapanese.ttf");
-    if (fontJapanese == FONS_INVALID) {
-	printf("Could not add font japanese.\n");
-	return;
-    }
-
+    FONScontext *fs = f->fs;
     glDisable(GL_LIGHTING);
 
     float sx, sy, dx, dy, lh = 0;
@@ -459,24 +439,24 @@ DrawText(int width, int height)
     fonsClearState(fs);
 
     fonsSetSize(fs, 124.0f);
-    fonsSetFont(fs, fontNormal);
+    fonsSetFont(fs, f->fontNormal);
     fonsVertMetrics(fs, NULL, NULL, &lh);
     dx = sx;
     dy += lh;
     //dash(dx,dy);
 
     fonsSetSize(fs, 124.0f);
-    fonsSetFont(fs, fontNormal);
+    fonsSetFont(fs, f->fontNormal);
     fonsSetColor(fs, white);
     dx = fonsDrawText(fs, dx,dy,"The quick ",NULL);
 
     fonsSetSize(fs, 48.0f);
-    fonsSetFont(fs, fontItalic);
+    fonsSetFont(fs, f->fontItalic);
     fonsSetColor(fs, brown);
     dx = fonsDrawText(fs, dx,dy,"brown ",NULL);
 
     fonsSetSize(fs, 24.0f);
-    fonsSetFont(fs, fontNormal);
+    fonsSetFont(fs, f->fontNormal);
     fonsSetColor(fs, white);
     dx = fonsDrawText(fs, dx,dy,"fox ",NULL);
 
@@ -484,18 +464,18 @@ DrawText(int width, int height)
     dx = sx;
     dy += lh*1.2f;
     //dash(dx,dy);
-    fonsSetFont(fs, fontItalic);
+    fonsSetFont(fs, f->fontItalic);
     dx = fonsDrawText(fs, dx,dy,"jumps over ",NULL);
-    fonsSetFont(fs, fontBold);
+    fonsSetFont(fs, f->fontBold);
     dx = fonsDrawText(fs, dx,dy,"the lazy ",NULL);
-    fonsSetFont(fs, fontNormal);
+    fonsSetFont(fs, f->fontNormal);
     dx = fonsDrawText(fs, dx,dy,"dog.",NULL);
 
     dx = sx;
     dy += lh*1.2f;
     //dash(dx,dy);
     fonsSetSize(fs, 12.0f);
-    fonsSetFont(fs, fontNormal);
+    fonsSetFont(fs, f->fontNormal);
     fonsSetColor(fs, blue);
     fonsDrawText(fs, dx,dy,"Now is the time for all good men to come to the aid of the party.",NULL);
 
@@ -504,7 +484,7 @@ DrawText(int width, int height)
     dy += lh*1.2f*2;
     //dash(dx,dy);
     fonsSetSize(fs, 18.0f);
-    fonsSetFont(fs, fontItalic);
+    fonsSetFont(fs, f->fontItalic);
     fonsSetColor(fs, white);
     fonsDrawText(fs, dx,dy,"Ég get etið gler án þess að meiða mig.",NULL);
 
@@ -512,12 +492,12 @@ DrawText(int width, int height)
     dx = sx;
     dy += lh*1.2f;
     //dash(dx,dy);
-    fonsSetFont(fs, fontJapanese);
+    fonsSetFont(fs, f->fontJapanese);
     fonsDrawText(fs, dx,dy,"私はガラスを食べられます。それは私を傷つけません。",NULL);
 
     // Font alignment
     fonsSetSize(fs, 18.0f);
-    fonsSetFont(fs, fontNormal);
+    fonsSetFont(fs, f->fontNormal);
     fonsSetColor(fs, white);
 
     dx = 50; dy = 350;
@@ -550,7 +530,7 @@ DrawText(int width, int height)
     fonsSetAlign(fs, FONS_ALIGN_LEFT | FONS_ALIGN_BASELINE);
 
     fonsSetSize(fs, 60.0f);
-    fonsSetFont(fs, fontItalic);
+    fonsSetFont(fs, f->fontItalic);
     fonsSetColor(fs, white);
     fonsSetSpacing(fs, 5.0f);
     fonsSetBlur(fs, 10.0f);
@@ -559,7 +539,7 @@ DrawText(int width, int height)
     dy += 50.0f;
 
     fonsSetSize(fs, 18.0f);
-    fonsSetFont(fs, fontBold);
+    fonsSetFont(fs, f->fontBold);
     fonsSetColor(fs, black);
     fonsSetSpacing(fs, 0.0f);
     fonsSetBlur(fs, 3.0f);
@@ -571,7 +551,6 @@ DrawText(int width, int height)
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
-
 }
 
 static Tcl_ThreadCreateType
@@ -600,17 +579,6 @@ Dm_Render(ClientData clientData)
     // so that's what the remainder of this rendering pass will use.
     idata->dm_bwidth = idata->dm_width;
     idata->dm_bheight = idata->dm_height;
-
-    // If we have insufficient memory, allocate or reallocate a local
-    // buffer big enough for the purpose.  We use our own buffer for
-    // rendering to allow Tk full control over what it wants to do behind
-    // the scenes.  We need this memory to persist, so handle it from the
-    // management thread.
-    long b_minsize = idata->dm_bwidth * idata->dm_bheight * 4;
-    if (!idata->dmpixel || idata->dm_buff_size < b_minsize) {
-	idata->dmpixel = (unsigned char *)realloc(idata->dmpixel, 2*b_minsize*sizeof(char));
-	idata->dm_buff_size = b_minsize * 2;
-    }
 
     // Have the key values now, we can unlock and allow interactivity in
     // the parent.  We'll finish this rendering pass before paying any
@@ -664,8 +632,8 @@ Dm_Render(ClientData clientData)
     glPopMatrix();
     glPopMatrix();
 
-
-    DrawText(idata->dm_width, idata->dm_height);
+    // TODO - there seems to be some problem triggered by fonsDrawText
+    DrawText(&idata->f, idata->dm_width, idata->dm_height);
 
     /* This is very important!!!
      * Make sure buffered commands are finished!!!
@@ -716,6 +684,8 @@ Dm_Render(ClientData clientData)
     Tcl_ThreadQueueEvent(idata->dm_id, (Tcl_Event *) threadEventPtr, TCL_QUEUE_TAIL);
     Tcl_ThreadAlert(idata->dm_id);
     Tcl_MutexUnlock(&threadMutex);
+
+    Tcl_MutexUnlock(&DmMutex);
 
     // Render complete, we're done with this thread
     Tcl_ExitThread(TCL_OK);
@@ -847,6 +817,35 @@ Dm_Update_Manager(ClientData clientData)
 	exit(1);
     }
 
+
+    // Have context - set up font info
+    idata->f.fs = glfonsCreate(800, 800, FONS_ZERO_TOPLEFT);
+    if (idata->f.fs == NULL) {
+	printf("Could not create stash.\n");
+	exit(1);
+    }
+    idata->f.fontNormal = fonsAddFont(idata->f.fs, "sans", "../../examples/fontstash/DroidSerif-Regular.ttf");
+    if (idata->f.fontNormal == FONS_INVALID) {
+	printf("Could not add font normal.\n");
+	exit(1);
+    }
+    idata->f.fontItalic = fonsAddFont(idata->f.fs, "sans-italic", "../../examples/fontstash/DroidSerif-Italic.ttf");
+    if (idata->f.fontItalic == FONS_INVALID) {
+	printf("Could not add font italic.\n");
+	exit(1);
+    }
+    idata->f.fontBold = fonsAddFont(idata->f.fs, "sans-bold", "../../examples/fontstash/DroidSerif-Bold.ttf");
+    if (idata->f.fontBold == FONS_INVALID) {
+	printf("Could not add font bold.\n");
+	exit(1);
+    }
+    idata->f.fontJapanese = fonsAddFont(idata->f.fs, "sans-jp", "../../examples/fontstash/DroidSansJapanese.ttf");
+    if (idata->f.fontJapanese == FONS_INVALID) {
+	printf("Could not add font japanese.\n");
+	exit(1);
+    }
+
+
     idata->x = 0;
     idata->t = 0;
 
@@ -909,6 +908,7 @@ Dm_Update_Manager(ClientData clientData)
 
 	// Start a rendering thread.
 	Tcl_ThreadId threadID;
+	Tcl_MutexLock(&DmMutex);
 	if (Tcl_CreateThread(&threadID, Dm_Render, (ClientData)idata, TCL_THREAD_STACK_DEFAULT, TCL_THREAD_NOFLAGS) != TCL_OK) {
 	    std::cerr << "can't create dm render thread\n";
 	}
@@ -1010,8 +1010,6 @@ main(int argc, const char *argv[])
     idata->dm_render_running = 0;
     idata->dm_render_ready = 0;
     idata->shutdown = 0;
-    idata->dm_buff_size = 0;
-    idata->dmpixel = NULL;
     idata->fb_buff_size = 0;
     idata->fbpixel = NULL;
     idata->parent_id = Tcl_GetCurrentThread();
@@ -1034,6 +1032,11 @@ main(int argc, const char *argv[])
     // Store the screen size
     idata->screen_width = WidthOfScreen(Tk_Screen(tkwin));
     idata->screen_height = HeightOfScreen(Tk_Screen(tkwin));
+
+    // Rather than try to resize the memory while multiple threads are trying to draw,
+    // make a container big enough to support our screen and be done with it.
+    idata->dm_buff_size = idata->screen_width * idata->screen_height * sizeof(GLubyte)*4;
+    idata->dmpixel = (unsigned char *)malloc(idata->dm_buff_size*sizeof(char));
 
     // Create the (initially empty) Tcl/Tk Photo (a.k.a color image) we will
     // use as our rendering canvas for the images.
