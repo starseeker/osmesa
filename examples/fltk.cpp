@@ -9,6 +9,10 @@
  *
  * Self contained example of working with image data
  * in FLTK in C/C++
+ *
+ * TODO - look into
+ * https://www.seriss.com/people/erco/fltk/#AnimateDrawing
+ * https://www.seriss.com/people/erco/fltk/#OpenGlInterp
  */
 
 
