@@ -15,6 +15,25 @@ if (NOT OSMESA_NAME_MANGLING)
   add_subdirectory(glew)
 endif()
 
+# TODO - do a version of the Tcl multithreading test using FLTK and C++ threading
+find_package(FLTK)
+if (FLTK_FOUND)
+  if(NOT TARGET fltk::fltk)
+    add_library(fltk::fltk INTERFACE IMPORTED)
+    set_target_properties(
+      fltk::fltk
+      PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "${FLTK_INCLUDE_DIR}"
+      INTERFACE_LINK_LIBRARIES "${FLTK_LIBRARIES}"
+      )
+  endif()
+
+  add_executable(fltktest fltk.cpp)
+  target_link_libraries(fltktest osmesa fltk::fltk ${M_LIBRARY})
+  set_property(TARGET fltktest APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
+
+endif (FLTK_FOUND)
+
 find_package(SDL2)
 if (SDL2_FOUND)
 
