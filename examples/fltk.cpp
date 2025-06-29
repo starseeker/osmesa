@@ -11,6 +11,8 @@
  * in FLTK in C/C++
  */
 
+
+
 // Code from the fontstash example is copyright Mikko Mononen:
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages
@@ -25,6 +27,54 @@
 // 2. Altered source versions must be plainly marked as such, and must not be
 //      misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
+
+
+
+// The Torus routine is extracted from GLUT, which per
+// https://github.com/markkilgard/glut/blob/master/lib/glut/glut_shapes.c
+// has the following license:
+//
+// (c) Copyright Mark J. Kilgard, 1994, 1997, 2001.
+// (c) Copyright 1993, Silicon Graphics, Inc.
+//
+// ALL RIGHTS RESERVED
+//
+// Permission to use, copy, modify, and distribute this software
+// for any purpose and without fee is hereby granted, provided
+// that the above copyright notice appear in all copies and that
+// both the copyright notice and this permission notice appear in
+// supporting documentation, and that the name of Silicon
+// Graphics, Inc. not be used in advertising or publicity
+// pertaining to distribution of the software without specific,
+// written prior permission.
+//
+// THE MATERIAL EMBODIED ON THIS SOFTWARE IS PROVIDED TO YOU
+// "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, EXPRESS, IMPLIED OR
+// OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF
+// MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  IN NO
+// EVENT SHALL SILICON GRAPHICS, INC.  BE LIABLE TO YOU OR ANYONE
+// ELSE FOR ANY DIRECT, SPECIAL, INCIDENTAL, INDIRECT OR
+// CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES WHATSOEVER,
+// INCLUDING WITHOUT LIMITATION, LOSS OF PROFIT, LOSS OF USE,
+// SAVINGS OR REVENUE, OR THE CLAIMS OF THIRD PARTIES, WHETHER OR
+// NOT SILICON GRAPHICS, INC.  HAS BEEN ADVISED OF THE POSSIBILITY
+// OF SUCH LOSS, HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// ARISING OUT OF OR IN CONNECTION WITH THE POSSESSION, USE OR
+// PERFORMANCE OF THIS SOFTWARE.
+//
+// US Government Users Restricted Rights
+//
+// Use, duplication, or disclosure by the Government is subject to
+// restrictions set forth in FAR 52.227.19(c)(2) or subparagraph
+// (c)(1)(ii) of the Rights in Technical Data and Computer
+// Software clause at DFARS 252.227-7013 and/or in similar or
+// successor clauses in the FAR or the DOD or NASA FAR
+// Supplement.  Unpublished-- rights reserved under the copyright
+// laws of the United States.  Contractor/manufacturer is Silicon
+// Graphics, Inc., 2011 N.  Shoreline Blvd., Mountain View, CA
+// 94039-7311.
+//
+// OpenGL(TM) is a trademark of Silicon Graphics, Inc.
 
 #include <random>
 #include <iostream>
@@ -91,11 +141,6 @@ main(int argc, const char *argv[])
     int width = 800;
     int height = 600;
 
-    std::default_random_engine gen;
-    std::uniform_int_distribution<int> colors(0,1);
-    std::uniform_int_distribution<int> vals(50,255);
-
-
     OSMesaContext ctx = OSMesaCreateContextExt(OSMESA_RGBA, 16, 0, 0, NULL);
     if (!ctx) {
 	printf("OSMesaCreateContext failed!\n");
@@ -112,22 +157,15 @@ main(int argc, const char *argv[])
 	exit(1);
     }
 
-    glViewport( 0, 0, width, height);
-    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+    glViewport(0, 0, width, height);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f );
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //////////////////////////////////////////////////////////////////////////////
-    // Rendering operation - this is where the work of a DM/FB render pass
-    // would occur in a real application
-    //////////////////////////////////////////////////////////////////////////////
-
-    // Clear color buffer
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-    GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
-    GLfloat rand_mat[]  = { 1, 0, 0, 1.0 };
+    GLfloat light_ambient[] = {0.0, 0.0, 0.0, 1.0};
+    GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};
+    GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0};
+    GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};
+    GLfloat rand_mat[]  = {1, 0, 0, 1.0};
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
@@ -143,7 +181,7 @@ main(int argc, const char *argv[])
     glOrtho(-2.5, 2.5, -2.5, 2.5, -10.0, 10.0);
     glMatrixMode(GL_MODELVIEW);
 
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glPushMatrix();
     glRotatef(20.0, 1.0, 0.0, 0.0);
@@ -151,7 +189,7 @@ main(int argc, const char *argv[])
     glPushMatrix();
     glTranslatef(-0.75, 0.5, 0.0);
     glRotatef(90.0, 1.0, 0.0, 0.0);
-    glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, rand_mat );
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, rand_mat);
     Torus(0.275, 0.85, 20, 20);
     glPopMatrix();
     glPopMatrix();
@@ -161,7 +199,6 @@ main(int argc, const char *argv[])
      */
     glFinish();
 
-    // Sample RGB image data (a red square)
     size_t parea = Fl::w() * Fl::h();
     long dm_buff_size = parea * sizeof(GLubyte)*4;
     unsigned char *dmpixel = (unsigned char *)malloc(dm_buff_size*sizeof(char));
@@ -187,20 +224,10 @@ main(int argc, const char *argv[])
     }
 
     Fl_Window *w = new Fl_Window(width, height, "OSMesa");
-    if (!w) {
-	std::cerr << "Failed to create FLTK window\n";
-	exit(1);
-    }
-
     w->begin();
-
-    // Create Fl_RGB_Image from the data
     Fl_RGB_Image *img = new Fl_RGB_Image((const uchar *)dmpixel, width, height, 4);
-
-    // Create an Fl_Box to display the image
     Fl_Box *b = new Fl_Box(0, 0, width, height);
-    b->image(img); // Set the image
-
+    b->image(img);
     w->end();
     w->show();
     return Fl::run();
