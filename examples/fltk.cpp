@@ -161,6 +161,9 @@ main(int argc, const char *argv[])
 	exit(1);
     }
 
+    // Avoid the need to flip pixels
+    OSMesaPixelStore(OSMESA_Y_UP, 0);
+
     glViewport(0, 0, width, height);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f );
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -208,24 +211,6 @@ main(int argc, const char *argv[])
     unsigned char *dmpixel = (unsigned char *)malloc(dm_buff_size*sizeof(char));
 
     glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, dmpixel);
-
-    // Image will be upside-down from FLTK's perspective, flip manually using an RGBA
-    // variation of the math from:
-    // https://github.com/vallentin/GLCollection/blob/master/screenshot.cpp
-    //
-    // Apparently this is necessary, since OpenGL doesn't provide a built-in way
-    // to handle this:
-    // https://www.opengl.org/archives/resources/features/KilgardTechniques/oglpitfall/
-    for (int y = 0; y < height / 2; ++y) {
-	for (int x = 0; x < width; ++x) {
-	    int top = (x + y * width) * 4;
-	    int bottom = (x + (height - y - 1) * width) * 4;
-	    char rgba[4];
-	    memcpy(rgba, dmpixel + top, sizeof(rgba));
-	    memcpy(dmpixel + top, dmpixel + bottom, sizeof(rgba));
-	    memcpy(dmpixel + bottom, rgba, sizeof(rgba));
-	}
-    }
 
     Fl_Window *w = new Fl_Window(width, height, "OSMesa");
     w->begin();

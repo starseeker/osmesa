@@ -96,6 +96,9 @@ int main(int argc, char **argv)
 	exit(1);
     }
 
+    // Avoid the need to flip pixels
+    OSMesaPixelStore(OSMESA_Y_UP, 0);
+
     int fontNormal = FONS_INVALID;
     int fontItalic = FONS_INVALID;
     int fontBold = FONS_INVALID;
@@ -300,24 +303,6 @@ int main(int argc, char **argv)
 
 	// SDL pixel buffer expects BGRA data, not RGBA data - read accordingly
 	glReadPixels(0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, screen->pixels);
-
-	// Image will be upside-down from SDL's perspective, flip manually using an RGBA
-	// variation of the math from:
-	// https://github.com/vallentin/GLCollection/blob/master/screenshot.cpp
-	//
-	// Apparently this is necessary, since OpenGL doesn't provide a built-in way
-	// to handle this:
-	// https://www.opengl.org/archives/resources/features/KilgardTechniques/oglpitfall/
-	for (int y = 0; y < height / 2; ++y) {
-	    for (int x = 0; x < width; ++x) {
-		int top = (x + y * width) * 4;
-		int bottom = (x + (height - y - 1) * width) * 4;
-		char rgba[4];
-		memcpy(rgba, screen->pixels + top, sizeof(rgba));
-		memcpy(screen->pixels + top, screen->pixels + bottom, sizeof(rgba));
-		memcpy(screen->pixels + bottom, rgba, sizeof(rgba));
-	    }
-	}
 
 	if (SDL_MUSTLOCK(screen)) {
 	    SDL_UnlockSurface(screen);
