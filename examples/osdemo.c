@@ -414,29 +414,10 @@ sph(double angle)
 static void
 write_png(const char *filename, GLubyte *buffer, int width, int height)
 {
-    const int binary = 0;
     FILE *f = fopen( filename, "wb" );
 
     if (f) {
-	// Image will be upside-down from SDL's perspective, flip manually using an RGBA
-	// variation of the math from:
-	// https://github.com/vallentin/GLCollection/blob/master/screenshot.cpp
-	//
-	// Apparently this is necessary, since OpenGL doesn't provide a built-in way
-	// to handle this:
-	// https://www.opengl.org/archives/resources/features/KilgardTechniques/oglpitfall/
-	for (int y = 0; y < height / 2; ++y) {
-	    for (int x = 0; x < width; ++x) {
-		int top = (x + y * width) * 4;
-		int bottom = (x + (height - y - 1) * width) * 4;
-		char rgba[4];
-		memcpy(rgba, buffer + top, sizeof(rgba));
-		memcpy(buffer + top, buffer + bottom, sizeof(rgba));
-		memcpy(buffer + bottom, rgba, sizeof(rgba));
-	    }
-	}
 	svpng(f, width, height, buffer, 1);
-
 	fclose(f);
     }
 }
@@ -478,6 +459,9 @@ main(int argc, const char *argv[])
 	printf("OSMesaMakeCurrent failed!\n");
 	return 0;
     }
+
+    // Avoid the need to flip pixels
+    OSMesaPixelStore(OSMESA_Y_UP, 0);
 
     {
 	int z, s, a;
