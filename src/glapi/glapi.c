@@ -669,9 +669,15 @@ _glapi_get_proc_address(const char *funcName)
     struct _glapi_function * entry;
     GLuint i;
 
-#ifdef MANGLE
-    if (funcName[0] != 'm' || funcName[1] != 'g' || funcName[2] != 'l')
-	return NULL;
+#ifdef USE_MGL_NAMESPACE
+    /* With name mangling, accept both "mgl" and "gl" prefixed names */
+    if (funcName[0] == 'm' && funcName[1] == 'g' && funcName[2] == 'l') {
+        /* mgl prefixed name - this is the expected case */
+    } else if (funcName[0] == 'g' && funcName[1] == 'l') {
+        /* gl prefixed name - we'll handle this below */
+    } else {
+        return NULL;
+    }
 #else
     if (funcName[0] != 'g' || funcName[1] != 'l')
 	return NULL;
@@ -690,6 +696,21 @@ _glapi_get_proc_address(const char *funcName)
 	if (func)
 	    return func;
     }
+
+#ifdef USE_MGL_NAMESPACE
+    /* If we're using name mangling, try alternative name lookups */
+    if (funcName[0] == 'm' && funcName[1] == 'g' && funcName[2] == 'l') {
+        /* If looking for "mglGenFramebuffersEXT", try "glGenFramebuffersEXT" in the static table */
+        const char *unmangledName = funcName + 1; /* skip the 'm' prefix */
+        const _glapi_proc func = get_static_proc_address(unmangledName);
+        if (func)
+            return func;
+    } else if (funcName[0] == 'g' && funcName[1] == 'l') {
+        /* If looking for "glGenFramebuffersEXT", try it directly (already done above),
+         * but this path handles the case where someone uses "gl" prefix with mangling enabled */
+        /* The static table search above should have handled this already */
+    }
+#endif
 
     entry = add_function_name(funcName);
     return (entry == NULL) ? NULL : entry->dispatch_stub;
