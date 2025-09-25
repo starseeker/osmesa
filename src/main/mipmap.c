@@ -897,20 +897,24 @@ _mesa_generate_mipmap(GLcontext *ctx, GLenum target,
 	    dstHeight == srcHeight &&
 	    dstDepth == srcDepth) {
 	    /* all done */
-	    if (srcData)
-		free((void *)srcData);
-	    if (dstData)
-		free(dstData);
+	    if (srcImage->IsCompressed) {
+		if (srcData)
+		    free((void *)srcData);
+		if (dstData)
+		    free(dstData);
+	    }
 	    return;
 	}
 
 	/* get dest gl_texture_image */
 	dstImage = _mesa_get_tex_image(ctx, texObj, target, level + 1);
 	if (!dstImage) {
-	    if (srcData)
-		free((void *)srcData);
-	    if (dstData)
-		free(dstData);
+	    if (srcImage->IsCompressed) {
+		if (srcData)
+		    free((void *)srcData);
+		if (dstData)
+		    free(dstData);
+	    }
 	    _mesa_error(ctx, GL_OUT_OF_MEMORY, "generating mipmaps");
 	    return;
 	}
@@ -965,13 +969,6 @@ _mesa_generate_mipmap(GLcontext *ctx, GLenum target,
 	    dstImage->Data = _mesa_alloc_texmemory(dstWidth * dstHeight
 						   * dstDepth * bytesPerTexel);
 
-	    /* If we're assigning these below, free up anything which has
-	     * been allocated first so we don't leak it */
-	    if (srcData)
-		free((void *)srcData);
-	    if (dstData)
-		free(dstData);
-
 	    if (!dstImage->Data) {
 		_mesa_error(ctx, GL_OUT_OF_MEMORY, "generating mipmaps");
 		return;
@@ -1011,10 +1008,12 @@ _mesa_generate_mipmap(GLcontext *ctx, GLenum target,
 		break;
 	    default:
 		_mesa_problem(ctx, "bad dimensions in _mesa_generate_mipmaps");
-		if (srcData)
-		    free((void *)srcData);
-		if (dstData)
-		    free(dstData);
+		if (srcImage->IsCompressed) {
+		    if (srcData)
+			free((void *)srcData);
+		    if (dstData)
+			free(dstData);
+		}
 		return;
 	}
 
@@ -1042,10 +1041,12 @@ _mesa_generate_mipmap(GLcontext *ctx, GLenum target,
 
     } /* loop over mipmap levels */
 
-    if (srcData)
-	free((void *)srcData);
-    if (dstData)
-	free(dstData);
+    if (srcImage->IsCompressed) {
+	if (srcData)
+	    free((void *)srcData);
+	if (dstData)
+	    free(dstData);
+    }
 }
 
 
