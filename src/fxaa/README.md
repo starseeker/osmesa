@@ -10,7 +10,14 @@ FXAA is a post-processing anti-aliasing technique that smooths jagged edges in r
 
 - `fxaa_cpu.h` - Public API header for FXAA processing
 - `fxaa_cpu.c` - CPU implementation of FXAA algorithm
-- `postprocess_fxaa.c` - Example integration hook (requires OSMesa context modifications)
+- `postprocess_fxaa.c` - Example integration hook (NOT COMPILED - reference only)
+- `CMakeLists.txt` - Build configuration for fxaa_cpu library
+- `README.md` - This file
+- `VTK_COMPARISON.md` - Comparison with VTK's FXAA implementation
+
+Note: `postprocess_fxaa.c` is example code showing how FXAA could be integrated
+directly into OSMesa. It's not compiled as part of the build. For current usage,
+apply FXAA manually in your application after rendering (see `osdemo_fxaa` example).
 
 ## Usage
 
