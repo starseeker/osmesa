@@ -1,17 +1,23 @@
-#include "fxaa_cpu.h"
-
 /* 
  * EXAMPLE INTEGRATION CODE - NOT COMPILED
  * 
  * This is example code showing how FXAA could be integrated directly into OSMesa.
  * It would require:
- * 1. Adding an 'enable_fxaa' field to the OSMesaContext structure
+ * 1. Adding an 'enable_fxaa' field to the OSMesaContext structure in osmesa.c
  * 2. Calling this function from osmesa.c after rendering
  * 3. Adding a public API to enable/disable FXAA
+ * 4. Including the internal OSMesa headers to access the context structure
  * 
  * For now, users should apply FXAA manually in their application code after
  * rendering, as demonstrated in examples/osdemo_fxaa.c
+ * 
+ * This file is intentionally not included in CMakeLists.txt and will not compile
+ * as-is without OSMesa internals.
  */
+
+#if 0  /* BEGIN NON-COMPILED EXAMPLE CODE */
+
+#include "fxaa_cpu.h"
 
 /* Example integration hook: call after rasterization before client reads buffer */
 void osmesa_apply_fxaa_if_enabled(OSMesaContext ctx, uint8_t* rgba, int w, int h, int stride) {
@@ -29,3 +35,5 @@ void osmesa_apply_fxaa_if_enabled(OSMesaContext ctx, uint8_t* rgba, int w, int h
     /* In-place processing */
     fxaa_apply_rgba8(&img, &img, &params);
 }
+
+#endif  /* END NON-COMPILED EXAMPLE CODE */
