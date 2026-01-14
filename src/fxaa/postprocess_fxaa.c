@@ -1,18 +1,25 @@
 /* 
- * EXAMPLE INTEGRATION CODE - NOT COMPILED
+ * FXAA INTEGRATION - NOW FULLY INTEGRATED INTO OSMESA
  * 
- * This is example code showing how FXAA could be integrated directly into OSMesa.
- * It would require:
- * 1. Adding an 'enable_fxaa' field to the OSMesaContext structure in osmesa.c
- * 2. Calling this function from osmesa.c after rendering
- * 3. Adding a public API to enable/disable FXAA
- * 4. Including the internal OSMesa headers to access the context structure
+ * This example code has been successfully integrated into OSMesa.
+ * The functionality is now available through the OSMesaFXAAEnable() API.
  * 
- * For now, users should apply FXAA manually in their application code after
- * rendering, as demonstrated in examples/osdemo_fxaa.c
+ * Usage:
+ *   OSMesaContext ctx = OSMesaCreateContextExt(OSMESA_RGBA, 16, 0, 0, NULL);
+ *   OSMesaMakeCurrent(ctx, buffer, GL_UNSIGNED_BYTE, width, height);
+ *   OSMesaFXAAEnable(GL_TRUE);  // Enable FXAA
+ *   render_scene();
+ *   glFinish();  // FXAA is applied automatically
  * 
- * This file is intentionally not included in CMakeLists.txt and will not compile
- * as-is without OSMesa internals.
+ * Features:
+ * - Integrated into osmesa.c with driver hook in glFinish()
+ * - Uses sRGB color space conversion (matching VTK) for better quality
+ * - Public API: OSMesaFXAAEnable(GLboolean enable)
+ * - Applied automatically when rendering completes
+ * 
+ * See FXAA_INTEGRATION.md for full documentation.
+ * 
+ * Original example code preserved below for reference:
  */
 
 #if 0  /* BEGIN NON-COMPILED EXAMPLE CODE */
