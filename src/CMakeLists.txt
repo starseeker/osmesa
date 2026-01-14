@@ -200,6 +200,9 @@ elseif (O2_COMPILER_FLAG)
   target_compile_options(osmesa PRIVATE "-O2")
 endif ()
 
+# FXAA CPU post-processing library
+add_subdirectory(fxaa)
+
 # Local Variables:
 # tab-width: 8
 # mode: cmake
