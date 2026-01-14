@@ -298,7 +298,16 @@ static inline float srgb_to_linear(float srgb) {
 }
 
 void fxaa_apply_rgba8_srgb(const ImageRGBA8* in, ImageRGBA8* out, const FXAAParams* p) {
-    /* Allocate temporary buffer for sRGB conversion */
+    /* 
+     * Allocate temporary buffers for sRGB conversion.
+     * 
+     * NOTE: This implementation uses two temporary buffers for clarity and correctness.
+     * Future optimization: Could reduce memory overhead by:
+     *   1. Processing in tiles to reduce buffer size
+     *   2. Combining conversion passes where possible
+     *   3. Using SIMD for faster conversion
+     * Current approach prioritizes correctness and code clarity.
+     */
     size_t bufferSize = (size_t)in->strideBytes * (size_t)in->height;
     uint8_t* srgbBuffer = (uint8_t*)malloc(bufferSize);
     if (!srgbBuffer) return;
