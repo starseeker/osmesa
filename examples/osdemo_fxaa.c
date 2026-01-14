@@ -144,6 +144,11 @@ int main(int argc, const char *argv[])
 {
     if (argc < 2) {
         fprintf(stderr, "Usage:\n  osdemo_fxaa <base_filename> [width height]\n");
+        fprintf(stderr, "\nThis demo now uses the integrated OSMesa FXAA feature.\n");
+        fprintf(stderr, "It writes:\n");
+        fprintf(stderr, "  <base>_nofxaa.png   - original render (no FXAA)\n");
+        fprintf(stderr, "  <base>_fxaa.png     - FXAA with sRGB conversion (matching VTK)\n");
+        fprintf(stderr, "  <base>_compare.png  - side-by-side comparison\n");
         return 1;
     }
     const char *base = argv[1];
@@ -173,7 +178,7 @@ int main(int argc, const char *argv[])
     /* Avoid the need to flip pixels (origin at top-left) */
     OSMesaPixelStore(OSMESA_Y_UP, 0);
 
-    /* Render aliasing-prone scene */
+    /* Render aliasing-prone scene WITHOUT FXAA first */
     render_aliasing_scene(Width, Height);
 
     /* Keep a copy of the pre-FXAA buffer */
@@ -187,16 +192,11 @@ int main(int argc, const char *argv[])
     }
     memcpy(buffer_pre, buffer, (size_t)Height * rowBytes);
 
-    /* Apply FXAA in-place */
-    ImageRGBA8 img = { buffer, Width, Height, Width * 4 };
-    FXAAParams params = {
-        .RelativeContrastThreshold = 0.125f,
-        .HardContrastThreshold = 0.0625f,
-        .SubpixelBlendLimit = 0.75f,
-        .SubpixelContrastThreshold = 0.25f,
-        .EndpointSearchIterations = 12
-    };
-    fxaa_apply_rgba8(&img, &img, &params);
+    /* Now enable integrated FXAA and re-render the scene */
+    OSMesaFXAAEnable(GL_TRUE);
+    
+    /* Clear and re-render with FXAA enabled */
+    render_aliasing_scene(Width, Height);
 
     /* Write individual images */
     char fn_nofxaa[512], fn_fxaa[512], fn_compare[512];
@@ -229,5 +229,7 @@ int main(int argc, const char *argv[])
     OSMesaDestroyContext(ctx);
 
     fprintf(stdout, "Wrote:\n  %s\n  %s\n  %s\n", fn_nofxaa, fn_fxaa, fn_compare);
+    fprintf(stdout, "\nNote: FXAA was applied using OSMesaFXAAEnable() with sRGB color space\n");
+    fprintf(stdout, "conversion (matching VTK's approach for improved visual quality).\n");
     return 0;
 }

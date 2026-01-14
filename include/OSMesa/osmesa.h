@@ -269,6 +269,25 @@ OSMesaGetProcAddress(const char *funcName);
 GLAPI void GLAPIENTRY
 OSMesaColorClamp(GLboolean enable);
 
+
+/**
+ * Enable/disable FXAA (Fast Approximate Anti-Aliasing) post-processing.
+ * When enabled, FXAA is applied automatically after rendering operations
+ * that flush the pipeline (e.g., glFinish, glFlush).
+ * 
+ * FXAA smooths jagged edges in rendered images with minimal performance impact.
+ * It works best on high-contrast edges and geometric shapes.
+ * 
+ * The implementation converts to sRGB color space before processing (matching
+ * VTK's approach) and converts back to linear RGB after processing.
+ * 
+ * Input:  enable - GL_TRUE to enable FXAA, GL_FALSE to disable
+ * 
+ * New in Mesa 6.5.3+
+ */
+GLAPI void GLAPIENTRY
+OSMesaFXAAEnable(GLboolean enable);
+
 #ifdef __cplusplus
 }
 #endif

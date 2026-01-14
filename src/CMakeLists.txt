@@ -9,6 +9,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/swrast_setup
   ${CMAKE_CURRENT_SOURCE_DIR}/shader/grammar
   ${CMAKE_CURRENT_SOURCE_DIR}/shader/slang
+  ${CMAKE_CURRENT_SOURCE_DIR}/fxaa
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
@@ -185,7 +186,11 @@ set(osmesa_srcs
   vbo/vbo_split_inplace.c
   )
 
+# FXAA CPU post-processing library
+add_subdirectory(fxaa)
+
 add_library(osmesa SHARED ${osmesa_srcs})
+target_link_libraries(osmesa fxaa_cpu ${M_LIBRARY})
 install(TARGETS osmesa
   RUNTIME DESTINATION ${BIN_DIR}
   LIBRARY DESTINATION ${LIB_DIR}
@@ -199,9 +204,6 @@ if (OSMESA_FAST AND O3_COMPILER_FLAG)
 elseif (O2_COMPILER_FLAG)
   target_compile_options(osmesa PRIVATE "-O2")
 endif ()
-
-# FXAA CPU post-processing library
-add_subdirectory(fxaa)
 
 # Local Variables:
 # tab-width: 8

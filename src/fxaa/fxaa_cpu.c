@@ -281,3 +281,81 @@ void fxaa_apply_rgba8(const ImageRGBA8* in, ImageRGBA8* out, const FXAAParams* p
         free(temp);
     }
 }
+
+/* sRGB <-> Linear RGB conversion functions */
+static inline float linear_to_srgb(float linear) {
+    if (linear <= 0.0031308f)
+        return linear * 12.92f;
+    else
+        return 1.055f * powf(linear, 1.0f/2.4f) - 0.055f;
+}
+
+static inline float srgb_to_linear(float srgb) {
+    if (srgb <= 0.04045f)
+        return srgb / 12.92f;
+    else
+        return powf((srgb + 0.055f) / 1.055f, 2.4f);
+}
+
+void fxaa_apply_rgba8_srgb(const ImageRGBA8* in, ImageRGBA8* out, const FXAAParams* p) {
+    /* Allocate temporary buffer for sRGB conversion */
+    size_t bufferSize = (size_t)in->strideBytes * (size_t)in->height;
+    uint8_t* srgbBuffer = (uint8_t*)malloc(bufferSize);
+    if (!srgbBuffer) return;
+    
+    /* Convert linear RGB to sRGB */
+    for (int y = 0; y < in->height; ++y) {
+        for (int x = 0; x < in->width; ++x) {
+            const uint8_t* pIn = in->rgba + y * in->strideBytes + x * 4;
+            uint8_t* pSrgb = srgbBuffer + y * in->strideBytes + x * 4;
+            
+            float r = pIn[0] / 255.0f;
+            float g = pIn[1] / 255.0f;
+            float b = pIn[2] / 255.0f;
+            
+            r = linear_to_srgb(r);
+            g = linear_to_srgb(g);
+            b = linear_to_srgb(b);
+            
+            pSrgb[0] = (uint8_t)FXAA_CLAMP(lroundf(r * 255.0f), 0, 255);
+            pSrgb[1] = (uint8_t)FXAA_CLAMP(lroundf(g * 255.0f), 0, 255);
+            pSrgb[2] = (uint8_t)FXAA_CLAMP(lroundf(b * 255.0f), 0, 255);
+            pSrgb[3] = pIn[3]; /* Preserve alpha */
+        }
+    }
+    
+    /* Apply FXAA in sRGB space */
+    ImageRGBA8 srgbImg = { srgbBuffer, in->width, in->height, in->strideBytes };
+    uint8_t* fxaaBuffer = (uint8_t*)malloc(bufferSize);
+    if (!fxaaBuffer) {
+        free(srgbBuffer);
+        return;
+    }
+    ImageRGBA8 fxaaImg = { fxaaBuffer, in->width, in->height, in->strideBytes };
+    
+    fxaa_apply_rgba8(&srgbImg, &fxaaImg, p);
+    
+    /* Convert sRGB back to linear RGB */
+    for (int y = 0; y < in->height; ++y) {
+        for (int x = 0; x < in->width; ++x) {
+            const uint8_t* pSrgb = fxaaBuffer + y * in->strideBytes + x * 4;
+            uint8_t* pOut = out->rgba + y * out->strideBytes + x * 4;
+            
+            float r = pSrgb[0] / 255.0f;
+            float g = pSrgb[1] / 255.0f;
+            float b = pSrgb[2] / 255.0f;
+            
+            r = srgb_to_linear(r);
+            g = srgb_to_linear(g);
+            b = srgb_to_linear(b);
+            
+            pOut[0] = (uint8_t)FXAA_CLAMP(lroundf(r * 255.0f), 0, 255);
+            pOut[1] = (uint8_t)FXAA_CLAMP(lroundf(g * 255.0f), 0, 255);
+            pOut[2] = (uint8_t)FXAA_CLAMP(lroundf(b * 255.0f), 0, 255);
+            pOut[3] = pSrgb[3]; /* Preserve alpha */
+        }
+    }
+    
+    free(srgbBuffer);
+    free(fxaaBuffer);
+}

@@ -430,17 +430,29 @@ main(int argc, const char *argv[])
     int Width = 400;
     int Height = 400;
     const char *filename = NULL;
+    int enable_fxaa = 0;
 
     if (argc < 2) {
 	fprintf(stderr, "Usage:\n");
-	fprintf(stderr, "  osdemo filename [width height]\n");
+	fprintf(stderr, "  osdemo filename [width height] [-fxaa]\n");
+	fprintf(stderr, "Options:\n");
+	fprintf(stderr, "  -fxaa    Enable FXAA anti-aliasing post-processing\n");
 	return 0;
     }
 
     filename = argv[1];
-    if (argc == 4) {
-	Width = atoi(argv[2]);
-	Height = atoi(argv[3]);
+    
+    /* Parse remaining arguments */
+    for (int i = 2; i < argc; i++) {
+        if (strcmp(argv[i], "-fxaa") == 0) {
+            enable_fxaa = 1;
+        } else if (i == 2 && argc >= 4 && argv[i][0] != '-') {
+            Width = atoi(argv[i]);
+            if (i+1 < argc && argv[i+1][0] != '-') {
+                Height = atoi(argv[i+1]);
+                i++; /* skip height arg */
+            }
+        }
     }
 
     ctx = OSMesaCreateContextExt( OSMESA_RGBA, 16, 0, 0, NULL );
@@ -462,6 +474,12 @@ main(int argc, const char *argv[])
 
     // Avoid the need to flip pixels
     OSMesaPixelStore(OSMESA_Y_UP, 0);
+    
+    /* Enable FXAA if requested */
+    if (enable_fxaa) {
+        OSMesaFXAAEnable(GL_TRUE);
+        printf("FXAA anti-aliasing enabled\n");
+    }
 
     {
 	int z, s, a;

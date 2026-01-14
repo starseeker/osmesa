@@ -25,6 +25,14 @@ typedef struct {
 /* Apply FXAA to an RGBA8 buffer (can be in-place if out == in). */
 void fxaa_apply_rgba8(const ImageRGBA8* in, ImageRGBA8* out, const FXAAParams* p);
 
+/* 
+ * Apply FXAA with sRGB color space conversion (matching VTK's approach).
+ * Converts linear RGB to sRGB before FXAA, then back to linear after.
+ * This improves visual quality by processing in perceptual color space.
+ * Can be in-place if out == in.
+ */
+void fxaa_apply_rgba8_srgb(const ImageRGBA8* in, ImageRGBA8* out, const FXAAParams* p);
+
 #ifdef __cplusplus
 }
 #endif
