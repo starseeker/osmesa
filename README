@@ -33,7 +33,82 @@ include things like static analyzer clean-ups and updating header includes to
 avoid accidentally including system versions of gl.h.
 
 
+--------------------------------------------------------------------------------
+Fast Approximate Anti-Aliasing
 
+VTK-style Fast Approximate Anti-Aliasing) has been integrated into OSMesa as an
+optional built-in post-processing feature. This integration provides automatic
+edge smoothing for rendered images with minimal performance impact.
+
+## Features
+
+- **Integrated API**: Enable/disable FXAA with a single function call
+- **sRGB Color Space**: Processes images in sRGB color space (matching VTK's approach) for improved visual quality
+- **Automatic Application**: FXAA is applied automatically when `glFinish()` is called
+- **VTK-Compatible**: Uses the same algorithm and color space handling as VTK's GPU-based FXAA
+
+## API
+
+### OSMesaFXAAEnable
+
+```c
+void OSMesaFXAAEnable(GLboolean enable);
+```
+
+Enable or disable FXAA post-processing for the current OSMesa context.
+
+**Parameters:**
+- `enable`: `GL_TRUE` to enable FXAA, `GL_FALSE` to disable
+
+**Example:**
+```c
+OSMesaContext ctx = OSMesaCreateContextExt(OSMESA_RGBA, 16, 0, 0, NULL);
+OSMesaMakeCurrent(ctx, buffer, GL_UNSIGNED_BYTE, width, height);
+
+/* Enable FXAA */
+OSMesaFXAAEnable(GL_TRUE);
+
+/* Render scene */
+render_scene();
+
+/* FXAA is automatically applied when glFinish() is called */
+glFinish();
+```
+
+## Color Space Handling
+
+The implementation converts rendered images through the following pipeline:
+
+1. **Linear RGB** (from OpenGL rendering)
+2. **→ sRGB** (via gamma encoding for FXAA processing)
+3. **FXAA processing** (in sRGB color space)
+4. **→ Linear RGB** (via gamma decoding for final output)
+
+This matches VTK's approach and provides better visual quality than processing
+in linear space, as FXAA's luminance calculations work better in perceptual
+color space.
+
+## Limitations
+
+- Currently only works with RGBA 8-bit unsigned byte buffers
+- FXAA is applied in-place on the framebuffer
+- Uses fixed parameters tuned for general-purpose rendering
+
+## FXAA Parameters
+
+The implementation uses the following parameters (matching VTK defaults):
+
+- **RelativeContrastThreshold**: 0.125
+- **HardContrastThreshold**: 0.0625
+- **SubpixelBlendLimit**: 0.75
+- **SubpixelContrastThreshold**: 0.25
+- **EndpointSearchIterations**: 12
+
+These parameters provide a good balance between quality and performance for typical 3D rendering scenarios.
+
+
+
+--------------------------------------------------------------------------------
 A note about supported OpenGL versions:
 
 Most documentation for the 7.x series of Mesa3D mentions OpenGL 2.1.  The reason

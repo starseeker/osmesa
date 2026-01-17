@@ -9,12 +9,14 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/swrast_setup
   ${CMAKE_CURRENT_SOURCE_DIR}/shader/grammar
   ${CMAKE_CURRENT_SOURCE_DIR}/shader/slang
+  ${CMAKE_CURRENT_SOURCE_DIR}/fxaa
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
 set(osmesa_srcs
   drivers/common/driverfuncs.c
   drivers/osmesa/osmesa.c
+  fxaa/fxaa_cpu.c
   glapi/glapi.c
   glapi/glthread.c
   main/accum.c
@@ -186,6 +188,7 @@ set(osmesa_srcs
   )
 
 add_library(osmesa SHARED ${osmesa_srcs})
+target_link_libraries(osmesa ${M_LIBRARY})
 install(TARGETS osmesa
   RUNTIME DESTINATION ${BIN_DIR}
   LIBRARY DESTINATION ${LIB_DIR}

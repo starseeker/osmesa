@@ -8,6 +8,10 @@ add_executable(osdemo osdemo.c)
 target_link_libraries(osdemo osmesa ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 set_property(TARGET osdemo APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
 
+add_executable(osdemo_fxaa osdemo_fxaa.c)
+target_link_libraries(osdemo_fxaa osmesa ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+set_property(TARGET osdemo_fxaa APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
+
 # TODO -see if we can adapt this as an example:
 # https://github.com/danginsburg/opengles3-book/blob/master/Chapter_2/Hello_Triangle/Hello_Triangle.c
 

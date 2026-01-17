@@ -51,6 +51,7 @@
 #include "tnl/t_pipeline.h"
 #include "drivers/common/driverfuncs.h"
 #include "vbo/vbo.h"
+#include "fxaa/fxaa_cpu.h"
 
 
 
@@ -68,6 +69,7 @@ struct osmesa_context {
     GLvoid *rowaddr[MAX_HEIGHT];	/*< address of first pixel in each image row */
     GLboolean yup;		/*< TRUE  -> Y increases upward */
     /*< FALSE -> Y increases downward */
+    GLboolean enable_fxaa;	/*< TRUE to enable FXAA post-processing */
 };
 
 
@@ -111,6 +113,66 @@ osmesa_update_state(GLcontext *ctx, GLuint new_state)
     _swsetup_InvalidateState(ctx, new_state);
     _tnl_InvalidateState(ctx, new_state);
     _vbo_InvalidateState(ctx, new_state);
+}
+
+
+/**
+ * Apply FXAA post-processing if enabled.
+ * Called from glFinish to process the final rendered image.
+ */
+static void
+osmesa_apply_fxaa(OSMesaContext osmesa)
+{
+    if (!osmesa || !osmesa->enable_fxaa)
+        return;
+    
+    /* Only apply FXAA to RGBA8 buffers */
+    if (osmesa->rb->DataType != GL_UNSIGNED_BYTE)
+        return;
+    
+    /* Only apply to RGBA format for now */
+    if (osmesa->format != OSMESA_RGBA)
+        return;
+    
+    GLint width = osmesa->rb->Width;
+    GLint height = osmesa->rb->Height;
+    uint8_t* buffer = (uint8_t*)osmesa->rb->Data;
+    
+    if (!buffer || width <= 0 || height <= 0)
+        return;
+    
+    /* Calculate stride based on row length */
+    GLint rowlength = osmesa->userRowLength ? osmesa->userRowLength : width;
+    GLint strideBytes = rowlength * 4;  /* 4 bytes per RGBA pixel */
+    
+    /* Set up FXAA parameters (matching VTK defaults) */
+    FXAAParams params = {
+        .RelativeContrastThreshold = 0.125f,
+        .HardContrastThreshold = 0.0625f,
+        .SubpixelBlendLimit = 0.75f,
+        .SubpixelContrastThreshold = 0.25f,
+        .EndpointSearchIterations = 12
+    };
+    
+    /* Apply FXAA with sRGB color space conversion (matching VTK) */
+    ImageRGBA8 img = { buffer, width, height, strideBytes };
+    fxaa_apply_rgba8_srgb(&img, &img, &params);
+}
+
+
+/**
+ * Called by glFinish to flush rendering and apply post-processing.
+ */
+static void
+osmesa_finish(GLcontext *ctx)
+{
+    OSMesaContext osmesa = OSMESA_CONTEXT(ctx);
+    
+    /* Finish all pending rendering operations first */
+    _swrast_flush(ctx);
+    
+    /* Apply FXAA if enabled */
+    osmesa_apply_fxaa(osmesa);
 }
 
 
@@ -1186,6 +1248,7 @@ OSMesaCreateContextExt(GLenum format, GLint depthBits, GLint stencilBits,
 	functions.GetString = get_string;
 	functions.UpdateState = osmesa_update_state;
 	functions.GetBufferSize = NULL;
+	functions.Finish = osmesa_finish;
 
 	if (!_mesa_initialize_context(&osmesa->mesa,
 				      osmesa->gl_visual,
@@ -1230,6 +1293,7 @@ OSMesaCreateContextExt(GLenum format, GLint depthBits, GLint stencilBits,
 	osmesa->gInd = gind;
 	osmesa->bInd = bind;
 	osmesa->aInd = aind;
+	osmesa->enable_fxaa = GL_FALSE;
 
 	/* Initialize the software rasterizer and helper modules. */
 	{
@@ -1547,6 +1611,7 @@ static struct name_function functions[] = {
     { "OSMesaGetColorBuffer", (OSMESAproc) OSMesaGetColorBuffer },
     { "OSMesaGetProcAddress", (OSMESAproc) OSMesaGetProcAddress },
     { "OSMesaColorClamp", (OSMESAproc) OSMesaColorClamp },
+    { "OSMesaFXAAEnable", (OSMESAproc) OSMesaFXAAEnable },
     { NULL, NULL }
 };
 
@@ -1573,6 +1638,19 @@ OSMesaColorClamp(GLboolean enable)
     } else {
 	osmesa->mesa.Color.ClampFragmentColor = GL_FIXED_ONLY_ARB;
     }
+}
+
+
+GLAPI void GLAPIENTRY
+OSMesaFXAAEnable(GLboolean enable)
+{
+    OSMesaContext osmesa = OSMesaGetCurrentContext();
+    
+    if (!osmesa) {
+        return;
+    }
+    
+    osmesa->enable_fxaa = enable;
 }
 
 
