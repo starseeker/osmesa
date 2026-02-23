@@ -89,10 +89,6 @@ lookup_statevar(const char *var, GLint index1, GLint index2, const char *field,
     GLuint i;
     GLboolean isMatrix = GL_FALSE;
 
-    /* Sanity */
-    if (!field)
-	return -1;
-
     for (i = 0; i < STATE_LENGTH; i++) {
 	tokens[i] = 0;
     }
@@ -108,6 +104,13 @@ lookup_statevar(const char *var, GLint index1, GLint index2, const char *field,
 	    break;
 	}
     }
+
+    /* Sanity: non-matrix state variables require a field accessor.
+     * Matrices are accessed by index (e.g. gl_ModelViewMatrixTranspose[col])
+     * and do not carry a field name, so we exempt them from this check.
+     */
+    if (!isMatrix && !field)
+	return -1;
 
     if (isMatrix) {
 	if (tokens[0] == STATE_TEXTURE_MATRIX) {
@@ -379,7 +382,6 @@ _slang_alloc_statevar(slang_ir_node *n,
     var = (char *) n->Var->a_name;
 
     pos = lookup_statevar(var, index1, index2, field, &swizzle, paramList);
-    assert(pos >= 0);
     if (pos >= 0) {
 	n0->Store->Index = pos;
 	n0->Store->Swizzle = swizzle;
