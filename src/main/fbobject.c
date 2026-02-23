@@ -1213,6 +1213,11 @@ framebuffer_texture(GLcontext *ctx, const char *caller, GLenum target,
 	_mesa_remove_attachment(ctx, att);
     }
     _glthread_UNLOCK_MUTEX(fb->Mutex);
+
+    /* Some subsequent GL commands may depend on the framebuffer's visual
+     * after the binding is updated.  Update visual info now.
+     */
+    _mesa_update_framebuffer_visual(fb);
 }
 
 

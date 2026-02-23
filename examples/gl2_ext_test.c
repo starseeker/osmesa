@@ -159,6 +159,7 @@ test_extension_strings(void)
 	"GL_ARB_vertex_buffer_object",
 	"GL_EXT_multi_draw_arrays",
 	"GL_ARB_depth_texture",
+	"GL_EXT_framebuffer_object",
 	"GL_ARB_shadow",
 	"GL_EXT_texture_rectangle",
 	"GL_ARB_fragment_program",
@@ -1190,6 +1191,119 @@ test_depth_texture(int W, int H)
 }
 
 /* ------------------------------------------------------------------ */
+/* Test 13b: GL_ARB_depth_texture + GL_EXT_framebuffer_object         */
+/* Render to an FBO that has a depth texture attached, then verify    */
+/* that depth values are correctly written and readable.              */
+/* ------------------------------------------------------------------ */
+static void
+test_fbo_depth_texture(int W, int H)
+{
+    printf("Test 13b: GL_ARB_depth_texture + FBO interaction\n");
+
+    if (!check_ext("GL_ARB_depth_texture"))
+	return;
+    if (!check_ext("GL_EXT_framebuffer_object"))
+	return;
+
+    clear_errors();
+
+    /* Create a depth texture (initially filled with 1.0) */
+    GLuint depth_tex;
+    glGenTextures(1, &depth_tex);
+    glBindTexture(GL_TEXTURE_2D, depth_tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, W, H, 0,
+		 GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+    /* Create a color texture for the FBO color attachment */
+    GLuint color_tex;
+    glGenTextures(1, &color_tex);
+    glBindTexture(GL_TEXTURE_2D, color_tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, W, H, 0,
+		 GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+    /* Create and bind FBO */
+    GLuint fbo;
+    glGenFramebuffersEXT(1, &fbo);
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
+    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
+			      GL_TEXTURE_2D, depth_tex, 0);
+    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+			      GL_TEXTURE_2D, color_tex, 0);
+
+    GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+    if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
+	fprintf(stderr, "  SKIP: FBO incomplete (status=0x%x)\n",
+		(unsigned)status);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	glDeleteFramebuffersEXT(1, &fbo);
+	glDeleteTextures(1, &depth_tex);
+	glDeleteTextures(1, &color_tex);
+	return;
+    }
+
+    /* Render a quad at z_ndc=0.5 with GL_ALWAYS depth test.
+     * With the default depth range [0,1], a vertex at z_ndc=0.5
+     * maps to window depth = (0.5 + 1.0) / 2.0 = 0.75.
+     */
+    glViewport(0, 0, W, H);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glDepthMask(GL_TRUE);
+    glClearDepth(1.0);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+    glBegin(GL_QUADS);
+    glVertex3f(-1.0f, -1.0f,  0.5f);
+    glVertex3f( 1.0f, -1.0f,  0.5f);
+    glVertex3f( 1.0f,  1.0f,  0.5f);
+    glVertex3f(-1.0f,  1.0f,  0.5f);
+    glEnd();
+    glFinish();
+
+    /* Read back the depth value from the FBO */
+    GLfloat depth_val = 0.0f;
+    glReadPixels(W/2, H/2, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth_val);
+
+    glDisable(GL_DEPTH_TEST);
+
+    /* Restore default framebuffer */
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    glDeleteFramebuffersEXT(1, &fbo);
+    glDeleteTextures(1, &depth_tex);
+    glDeleteTextures(1, &color_tex);
+
+    if (check_gl_error("test_fbo_depth_texture")) {
+	fprintf(stderr, "  FAIL: GL error during FBO depth texture test\n");
+	g_failed++;
+	return;
+    }
+
+    /* depth=0.75 with tolerance for float precision */
+    int ok = (depth_val > 0.74f && depth_val < 0.76f);
+    if (ok) {
+	printf("  PASS: FBO depth texture write/read: depth=%.4f (~0.75)\n",
+	       depth_val);
+    } else {
+	fprintf(stderr,
+		"  FAIL: FBO depth texture write/read: depth=%.4f, "
+		"expected ~0.75\n", depth_val);
+	g_failed++;
+    }
+}
+
+/* ------------------------------------------------------------------ */
 /* Test 14: GL_ARB_shadow                                              */
 /* ------------------------------------------------------------------ */
 static void
@@ -1766,6 +1880,7 @@ main(void)
     test_vbo(W, H);
     test_multi_draw_arrays(W, H);
     test_depth_texture(W, H);
+    test_fbo_depth_texture(W, H);
     test_shadow(W, H);
     test_texture_rectangle(W, H);
     test_vertex_program(W, H);
