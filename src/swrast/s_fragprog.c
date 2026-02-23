@@ -29,6 +29,7 @@
 
 #include "s_fragprog.h"
 #include "s_span.h"
+#include "s_texfilter.h"
 
 
 /**
@@ -38,20 +39,29 @@ static void
 fetch_texel(GLcontext *ctx, const GLfloat texcoord[4], GLfloat lambda,
 	    GLuint unit, GLfloat color[4])
 {
-    GLchan rgba[4];
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
     const struct gl_texture_object *texObj = ctx->Texture.Unit[unit]._Current;
 
     if (texObj)
 	lambda = CLAMP(lambda, texObj->MinLod, texObj->MaxLod);
 
-    /* XXX use a float-valued TextureSample routine here!!! */
-    swrast->TextureSample[unit](ctx, texObj, 1, (const GLfloat(*)[4]) texcoord,
-				&lambda, &rgba);
-    color[0] = CHAN_TO_FLOAT(rgba[0]);
-    color[1] = CHAN_TO_FLOAT(rgba[1]);
-    color[2] = CHAN_TO_FLOAT(rgba[2]);
-    color[3] = CHAN_TO_FLOAT(rgba[3]);
+    if (texObj && texObj->Image[0][texObj->BaseLevel] &&
+	texObj->Image[0][texObj->BaseLevel]->TexFormat->DataType == GL_FLOAT &&
+	swrast->TextureSampleF[unit]) {
+	/* Use float-valued sampler to preserve HDR precision */
+	swrast->TextureSampleF[unit](ctx, texObj, 1,
+				     (const GLfloat(*)[4]) texcoord,
+				     &lambda, (GLfloat(*)[4]) color);
+    } else {
+	GLchan rgba[4];
+	swrast->TextureSample[unit](ctx, texObj, 1,
+				    (const GLfloat(*)[4]) texcoord,
+				    &lambda, &rgba);
+	color[0] = CHAN_TO_FLOAT(rgba[0]);
+	color[1] = CHAN_TO_FLOAT(rgba[1]);
+	color[2] = CHAN_TO_FLOAT(rgba[2]);
+	color[3] = CHAN_TO_FLOAT(rgba[3]);
+    }
 }
 
 
@@ -66,8 +76,7 @@ fetch_texel_deriv(GLcontext *ctx, const GLfloat texcoord[4],
 {
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
     const struct gl_texture_object *texObj = ctx->Texture.Unit[unit]._Current;
-    GLfloat lambda;
-    GLchan rgba[4];
+    GLfloat lambda = 0.0F;
 
     if (texObj) {
 	const struct gl_texture_image *texImg = texObj->Image[0][texObj->BaseLevel];
@@ -84,12 +93,21 @@ fetch_texel_deriv(GLcontext *ctx, const GLfloat texcoord[4],
 	lambda = CLAMP(lambda, texObj->MinLod, texObj->MaxLod);
     }
 
-    swrast->TextureSample[unit](ctx, texObj, 1, (const GLfloat(*)[4]) texcoord,
-				&lambda, &rgba);
-    color[0] = CHAN_TO_FLOAT(rgba[0]);
-    color[1] = CHAN_TO_FLOAT(rgba[1]);
-    color[2] = CHAN_TO_FLOAT(rgba[2]);
-    color[3] = CHAN_TO_FLOAT(rgba[3]);
+    if (texObj && texObj->Image[0][texObj->BaseLevel] &&
+	texObj->Image[0][texObj->BaseLevel]->TexFormat->DataType == GL_FLOAT &&
+	swrast->TextureSampleF[unit]) {
+	swrast->TextureSampleF[unit](ctx, texObj, 1,
+				     (const GLfloat(*)[4]) texcoord,
+				     &lambda, (GLfloat(*)[4]) color);
+    } else {
+	GLchan rgba[4];
+	swrast->TextureSample[unit](ctx, texObj, 1, (const GLfloat(*)[4]) texcoord,
+				    &lambda, &rgba);
+	color[0] = CHAN_TO_FLOAT(rgba[0]);
+	color[1] = CHAN_TO_FLOAT(rgba[1]);
+	color[2] = CHAN_TO_FLOAT(rgba[2]);
+	color[3] = CHAN_TO_FLOAT(rgba[3]);
+    }
 }
 
 

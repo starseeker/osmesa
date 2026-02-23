@@ -480,8 +480,10 @@ _swrast_invalidate_state(GLcontext *ctx, GLbitfield new_state)
 	swrast->BlendFunc = _swrast_validate_blend_func;
 
     if (new_state & _SWRAST_NEW_TEXTURE_SAMPLE_FUNC)
-	for (i = 0 ; i < ctx->Const.MaxTextureImageUnits ; i++)
+	for (i = 0 ; i < ctx->Const.MaxTextureImageUnits ; i++) {
 	    swrast->TextureSample[i] = NULL;
+	    swrast->TextureSampleF[i] = NULL;
+	}
 }
 
 
@@ -497,6 +499,7 @@ _swrast_update_texture_samplers(GLcontext *ctx)
 	 * function that just returns opaque black (0,0,0,1).
 	 */
 	swrast->TextureSample[u] = _swrast_choose_texture_sample_func(ctx, tObj);
+	swrast->TextureSampleF[u] = _swrast_choose_texture_sample_func_f(ctx, tObj);
     }
 }
 
@@ -779,8 +782,10 @@ _swrast_CreateContext(GLcontext *ctx)
     swrast->_IntegerAccumMode = GL_FALSE;
     swrast->_IntegerAccumScaler = 0.0;
 
-    for (i = 0; i < MAX_TEXTURE_IMAGE_UNITS; i++)
+    for (i = 0; i < MAX_TEXTURE_IMAGE_UNITS; i++) {
 	swrast->TextureSample[i] = NULL;
+	swrast->TextureSampleF[i] = NULL;
+    }
 
     swrast->SpanArrays = MALLOC_STRUCT(sw_span_arrays);
     if (!swrast->SpanArrays) {

@@ -1577,17 +1577,27 @@ _swrast_write_rgba_span(GLcontext *ctx, SWspan *span)
 		    _swrast_mask_rgba_span(ctx, rb, span);
 		}
 
+		/* When the renderbuffer is GL_FLOAT and ChanType is also
+		 * GL_FLOAT (fragment program output), the actual pixel data
+		 * lives in attribs[FRAG_ATTRIB_COL0], not in rgba (which is
+		 * a GLchan pointer into the 8-bit colour arrays).             */
+		const void *colorData =
+		    (rb->DataType == GL_FLOAT &&
+		     span->array->ChanType == GL_FLOAT)
+		    ? (const void *) span->array->attribs[FRAG_ATTRIB_COL0]
+		    : (const void *) span->array->rgba;
+
 		if (span->arrayMask & SPAN_XY) {
 		    /* array of pixel coords */
 		    ASSERT(rb->PutValues);
 		    rb->PutValues(ctx, rb, span->end,
 				  span->array->x, span->array->y,
-				  span->array->rgba, span->array->mask);
+				  colorData, span->array->mask);
 		} else {
 		    /* horizontal run of pixels */
 		    ASSERT(rb->PutRow);
 		    rb->PutRow(ctx, rb, span->end, span->x, span->y,
-			       span->array->rgba,
+			       colorData,
 			       span->writeAll ? NULL: span->array->mask);
 		}
 

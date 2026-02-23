@@ -403,9 +403,9 @@ const struct gl_texture_format _mesa_texformat_rgba_float32 = {
     0,					/* StencilBits */
     4 * sizeof(GLfloat),			/* TexelBytes */
     _mesa_texstore_rgba_float32,		/* StoreTexImageFunc */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel1D */
+    fetch_texel_1d_rgba_f32,		/* FetchTexel1D */
+    fetch_texel_2d_rgba_f32,		/* FetchTexel2D */
+    fetch_texel_3d_rgba_f32,		/* FetchTexel3D */
     fetch_texel_1d_f_rgba_f32,		/* FetchTexel1Df */
     fetch_texel_2d_f_rgba_f32,		/* FetchTexel2Df */
     fetch_texel_3d_f_rgba_f32,		/* FetchTexel3Df */
@@ -427,9 +427,9 @@ const struct gl_texture_format _mesa_texformat_rgba_float16 = {
     0,					/* StencilBits */
     4 * sizeof(GLhalfARB),		/* TexelBytes */
     _mesa_texstore_rgba_float16,		/* StoreTexImageFunc */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel1D */
+    fetch_texel_1d_rgba_f16,		/* FetchTexel1D */
+    fetch_texel_2d_rgba_f16,		/* FetchTexel2D */
+    fetch_texel_3d_rgba_f16,		/* FetchTexel3D */
     fetch_texel_1d_f_rgba_f16,		/* FetchTexel1Df */
     fetch_texel_2d_f_rgba_f16,		/* FetchTexel2Df */
     fetch_texel_3d_f_rgba_f16,		/* FetchTexel3Df */
@@ -451,9 +451,9 @@ const struct gl_texture_format _mesa_texformat_rgb_float32 = {
     0,					/* StencilBits */
     3 * sizeof(GLfloat),			/* TexelBytes */
     _mesa_texstore_rgba_float32,/*yes*/	/* StoreTexImageFunc */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel1D */
+    fetch_texel_1d_rgb_f32,		/* FetchTexel1D */
+    fetch_texel_2d_rgb_f32,		/* FetchTexel2D */
+    fetch_texel_3d_rgb_f32,		/* FetchTexel3D */
     fetch_texel_1d_f_rgb_f32,		/* FetchTexel1Df */
     fetch_texel_2d_f_rgb_f32,		/* FetchTexel2Df */
     fetch_texel_3d_f_rgb_f32,		/* FetchTexel3Df */
@@ -475,9 +475,9 @@ const struct gl_texture_format _mesa_texformat_rgb_float16 = {
     0,					/* StencilBits */
     3 * sizeof(GLhalfARB),		/* TexelBytes */
     _mesa_texstore_rgba_float16,/*yes*/	/* StoreTexImageFunc */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel1D */
+    fetch_texel_1d_rgb_f16,		/* FetchTexel1D */
+    fetch_texel_2d_rgb_f16,		/* FetchTexel2D */
+    fetch_texel_3d_rgb_f16,		/* FetchTexel3D */
     fetch_texel_1d_f_rgb_f16,		/* FetchTexel1Df */
     fetch_texel_2d_f_rgb_f16,		/* FetchTexel2Df */
     fetch_texel_3d_f_rgb_f16,		/* FetchTexel3Df */
@@ -499,9 +499,9 @@ const struct gl_texture_format _mesa_texformat_alpha_float32 = {
     0,					/* StencilBits */
     1 * sizeof(GLfloat),			/* TexelBytes */
     _mesa_texstore_rgba_float32,/*yes*/	/* StoreTexImageFunc */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel1D */
+    fetch_texel_1d_alpha_f32,		/* FetchTexel1D */
+    fetch_texel_2d_alpha_f32,		/* FetchTexel2D */
+    fetch_texel_3d_alpha_f32,		/* FetchTexel3D */
     fetch_texel_1d_f_alpha_f32,		/* FetchTexel1Df */
     fetch_texel_2d_f_alpha_f32,		/* FetchTexel2Df */
     fetch_texel_3d_f_alpha_f32,		/* FetchTexel3Df */
@@ -523,9 +523,9 @@ const struct gl_texture_format _mesa_texformat_alpha_float16 = {
     0,					/* StencilBits */
     1 * sizeof(GLhalfARB),		/* TexelBytes */
     _mesa_texstore_rgba_float16,/*yes*/	/* StoreTexImageFunc */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel1D */
+    fetch_texel_1d_alpha_f16,		/* FetchTexel1D */
+    fetch_texel_2d_alpha_f16,		/* FetchTexel2D */
+    fetch_texel_3d_alpha_f16,		/* FetchTexel3D */
     fetch_texel_1d_f_alpha_f16,		/* FetchTexel1Df */
     fetch_texel_2d_f_alpha_f16,		/* FetchTexel2Df */
     fetch_texel_3d_f_alpha_f16,		/* FetchTexel3Df */
@@ -547,9 +547,9 @@ const struct gl_texture_format _mesa_texformat_luminance_float32 = {
     0,					/* StencilBits */
     1 * sizeof(GLfloat),			/* TexelBytes */
     _mesa_texstore_rgba_float32,/*yes*/	/* StoreTexImageFunc */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel2D */
-    NULL,				/* FetchTexel3D */
+    fetch_texel_1d_luminance_f32,	/* FetchTexel1D */
+    fetch_texel_2d_luminance_f32,	/* FetchTexel2D */
+    fetch_texel_3d_luminance_f32,	/* FetchTexel3D */
     fetch_texel_1d_f_luminance_f32,	/* FetchTexel1Df */
     fetch_texel_2d_f_luminance_f32,	/* FetchTexel2Df */
     fetch_texel_3d_f_luminance_f32,	/* FetchTexel3Df */
@@ -571,9 +571,9 @@ const struct gl_texture_format _mesa_texformat_luminance_float16 = {
     0,					/* StencilBits */
     1 * sizeof(GLhalfARB),		/* TexelBytes */
     _mesa_texstore_rgba_float16,/*yes*/	/* StoreTexImageFunc */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel2D */
-    NULL,				/* FetchTexel3D */
+    fetch_texel_1d_luminance_f16,	/* FetchTexel1D */
+    fetch_texel_2d_luminance_f16,	/* FetchTexel2D */
+    fetch_texel_3d_luminance_f16,	/* FetchTexel3D */
     fetch_texel_1d_f_luminance_f16,	/* FetchTexel1Df */
     fetch_texel_2d_f_luminance_f16,	/* FetchTexel2Df */
     fetch_texel_3d_f_luminance_f16,	/* FetchTexel3Df */
@@ -595,9 +595,9 @@ const struct gl_texture_format _mesa_texformat_luminance_alpha_float32 = {
     0,					/* StencilBits */
     2 * sizeof(GLfloat),			/* TexelBytes */
     _mesa_texstore_rgba_float32,		/* StoreTexImageFunc */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel2D */
-    NULL,				/* FetchTexel3D */
+    fetch_texel_1d_luminance_alpha_f32,	/* FetchTexel1D */
+    fetch_texel_2d_luminance_alpha_f32,	/* FetchTexel2D */
+    fetch_texel_3d_luminance_alpha_f32,	/* FetchTexel3D */
     fetch_texel_1d_f_luminance_alpha_f32,/* FetchTexel1Df */
     fetch_texel_2d_f_luminance_alpha_f32,/* FetchTexel2Df */
     fetch_texel_3d_f_luminance_alpha_f32,/* FetchTexel3Df */
@@ -619,9 +619,9 @@ const struct gl_texture_format _mesa_texformat_luminance_alpha_float16 = {
     0,					/* StencilBits */
     2 * sizeof(GLhalfARB),		/* TexelBytes */
     _mesa_texstore_rgba_float16,		/* StoreTexImageFunc */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel2D */
-    NULL,				/* FetchTexel3D */
+    fetch_texel_1d_luminance_alpha_f16,	/* FetchTexel1D */
+    fetch_texel_2d_luminance_alpha_f16,	/* FetchTexel2D */
+    fetch_texel_3d_luminance_alpha_f16,	/* FetchTexel3D */
     fetch_texel_1d_f_luminance_alpha_f16,/* FetchTexel1Df */
     fetch_texel_2d_f_luminance_alpha_f16,/* FetchTexel2Df */
     fetch_texel_3d_f_luminance_alpha_f16,/* FetchTexel3Df */
@@ -643,9 +643,9 @@ const struct gl_texture_format _mesa_texformat_intensity_float32 = {
     0,					/* StencilBits */
     1 * sizeof(GLfloat),			/* TexelBytes */
     _mesa_texstore_rgba_float32,/*yes*/	/* StoreTexImageFunc */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel2D */
-    NULL,				/* FetchTexel3D */
+    fetch_texel_1d_intensity_f32,	/* FetchTexel1D */
+    fetch_texel_2d_intensity_f32,	/* FetchTexel2D */
+    fetch_texel_3d_intensity_f32,	/* FetchTexel3D */
     fetch_texel_1d_f_intensity_f32,	/* FetchTexel1Df */
     fetch_texel_2d_f_intensity_f32,	/* FetchTexel2Df */
     fetch_texel_3d_f_intensity_f32,	/* FetchTexel3Df */
@@ -667,9 +667,9 @@ const struct gl_texture_format _mesa_texformat_intensity_float16 = {
     0,					/* StencilBits */
     1 * sizeof(GLhalfARB),		/* TexelBytes */
     _mesa_texstore_rgba_float16,/*yes*/	/* StoreTexImageFunc */
-    NULL,				/* FetchTexel1D */
-    NULL,				/* FetchTexel2D */
-    NULL,				/* FetchTexel3D */
+    fetch_texel_1d_intensity_f16,	/* FetchTexel1D */
+    fetch_texel_2d_intensity_f16,	/* FetchTexel2D */
+    fetch_texel_3d_intensity_f16,	/* FetchTexel3D */
     fetch_texel_1d_f_intensity_f16,	/* FetchTexel1Df */
     fetch_texel_2d_f_intensity_f16,	/* FetchTexel2Df */
     fetch_texel_3d_f_intensity_f16,	/* FetchTexel3Df */

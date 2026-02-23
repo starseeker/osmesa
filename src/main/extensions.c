@@ -68,7 +68,7 @@ static const struct {
     { OFF, "GL_ARB_texture_env_combine",        F(ARB_texture_env_combine) },
     { OFF, "GL_ARB_texture_env_crossbar",       F(ARB_texture_env_crossbar) },
     { OFF, "GL_ARB_texture_env_dot3",           F(ARB_texture_env_dot3) },
-    { OFF, "GL_MESAX_texture_float",            F(ARB_texture_float) },
+    { OFF, "GL_ARB_texture_float",              F(ARB_texture_float) },
     { OFF, "GL_ARB_texture_mirrored_repeat",    F(ARB_texture_mirrored_repeat)},
     { OFF, "GL_ARB_texture_non_power_of_two",   F(ARB_texture_non_power_of_two)},
     { OFF, "GL_ARB_texture_rectangle",          F(NV_texture_rectangle) },
@@ -209,7 +209,7 @@ _mesa_enable_sw_extensions(GLcontext *ctx)
     ctx->Extensions.ARB_texture_env_combine = GL_TRUE;
     ctx->Extensions.ARB_texture_env_crossbar = GL_TRUE;
     ctx->Extensions.ARB_texture_env_dot3 = GL_TRUE;
-    /*ctx->Extensions.ARB_texture_float = GL_TRUE;*/
+    ctx->Extensions.ARB_texture_float = GL_TRUE;
     ctx->Extensions.ARB_texture_mirrored_repeat = GL_TRUE;
     ctx->Extensions.ARB_texture_non_power_of_two = GL_TRUE;
 #if FEATURE_ARB_vertex_program

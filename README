@@ -1183,7 +1183,7 @@ GL_ARB_texture_filter_anisotropic:                             MISSING
 GL_ARB_texture_filter_minmax:                                  MISSING
 -----------------------------
 
-GL_ARB_texture_float:                                          MISSING
+GL_ARB_texture_float:                                          OK 
 ---------------------
 
 GL_ARB_texture_gather:                                         MISSING
