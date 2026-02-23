@@ -54,6 +54,11 @@ typedef void (*texture_sample_func)(GLcontext *ctx,
 				    GLuint n, const GLfloat texcoords[][4],
 				    const GLfloat lambda[], GLchan rgba[][4]);
 
+typedef void (*texture_sample_func_f)(GLcontext *ctx,
+				      const struct gl_texture_object *tObj,
+				      GLuint n, const GLfloat texcoords[][4],
+				      const GLfloat lambda[], GLfloat rgba[][4]);
+
 typedef void (_ASMAPIP blend_func)(GLcontext *ctx, GLuint n,
 				   const GLubyte mask[],
 				   GLvoid *src, const GLvoid *dst,
@@ -215,6 +220,7 @@ typedef struct {
      */
     blend_func BlendFunc;
     texture_sample_func TextureSample[MAX_TEXTURE_IMAGE_UNITS];
+    texture_sample_func_f TextureSampleF[MAX_TEXTURE_IMAGE_UNITS]; /**< Float-output texture sampler */
 
     /** Buffer for saving the sampled texture colors.
      * Needed for GL_ARB_texture_env_crossbar implementation.

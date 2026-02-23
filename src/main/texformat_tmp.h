@@ -296,16 +296,27 @@ static void FETCH(f_rgba_f32)(const struct gl_texture_image *texImage,
     texel[ACOMP] = src[3];
 }
 
+static void FETCH(rgba_f32)(const struct gl_texture_image *texImage,
+                            GLint i, GLint j, GLint k, GLchan *texel)
+{
+    GLfloat temp[4];
+    FETCH(f_rgba_f32)(texImage, i, j, k, temp);
+    CLAMPED_FLOAT_TO_CHAN(texel[RCOMP], temp[RCOMP]);
+    CLAMPED_FLOAT_TO_CHAN(texel[GCOMP], temp[GCOMP]);
+    CLAMPED_FLOAT_TO_CHAN(texel[BCOMP], temp[BCOMP]);
+    CLAMPED_FLOAT_TO_CHAN(texel[ACOMP], temp[ACOMP]);
+}
+
 #if DIM == 3
 static void store_texel_rgba_f32(struct gl_texture_image *texImage,
 				 GLint i, GLint j, GLint k, const void *texel)
 {
-    const GLfloat *depth = (const GLfloat *) texel;
-    GLfloat *dst = TEXEL_ADDR(GLfloat, texImage, i, j, k, 1);
-    dst[0] = depth[RCOMP];
-    dst[1] = depth[GCOMP];
-    dst[2] = depth[BCOMP];
-    dst[3] = depth[ACOMP];
+    const GLfloat *rgba = (const GLfloat *) texel;
+    GLfloat *dst = TEXEL_ADDR(GLfloat, texImage, i, j, k, 4);
+    dst[0] = rgba[RCOMP];
+    dst[1] = rgba[GCOMP];
+    dst[2] = rgba[BCOMP];
+    dst[3] = rgba[ACOMP];
 }
 #endif
 
@@ -325,13 +336,27 @@ static void FETCH(f_rgba_f16)(const struct gl_texture_image *texImage,
     texel[ACOMP] = _mesa_half_to_float(src[3]);
 }
 
+static void FETCH(rgba_f16)(const struct gl_texture_image *texImage,
+                            GLint i, GLint j, GLint k, GLchan *texel)
+{
+    GLfloat temp[4];
+    FETCH(f_rgba_f16)(texImage, i, j, k, temp);
+    CLAMPED_FLOAT_TO_CHAN(texel[RCOMP], temp[RCOMP]);
+    CLAMPED_FLOAT_TO_CHAN(texel[GCOMP], temp[GCOMP]);
+    CLAMPED_FLOAT_TO_CHAN(texel[BCOMP], temp[BCOMP]);
+    CLAMPED_FLOAT_TO_CHAN(texel[ACOMP], temp[ACOMP]);
+}
+
 #if DIM == 3
 static void store_texel_rgba_f16(struct gl_texture_image *texImage,
 				 GLint i, GLint j, GLint k, const void *texel)
 {
-    const GLfloat *depth = (const GLfloat *) texel;
-    GLhalfARB *dst = TEXEL_ADDR(GLhalfARB, texImage, i, j, k, 1);
-    dst[0] = _mesa_float_to_half(*depth);
+    const GLfloat *rgba = (const GLfloat *) texel;
+    GLhalfARB *dst = TEXEL_ADDR(GLhalfARB, texImage, i, j, k, 4);
+    dst[0] = _mesa_float_to_half(rgba[RCOMP]);
+    dst[1] = _mesa_float_to_half(rgba[GCOMP]);
+    dst[2] = _mesa_float_to_half(rgba[BCOMP]);
+    dst[3] = _mesa_float_to_half(rgba[ACOMP]);
 }
 #endif
 
@@ -350,13 +375,26 @@ static void FETCH(f_rgb_f32)(const struct gl_texture_image *texImage,
     texel[ACOMP] = 1.0F;
 }
 
+static void FETCH(rgb_f32)(const struct gl_texture_image *texImage,
+                           GLint i, GLint j, GLint k, GLchan *texel)
+{
+    GLfloat temp[4];
+    FETCH(f_rgb_f32)(texImage, i, j, k, temp);
+    CLAMPED_FLOAT_TO_CHAN(texel[RCOMP], temp[RCOMP]);
+    CLAMPED_FLOAT_TO_CHAN(texel[GCOMP], temp[GCOMP]);
+    CLAMPED_FLOAT_TO_CHAN(texel[BCOMP], temp[BCOMP]);
+    CLAMPED_FLOAT_TO_CHAN(texel[ACOMP], temp[ACOMP]);
+}
+
 #if DIM == 3
 static void store_texel_rgb_f32(struct gl_texture_image *texImage,
 				GLint i, GLint j, GLint k, const void *texel)
 {
-    const GLfloat *depth = (const GLfloat *) texel;
-    GLfloat *dst = TEXEL_ADDR(GLfloat, texImage, i, j, k, 1);
-    dst[0] = *depth;
+    const GLfloat *rgba = (const GLfloat *) texel;
+    GLfloat *dst = TEXEL_ADDR(GLfloat, texImage, i, j, k, 3);
+    dst[0] = rgba[RCOMP];
+    dst[1] = rgba[GCOMP];
+    dst[2] = rgba[BCOMP];
 }
 #endif
 
@@ -376,13 +414,26 @@ static void FETCH(f_rgb_f16)(const struct gl_texture_image *texImage,
     texel[ACOMP] = 1.0F;
 }
 
+static void FETCH(rgb_f16)(const struct gl_texture_image *texImage,
+                           GLint i, GLint j, GLint k, GLchan *texel)
+{
+    GLfloat temp[4];
+    FETCH(f_rgb_f16)(texImage, i, j, k, temp);
+    CLAMPED_FLOAT_TO_CHAN(texel[RCOMP], temp[RCOMP]);
+    CLAMPED_FLOAT_TO_CHAN(texel[GCOMP], temp[GCOMP]);
+    CLAMPED_FLOAT_TO_CHAN(texel[BCOMP], temp[BCOMP]);
+    CLAMPED_FLOAT_TO_CHAN(texel[ACOMP], temp[ACOMP]);
+}
+
 #if DIM == 3
 static void store_texel_rgb_f16(struct gl_texture_image *texImage,
 				GLint i, GLint j, GLint k, const void *texel)
 {
-    const GLfloat *depth = (const GLfloat *) texel;
-    GLhalfARB *dst = TEXEL_ADDR(GLhalfARB, texImage, i, j, k, 1);
-    dst[0] = _mesa_float_to_half(*depth);
+    const GLfloat *rgba = (const GLfloat *) texel;
+    GLhalfARB *dst = TEXEL_ADDR(GLhalfARB, texImage, i, j, k, 3);
+    dst[0] = _mesa_float_to_half(rgba[RCOMP]);
+    dst[1] = _mesa_float_to_half(rgba[GCOMP]);
+    dst[2] = _mesa_float_to_half(rgba[BCOMP]);
 }
 #endif
 
@@ -400,6 +451,15 @@ static void FETCH(f_alpha_f32)(const struct gl_texture_image *texImage,
 	texel[GCOMP] =
 	    texel[BCOMP] = 0.0F;
     texel[ACOMP] = src[0];
+}
+
+static void FETCH(alpha_f32)(const struct gl_texture_image *texImage,
+                             GLint i, GLint j, GLint k, GLchan *texel)
+{
+    GLfloat temp[4];
+    FETCH(f_alpha_f32)(texImage, i, j, k, temp);
+    texel[RCOMP] = texel[GCOMP] = texel[BCOMP] = 0;
+    CLAMPED_FLOAT_TO_CHAN(texel[ACOMP], temp[ACOMP]);
 }
 
 #if DIM == 3
@@ -428,6 +488,15 @@ static void FETCH(f_alpha_f16)(const struct gl_texture_image *texImage,
     texel[ACOMP] = _mesa_half_to_float(src[0]);
 }
 
+static void FETCH(alpha_f16)(const struct gl_texture_image *texImage,
+                             GLint i, GLint j, GLint k, GLchan *texel)
+{
+    GLfloat temp[4];
+    FETCH(f_alpha_f16)(texImage, i, j, k, temp);
+    texel[RCOMP] = texel[GCOMP] = texel[BCOMP] = 0;
+    CLAMPED_FLOAT_TO_CHAN(texel[ACOMP], temp[ACOMP]);
+}
+
 #if DIM == 3
 static void store_texel_alpha_f16(struct gl_texture_image *texImage,
 				  GLint i, GLint j, GLint k, const void *texel)
@@ -452,6 +521,17 @@ static void FETCH(f_luminance_f32)(const struct gl_texture_image *texImage,
 	texel[GCOMP] =
 	    texel[BCOMP] = src[0];
     texel[ACOMP] = 1.0F;
+}
+
+static void FETCH(luminance_f32)(const struct gl_texture_image *texImage,
+                                 GLint i, GLint j, GLint k, GLchan *texel)
+{
+    GLfloat temp[4];
+    GLchan lum;
+    FETCH(f_luminance_f32)(texImage, i, j, k, temp);
+    CLAMPED_FLOAT_TO_CHAN(lum, temp[RCOMP]);
+    texel[RCOMP] = texel[GCOMP] = texel[BCOMP] = lum;
+    texel[ACOMP] = CHAN_MAX;
 }
 
 #if DIM == 3
@@ -480,6 +560,17 @@ static void FETCH(f_luminance_f16)(const struct gl_texture_image *texImage,
     texel[ACOMP] = 1.0F;
 }
 
+static void FETCH(luminance_f16)(const struct gl_texture_image *texImage,
+                                 GLint i, GLint j, GLint k, GLchan *texel)
+{
+    GLfloat temp[4];
+    GLchan lum;
+    FETCH(f_luminance_f16)(texImage, i, j, k, temp);
+    CLAMPED_FLOAT_TO_CHAN(lum, temp[RCOMP]);
+    texel[RCOMP] = texel[GCOMP] = texel[BCOMP] = lum;
+    texel[ACOMP] = CHAN_MAX;
+}
+
 #if DIM == 3
 static void store_texel_luminance_f16(struct gl_texture_image *texImage,
 				      GLint i, GLint j, GLint k, const void *texel)
@@ -504,6 +595,17 @@ static void FETCH(f_luminance_alpha_f32)(const struct gl_texture_image *texImage
 	texel[GCOMP] =
 	    texel[BCOMP] = src[0];
     texel[ACOMP] = src[1];
+}
+
+static void FETCH(luminance_alpha_f32)(const struct gl_texture_image *texImage,
+                                      GLint i, GLint j, GLint k, GLchan *texel)
+{
+    GLfloat temp[4];
+    GLchan lum;
+    FETCH(f_luminance_alpha_f32)(texImage, i, j, k, temp);
+    CLAMPED_FLOAT_TO_CHAN(lum, temp[RCOMP]);
+    texel[RCOMP] = texel[GCOMP] = texel[BCOMP] = lum;
+    CLAMPED_FLOAT_TO_CHAN(texel[ACOMP], temp[ACOMP]);
 }
 
 #if DIM == 3
@@ -533,6 +635,17 @@ static void FETCH(f_luminance_alpha_f16)(const struct gl_texture_image *texImage
     texel[ACOMP] = _mesa_half_to_float(src[1]);
 }
 
+static void FETCH(luminance_alpha_f16)(const struct gl_texture_image *texImage,
+                                      GLint i, GLint j, GLint k, GLchan *texel)
+{
+    GLfloat temp[4];
+    GLchan lum;
+    FETCH(f_luminance_alpha_f16)(texImage, i, j, k, temp);
+    CLAMPED_FLOAT_TO_CHAN(lum, temp[RCOMP]);
+    texel[RCOMP] = texel[GCOMP] = texel[BCOMP] = lum;
+    CLAMPED_FLOAT_TO_CHAN(texel[ACOMP], temp[ACOMP]);
+}
+
 #if DIM == 3
 static void store_texel_luminance_alpha_f16(struct gl_texture_image *texImage,
 	GLint i, GLint j, GLint k, const void *texel)
@@ -560,6 +673,16 @@ static void FETCH(f_intensity_f32)(const struct gl_texture_image *texImage,
 		texel[ACOMP] = src[0];
 }
 
+static void FETCH(intensity_f32)(const struct gl_texture_image *texImage,
+                                 GLint i, GLint j, GLint k, GLchan *texel)
+{
+    GLfloat temp[4];
+    GLchan val;
+    FETCH(f_intensity_f32)(texImage, i, j, k, temp);
+    CLAMPED_FLOAT_TO_CHAN(val, temp[RCOMP]);
+    texel[RCOMP] = texel[GCOMP] = texel[BCOMP] = texel[ACOMP] = val;
+}
+
 #if DIM == 3
 static void store_texel_intensity_f32(struct gl_texture_image *texImage,
 				      GLint i, GLint j, GLint k, const void *texel)
@@ -584,6 +707,16 @@ static void FETCH(f_intensity_f16)(const struct gl_texture_image *texImage,
 	texel[GCOMP] =
 	    texel[BCOMP] =
 		texel[ACOMP] = _mesa_half_to_float(src[0]);
+}
+
+static void FETCH(intensity_f16)(const struct gl_texture_image *texImage,
+                                 GLint i, GLint j, GLint k, GLchan *texel)
+{
+    GLfloat temp[4];
+    GLchan val;
+    FETCH(f_intensity_f16)(texImage, i, j, k, temp);
+    CLAMPED_FLOAT_TO_CHAN(val, temp[RCOMP]);
+    texel[RCOMP] = texel[GCOMP] = texel[BCOMP] = texel[ACOMP] = val;
 }
 
 #if DIM == 3

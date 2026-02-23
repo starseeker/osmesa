@@ -42,6 +42,11 @@ texture_get_row(GLcontext *ctx, struct gl_renderbuffer *rb, GLuint count,
 	for (i = 0; i < count; i++) {
 	    trb->TexImage->FetchTexelc(trb->TexImage, x + i, y, z, rgbaOut + 4 * i);
 	}
+    } else if (rb->DataType == GL_FLOAT) {
+	GLfloat *rgbaOut = (GLfloat *) values;
+	for (i = 0; i < count; i++) {
+	    trb->TexImage->FetchTexelf(trb->TexImage, x + i, y, z, rgbaOut + 4 * i);
+	}
     } else if (rb->DataType == GL_UNSIGNED_INT) {
 	GLuint *zValues = (GLuint *) values;
 	/*
@@ -84,6 +89,12 @@ texture_get_values(GLcontext *ctx, struct gl_renderbuffer *rb, GLuint count,
 	GLchan *rgbaOut = (GLchan *) values;
 	for (i = 0; i < count; i++) {
 	    trb->TexImage->FetchTexelc(trb->TexImage, x[i], y[i], z,
+				       rgbaOut + 4 * i);
+	}
+    } else if (rb->DataType == GL_FLOAT) {
+	GLfloat *rgbaOut = (GLfloat *) values;
+	for (i = 0; i < count; i++) {
+	    trb->TexImage->FetchTexelf(trb->TexImage, x[i], y[i], z,
 				       rgbaOut + 4 * i);
 	}
     } else if (rb->DataType == GL_UNSIGNED_INT) {
@@ -130,6 +141,14 @@ texture_put_row(GLcontext *ctx, struct gl_renderbuffer *rb, GLuint count,
 	    }
 	    rgba += 4;
 	}
+    } else if (rb->DataType == GL_FLOAT) {
+	const GLfloat *rgba = (const GLfloat *) values;
+	for (i = 0; i < count; i++) {
+	    if (!mask || mask[i]) {
+		trb->Store(trb->TexImage, x + i, y, z, rgba);
+	    }
+	    rgba += 4;
+	}
     } else if (rb->DataType == GL_UNSIGNED_INT) {
 	const GLuint *zValues = (const GLuint *) values;
 	for (i = 0; i < count; i++) {
@@ -162,6 +181,13 @@ texture_put_mono_row(GLcontext *ctx, struct gl_renderbuffer *rb, GLuint count,
 
     if (rb->DataType == CHAN_TYPE) {
 	const GLchan *rgba = (const GLchan *) value;
+	for (i = 0; i < count; i++) {
+	    if (!mask || mask[i]) {
+		trb->Store(trb->TexImage, x + i, y, z, rgba);
+	    }
+	}
+    } else if (rb->DataType == GL_FLOAT) {
+	const GLfloat *rgba = (const GLfloat *) value;
 	for (i = 0; i < count; i++) {
 	    if (!mask || mask[i]) {
 		trb->Store(trb->TexImage, x + i, y, z, rgba);
@@ -206,6 +232,14 @@ texture_put_values(GLcontext *ctx, struct gl_renderbuffer *rb, GLuint count,
 	    }
 	    rgba += 4;
 	}
+    } else if (rb->DataType == GL_FLOAT) {
+	const GLfloat *rgba = (const GLfloat *) values;
+	for (i = 0; i < count; i++) {
+	    if (!mask || mask[i]) {
+		trb->Store(trb->TexImage, x[i], y[i], z, rgba);
+	    }
+	    rgba += 4;
+	}
     } else if (rb->DataType == GL_UNSIGNED_INT) {
 	const GLuint *zValues = (const GLuint *) values;
 	for (i = 0; i < count; i++) {
@@ -239,6 +273,13 @@ texture_put_mono_values(GLcontext *ctx, struct gl_renderbuffer *rb,
 
     if (rb->DataType == CHAN_TYPE) {
 	const GLchan *rgba = (const GLchan *) value;
+	for (i = 0; i < count; i++) {
+	    if (!mask || mask[i]) {
+		trb->Store(trb->TexImage, x[i], y[i], z, rgba);
+	    }
+	}
+    } else if (rb->DataType == GL_FLOAT) {
+	const GLfloat *rgba = (const GLfloat *) value;
 	for (i = 0; i < count; i++) {
 	    if (!mask || mask[i]) {
 		trb->Store(trb->TexImage, x[i], y[i], z, rgba);
@@ -350,6 +391,9 @@ update_wrapper(GLcontext *ctx, const struct gl_renderbuffer_attachment *att)
     } else if (trb->TexImage->TexFormat->MesaFormat == MESA_FORMAT_Z32) {
 	trb->Base._ActualFormat = GL_DEPTH_COMPONENT;
 	trb->Base.DataType = GL_UNSIGNED_INT;
+    } else if (trb->TexImage->TexFormat->DataType == GL_FLOAT) {
+	trb->Base._ActualFormat = trb->TexImage->InternalFormat;
+	trb->Base.DataType = GL_FLOAT;
     } else {
 	trb->Base._ActualFormat = trb->TexImage->InternalFormat;
 	trb->Base.DataType = CHAN_TYPE;
