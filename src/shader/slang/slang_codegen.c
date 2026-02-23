@@ -2482,17 +2482,22 @@ _slang_check_matmul_optimization(slang_assemble_ctx *A, slang_operation *oper)
     };
 
     assert(oper->type == SLANG_OPER_MULTIPLY);
-    if (oper->children[0].type == SLANG_OPER_IDENTIFIER) {
+    if (oper->children[0].type == SLANG_OPER_IDENTIFIER ||
+        oper->children[0].type == SLANG_OPER_SUBSCRIPT) {
 	GLuint i;
+	/* For subscripted arrays (e.g. gl_TextureMatrix[n]), check the base */
+	slang_operation *matOp = (oper->children[0].type == SLANG_OPER_IDENTIFIER)
+	    ? &oper->children[0]
+	    : &oper->children[0].children[0];
 	for (i = 0; matrices[i].orig; i++) {
-	    if (oper->children[0].a_id
+	    if (matOp->a_id
 		== slang_atom_pool_atom(A->atoms, matrices[i].orig)) {
 		/*
 		_mesa_printf("Replace %s with %s\n",
 		             matrices[i].orig, matrices[i].tranpose);
 		*/
-		assert(oper->children[0].type == SLANG_OPER_IDENTIFIER);
-		oper->children[0].a_id
+		assert(matOp->type == SLANG_OPER_IDENTIFIER);
+		matOp->a_id
 		    = slang_atom_pool_atom(A->atoms, matrices[i].tranpose);
 		/* finally, swap the operands */
 		_slang_operation_swap(&oper->children[0], &oper->children[1]);
