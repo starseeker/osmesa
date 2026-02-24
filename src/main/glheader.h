@@ -149,6 +149,18 @@
 #  define INLINE
 #endif
 
+/* Prevent inlining.  Used to keep the auto-vectorizer from operating on a
+ * function in a caller context where it generates incorrect code (e.g. the
+ * interpolate_colors() loop inlined into _swrast_write_rgba_span() produces
+ * wrong AoS byte-shuffle code under GCC -O3, causing B == R on every span). */
+#if defined(__GNUC__) || defined(__clang__)
+#  define NOINLINE __attribute__((noinline))
+#elif defined(_MSC_VER) || defined(__MSC__)
+#  define NOINLINE __declspec(noinline)
+#else
+#  define NOINLINE
+#endif
+
 
 /* If we build the library with gcc's -fvisibility=hidden flag, we'll
  * use the PUBLIC macro to mark functions that are to be exported.
