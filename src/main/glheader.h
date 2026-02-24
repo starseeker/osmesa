@@ -149,7 +149,7 @@
 #  define INLINE
 #endif
 
-/* Prevent inlining.  Used to keep the auto-vectoriser from operating on a
+/* Prevent inlining.  Used to keep the auto-vectorizer from operating on a
  * function in a caller context where it generates incorrect code (e.g. the
  * interpolate_colors() loop inlined into _swrast_write_rgba_span() produces
  * wrong AoS byte-shuffle code under GCC -O3, causing B == R on every span). */

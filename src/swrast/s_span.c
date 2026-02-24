@@ -197,11 +197,11 @@ _swrast_span_default_texcoords(GLcontext *ctx, SWspan *span)
 /**
  * Interpolate primary colors to fill in the span->array->color array.
  *
- * Marked NOINLINE: GCC's auto-vectoriser generates incorrect AoS
+ * Marked NOINLINE: GCC's auto-vectorizer generates incorrect AoS
  * byte-interleaving when this function is inlined into the large
  * _swrast_write_rgba_span() context under -O3, causing the blue channel
  * to equal the red channel on every affected span (the B=R anomaly).
- * Keeping it out-of-line lets the vectoriser operate on the compact
+ * Keeping it out-of-line lets the vectorizer operate on the compact
  * standalone function, where it produces correct shuffle code.
  */
 static NOINLINE void
