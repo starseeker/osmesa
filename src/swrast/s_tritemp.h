@@ -119,15 +119,26 @@
 
 
 /*
- * Some code we unfortunately need to prevent negative interpolated colors.
+ * Clamp negative starting interpolant values to zero.
+ *
+ * The old Mesa 7.x version also had a "fix up endpoint" clause:
+ *   GLfixed endVal = span.CHANNEL + (LEN) * span.CHANNELSTEP;
+ *   if (endVal < 0) { span.CHANNEL -= endVal; }
+ * That clause was wrong: when the *endpoint* of a span would go negative,
+ * it modified the *starting* value so that the endpoint equals zero.
+ * On short spans (LEN=1) with a steep colour gradient this produced
+ * span.CHANNEL = -LEN * CHANNELSTEP, which frequently happened to equal
+ * span.red, causing a visible "B=R" colour artifact throughout coloured
+ * scenes (the blue channel of the first pixel in every affected span was
+ * set to the red channel value instead of the correct interpolated colour).
+ *
+ * The fix: only clamp the start value when it is itself negative.
+ * Per-pixel clamping in interpolate_colors handles any values that
+ * drift below zero during iteration.
  */
 #ifndef CLAMP_INTERPOLANT
 #define CLAMP_INTERPOLANT(CHANNEL, CHANNELSTEP, LEN)		\
 do {								\
-   GLfixed endVal = span.CHANNEL + (LEN) * span.CHANNELSTEP;	\
-   if (endVal < 0) {						\
-      span.CHANNEL -= endVal;					\
-   }								\
    if (span.CHANNEL < 0) {					\
       span.CHANNEL = 0;						\
    }								\
@@ -909,7 +920,7 @@ static void NAME(GLcontext *ctx, const SWvertex *v0,
 			aLeft = vLower->color[ACOMP] + (span.attrStepX[FRAG_ATTRIB_COL0][3] * adjx + span.attrStepY[FRAG_ATTRIB_COL0][3] * adjy) * (1.0F / FIXED_SCALE);
 			fdaOuter = span.attrStepY[FRAG_ATTRIB_COL0][3] + dxOuter * span.attrStepX[FRAG_ATTRIB_COL0][3];
 #    else
-			aLeft = (GLint)(ChanToFixed(vLower->color[ACOMP]) + span.attrStepX[FRAG_ATTRIB_COL0][3] * adjx + span.attrStepX[FRAG_ATTRIB_COL0][3] * adjy) + FIXED_HALF;
+			aLeft = (GLint)(ChanToFixed(vLower->color[ACOMP]) + span.attrStepX[FRAG_ATTRIB_COL0][3] * adjx + span.attrStepY[FRAG_ATTRIB_COL0][3] * adjy) + FIXED_HALF;
 			fdaOuter = SignedFloatToFixed(span.attrStepY[FRAG_ATTRIB_COL0][3] + dxOuter * span.attrStepX[FRAG_ATTRIB_COL0][3]);
 #    endif
 #  endif
