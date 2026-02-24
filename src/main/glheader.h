@@ -149,6 +149,15 @@
 #  define INLINE
 #endif
 
+/* Prevent inlining (used to avoid compiler auto-vectorization bugs) */
+#if defined(__GNUC__)
+#  define NOINLINE __attribute__((noinline))
+#elif defined(_MSC_VER) || defined(__MSC__)
+#  define NOINLINE __declspec(noinline)
+#else
+#  define NOINLINE
+#endif
+
 
 /* If we build the library with gcc's -fvisibility=hidden flag, we'll
  * use the PUBLIC macro to mark functions that are to be exported.

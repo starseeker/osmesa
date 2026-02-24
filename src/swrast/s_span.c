@@ -196,8 +196,15 @@ _swrast_span_default_texcoords(GLcontext *ctx, SWspan *span)
 
 /**
  * Interpolate primary colors to fill in the span->array->color array.
+ *
+ * Marked NOINLINE: GCC's auto-vectorizer generates incorrect AoS
+ * byte-interleaving when this function is inlined into the large
+ * _swrast_write_rgba_span() context under -O3, causing the blue channel
+ * to equal the red channel on every affected span (the B=R anomaly).
+ * Keeping it out-of-line lets the vectorizer operate on the compact
+ * standalone function, where it produces correct shuffle code.
  */
-static INLINE void
+static NOINLINE void
 interpolate_colors(SWspan *span)
 {
     const GLuint n = span->end;
@@ -229,10 +236,10 @@ interpolate_colors(SWspan *span)
 		GLint db = span->blueStep;
 		GLint da = span->alphaStep;
 		for (i = 0; i < n; i++) {
-		    rgba[i][RCOMP] = FixedToChan(r);
-		    rgba[i][GCOMP] = FixedToChan(g);
-		    rgba[i][BCOMP] = FixedToChan(b);
-		    rgba[i][ACOMP] = FixedToChan(a);
+		    rgba[i][RCOMP] = (GLubyte) CLAMP(FixedToChan(r), 0, CHAN_MAX);
+		    rgba[i][GCOMP] = (GLubyte) CLAMP(FixedToChan(g), 0, CHAN_MAX);
+		    rgba[i][BCOMP] = (GLubyte) CLAMP(FixedToChan(b), 0, CHAN_MAX);
+		    rgba[i][ACOMP] = (GLubyte) CLAMP(FixedToChan(a), 0, CHAN_MAX);
 		    r += dr;
 		    g += dg;
 		    b += db;
@@ -265,10 +272,10 @@ interpolate_colors(SWspan *span)
 		db = span->blueStep;
 		da = span->alphaStep;
 		for (i = 0; i < n; i++) {
-		    rgba[i][RCOMP] = FixedToChan(r);
-		    rgba[i][GCOMP] = FixedToChan(g);
-		    rgba[i][BCOMP] = FixedToChan(b);
-		    rgba[i][ACOMP] = FixedToChan(a);
+		    rgba[i][RCOMP] = (GLushort) CLAMP(FixedToChan(r), 0, CHAN_MAX);
+		    rgba[i][GCOMP] = (GLushort) CLAMP(FixedToChan(g), 0, CHAN_MAX);
+		    rgba[i][BCOMP] = (GLushort) CLAMP(FixedToChan(b), 0, CHAN_MAX);
+		    rgba[i][ACOMP] = (GLushort) CLAMP(FixedToChan(a), 0, CHAN_MAX);
 		    r += dr;
 		    g += dg;
 		    b += db;
