@@ -317,18 +317,18 @@ typedef struct {
     GLuint lo, hi;
 } Fx64;
 
-#define FX64_MOV32(a, b) a.lo = b
+#define FX64_MOV32(a, b) do { a.hi = 0; a.lo = (b); } while (0)
 #define FX64_OR32(a, b)  a.lo |= b
 
-#define FX64_SHL(a, c)                                 \
-   do {                                                \
-       if ((c) >= 32) {                                \
-          a.hi = a.lo << ((c) - 32);                   \
-          a.lo = 0;                                    \
-       } else {                                        \
-          a.hi = (a.hi << (c)) | (a.lo >> (32 - (c))); \
-          a.lo <<= (c);                                \
-       }                                               \
+#define FX64_SHL(a, c)                                      \
+   do {                                                     \
+       if ((c) >= 32) {                                     \
+          a.hi = a.lo << ((c) >= 32 ? (c) - 32 : 0);       \
+          a.lo = 0;                                         \
+       } else if ((c) > 0) {                                \
+          a.hi = (a.hi << (c)) | (a.lo >> (32 - (c)));     \
+          a.lo <<= (c);                                     \
+       }                                                    \
    } while (0)
 
 #endif /* !__GNUC__ */
@@ -816,7 +816,7 @@ fxt1_quantize_ALPHA1(GLuint *cc,
     /* choose the common vector (yuck!) */
     {
 	GLint j1, j2;
-	GLint v1 = 0, v2 = 0;
+	GLint v1 = 0, v2 = 2;
 	GLfloat err = 1e9; /* big enough */
 	GLfloat tv[2 * 2][MAX_COMP]; /* 2 extrema for each sub-block */
 	for (i = 0; i < n_comp; i++) {

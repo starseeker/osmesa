@@ -160,7 +160,6 @@ void fxaa_apply_rgba8(const ImageRGBA8* in, ImageRGBA8* out, const FXAAParams* p
 	temp = (uint8_t*)malloc((size_t)in->strideBytes * (size_t)in->height);
 	if (!temp) return;
 	dst.rgba = temp;
-	dst.width = in->width;
 	dst.height = in->height;
 	dst.strideBytes = in->strideBytes;
     }

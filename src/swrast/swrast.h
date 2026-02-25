@@ -102,8 +102,8 @@ _swrast_Bitmap(GLcontext *ctx,
 extern void
 _swrast_CopyPixels(GLcontext *ctx,
 		   GLint srcx, GLint srcy,
-		   GLint destx, GLint desty,
 		   GLsizei width, GLsizei height,
+		   GLint destx, GLint desty,
 		   GLenum type);
 
 extern void
