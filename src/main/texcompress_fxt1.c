@@ -420,7 +420,7 @@ fxt1_worst(GLfloat vec[MAX_COMP],
 
 static GLint
 fxt1_variance(GLdouble variance[MAX_COMP],
-	      GLubyte input[N_TEXELS][MAX_COMP], GLint nc, GLint n)
+	      GLubyte (*input)[MAX_COMP], GLint nc, GLint n)
 {
     GLint i, k, best = 0;
     GLint sx, sx2;

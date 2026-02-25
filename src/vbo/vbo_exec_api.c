@@ -188,10 +188,13 @@ static void vbo_exec_copy_from_current(struct vbo_exec_context *exec)
 	switch (exec->vtx.attrsz[i]) {
 	    case 4:
 		exec->vtx.attrptr[i][3] = current[3];
+		/* fall through */
 	    case 3:
 		exec->vtx.attrptr[i][2] = current[2];
+		/* fall through */
 	    case 2:
 		exec->vtx.attrptr[i][1] = current[1];
+		/* fall through */
 	    case 1:
 		exec->vtx.attrptr[i][0] = current[0];
 		break;

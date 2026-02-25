@@ -191,9 +191,9 @@ do {                                          \
 #define COPY_SZ_4V(DST, SZ, SRC)  \
 do {                              \
    switch (SZ) {                  \
-   case 4: (DST)[3] = (SRC)[3];   \
-   case 3: (DST)[2] = (SRC)[2];   \
-   case 2: (DST)[1] = (SRC)[1];   \
+   case 4: (DST)[3] = (SRC)[3];   /* fall through */ \
+   case 3: (DST)[2] = (SRC)[2];   /* fall through */ \
+   case 2: (DST)[1] = (SRC)[1];   /* fall through */ \
    case 1: (DST)[0] = (SRC)[0];   \
    }                              \
 } while(0)

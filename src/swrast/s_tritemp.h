@@ -172,7 +172,7 @@ static void NAME(GLcontext *ctx, const SWvertex *v0,
 #endif
 	GLint lines;	/* number of lines to be sampled on this edge */
     } EdgeT;
-#define EDGET_INIT_ZERO {NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EDGET_INIT_ZERO {0}
 
     const SWcontext *swrast = SWRAST_CONTEXT(ctx);
 #ifdef INTERP_Z

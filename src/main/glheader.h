@@ -162,6 +162,19 @@
 #endif
 
 
+/* Annotate intentional switch case fall-throughs to silence
+ * -Wimplicit-fallthrough warnings on GCC 7+ and Clang.
+ * MSVC does not warn about implicit fallthrough in C by default, so
+ * a comment is sufficient there. */
+#if defined(__GNUC__) && (__GNUC__ >= 7)
+#  define FALLTHROUGH __attribute__((__fallthrough__))
+#elif defined(__clang__)
+#  define FALLTHROUGH __attribute__((__fallthrough__))
+#else
+#  define FALLTHROUGH /* fall through */
+#endif
+
+
 /* If we build the library with gcc's -fvisibility=hidden flag, we'll
  * use the PUBLIC macro to mark functions that are to be exported.
  *

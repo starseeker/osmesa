@@ -2691,31 +2691,31 @@ parse_fp_instruction(GLcontext * ctx, const GLubyte ** inst,
 	case OP_ALU_VECTOR:
 	    switch (code) {
 		case OP_ABS_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_ABS:
 		    fp->Opcode = OPCODE_ABS;
 		    break;
 
 		case OP_FLR_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_FLR:
 		    fp->Opcode = OPCODE_FLR;
 		    break;
 
 		case OP_FRC_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_FRC:
 		    fp->Opcode = OPCODE_FRC;
 		    break;
 
 		case OP_LIT_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_LIT:
 		    fp->Opcode = OPCODE_LIT;
 		    break;
 
 		case OP_MOV_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_MOV:
 		    fp->Opcode = OPCODE_MOV;
 		    break;
@@ -2731,43 +2731,43 @@ parse_fp_instruction(GLcontext * ctx, const GLubyte ** inst,
 	case OP_ALU_SCALAR:
 	    switch (code) {
 		case OP_COS_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_COS:
 		    fp->Opcode = OPCODE_COS;
 		    break;
 
 		case OP_EX2_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_EX2:
 		    fp->Opcode = OPCODE_EX2;
 		    break;
 
 		case OP_LG2_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_LG2:
 		    fp->Opcode = OPCODE_LG2;
 		    break;
 
 		case OP_RCP_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_RCP:
 		    fp->Opcode = OPCODE_RCP;
 		    break;
 
 		case OP_RSQ_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_RSQ:
 		    fp->Opcode = OPCODE_RSQ;
 		    break;
 
 		case OP_SIN_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_SIN:
 		    fp->Opcode = OPCODE_SIN;
 		    break;
 
 		case OP_SCS_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_SCS:
 
 		    fp->Opcode = OPCODE_SCS;
@@ -2784,7 +2784,7 @@ parse_fp_instruction(GLcontext * ctx, const GLubyte ** inst,
 	case OP_ALU_BINSC:
 	    switch (code) {
 		case OP_POW_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_POW:
 		    fp->Opcode = OPCODE_POW;
 		    break;
@@ -2803,73 +2803,73 @@ parse_fp_instruction(GLcontext * ctx, const GLubyte ** inst,
 	case OP_ALU_BIN:
 	    switch (code) {
 		case OP_ADD_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_ADD:
 		    fp->Opcode = OPCODE_ADD;
 		    break;
 
 		case OP_DP3_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_DP3:
 		    fp->Opcode = OPCODE_DP3;
 		    break;
 
 		case OP_DP4_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_DP4:
 		    fp->Opcode = OPCODE_DP4;
 		    break;
 
 		case OP_DPH_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_DPH:
 		    fp->Opcode = OPCODE_DPH;
 		    break;
 
 		case OP_DST_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_DST:
 		    fp->Opcode = OPCODE_DST;
 		    break;
 
 		case OP_MAX_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_MAX:
 		    fp->Opcode = OPCODE_MAX;
 		    break;
 
 		case OP_MIN_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_MIN:
 		    fp->Opcode = OPCODE_MIN;
 		    break;
 
 		case OP_MUL_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_MUL:
 		    fp->Opcode = OPCODE_MUL;
 		    break;
 
 		case OP_SGE_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_SGE:
 		    fp->Opcode = OPCODE_SGE;
 		    break;
 
 		case OP_SLT_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_SLT:
 		    fp->Opcode = OPCODE_SLT;
 		    break;
 
 		case OP_SUB_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_SUB:
 		    fp->Opcode = OPCODE_SUB;
 		    break;
 
 		case OP_XPD_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_XPD:
 		    fp->Opcode = OPCODE_XPD;
 		    break;
@@ -2886,19 +2886,19 @@ parse_fp_instruction(GLcontext * ctx, const GLubyte ** inst,
 	case OP_ALU_TRI:
 	    switch (code) {
 		case OP_CMP_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_CMP:
 		    fp->Opcode = OPCODE_CMP;
 		    break;
 
 		case OP_LRP_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_LRP:
 		    fp->Opcode = OPCODE_LRP;
 		    break;
 
 		case OP_MAD_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_MAD:
 		    fp->Opcode = OPCODE_MAD;
 		    break;
@@ -2916,7 +2916,7 @@ parse_fp_instruction(GLcontext * ctx, const GLubyte ** inst,
 	case OP_ALU_SWZ:
 	    switch (code) {
 		case OP_SWZ_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_SWZ:
 		    fp->Opcode = OPCODE_SWZ;
 		    break;
@@ -2946,19 +2946,19 @@ parse_fp_instruction(GLcontext * ctx, const GLubyte ** inst,
 	case OP_TEX_SAMPLE:
 	    switch (code) {
 		case OP_TEX_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_TEX:
 		    fp->Opcode = OPCODE_TEX;
 		    break;
 
 		case OP_TXP_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_TXP:
 		    fp->Opcode = OPCODE_TXP;
 		    break;
 
 		case OP_TXB_SAT:
-		    fp->SaturateMode = SATURATE_ZERO_ONE;
+		    fp->SaturateMode = SATURATE_ZERO_ONE; /* fall through */
 		case OP_TXB:
 		    fp->Opcode = OPCODE_TXB;
 		    break;
