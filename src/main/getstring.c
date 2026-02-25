@@ -154,8 +154,7 @@ _mesa_GetString(GLenum name)
 		ctx->Extensions.ARB_vertex_program) {
 		return (const GLubyte *) ctx->Program.ErrorString;
 	    }
-	    /* fall through */
-	    __attribute__((__fallthrough__));
+	    FALLTHROUGH;
 #endif
 #if FEATURE_ARB_shading_language_100
 	error:
