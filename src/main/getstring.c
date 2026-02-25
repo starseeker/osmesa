@@ -154,11 +154,12 @@ _mesa_GetString(GLenum name)
 		ctx->Extensions.ARB_vertex_program) {
 		return (const GLubyte *) ctx->Program.ErrorString;
 	    }
-	    FALLTHROUGH;
 #endif
 #if FEATURE_ARB_shading_language_100
 	error:
+	    ;
 #endif
+	FALLTHROUGH;
 	default:
 	    _mesa_error(ctx, GL_INVALID_ENUM, "glGetString");
 	    return (const GLubyte *) 0;
