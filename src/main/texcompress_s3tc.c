@@ -97,8 +97,6 @@ texstore_rgb_dxt1(TEXSTORE_PARAMS)
 	pixels = tempImage;
     } else {
 	pixels = (const GLchan *) srcAddr;
-	_mesa_image_row_stride(srcPacking, srcWidth, srcFormat,
-					      srcType) / sizeof(GLchan);
     }
 
     dst = _mesa_compressed_image_address(dstXoffset, dstYoffset, 0,
@@ -155,8 +153,6 @@ texstore_rgba_dxt1(TEXSTORE_PARAMS)
 	pixels = tempImage;
     } else {
 	pixels = (const GLchan *) srcAddr;
-	_mesa_image_row_stride(srcPacking, srcWidth, srcFormat,
-					      srcType) / sizeof(GLchan);
     }
 
     dst = _mesa_compressed_image_address(dstXoffset, dstYoffset, 0,
@@ -212,8 +208,6 @@ texstore_rgba_dxt3(TEXSTORE_PARAMS)
 	pixels = tempImage;
     } else {
 	pixels = (const GLchan *) srcAddr;
-	_mesa_image_row_stride(srcPacking, srcWidth, srcFormat,
-					      srcType) / sizeof(GLchan);
     }
 
     dst = _mesa_compressed_image_address(dstXoffset, dstYoffset, 0,
@@ -269,8 +263,6 @@ texstore_rgba_dxt5(TEXSTORE_PARAMS)
 	pixels = tempImage;
     } else {
 	pixels = (const GLchan *) srcAddr;
-	_mesa_image_row_stride(srcPacking, srcWidth, srcFormat,
-					      srcType) / sizeof(GLchan);
     }
 
     dst = _mesa_compressed_image_address(dstXoffset, dstYoffset, 0,

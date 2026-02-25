@@ -244,7 +244,7 @@ static void FETCH(f_z32)(const struct gl_texture_image *texImage,
 			 GLint i, GLint j, GLint k, GLfloat *texel)
 {
     const GLuint *src = TEXEL_ADDR(GLuint, texImage, i, j, k, 1);
-    texel[0] = src[0] * (1.0F / 0xffffffff);
+    texel[0] = (GLfloat)(src[0] * (1.0 / 0xffffffff));
 }
 
 #if DIM == 3
