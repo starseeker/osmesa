@@ -153,15 +153,11 @@ _mesa_PixelStorei(GLenum pname, GLint param)
 	case GL_UNPACK_SWAP_BYTES:
 	    if (param == (GLint)ctx->Unpack.SwapBytes)
 		return;
-	    if ((GLint)ctx->Unpack.SwapBytes == param)
-		return;
 	    FLUSH_VERTICES(ctx, _NEW_PACKUNPACK);
 	    ctx->Unpack.SwapBytes = param ? GL_TRUE : GL_FALSE;
 	    break;
 	case GL_UNPACK_LSB_FIRST:
 	    if (param == (GLint)ctx->Unpack.LsbFirst)
-		return;
-	    if ((GLint)ctx->Unpack.LsbFirst == param)
 		return;
 	    FLUSH_VERTICES(ctx, _NEW_PACKUNPACK);
 	    ctx->Unpack.LsbFirst = param ? GL_TRUE : GL_FALSE;
