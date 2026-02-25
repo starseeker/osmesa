@@ -358,7 +358,7 @@ static struct ureg get_temp(struct tnl_program *p)
 static struct ureg reserve_temp(struct tnl_program *p)
 {
     struct ureg temp = get_temp(p);
-    if (temp.idx > 0 && temp.idx < INT_MAX)
+    if (temp.idx > 0 && temp.idx < (GLint)(sizeof(GLuint) * 8))
 	p->temp_reserved |= 1<<temp.idx;
     return temp;
 }
@@ -366,7 +366,7 @@ static struct ureg reserve_temp(struct tnl_program *p)
 static void release_temp(struct tnl_program *p, struct ureg reg)
 {
     if (reg.file == PROGRAM_TEMPORARY) {
-	if (reg.idx > 0 && reg.idx < INT_MAX)
+	if (reg.idx > 0 && reg.idx < (GLint)(sizeof(GLuint) * 8))
 	    p->temp_in_use &= ~(1<<reg.idx);
 	p->temp_in_use |= p->temp_reserved; /* can't release reserved temps */
     }

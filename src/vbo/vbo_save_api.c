@@ -444,10 +444,13 @@ static void _save_copy_from_current(GLcontext *ctx)
 	switch (save->attrsz[i]) {
 	    case 4:
 		save->attrptr[i][3] = save->current[i][3];
+		/* fall through */
 	    case 3:
 		save->attrptr[i][2] = save->current[i][2];
+		/* fall through */
 	    case 2:
 		save->attrptr[i][1] = save->current[i][1];
+		/* fall through */
 	    case 1:
 		save->attrptr[i][0] = save->current[i][0];
 	    case 0:

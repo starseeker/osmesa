@@ -1599,6 +1599,20 @@ struct name_function {
     OSMESAproc Function;
 };
 
+/*
+ * OSMesaGetProcAddress lookup table.
+ * The casts to OSMESAproc (void(*)()) are intentional: this is the standard
+ * GetProcAddress pattern used throughout OpenGL (wglGetProcAddress,
+ * glXGetProcAddress, eglGetProcAddress).  The functions are NEVER called
+ * through OSMESAproc; callers receive the pointer and cast it back to the
+ * correct specific type before calling, so there is no undefined behaviour.
+ * Suppress -Wcast-function-type which fires on the casts but is a false
+ * positive here (GCC 8+ release notes acknowledge this pattern).
+ */
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-function-type"
+#endif
 static struct name_function functions[] = {
     { "OSMesaCreateContext", (OSMESAproc) OSMesaCreateContext },
     { "OSMesaCreateContextExt", (OSMESAproc) OSMesaCreateContextExt },
@@ -1614,6 +1628,9 @@ static struct name_function functions[] = {
     { "OSMesaFXAAEnable", (OSMESAproc) OSMesaFXAAEnable },
     { NULL, NULL }
 };
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 
 GLAPI OSMESAproc GLAPIENTRY

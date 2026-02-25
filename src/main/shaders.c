@@ -381,9 +381,14 @@ _mesa_ShaderSourceARB(GLhandleARB shaderObj, GLsizei count,
      * This array holds offsets of where the appropriate string ends, thus the
      * last element will be set to the total length of the source code.
      */
-    offsets = (GLint *) malloc(count * sizeof(GLint));
+    offsets = (GLint *) calloc(count, sizeof(GLint));
     if (offsets == NULL) {
 	_mesa_error(ctx, GL_OUT_OF_MEMORY, "glShaderSourceARB");
+	return;
+    }
+
+    if (count == 0) {
+	free((GLvoid *) offsets);
 	return;
     }
 
