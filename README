@@ -34,6 +34,27 @@ avoid accidentally including system versions of gl.h.
 
 
 --------------------------------------------------------------------------------
+Build System
+
+CMake's precompiled header (PCH) support is enabled via target_precompile_headers()
+for the osmesa target.  glheader.h is used as the PCH because it is the most
+widely included header in the project (present in 135 of ~170 source files) and
+pulls in a large set of stable system and GL headers that would otherwise be
+parsed repeatedly for every translation unit.
+
+Build time comparison (GCC 13.3, Ubuntu 24.04, Release build):
+
+  Configuration       Parallel (4 cores)   Single-threaded
+  ------------------  ------------------   ---------------
+  Without PCH         24.4 s wall          57.2 s wall (54.4 s CPU)
+  With PCH            22.4 s wall          53.0 s wall (50.0 s CPU)
+  Delta               -2.0 s  (-8%)        -4.2 s  (-7%)
+
+The PCH is declared PRIVATE so it applies only to the library compilation
+units and is not forced onto consumers of the installed headers.
+
+
+--------------------------------------------------------------------------------
 Fast Approximate Anti-Aliasing
 
 VTK-style Fast Approximate Anti-Aliasing) has been integrated into OSMesa as an
