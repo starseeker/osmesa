@@ -37,18 +37,25 @@ avoid accidentally including system versions of gl.h.
 Build System
 
 CMake's precompiled header (PCH) support is enabled via target_precompile_headers()
-for the osmesa target.  glheader.h is used as the PCH because it is the most
-widely included header in the project (present in 135 of ~170 source files) and
-pulls in a large set of stable system and GL headers that would otherwise be
-parsed repeatedly for every translation unit.
+for the osmesa target.  Three headers are precompiled because together they cover
+the vast majority of source files and account for the largest parsing costs:
+
+  glheader.h  - 135 of ~170 source files; pulls in all system headers and the
+                OSMesa/gl.h + OSMesa/glext.h GL headers
+  context.h   - 118 of ~170 source files; transitively includes imports.h and
+                the 3041-line mtypes.h (which itself pulls in glapitable.h,
+                dd.h, glthread.h, m_matrix.h, etc.)
+  macros.h    -  92 of ~170 source files; covers translation units that use
+                macros but do not include context.h directly
 
 Build time comparison (GCC 13.3, Ubuntu 24.04, Release build):
 
-  Configuration       Parallel (4 cores)   Single-threaded
-  ------------------  ------------------   ---------------
-  Without PCH         24.4 s wall          57.2 s wall (54.4 s CPU)
-  With PCH            22.4 s wall          53.0 s wall (50.0 s CPU)
-  Delta               -2.0 s  (-8%)        -4.2 s  (-7%)
+  Configuration                  Parallel (4 cores)   Single-threaded
+  -----------------------------  ------------------   ---------------
+  Without PCH                    24.4 s wall          57.2 s wall (54.4 s CPU)
+  PCH: glheader.h only           22.4 s wall          53.0 s wall (50.0 s CPU)
+  PCH: + context.h + macros.h    21.8 s wall          50.8 s wall (47.9 s CPU)
+  Total delta vs no PCH          -2.6 s  (-11%)       -6.4 s  (-11%)
 
 The PCH is declared PRIVATE so it applies only to the library compilation
 units and is not forced onto consumers of the installed headers.
