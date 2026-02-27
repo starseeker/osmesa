@@ -32,6 +32,7 @@ Source code changes are (or at least are intended to be) relatively minor and
 include things like static analyzer clean-ups and updating header includes to
 avoid accidentally including system versions of gl.h.
 
+
 --------------------------------------------------------------------------------
 Fast Approximate Anti-Aliasing
 
