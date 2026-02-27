@@ -919,8 +919,10 @@ _mesa_generate_mipmap(GLcontext *ctx, GLenum target,
 	    return;
 	}
 
-	if (dstImage->ImageOffsets)
+	if (dstImage->ImageOffsets) {
 	    free(dstImage->ImageOffsets);
+	    dstImage->ImageOffsets = NULL;
+	}
 
 	/* Free old image data */
 	if (dstImage->Data)
@@ -929,6 +931,16 @@ _mesa_generate_mipmap(GLcontext *ctx, GLenum target,
 	/* initialize new image */
 	_mesa_init_teximage_fields(ctx, target, dstImage, dstWidth, dstHeight,
 				   dstDepth, border, srcImage->InternalFormat);
+	if (!dstImage->ImageOffsets) {
+	    _mesa_error(ctx, GL_OUT_OF_MEMORY, "generating mipmaps");
+	    if (srcImage->IsCompressed) {
+		if (srcData)
+		    free((void *)srcData);
+		if (dstData)
+		    free(dstData);
+	    }
+	    return;
+	}
 	dstImage->DriverData = NULL;
 	dstImage->TexFormat = srcImage->TexFormat;
 	dstImage->FetchTexelc = srcImage->FetchTexelc;
@@ -958,6 +970,8 @@ _mesa_generate_mipmap(GLcontext *ctx, GLenum target,
 		    free((void *)srcData);
 		if (dstData)
 		    free(dstData);
+		free(dstImage->ImageOffsets);
+		dstImage->ImageOffsets = NULL;
 		return;
 	    }
 	    /* srcData and dstData are already set */
@@ -971,6 +985,8 @@ _mesa_generate_mipmap(GLcontext *ctx, GLenum target,
 
 	    if (!dstImage->Data) {
 		_mesa_error(ctx, GL_OUT_OF_MEMORY, "generating mipmaps");
+		free(dstImage->ImageOffsets);
+		dstImage->ImageOffsets = NULL;
 		return;
 	    }
 
