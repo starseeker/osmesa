@@ -188,11 +188,6 @@ set(osmesa_srcs
   )
 
 add_library(osmesa SHARED ${osmesa_srcs})
-target_precompile_headers(osmesa PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/main/glheader.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/main/context.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/main/macros.h
-)
 set_target_properties(osmesa PROPERTIES UNITY_BUILD ON)
 # grammar_mesa.c must not be merged into a unity batch because it directly
 # #includes grammar.c (a non-compiled .c file).  Files that use heavy

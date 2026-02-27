@@ -36,29 +36,18 @@ avoid accidentally including system versions of gl.h.
 --------------------------------------------------------------------------------
 Build System
 
-CMake's precompiled header (PCH) support is enabled via target_precompile_headers()
-for the osmesa target.  Three headers are precompiled because together they cover
-the vast majority of source files and account for the largest parsing costs:
-
-  glheader.h  - 135 of ~170 source files; pulls in all system headers and the
-                OSMesa/gl.h + OSMesa/glext.h GL headers
-  context.h   - 118 of ~170 source files; transitively includes imports.h and
-                the 3041-line mtypes.h (which itself pulls in glapitable.h,
-                dd.h, glthread.h, m_matrix.h, etc.)
-  macros.h    -  92 of ~170 source files; covers translation units that use
-                macros but do not include context.h directly
-
-CMake's native unity (jumbo) build support is also enabled via the UNITY_BUILD
+CMake's native unity (jumbo) build support is enabled via the UNITY_BUILD
 target property.  CMake groups the source files into batches of eight and
 generates one amalgamation .c file per batch that #includes all members of
 the batch.  This means each batch pays the header-parsing cost only once
-instead of once per file.
+instead of once per file, reducing the effective number of compiler
+invocations from 172 down to about 36.
 
-Sixteen source files that use the "X-macro" pattern (a template header included
-repeatedly inside the same .c file with different #define settings) are excluded
-from unity batching because the macros they define are still active at the end
-of the file and would silently alter the meaning of subsequent files in the
-same batch:
+Sixteen source files that use the "X-macro" pattern (a template header
+included repeatedly inside the same .c file with different #define settings)
+are excluded from unity batching because the macros they define are still
+active at the end of the file and would silently alter the meaning of
+subsequent files in the same batch:
 
   drivers/osmesa/osmesa.c          math/m_translate.c
   glapi/glapi.c                    math/m_xform.c
@@ -80,18 +69,26 @@ so that they can participate in unity batching:
                         init_matrix  -> init_matrix_xform
   tnl/t_vb_program.c    dtr          -> vp_stage_dtr
 
+CMake's precompiled header (PCH) mechanism was also evaluated.  Measured
+against a baseline with neither optimization active, PCH alone saves roughly
+11% of wall time.  Once the unity build is in place however, adding PCH
+provides no further measurable improvement: the unity batches already pay
+each header's parse cost only once, so there is nothing left for the PCH to
+eliminate.  The ~0.3 s shown in the table for "PCH added to unity" is within
+normal run-to-run measurement noise (~0.6%).  The PCH has therefore been
+removed; it would only add a redundant compile step at the start of every
+build.
+
 Build time comparison (GCC 13.3, Ubuntu 24.04, Release build):
 
-  Configuration                       Parallel (4 cores)   Single-threaded
-  ----------------------------------  ------------------   ---------------
-  Without PCH                         24.4 s wall          57.2 s wall (54.4 s CPU)
-  PCH: glheader.h only                22.4 s wall          53.0 s wall (50.0 s CPU)
-  PCH: + context.h + macros.h         21.8 s wall          50.8 s wall (47.9 s CPU)
-  PCH + unity build                   20.0 s wall          47.9 s wall (46.8 s CPU)
-  Total delta vs no PCH/unity         -4.4 s  (-18%)       -9.3 s  (-16%)
-
-The PCH is declared PRIVATE so it applies only to the library compilation
-units and is not forced onto consumers of the installed headers.
+  Configuration                    Parallel (4 cores)   Single-threaded
+  -------------------------------  ------------------   ---------------
+  No PCH, no unity (baseline)      24.4 s wall          57.2 s wall (54.4 s CPU)
+  PCH only (no unity)              21.8 s wall          50.8 s wall (47.9 s CPU)
+  Unity build only (no PCH)        20.0 s wall          47.9 s wall (46.8 s CPU)
+  Unity build + PCH                20.0 s wall          47.6 s wall (46.4 s CPU)
+  Delta: unity vs baseline         -4.4 s  (-18%)       -9.3 s  (-16%)
+  Delta: PCH added to unity         ~0 s   ( ~0%)        ~0 s   ( ~0%)
 
 
 --------------------------------------------------------------------------------
