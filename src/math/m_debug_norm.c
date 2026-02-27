@@ -40,7 +40,7 @@
 
 #ifdef __UNIXOS2__
 /* The linker doesn't like empty files */
-static char dummy;
+static char dummy_norm;
 #endif
 
 #ifdef DEBUG_MATH  /* This code only used for debugging */
@@ -184,7 +184,7 @@ static void ref_norm_transform_normalize(const GLmatrix *mat,
  * Normal transformation tests
  */
 
-static void init_matrix(GLfloat *m)
+static void init_matrix_norm(GLfloat *m)
 {
     m[0] = 63.0;
     m[4] = 43.0;
@@ -223,7 +223,7 @@ static int test_norm_function(normal_func func, int mtype, long *cycles)
     mat->m = (GLfloat *) ALIGN_MALLOC(16 * sizeof(GLfloat), 16);
     mat->inv = m = mat->m;
 
-    init_matrix(m);
+    init_matrix_norm(m);
 
     scale = 1.0F + rnd() * norm_scale_types[mtype];
 

@@ -494,7 +494,7 @@ init_vp(GLcontext *ctx, struct tnl_pipeline_stage *stage)
  * Destructor for this pipeline stage.
  */
 static void
-dtr(struct tnl_pipeline_stage *stage)
+vp_stage_dtr(struct tnl_pipeline_stage *stage)
 {
     struct vp_stage_data *store = VP_STAGE_DATA(stage);
 
@@ -532,7 +532,7 @@ const struct tnl_pipeline_stage _tnl_vertex_program_stage = {
     "vertex-program",
     NULL,			/* private_data */
     init_vp,			/* create */
-    dtr,				/* destroy */
+    vp_stage_dtr,			/* destroy */
     validate_vp_stage, 		/* validate */
     run_vp			/* run -- initially set to ctr */
 };

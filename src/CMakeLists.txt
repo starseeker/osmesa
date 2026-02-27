@@ -193,6 +193,31 @@ target_precompile_headers(osmesa PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/main/context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/main/macros.h
 )
+set_target_properties(osmesa PROPERTIES UNITY_BUILD ON)
+# grammar_mesa.c must not be merged into a unity batch because it directly
+# #includes grammar.c (a non-compiled .c file).  Files that use heavy
+# X-macro / template-header patterns also need isolation so that the macro
+# sequences defined before each template #include do not bleed across
+# translation-unit boundaries inside a batch.
+set_source_files_properties(
+  shader/grammar/grammar_mesa.c
+  drivers/osmesa/osmesa.c
+  math/m_translate.c
+  math/m_xform.c
+  swrast/s_triangle.c
+  swrast/s_points.c
+  swrast/s_lines.c
+  swrast/s_aaline.c
+  swrast/s_aatriangle.c
+  swrast_setup/ss_triangle.c
+  main/texformat.c
+  main/vtxfmt.c
+  main/dispatch.c
+  glapi/glapi.c
+  vbo/vbo_exec_api.c
+  vbo/vbo_save_api.c
+  PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
+)
 target_link_libraries(osmesa ${M_LIBRARY})
 install(TARGETS osmesa
   RUNTIME DESTINATION ${BIN_DIR}

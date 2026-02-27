@@ -48,14 +48,47 @@ the vast majority of source files and account for the largest parsing costs:
   macros.h    -  92 of ~170 source files; covers translation units that use
                 macros but do not include context.h directly
 
+CMake's native unity (jumbo) build support is also enabled via the UNITY_BUILD
+target property.  CMake groups the source files into batches of eight and
+generates one amalgamation .c file per batch that #includes all members of
+the batch.  This means each batch pays the header-parsing cost only once
+instead of once per file.
+
+Sixteen source files that use the "X-macro" pattern (a template header included
+repeatedly inside the same .c file with different #define settings) are excluded
+from unity batching because the macros they define are still active at the end
+of the file and would silently alter the meaning of subsequent files in the
+same batch:
+
+  drivers/osmesa/osmesa.c          math/m_translate.c
+  glapi/glapi.c                    math/m_xform.c
+  main/dispatch.c                  shader/grammar/grammar_mesa.c
+  main/texformat.c                 swrast/s_aaline.c
+  main/vtxfmt.c                    swrast/s_aatriangle.c
+  vbo/vbo_exec_api.c               swrast/s_lines.c
+  vbo/vbo_save_api.c               swrast/s_points.c
+                                   swrast/s_triangle.c
+                                   swrast_setup/ss_triangle.c
+
+Three files contained static symbols whose names were duplicated across files
+that fell into the same unity batch.  These were renamed to unique identifiers
+so that they can participate in unity batching:
+
+  math/m_debug_norm.c   dummy        -> dummy_norm
+                        init_matrix  -> init_matrix_norm
+  math/m_debug_xform.c  dummy        -> dummy_xform
+                        init_matrix  -> init_matrix_xform
+  tnl/t_vb_program.c    dtr          -> vp_stage_dtr
+
 Build time comparison (GCC 13.3, Ubuntu 24.04, Release build):
 
-  Configuration                  Parallel (4 cores)   Single-threaded
-  -----------------------------  ------------------   ---------------
-  Without PCH                    24.4 s wall          57.2 s wall (54.4 s CPU)
-  PCH: glheader.h only           22.4 s wall          53.0 s wall (50.0 s CPU)
-  PCH: + context.h + macros.h    21.8 s wall          50.8 s wall (47.9 s CPU)
-  Total delta vs no PCH          -2.6 s  (-11%)       -6.4 s  (-11%)
+  Configuration                       Parallel (4 cores)   Single-threaded
+  ----------------------------------  ------------------   ---------------
+  Without PCH                         24.4 s wall          57.2 s wall (54.4 s CPU)
+  PCH: glheader.h only                22.4 s wall          53.0 s wall (50.0 s CPU)
+  PCH: + context.h + macros.h         21.8 s wall          50.8 s wall (47.9 s CPU)
+  PCH + unity build                   20.0 s wall          47.9 s wall (46.8 s CPU)
+  Total delta vs no PCH/unity         -4.4 s  (-18%)       -9.3 s  (-16%)
 
 The PCH is declared PRIVATE so it applies only to the library compilation
 units and is not forced onto consumers of the installed headers.

@@ -39,7 +39,7 @@
 
 #ifdef __UNIXOS2__
 /* The linker doesn't like empty files */
-static char dummy;
+static char dummy_xform;
 #endif
 
 #ifdef DEBUG_MATH  /* This code only used for debugging */
@@ -153,7 +153,7 @@ static void ref_transform(GLvector4f *dst,
  * Vertex transformation tests
  */
 
-static void init_matrix(GLfloat *m)
+static void init_matrix_xform(GLfloat *m)
 {
     m[0] = 63.0;
     m[4] = 43.0;
@@ -201,7 +201,7 @@ static int test_transform_function(transform_func func, int psize,
     m = mat->m;
     ASSERT(((long)m & 15) == 0);
 
-    init_matrix(m);
+    init_matrix_xform(m);
 
     for (i = 0 ; i < 4 ; i++) {
 	for (j = 0 ; j < 4 ; j++) {
