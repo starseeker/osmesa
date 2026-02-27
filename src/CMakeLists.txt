@@ -188,6 +188,7 @@ set(osmesa_srcs
   )
 
 add_library(osmesa SHARED ${osmesa_srcs})
+target_precompile_headers(osmesa PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/main/glheader.h)
 target_link_libraries(osmesa ${M_LIBRARY})
 install(TARGETS osmesa
   RUNTIME DESTINATION ${BIN_DIR}
