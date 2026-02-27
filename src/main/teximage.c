@@ -1178,6 +1178,10 @@ _mesa_init_teximage_fields(GLcontext *ctx, GLenum target,
      * case code in the texstore routines.
      */
     img->ImageOffsets = (GLuint *) malloc(depth * sizeof(GLuint));
+    if (!img->ImageOffsets) {
+	/* Caller must check for this failure */
+	return;
+    }
     for (i = 0; i < depth; i++) {
 	img->ImageOffsets[i] = i * width * height;
     }
