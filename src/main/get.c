@@ -1698,7 +1698,7 @@ _mesa_GetBooleanv(GLenum pname, GLboolean *params)
 	    params[0] = ctx->FragmentProgram.Enabled;
 	    break;
 	case GL_MAX_TEXTURE_COORDS_ARB:
-	    CHECK_EXT2(ARB_fragment_program, NV_fragment_program, "GetBooleanv");
+	    CHECK_EXT3(ARB_fragment_program, NV_fragment_program, ARB_multitexture, "GetBooleanv");
 	    params[0] = INT_TO_BOOLEAN(ctx->Const.MaxTextureCoordUnits);
 	    break;
 	case GL_MAX_TEXTURE_IMAGE_UNITS_ARB:
@@ -3516,7 +3516,7 @@ _mesa_GetFloatv(GLenum pname, GLfloat *params)
 	    params[0] = BOOLEAN_TO_FLOAT(ctx->FragmentProgram.Enabled);
 	    break;
 	case GL_MAX_TEXTURE_COORDS_ARB:
-	    CHECK_EXT2(ARB_fragment_program, NV_fragment_program, "GetFloatv");
+	    CHECK_EXT3(ARB_fragment_program, NV_fragment_program, ARB_multitexture, "GetFloatv");
 	    params[0] = (GLfloat)(ctx->Const.MaxTextureCoordUnits);
 	    break;
 	case GL_MAX_TEXTURE_IMAGE_UNITS_ARB:
@@ -5333,7 +5333,7 @@ _mesa_GetIntegerv(GLenum pname, GLint *params)
 	    params[0] = BOOLEAN_TO_INT(ctx->FragmentProgram.Enabled);
 	    break;
 	case GL_MAX_TEXTURE_COORDS_ARB:
-	    CHECK_EXT2(ARB_fragment_program, NV_fragment_program, "GetIntegerv");
+	    CHECK_EXT3(ARB_fragment_program, NV_fragment_program, ARB_multitexture, "GetIntegerv");
 	    params[0] = ctx->Const.MaxTextureCoordUnits;
 	    break;
 	case GL_MAX_TEXTURE_IMAGE_UNITS_ARB:
