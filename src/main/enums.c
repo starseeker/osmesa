@@ -4802,7 +4802,7 @@ static const unsigned reduced_enums[1277] = {
     30, /* GL_ALL_CLIENT_ATTRIB_BITS */
 };
 
-#define Elements(x) sizeof(x)/sizeof(*x)
+#define Elements_enum(x) sizeof(x)/sizeof(*x)
 
 typedef int (*cfunc)(const void *, const void *);
 
@@ -4843,7 +4843,7 @@ const char *_mesa_lookup_enum_by_nr(int nr)
 {
     unsigned * i;
 
-    i = (unsigned *)bsearch(& nr, reduced_enums, Elements(reduced_enums),
+    i = (unsigned *)bsearch(& nr, reduced_enums, Elements_enum(reduced_enums),
 			    sizeof(reduced_enums[0]), (cfunc) compar_nr);
 
     if (i != NULL) {
@@ -4860,7 +4860,7 @@ int _mesa_lookup_enum_by_name(const char *symbol)
     enum_elt * f = NULL;
 
     if (symbol != NULL) {
-	f = (enum_elt *)bsearch(symbol, all_enums, Elements(all_enums),
+	f = (enum_elt *)bsearch(symbol, all_enums, Elements_enum(all_enums),
 				sizeof(enum_elt), (cfunc) compar_name);
     }
 
