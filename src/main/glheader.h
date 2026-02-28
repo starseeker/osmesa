@@ -149,12 +149,15 @@
 #  define INLINE
 #endif
 
-/* Prevent inlining.  Used to keep the auto-vectorizer from operating on a
- * function in a caller context where it generates incorrect code (e.g. the
- * interpolate_colors() loop inlined into _swrast_write_rgba_span() produces
- * wrong AoS byte-shuffle code under GCC -O3, causing B == R on every span). */
+/* Prevent inlining and auto-vectorization.  The interpolate_colors() loop
+ * produces an incorrect AoS byte-shuffle under GCC's auto-vectorizer both
+ * when inlined into _swrast_write_rgba_span() (B == R on every affected span)
+ * AND when compiled as a standalone function under GCC 13+ (same symptom).
+ * Disabling tree-vectorization for the function body eliminates the bug.
+ * The equivalent for MSVC is __declspec(noinline); no vectorization guard is
+ * needed there because cl.exe does not auto-vectorize this loop in practice. */
 #if defined(__GNUC__) || defined(__clang__)
-#  define NOINLINE __attribute__((noinline))
+#  define NOINLINE __attribute__((noinline, optimize("no-tree-vectorize")))
 #elif defined(_MSC_VER) || defined(__MSC__)
 #  define NOINLINE __declspec(noinline)
 #else
