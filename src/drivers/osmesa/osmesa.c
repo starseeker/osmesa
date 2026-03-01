@@ -1385,6 +1385,15 @@ GLAPI GLboolean GLAPIENTRY
 OSMesaMakeCurrent(OSMesaContext osmesa, void *buffer, GLenum type,
 		  GLsizei width, GLsizei height)
 {
+    /* NULL context + NULL buffer: unbind the current context (mirrors the
+     * behaviour of wglMakeCurrent(NULL,NULL) / glXMakeCurrent(dpy,None,NULL)).
+     * This is the only portable way callers can release the current OSMesa
+     * context without making another one current. */
+    if (!osmesa && !buffer) {
+	_mesa_make_current(NULL, NULL, NULL);
+	return GL_TRUE;
+    }
+
     if (!osmesa || !buffer ||
 	width < 1 || height < 1 ||
 	width > MAX_WIDTH || height > MAX_HEIGHT) {
