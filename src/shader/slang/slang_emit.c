@@ -966,26 +966,40 @@ emit_move(slang_emit_info *emitInfo, slang_ir_node *n)
     n->Store = n->Children[0]->Store;
 
 #if PEEPHOLE_OPTIMIZATIONS
-    if (inst &&
-	_slang_is_temp(emitInfo->vt, n->Children[1]->Store) &&
-	(inst->DstReg.File == n->Children[1]->Store->File) &&
-	(inst->DstReg.Index == n->Children[1]->Store->Index)) {
-	/* Peephole optimization:
-	 * The Right-Hand-Side has its results in a temporary place.
-	 * Modify the RHS (and the prev instruction) to store its results
-	 * in the destination specified by n->Children[0].
-	 * Then, this MOVE is a no-op.
-	 */
-	if (n->Children[1]->Opcode != IR_SWIZZLE)
-	    _slang_free_temp(emitInfo->vt, n->Children[1]->Store);
-	*n->Children[1]->Store = *n->Children[0]->Store;
-	/* fixup the previous instruction (which stored the RHS result) */
-	assert(n->Children[0]->Store->Index >= 0);
-	storage_to_dst_reg(&inst->DstReg, n->Children[0]->Store, n->Writemask);
-	return inst;
-    } else
-#endif
+    /* For scalar (size==1) temps packed into register sub-components, also
+     * verify the write-mask matches the expected component.  Without this
+     * check two scalar temps that share the same register index but live in
+     * different components (e.g. T0.x vs T0.y) would both satisfy the Index
+     * test, causing the peephole to redirect the wrong instruction and
+     * clobber a live variable. */
+    if (inst) {
+	const slang_ir_storage *rhs = n->Children[1]->Store;
+	const GLboolean scalar_ok = (rhs->Size != 1) ||
+	    (inst->DstReg.WriteMask ==
+	     (WRITEMASK_X << GET_SWZ(rhs->Swizzle, 0)));
+	if (_slang_is_temp(emitInfo->vt, rhs) &&
+	    (inst->DstReg.File == rhs->File) &&
+	    (inst->DstReg.Index == rhs->Index) &&
+	    scalar_ok) {
+	    /* Peephole optimization:
+	     * The Right-Hand-Side has its results in a temporary place.
+	     * Modify the RHS (and the prev instruction) to store its results
+	     * in the destination specified by n->Children[0].
+	     * Then, this MOVE is a no-op.
+	     */
+	    if (n->Children[1]->Opcode != IR_SWIZZLE)
+		_slang_free_temp(emitInfo->vt, n->Children[1]->Store);
+	    *n->Children[1]->Store = *n->Children[0]->Store;
+	    /* fixup the previous instruction (which stored the RHS result) */
+	    assert(n->Children[0]->Store->Index >= 0);
+	    storage_to_dst_reg(&inst->DstReg, n->Children[0]->Store, n->Writemask);
+	    return inst;
+	}
+    }
     {
+#else
+    {
+#endif
 	if (n->Children[0]->Store->Size > 4) {
 	    /* move matrix/struct etc (block of registers) */
 	    slang_ir_storage dstStore = *n->Children[0]->Store;
