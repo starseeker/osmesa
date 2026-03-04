@@ -2122,9 +2122,9 @@ _mesa_reference_renderbuffer(struct gl_renderbuffer **ptr,
 	GLboolean deleteFlag = GL_FALSE;
 	struct gl_renderbuffer *oldRb = *ptr;
 
-	assert(oldRb->Magic == RB_MAGIC);
+	assert((unsigned int)oldRb->Magic == RB_MAGIC);
 	_glthread_LOCK_MUTEX(oldRb->Mutex);
-	assert(oldRb->Magic == RB_MAGIC);
+	assert((unsigned int)oldRb->Magic == RB_MAGIC);
 	ASSERT(oldRb->RefCount > 0);
 	oldRb->RefCount--;
 	/*printf("RB DECR %p (%d) to %d\n", (void*) oldRb, oldRb->Name, oldRb->RefCount);*/
@@ -2141,7 +2141,7 @@ _mesa_reference_renderbuffer(struct gl_renderbuffer **ptr,
     assert(!*ptr);
 
     if (rb) {
-	assert(rb->Magic == RB_MAGIC);
+	assert((unsigned int)rb->Magic == RB_MAGIC);
 	/* reference new renderbuffer */
 	_glthread_LOCK_MUTEX(rb->Mutex);
 	rb->RefCount++;

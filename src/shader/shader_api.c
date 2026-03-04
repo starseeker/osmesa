@@ -512,7 +512,7 @@ _mesa_bind_attrib_location(GLcontext *ctx, GLuint program, GLuint index,
 	_mesa_error(ctx, GL_OUT_OF_MEMORY, "glBindAttribLocation");
     }
 
-    if (shProg->VertexProgram && oldIndex >= 0 && oldIndex != index) {
+    if (shProg->VertexProgram && oldIndex >= 0 && oldIndex != (GLint)index) {
 	/* If the index changed, need to search/replace references to that attribute
 	 * in the vertex program.
 	 */
@@ -761,7 +761,7 @@ _mesa_get_attached_shaders(GLcontext *ctx, GLuint program, GLsizei maxCount,
 	= _mesa_lookup_shader_program(ctx, program);
     if (shProg) {
 	GLint i;
-	for (i = 0; i < maxCount && i < shProg->NumShaders; i++) {
+	for (i = 0; i < maxCount && (GLuint)i < shProg->NumShaders; i++) {
 	    obj[i] = shProg->Shaders[i]->Name;
 	}
 	if (count)
@@ -975,7 +975,7 @@ get_uniformfv(GLcontext *ctx, GLuint program, GLint location,
 	= _mesa_lookup_shader_program(ctx, program);
     if (shProg) {
 	GLint i;
-	if (location >= 0 && location < shProg->Uniforms->NumParameters) {
+	if (location >= 0 && (GLuint)location < shProg->Uniforms->NumParameters) {
 	    GLuint uSize;
 	    GLenum uType;
 	    GLint rows = 0;
@@ -1002,12 +1002,12 @@ get_uniformfv(GLcontext *ctx, GLuint program, GLint location,
 	    }
 	    if (rows != 0) {
 		GLint r, c;
-		for (c = 0, i = 0; c * 4 < uSize; c++)
+		for (c = 0, i = 0; (GLuint)(c * 4) < uSize; c++)
 		    for (r = 0; r < rows; r++, i++)
 			params[i] = shProg->Uniforms->ParameterValues[location + c][r];
 		return i;
 	    } else {
-		for (i = 0; i < uSize; i++) {
+		for (i = 0; (GLuint)i < uSize; i++) {
 		    params[i] = shProg->Uniforms->ParameterValues[location][i];
 		}
 		return i;
@@ -1231,7 +1231,7 @@ _mesa_uniform(GLcontext *ctx, GLint location, GLsizei count,
 	}
 	/* check that the sampler (tex unit index) is legal */
 	unit = ((GLint *) values)[0];
-	if (unit >= ctx->Const.MaxTextureImageUnits) {
+	if ((GLuint)unit >= ctx->Const.MaxTextureImageUnits) {
 	    _mesa_error(ctx, GL_INVALID_VALUE,
 			"glUniform1(invalid sampler/tex unit index)");
 	    return;
@@ -1376,17 +1376,17 @@ _mesa_uniform_matrix(GLcontext *ctx, GLint cols, GLint rows,
     for (i = 0; i < count; i++) {
 	if (transpose) {
 	    GLuint row, col;
-	    for (col = 0; col < cols; col++) {
+	    for (col = 0; col < (GLuint)cols; col++) {
 		GLfloat *v = shProg->Uniforms->ParameterValues[location + col];
-		for (row = 0; row < rows; row++) {
+		for (row = 0; row < (GLuint)rows; row++) {
 		    v[row] = values[row * cols + col];
 		}
 	    }
 	} else {
 	    GLuint row, col;
-	    for (col = 0; col < cols; col++) {
+	    for (col = 0; col < (GLuint)cols; col++) {
 		GLfloat *v = shProg->Uniforms->ParameterValues[location + col];
-		for (row = 0; row < rows; row++) {
+		for (row = 0; row < (GLuint)rows; row++) {
 		    v[row] = values[col * rows + row];
 		}
 	    }

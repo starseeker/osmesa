@@ -1019,7 +1019,7 @@ alloc_dispatch_table(void)
     struct _glapi_table *table = (struct _glapi_table *)malloc(sizeof(struct _glapi_table));
     if (table) {
 	_glapi_proc *entry = (_glapi_proc *) table;
-	GLint i;
+	GLuint i;
 	for (i = 0; i < DISPATCH_TABLE_SIZE; i++) {
 	    entry[i] = (_glapi_proc) generic_nop;
 	}

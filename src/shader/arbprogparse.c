@@ -1145,7 +1145,7 @@ parse_state_single_item(GLcontext * ctx, const GLubyte ** inst,
 	    state_tokens[1] = (gl_state_index)parse_integer(inst, Program);
 
 	    /* Check the value of state_tokens[1] against the # of lights */
-	    if (state_tokens[1] >= (GLint) ctx->Const.MaxLights) {
+	    if ((GLint)state_tokens[1] >= (GLint) ctx->Const.MaxLights) {
 		program_error(ctx, Program->Position, "Invalid Light Number");
 		/* bad state_tokens[1] */
 		return 1;
@@ -1193,7 +1193,7 @@ parse_state_single_item(GLcontext * ctx, const GLubyte ** inst,
 	    state_tokens[1] = (gl_state_index)parse_integer(inst, Program);
 
 	    /* Check the value of state_tokens[1] against the # of lights */
-	    if (state_tokens[1] >= (GLint) ctx->Const.MaxLights) {
+	    if ((GLint)state_tokens[1] >= (GLint) ctx->Const.MaxLights) {
 		program_error(ctx, Program->Position, "Invalid Light Number");
 		/* bad state_tokens[1] */
 		return 1;
@@ -1393,10 +1393,10 @@ parse_program_single_item(GLcontext * ctx, const GLubyte ** inst,
 
 	    /* Check state_tokens[2] against the number of ENV parameters available */
 	    if (((Program->Base.Target == GL_FRAGMENT_PROGRAM_ARB) &&
-		 (state_tokens[2] >= (GLint) ctx->Const.FragmentProgram.MaxEnvParams))
+		 ((GLint)state_tokens[2] >= (GLint) ctx->Const.FragmentProgram.MaxEnvParams))
 		||
 		((Program->Base.Target == GL_VERTEX_PROGRAM_ARB) &&
-		 (state_tokens[2] >= (GLint) ctx->Const.VertexProgram.MaxEnvParams))) {
+		 ((GLint)state_tokens[2] >= (GLint) ctx->Const.VertexProgram.MaxEnvParams))) {
 		program_error(ctx, Program->Position,
 			      "Invalid Program Env Parameter");
 		/* bad state_tokens[2] */
@@ -1411,10 +1411,10 @@ parse_program_single_item(GLcontext * ctx, const GLubyte ** inst,
 
 	    /* Check state_tokens[2] against the number of LOCAL parameters available */
 	    if (((Program->Base.Target == GL_FRAGMENT_PROGRAM_ARB) &&
-		 (state_tokens[2] >= (GLint) ctx->Const.FragmentProgram.MaxLocalParams))
+		 ((GLint)state_tokens[2] >= (GLint) ctx->Const.FragmentProgram.MaxLocalParams))
 		||
 		((Program->Base.Target == GL_VERTEX_PROGRAM_ARB) &&
-		 (state_tokens[2] >= (GLint) ctx->Const.VertexProgram.MaxLocalParams))) {
+		 ((GLint)state_tokens[2] >= (GLint) ctx->Const.VertexProgram.MaxLocalParams))) {
 		program_error(ctx, Program->Position,
 			      "Invalid Program Local Parameter");
 		/* bad state_tokens[2] */

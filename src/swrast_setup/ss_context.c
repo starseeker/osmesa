@@ -116,7 +116,8 @@ setup_vertex_format(GLcontext *ctx)
 			    swsetup->last_index_bitset)) {
 	DECLARE_RENDERINPUTS(index_bitset);
 	struct tnl_attr_map map[_TNL_ATTRIB_MAX];
-	int i, e = 0;
+	int e = 0;
+	GLuint i;
 
 	RENDERINPUTS_COPY(index_bitset, tnl->render_inputs_bitset);
 
