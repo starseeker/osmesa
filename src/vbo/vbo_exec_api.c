@@ -656,7 +656,7 @@ void vbo_exec_vtx_init(struct vbo_exec_context *exec)
      * continuously.
      */
     exec->vtx.bufferobj = ctx->Array.NullBufferObj;
-    exec->vtx.buffer_map = ALIGN_MALLOC(VBO_VERT_BUFFER_SIZE * sizeof(GLfloat), 64);
+    exec->vtx.buffer_map = (GLubyte *)ALIGN_MALLOC(VBO_VERT_BUFFER_SIZE * sizeof(GLfloat), 64);
 
     vbo_exec_vtxfmt_init(exec);
 

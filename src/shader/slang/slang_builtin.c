@@ -61,36 +61,36 @@ lookup_statevar(const char *var, GLint index1, GLint index2, const char *field,
     } matrices[] = {
 	{ "gl_ModelViewMatrix", STATE_MODELVIEW_MATRIX, STATE_MATRIX_TRANSPOSE },
 	{ "gl_ModelViewMatrixInverse", STATE_MODELVIEW_MATRIX, STATE_MATRIX_INVTRANS },
-	{ "gl_ModelViewMatrixTranspose", STATE_MODELVIEW_MATRIX, 0 },
+	{ "gl_ModelViewMatrixTranspose", STATE_MODELVIEW_MATRIX, (gl_state_index)0 },
 	{ "gl_ModelViewMatrixInverseTranspose", STATE_MODELVIEW_MATRIX, STATE_MATRIX_INVERSE },
 
 	{ "gl_ProjectionMatrix", STATE_PROJECTION_MATRIX, STATE_MATRIX_TRANSPOSE },
 	{ "gl_ProjectionMatrixInverse", STATE_PROJECTION_MATRIX, STATE_MATRIX_INVTRANS },
-	{ "gl_ProjectionMatrixTranspose", STATE_PROJECTION_MATRIX, 0 },
+	{ "gl_ProjectionMatrixTranspose", STATE_PROJECTION_MATRIX, (gl_state_index)0 },
 	{ "gl_ProjectionMatrixInverseTranspose", STATE_PROJECTION_MATRIX, STATE_MATRIX_INVERSE },
 
 	{ "gl_ModelViewProjectionMatrix", STATE_MVP_MATRIX, STATE_MATRIX_TRANSPOSE },
 	{ "gl_ModelViewProjectionMatrixInverse", STATE_MVP_MATRIX, STATE_MATRIX_INVTRANS },
-	{ "gl_ModelViewProjectionMatrixTranspose", STATE_MVP_MATRIX, 0 },
+	{ "gl_ModelViewProjectionMatrixTranspose", STATE_MVP_MATRIX, (gl_state_index)0 },
 	{ "gl_ModelViewProjectionMatrixInverseTranspose", STATE_MVP_MATRIX, STATE_MATRIX_INVERSE },
 
 	{ "gl_TextureMatrix", STATE_TEXTURE_MATRIX, STATE_MATRIX_TRANSPOSE },
 	{ "gl_TextureMatrixInverse", STATE_TEXTURE_MATRIX, STATE_MATRIX_INVTRANS },
-	{ "gl_TextureMatrixTranspose", STATE_TEXTURE_MATRIX, 0 },
+	{ "gl_TextureMatrixTranspose", STATE_TEXTURE_MATRIX, (gl_state_index)0 },
 	{ "gl_TextureMatrixInverseTranspose", STATE_TEXTURE_MATRIX, STATE_MATRIX_INVERSE },
 
 	/* XXX verify these!!! */
 	{ "gl_NormalMatrix", STATE_MODELVIEW_MATRIX, STATE_MATRIX_TRANSPOSE },
-	{ "__NormalMatrixTranspose", STATE_MODELVIEW_MATRIX, 0 },
+	{ "__NormalMatrixTranspose", STATE_MODELVIEW_MATRIX, (gl_state_index)0 },
 
-	{ NULL, 0, 0 }
+	{ NULL, (gl_state_index)0, (gl_state_index)0 }
     };
     gl_state_index tokens[STATE_LENGTH];
     GLuint i;
     GLboolean isMatrix = GL_FALSE;
 
     for (i = 0; i < STATE_LENGTH; i++) {
-	tokens[i] = 0;
+	tokens[i] = (gl_state_index)0;
     }
     *swizzleOut = SWIZZLE_NOOP;
 
@@ -115,7 +115,7 @@ lookup_statevar(const char *var, GLint index1, GLint index2, const char *field,
     if (isMatrix) {
 	if (tokens[0] == STATE_TEXTURE_MATRIX) {
 	    if (index1 >= 0) {
-		tokens[1] = index1;
+		tokens[1] = (gl_state_index)index1;
 		index1 = 0; /* prevent extra addition at end of function */
 	    }
 	}
@@ -132,7 +132,7 @@ lookup_statevar(const char *var, GLint index1, GLint index2, const char *field,
 	}
     } else if (strcmp(var, "gl_ClipPlane") == 0) {
 	tokens[0] = STATE_CLIPPLANE;
-	tokens[1] = index1;
+	tokens[1] = (gl_state_index)index1;
     } else if (strcmp(var, "gl_Point") == 0) {
 	if (strcmp(field, "size") == 0) {
 	    tokens[0] = STATE_POINT_SIZE;
@@ -162,9 +162,9 @@ lookup_statevar(const char *var, GLint index1, GLint index2, const char *field,
 	       strcmp(var, "gl_BackMaterial") == 0) {
 	tokens[0] = STATE_MATERIAL;
 	if (strcmp(var, "gl_FrontMaterial") == 0)
-	    tokens[1] = 0;
+	    tokens[1] = (gl_state_index)0;
 	else
-	    tokens[1] = 1;
+	    tokens[1] = (gl_state_index)1;
 	if (strcmp(field, "emission") == 0) {
 	    tokens[2] = STATE_EMISSION;
 	} else if (strcmp(field, "ambient") == 0) {
@@ -181,7 +181,7 @@ lookup_statevar(const char *var, GLint index1, GLint index2, const char *field,
 	}
     } else if (strcmp(var, "gl_LightSource") == 0) {
 	tokens[0] = STATE_LIGHT;
-	tokens[1] = index1;
+	tokens[1] = (gl_state_index)index1;
 	if (strcmp(field, "ambient") == 0) {
 	    tokens[2] = STATE_AMBIENT;
 	} else if (strcmp(field, "diffuse") == 0) {
@@ -224,25 +224,25 @@ lookup_statevar(const char *var, GLint index1, GLint index2, const char *field,
     } else if (strcmp(var, "gl_FrontLightModelProduct") == 0) {
 	if (strcmp(field, "sceneColor") == 0) {
 	    tokens[0] = STATE_LIGHTMODEL_SCENECOLOR;
-	    tokens[1] = 0;
+	    tokens[1] = (gl_state_index)0;
 	} else {
 	    return -1;
 	}
     } else if (strcmp(var, "gl_BackLightModelProduct") == 0) {
 	if (strcmp(field, "sceneColor") == 0) {
 	    tokens[0] = STATE_LIGHTMODEL_SCENECOLOR;
-	    tokens[1] = 1;
+	    tokens[1] = (gl_state_index)1;
 	} else {
 	    return -1;
 	}
     } else if (strcmp(var, "gl_FrontLightProduct") == 0 ||
 	       strcmp(var, "gl_BackLightProduct") == 0) {
 	tokens[0] = STATE_LIGHTPROD;
-	tokens[1] = index1; /* light number */
+	tokens[1] = (gl_state_index)index1; /* light number */
 	if (strcmp(var, "gl_FrontLightProduct") == 0) {
-	    tokens[2] = 0; /* front */
+	    tokens[2] = (gl_state_index)0; /* front */
 	} else {
-	    tokens[2] = 1; /* back */
+	    tokens[2] = (gl_state_index)1; /* back */
 	}
 	if (strcmp(field, "ambient") == 0) {
 	    tokens[3] = STATE_AMBIENT;
@@ -255,38 +255,38 @@ lookup_statevar(const char *var, GLint index1, GLint index2, const char *field,
 	}
     } else if (strcmp(var, "gl_TextureEnvColor") == 0) {
 	tokens[0] = STATE_TEXENV_COLOR;
-	tokens[1] = index1;
+	tokens[1] = (gl_state_index)index1;
     } else if (strcmp(var, "gl_EyePlaneS") == 0) {
 	tokens[0] = STATE_TEXGEN;
-	tokens[1] = index1; /* tex unit */
+	tokens[1] = (gl_state_index)index1; /* tex unit */
 	tokens[2] = STATE_TEXGEN_EYE_S;
     } else if (strcmp(var, "gl_EyePlaneT") == 0) {
 	tokens[0] = STATE_TEXGEN;
-	tokens[1] = index1; /* tex unit */
+	tokens[1] = (gl_state_index)index1; /* tex unit */
 	tokens[2] = STATE_TEXGEN_EYE_T;
     } else if (strcmp(var, "gl_EyePlaneR") == 0) {
 	tokens[0] = STATE_TEXGEN;
-	tokens[1] = index1; /* tex unit */
+	tokens[1] = (gl_state_index)index1; /* tex unit */
 	tokens[2] = STATE_TEXGEN_EYE_R;
     } else if (strcmp(var, "gl_EyePlaneQ") == 0) {
 	tokens[0] = STATE_TEXGEN;
-	tokens[1] = index1; /* tex unit */
+	tokens[1] = (gl_state_index)index1; /* tex unit */
 	tokens[2] = STATE_TEXGEN_EYE_Q;
     } else if (strcmp(var, "gl_ObjectPlaneS") == 0) {
 	tokens[0] = STATE_TEXGEN;
-	tokens[1] = index1; /* tex unit */
+	tokens[1] = (gl_state_index)index1; /* tex unit */
 	tokens[2] = STATE_TEXGEN_OBJECT_S;
     } else if (strcmp(var, "gl_ObjectPlaneT") == 0) {
 	tokens[0] = STATE_TEXGEN;
-	tokens[1] = index1; /* tex unit */
+	tokens[1] = (gl_state_index)index1; /* tex unit */
 	tokens[2] = STATE_TEXGEN_OBJECT_T;
     } else if (strcmp(var, "gl_ObjectPlaneR") == 0) {
 	tokens[0] = STATE_TEXGEN;
-	tokens[1] = index1; /* tex unit */
+	tokens[1] = (gl_state_index)index1; /* tex unit */
 	tokens[2] = STATE_TEXGEN_OBJECT_R;
     } else if (strcmp(var, "gl_ObjectPlaneQ") == 0) {
 	tokens[0] = STATE_TEXGEN;
-	tokens[1] = index1; /* tex unit */
+	tokens[1] = (gl_state_index)index1; /* tex unit */
 	tokens[2] = STATE_TEXGEN_OBJECT_Q;
     } else if (strcmp(var, "gl_Fog") == 0) {
 	if (strcmp(field, "color") == 0) {
@@ -315,7 +315,7 @@ lookup_statevar(const char *var, GLint index1, GLint index2, const char *field,
 	GLint pos[4];
 	GLuint j;
 	for (j = 0; j < 4; j++) {
-	    tokens[2] = tokens[3] = j; /* jth row of matrix */
+	    tokens[2] = tokens[3] = (gl_state_index)j; /* jth row of matrix */
 	    pos[j] = _mesa_add_state_reference(paramList, tokens);
 	    assert(pos[j] >= 0);
 	    ASSERT(pos[j] >= 0);

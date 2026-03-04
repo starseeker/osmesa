@@ -1120,7 +1120,7 @@ parse_state_single_item(GLcontext * ctx, const GLubyte ** inst,
     switch (token) {
 	case STATE_MATERIAL_PARSER:
 	    state_tokens[0] = STATE_MATERIAL;
-	    state_tokens[1] = parse_face_type(inst);
+	    state_tokens[1] = (gl_state_index)parse_face_type(inst);
 	    switch (*(*inst)++) {
 		case MATERIAL_AMBIENT:
 		    state_tokens[2] = STATE_AMBIENT;
@@ -1142,7 +1142,7 @@ parse_state_single_item(GLcontext * ctx, const GLubyte ** inst,
 
 	case STATE_LIGHT_PARSER:
 	    state_tokens[0] = STATE_LIGHT;
-	    state_tokens[1] = parse_integer(inst, Program);
+	    state_tokens[1] = (gl_state_index)parse_integer(inst, Program);
 
 	    /* Check the value of state_tokens[1] against the # of lights */
 	    if (state_tokens[1] >= (GLint) ctx->Const.MaxLights) {
@@ -1183,14 +1183,14 @@ parse_state_single_item(GLcontext * ctx, const GLubyte ** inst,
 		    break;
 		case LIGHT_MODEL_SCENECOLOR:
 		    state_tokens[0] = STATE_LIGHTMODEL_SCENECOLOR;
-		    state_tokens[1] = parse_face_type(inst);
+		    state_tokens[1] = (gl_state_index)parse_face_type(inst);
 		    break;
 	    }
 	    break;
 
 	case STATE_LIGHT_PROD:
 	    state_tokens[0] = STATE_LIGHTPROD;
-	    state_tokens[1] = parse_integer(inst, Program);
+	    state_tokens[1] = (gl_state_index)parse_integer(inst, Program);
 
 	    /* Check the value of state_tokens[1] against the # of lights */
 	    if (state_tokens[1] >= (GLint) ctx->Const.MaxLights) {
@@ -1199,7 +1199,7 @@ parse_state_single_item(GLcontext * ctx, const GLubyte ** inst,
 		return 1;
 	    }
 
-	    state_tokens[2] = parse_face_type(inst);
+	    state_tokens[2] = (gl_state_index)parse_face_type(inst);
 	    switch (*(*inst)++) {
 		case LIGHT_PROD_AMBIENT:
 		    state_tokens[3] = STATE_AMBIENT;
@@ -1226,7 +1226,7 @@ parse_state_single_item(GLcontext * ctx, const GLubyte ** inst,
 	    break;
 
 	case STATE_TEX_ENV:
-	    state_tokens[1] = parse_integer(inst, Program);
+	    state_tokens[1] = (gl_state_index)parse_integer(inst, Program);
 	    switch (*(*inst)++) {
 		case TEX_ENV_COLOR:
 		    state_tokens[0] = STATE_TEXENV_COLOR;
@@ -1242,7 +1242,7 @@ parse_state_single_item(GLcontext * ctx, const GLubyte ** inst,
 
 	    if (parse_texcoord_num(ctx, inst, Program, &coord))
 		return 1;
-	    state_tokens[1] = coord;
+	    state_tokens[1] = (gl_state_index)coord;
 
 	    /* EYE or OBJECT */
 	    type = *(*inst)++;
@@ -1325,10 +1325,10 @@ parse_state_single_item(GLcontext * ctx, const GLubyte ** inst,
 			     (GLint *) &state_tokens[4]))
 		return 1;
 
-	    state_tokens[2] = parse_integer(inst, Program);        /* The first row to grab */
+	    state_tokens[2] = (gl_state_index)parse_integer(inst, Program);        /* The first row to grab */
 
 	    if ((**inst) != 0) {                                   /* Either the last row, 0 */
-		state_tokens[3] = parse_integer(inst, Program);
+		state_tokens[3] = (gl_state_index)parse_integer(inst, Program);
 		if (state_tokens[3] < state_tokens[2]) {
 		    program_error(ctx, Program->Position,
 				  "Second matrix index less than the first");
@@ -1389,7 +1389,7 @@ parse_program_single_item(GLcontext * ctx, const GLubyte ** inst,
     switch (*(*inst)++) {
 	case PROGRAM_PARAM_ENV:
 	    state_tokens[1] = STATE_ENV;
-	    state_tokens[2] = parse_integer(inst, Program);
+	    state_tokens[2] = (gl_state_index)parse_integer(inst, Program);
 
 	    /* Check state_tokens[2] against the number of ENV parameters available */
 	    if (((Program->Base.Target == GL_FRAGMENT_PROGRAM_ARB) &&
@@ -1407,7 +1407,7 @@ parse_program_single_item(GLcontext * ctx, const GLubyte ** inst,
 
 	case PROGRAM_PARAM_LOCAL:
 	    state_tokens[1] = STATE_LOCAL;
-	    state_tokens[2] = parse_integer(inst, Program);
+	    state_tokens[2] = (gl_state_index)parse_integer(inst, Program);
 
 	    /* Check state_tokens[2] against the number of LOCAL parameters available */
 	    if (((Program->Base.Target == GL_FRAGMENT_PROGRAM_ARB) &&
@@ -1742,7 +1742,7 @@ parse_param_elements(GLcontext * ctx, const GLubyte ** inst,
 {
     GLint idx;
     GLuint err = 0;
-    gl_state_index state_tokens[STATE_LENGTH] = {0, 0, 0, 0, 0};
+    gl_state_index state_tokens[STATE_LENGTH] = {(gl_state_index)0, (gl_state_index)0, (gl_state_index)0, (gl_state_index)0, (gl_state_index)0};
     GLfloat const_values[4];
 
     GLubyte token = *(*inst)++;
@@ -1766,7 +1766,7 @@ parse_param_elements(GLcontext * ctx, const GLubyte ** inst,
 		const GLint last_row = state_tokens[3];
 
 		for (row = first_row; row <= last_row; row++) {
-		    state_tokens[2] = state_tokens[3] = row;
+		    state_tokens[2] = state_tokens[3] = (gl_state_index)row;
 
 		    idx = _mesa_add_state_reference(Program->Base.Parameters,
 						    state_tokens);
@@ -1823,7 +1823,7 @@ parse_param_elements(GLcontext * ctx, const GLubyte ** inst,
 		}
 
 		for (new_idx = start_idx; new_idx <= end_idx; new_idx++) {
-		    state_tokens[2] = new_idx;
+		    state_tokens[2] = (gl_state_index)new_idx;
 		    _mesa_add_state_reference(Program->Base.Parameters,
 						    state_tokens);
 		    param_var->param_binding_length++;

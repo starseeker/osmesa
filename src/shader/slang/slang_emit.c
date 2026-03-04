@@ -1111,7 +1111,7 @@ emit_not(slang_emit_info *emitInfo, slang_ir_node *n)
 	{ OPCODE_SGE, OPCODE_SLT },
 	{ OPCODE_SEQ, OPCODE_SNE },
 	{ OPCODE_SNE, OPCODE_SEQ },
-	{ 0, 0 }
+	{ (gl_inst_opcode)0, (gl_inst_opcode)0 }
     };
     struct prog_instruction *inst;
     GLuint i;

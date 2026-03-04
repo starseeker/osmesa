@@ -44,7 +44,7 @@
 static GLubyte *get_space(GLcontext *ctx, GLuint bytes)
 {
     TNLcontext *tnl = TNL_CONTEXT(ctx);
-    GLubyte *space = malloc(bytes);
+    GLubyte *space = (GLubyte *)malloc(bytes);
 
     tnl->block[tnl->nr_blocks++] = space;
     return space;
@@ -214,7 +214,7 @@ static void bind_inputs(GLcontext *ctx,
 	 * XXX: remove the GLvector4f type at some stage and just use
 	 * client arrays.
 	 */
-	_tnl_import_array(ctx, i, count, inputs[i], ptr);
+	_tnl_import_array(ctx, i, count, inputs[i], (const GLubyte *)ptr);
     }
 
     /* We process only the vertices between min & max index:

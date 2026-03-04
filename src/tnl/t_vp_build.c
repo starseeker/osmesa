@@ -437,11 +437,11 @@ static struct ureg register_param5(struct tnl_program *p,
 {
     gl_state_index tokens[STATE_LENGTH];
     GLint idx;
-    tokens[0] = s0;
-    tokens[1] = s1;
-    tokens[2] = s2;
-    tokens[3] = s3;
-    tokens[4] = s4;
+    tokens[0] = (gl_state_index)s0;
+    tokens[1] = (gl_state_index)s1;
+    tokens[2] = (gl_state_index)s2;
+    tokens[3] = (gl_state_index)s3;
+    tokens[4] = (gl_state_index)s4;
     idx = _mesa_add_state_reference(p->program->Base.Parameters, tokens);
     return make_ureg(PROGRAM_STATE_VAR, idx);
 }

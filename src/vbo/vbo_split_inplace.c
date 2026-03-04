@@ -208,7 +208,7 @@ static void split_prims(struct split_context *split)
 	     */
 	    struct _mesa_index_buffer ib;
 	    struct _mesa_prim tmpprim;
-	    GLuint *elts = malloc(count * sizeof(GLuint));
+	    GLuint *elts = (GLuint *)malloc(count * sizeof(GLuint));
 	    GLuint j;
 
 	    for (j = 0; j < count; j++)
