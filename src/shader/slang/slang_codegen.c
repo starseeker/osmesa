@@ -60,7 +60,7 @@ static slang_ir_node *
 _slang_gen_operation(slang_assemble_ctx * A, slang_operation *oper);
 
 
-static GLboolean
+static USED GLboolean
 is_sampler_type(const slang_fully_specified_type *t)
 {
     switch (t->specifier.type) {
@@ -2873,7 +2873,7 @@ _slang_codegen_global_variable(slang_assemble_ctx *A, slang_variable *var,
 	} else {
 	    /* pre-defined varying, like gl_Color or gl_TexCoord */
 	    if (type == SLANG_UNIT_FRAGMENT_BUILTIN) {
-		GLuint swizzle;
+		GLuint swizzle = SWIZZLE_NOOP; /* init to silence compiler warning */
 		GLint index = _slang_input_index(varName, GL_FRAGMENT_PROGRAM_ARB,
 						 &swizzle);
 		assert(index >= 0);
@@ -2906,7 +2906,7 @@ _slang_codegen_global_variable(slang_assemble_ctx *A, slang_variable *var,
 					  VERT_ATTRIB_GENERIC0 + index, size);
 	} else {
 	    /* pre-defined vertex attrib */
-	    GLuint swizzle;
+	    GLuint swizzle = SWIZZLE_NOOP; /* init to silence compiler warning */
 	    GLint index = _slang_input_index(varName, GL_VERTEX_PROGRAM_ARB,
 					     &swizzle);
 	    GLint size = 4; /* XXX? */
