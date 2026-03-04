@@ -233,6 +233,14 @@ check_c_compiler_flag(-Werror=c++-compat HAVE_CXX_COMPAT_FLAG)
 if (HAVE_CXX_COMPAT_FLAG)
   target_compile_options(osmesa PRIVATE "-Werror=c++-compat")
 endif (HAVE_CXX_COMPAT_FLAG)
+check_c_compiler_flag(-Wall HAVE_WALL_FLAG)
+if (HAVE_WALL_FLAG)
+  target_compile_options(osmesa PRIVATE "-Wall")
+endif (HAVE_WALL_FLAG)
+check_c_compiler_flag(-Wsign-compare HAVE_WSIGN_COMPARE_FLAG)
+if (HAVE_WSIGN_COMPARE_FLAG)
+  target_compile_options(osmesa PRIVATE "-Wsign-compare")
+endif (HAVE_WSIGN_COMPARE_FLAG)
 
 # Local Variables:
 # tab-width: 8

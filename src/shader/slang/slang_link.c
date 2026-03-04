@@ -436,7 +436,7 @@ _slang_remap_attribute(struct gl_program *prog, GLuint oldAttrib, GLuint newAttr
 	struct prog_instruction *inst = prog->Instructions + i;
 	for (j = 0; j < 3; j++) {
 	    if (inst->SrcReg[j].File == PROGRAM_INPUT) {
-		if (inst->SrcReg[j].Index == VERT_ATTRIB_GENERIC0 + oldAttrib) {
+		if ((GLuint)inst->SrcReg[j].Index == VERT_ATTRIB_GENERIC0 + oldAttrib) {
 		    inst->SrcReg[j].Index = VERT_ATTRIB_GENERIC0 + newAttrib;
 		}
 	    }

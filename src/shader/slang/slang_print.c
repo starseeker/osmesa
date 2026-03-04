@@ -181,7 +181,7 @@ static void
 print_generic2(const slang_operation *op, const char *oper,
 	       const char *s, int indent)
 {
-    int i;
+    GLuint i;
     if (oper) {
 	spaces(indent);
 	printf("[%p locals %p] %s %s\n", (void*) op, (void*) op->locals, oper, s);
@@ -232,7 +232,7 @@ find_var(const slang_variable_scope *s, slang_atom name)
 void
 slang_print_tree(const slang_operation *op, int indent)
 {
-    int i;
+    GLuint i;
 
     switch (op->type) {
 
@@ -622,7 +622,7 @@ slang_print_tree(const slang_operation *op, int indent)
 void
 slang_print_function(const slang_function *f, GLboolean body)
 {
-    int i;
+    GLuint i;
 
 #if 0
     if (strcmp((char *) f->header.a_name, "main") != 0)
@@ -800,7 +800,7 @@ int
 slang_checksum_tree(const slang_operation *op)
 {
     int s = op->num_children;
-    int i;
+    GLuint i;
 
     for (i = 0; i < op->num_children; i++) {
 	s += slang_checksum_tree(&op->children[i]);

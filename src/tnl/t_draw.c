@@ -360,7 +360,7 @@ void _tnl_draw_prims(GLcontext *ctx,
 			 min_index, max_index,
 			 _tnl_draw_prims);
 	return;
-    } else if (max_index > max) {
+    } else if (max_index > (GLuint)max) {
 	/* The software TNL pipeline has a fixed amount of storage for
 	 * vertices and it is necessary to split incoming drawing commands
 	 * if they exceed that limit.

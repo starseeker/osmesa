@@ -1908,7 +1908,7 @@ compile_with_grammar(grammar id, const char *source, slang_code_unit * unit,
     if (!_slang_preprocess_version(source, &version, &start, infolog))
 	return GL_FALSE;
 
-    if (version > maxVersion) {
+    if (version > (GLuint)maxVersion) {
 	slang_info_log_error(infolog,
 			     "language version %.2f is not supported.",
 			     version * 0.01);

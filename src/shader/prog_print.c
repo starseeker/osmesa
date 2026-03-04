@@ -125,10 +125,10 @@ arb_input_attrib_string(GLint index, GLenum progType)
     };
 
     if (progType == GL_VERTEX_PROGRAM_ARB) {
-	assert(index < sizeof(vertAttribs) / sizeof(vertAttribs[0]));
+	assert(index < (GLint)(sizeof(vertAttribs) / sizeof(vertAttribs[0])));
 	return vertAttribs[index];
     } else {
-	assert(index < sizeof(fragAttribs) / sizeof(fragAttribs[0]));
+	assert(index < (GLint)(sizeof(fragAttribs) / sizeof(fragAttribs[0])));
 	return fragAttribs[index];
     }
 }
@@ -168,10 +168,10 @@ arb_output_attrib_string(GLint index, GLenum progType)
     };
 
     if (progType == GL_VERTEX_PROGRAM_ARB) {
-	assert(index < sizeof(vertResults) / sizeof(vertResults[0]));
+	assert(index < (GLint)(sizeof(vertResults) / sizeof(vertResults[0])));
 	return vertResults[index];
     } else {
-	assert(index < sizeof(fragResults) / sizeof(fragResults[0]));
+	assert(index < (GLint)(sizeof(fragResults) / sizeof(fragResults[0])));
 	return fragResults[index];
     }
 }

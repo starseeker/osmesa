@@ -326,7 +326,7 @@ _slang_adapt_call(slang_operation *callOper, const slang_function *fun,
     if (fun->kind != SLANG_FUNC_CONSTRUCTOR)
 	return GL_FALSE;
 
-    if (callOper->num_children != numParams) {
+    if (callOper->num_children != (GLuint)numParams) {
 	/* number of arguments doesn't match number of parameters */
 
 	if (fun->kind == SLANG_FUNC_CONSTRUCTOR) {
@@ -389,10 +389,10 @@ _slang_adapt_call(slang_operation *callOper, const slang_function *fun,
 	}
     }
 
-    if (callOper->num_children < numParams) {
+    if (callOper->num_children < (GLuint)numParams) {
 	/* still not enough args for all params */
 	return GL_FALSE;
-    } else if (callOper->num_children > numParams) {
+    } else if (callOper->num_children > (GLuint)numParams) {
 	/* now too many arguments */
 	/* XXX this isn't always an error, see spec */
 	return GL_FALSE;

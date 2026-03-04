@@ -225,7 +225,7 @@ _mesa_copy_texture_object(struct gl_texture_object *dest,
  * Check if the given texture object is valid by examining its Target field.
  * For debugging only.
  */
-static GLboolean
+static USED GLboolean
 valid_texture_object(const struct gl_texture_object *tex)
 {
     switch (tex->Target) {

@@ -590,13 +590,13 @@ _glapi_add_dispatch(const char * const * function_names,
 		 * glXGetProcAddress but never filled in by the driver.
 		 */
 
-		if (ExtEntryTable[j].dispatch_offset != ~0) {
+		if (ExtEntryTable[j].dispatch_offset != ~0u) {
 		    if (strcmp(real_sig, ExtEntryTable[j].parameter_signature)
 			!= 0) {
 			return -1;
 		    }
 
-		    if ((offset != ~0) && (ExtEntryTable[j].dispatch_offset != offset)) {
+		    if ((offset != ~0) && (ExtEntryTable[j].dispatch_offset != (unsigned)offset)) {
 			return -1;
 		    }
 
