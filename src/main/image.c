@@ -4255,7 +4255,7 @@ _mesa_unpack_image(GLuint dimensions,
 		    if (unpack->LsbFirst) {
 			GLubyte srcMask = 1 << (unpack->SkipPixels & 0x7);
 			GLubyte dstMask = 128;
-			const GLubyte *s = src;
+			const GLubyte *s = (const GLubyte *)src;
 			GLubyte *d = dst;
 			*d = 0;
 			for (i = 0; i < width; i++) {
@@ -4279,7 +4279,7 @@ _mesa_unpack_image(GLuint dimensions,
 		    } else {
 			GLubyte srcMask = 128 >> (unpack->SkipPixels & 0x7);
 			GLubyte dstMask = 128;
-			const GLubyte *s = src;
+			const GLubyte *s = (const GLubyte *)src;
 			GLubyte *d = dst;
 			*d = 0;
 			for (i = 0; i < width; i++) {

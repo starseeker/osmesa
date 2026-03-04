@@ -95,7 +95,7 @@ _swsetup_RenderPrimitive(GLcontext *ctx, GLenum mode)
 #define EMIT_ATTR( ATTR, STYLE, MEMBER )	\
 do {						\
    map[e].attrib = (ATTR);			\
-   map[e].format = (STYLE);			\
+   map[e].format = (enum tnl_attr_format)(STYLE);			\
    map[e].offset = SWOffset(MEMBER);	       	\
    e++;						\
 } while (0)

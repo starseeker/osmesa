@@ -228,6 +228,12 @@ elseif (O2_COMPILER_FLAG)
   target_compile_options(osmesa PRIVATE "-O2")
 endif ()
 
+include(CheckCCompilerFlag)
+check_c_compiler_flag(-Werror=c++-compat HAVE_CXX_COMPAT_FLAG)
+if (HAVE_CXX_COMPAT_FLAG)
+  target_compile_options(osmesa PRIVATE "-Werror=c++-compat")
+endif (HAVE_CXX_COMPAT_FLAG)
+
 # Local Variables:
 # tab-width: 8
 # mode: cmake

@@ -59,7 +59,7 @@ static void *rebase_##TYPE( const void *ptr,			\
 			  TYPE min_index )			\
 {								\
    const TYPE *in = (TYPE *)ptr;				\
-   TYPE *tmp_indices = malloc(count * sizeof(TYPE));	\
+   TYPE *tmp_indices = (TYPE *)malloc(count * sizeof(TYPE));	\
    GLuint i;							\
 								\
    for (i = 0; i < count; i++)  				\

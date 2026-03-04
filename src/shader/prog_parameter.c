@@ -333,7 +333,7 @@ _mesa_add_attribute(struct gl_program_parameter_list *paramList,
 	/* replace */
 	if (attrib < 0)
 	    attrib = i;
-	paramList->Parameters[i].StateIndexes[0] = attrib;
+	paramList->Parameters[i].StateIndexes[0] = (gl_state_index)attrib;
     } else {
 	/* add */
 	gl_state_index state[STATE_LENGTH];

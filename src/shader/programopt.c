@@ -57,10 +57,10 @@ _mesa_insert_mvp_code(GLcontext *ctx, struct gl_vertex_program *vprog)
      * XXX we should check if these state vars are already declared.
      */
     static const gl_state_index mvpState[4][STATE_LENGTH] = {
-	{ STATE_MVP_MATRIX, 0, 0, 0, 0 },  /* state.matrix.mvp.row[0] */
-	{ STATE_MVP_MATRIX, 0, 1, 1, 0 },  /* state.matrix.mvp.row[1] */
-	{ STATE_MVP_MATRIX, 0, 2, 2, 0 },  /* state.matrix.mvp.row[2] */
-	{ STATE_MVP_MATRIX, 0, 3, 3, 0 },  /* state.matrix.mvp.row[3] */
+	{ STATE_MVP_MATRIX, (gl_state_index)0, (gl_state_index)0, (gl_state_index)0, (gl_state_index)0 },  /* state.matrix.mvp.row[0] */
+	{ STATE_MVP_MATRIX, (gl_state_index)0, (gl_state_index)1, (gl_state_index)1, (gl_state_index)0 },  /* state.matrix.mvp.row[1] */
+	{ STATE_MVP_MATRIX, (gl_state_index)0, (gl_state_index)2, (gl_state_index)2, (gl_state_index)0 },  /* state.matrix.mvp.row[2] */
+	{ STATE_MVP_MATRIX, (gl_state_index)0, (gl_state_index)3, (gl_state_index)3, (gl_state_index)0 },  /* state.matrix.mvp.row[3] */
     };
     GLint mvpRef[4];
 
@@ -125,9 +125,9 @@ void
 _mesa_append_fog_code(GLcontext *ctx, struct gl_fragment_program *fprog)
 {
     static const gl_state_index fogPStateOpt[STATE_LENGTH]
-	= { STATE_INTERNAL, STATE_FOG_PARAMS_OPTIMIZED, 0, 0, 0 };
+	= { STATE_INTERNAL, STATE_FOG_PARAMS_OPTIMIZED, (gl_state_index)0, (gl_state_index)0, (gl_state_index)0 };
     static const gl_state_index fogColorState[STATE_LENGTH]
-	= { STATE_FOG_COLOR, 0, 0, 0, 0};
+	= { STATE_FOG_COLOR, (gl_state_index)0, (gl_state_index)0, (gl_state_index)0, (gl_state_index)0};
     struct prog_instruction *newInst, *inst;
     const GLuint origLen = fprog->Base.NumInstructions;
     const GLuint newLen = origLen + 5;

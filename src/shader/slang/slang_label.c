@@ -64,7 +64,7 @@ _slang_label_add_reference(slang_label *l, GLuint inst)
 {
     const GLuint oldSize = l->NumReferences * sizeof(GLuint);
     assert(l->Location < 0);
-    l->References = _slang_realloc(l->References,
+    l->References = (GLuint *)_slang_realloc(l->References,
 				   oldSize, oldSize + sizeof(GLuint));
     if (l->References) {
 	l->References[l->NumReferences] = inst;

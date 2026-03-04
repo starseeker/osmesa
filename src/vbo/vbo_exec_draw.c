@@ -183,7 +183,7 @@ static void vbo_exec_bind_arrays(GLcontext *ctx)
 	GLuint src = map[attr];
 
 	if (exec->vtx.attrsz[src]) {
-	    arrays[attr].Ptr = (void *)data;
+	    arrays[attr].Ptr = (const GLubyte *)data;
 	    arrays[attr].Size = exec->vtx.attrsz[src];
 	    arrays[attr].StrideB = exec->vtx.vertex_size * sizeof(GLfloat);
 	    arrays[attr].Stride = exec->vtx.vertex_size * sizeof(GLfloat);
