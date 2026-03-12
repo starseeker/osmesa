@@ -241,6 +241,10 @@ check_c_compiler_flag(-Wsign-compare HAVE_WSIGN_COMPARE_FLAG)
 if (HAVE_WSIGN_COMPARE_FLAG)
   target_compile_options(osmesa PRIVATE "-Wsign-compare")
 endif (HAVE_WSIGN_COMPARE_FLAG)
+check_c_compiler_flag(-fvisibility=hidden HAVE_VISIBILITY_HIDDEN_FLAG)
+if (HAVE_VISIBILITY_HIDDEN_FLAG)
+  target_compile_options(osmesa PRIVATE "-fvisibility=hidden")
+endif (HAVE_VISIBILITY_HIDDEN_FLAG)
 
 # Local Variables:
 # tab-width: 8

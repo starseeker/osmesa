@@ -58,6 +58,16 @@ typedef void (*_glapi_warning_func)(void *ctx, const char *str, ...);
 #define _glapi_get_context _mglapi_get_context
 #define _glapi_Context _mglapi_Context
 #define _glapi_Dispatch _mglapi_Dispatch
+#define _glapi_noop_enable_warnings _mglapi_noop_enable_warnings
+#define _glapi_set_warning_func _mglapi_set_warning_func
+#define _glapi_check_multithread _mglapi_check_multithread
+#define _glapi_begin_dispatch_override _mglapi_begin_dispatch_override
+#define _glapi_end_dispatch_override _mglapi_end_dispatch_override
+#define _glapi_get_override_dispatch _mglapi_get_override_dispatch
+#define _glapi_add_dispatch _mglapi_add_dispatch
+#define _glapi_get_proc_offset _mglapi_get_proc_offset
+#define _glapi_get_proc_address _mglapi_get_proc_address
+#define _glapi_get_proc_name _mglapi_get_proc_name
 #endif
 
 
