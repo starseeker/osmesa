@@ -69,9 +69,8 @@ typedef struct {
 
 
 static struct gl_program *
-new_subroutine(slang_emit_info *emitInfo, GLuint *id)
+new_subroutine(GLcontext *ctx, slang_emit_info *emitInfo, GLuint *id)
 {
-    GET_CURRENT_CONTEXT(ctx);
     const GLuint n = emitInfo->NumSubroutines;
 
     emitInfo->Subroutines = (struct gl_program **)
@@ -1755,9 +1754,8 @@ emit(slang_emit_info *emitInfo, slang_ir_node *n)
  * XXX this logic should really be part of the linking process...
  */
 static void
-_slang_resolve_subroutines(slang_emit_info *emitInfo)
+_slang_resolve_subroutines(GLcontext *ctx, slang_emit_info *emitInfo)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_program *mainP = emitInfo->prog;
     GLuint *subroutineLoc, i, total;
 
@@ -1826,11 +1824,10 @@ _slang_resolve_subroutines(slang_emit_info *emitInfo)
 
 
 GLboolean
-_slang_emit_code(slang_ir_node *n, slang_var_table *vt,
+_slang_emit_code(GLcontext *ctx, slang_ir_node *n, slang_var_table *vt,
 		 struct gl_program *prog, GLboolean withEnd,
 		 slang_info_log *log)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLboolean success;
     slang_emit_info emitInfo;
 

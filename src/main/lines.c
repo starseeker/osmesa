@@ -40,9 +40,8 @@
  * \sa glLineWidth().
  */
 void GLAPIENTRY
-_mesa_LineWidth(GLfloat width)
+_mesa_LineWidth(ctx, GLcontext *ctx, GLfloat width)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (width<=0.0) {
@@ -82,9 +81,8 @@ _mesa_LineWidth(GLfloat width)
  * the dd_function_table::LineStipple callback.
  */
 void GLAPIENTRY
-_mesa_LineStipple(GLint factor, GLushort pattern)
+_mesa_LineStipple(ctx, GLcontext *ctx, GLint factor, GLushort pattern)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     factor = CLAMP(factor, 1, 256);
@@ -110,7 +108,7 @@ _mesa_LineStipple(GLint factor, GLushort pattern)
  * Initializes __GLcontextRec::Line and line related constants in
  * __GLcontextRec::Const.
  */
-void GLAPIENTRY _mesa_init_line(GLcontext * ctx)
+void GLAPIENTRY _mesa_init_line(ctx, GLcontext * ctx)
 {
     /* Line group */
     ctx->Line.SmoothFlag = GL_FALSE;

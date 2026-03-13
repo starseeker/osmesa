@@ -49,9 +49,8 @@
 
 
 void GLAPIENTRY
-_mesa_FeedbackBuffer(GLsizei size, GLenum type, GLfloat *buffer)
+_mesa_FeedbackBuffer(ctx, GLcontext *ctx, GLsizei size, GLenum type, GLfloat *buffer)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (ctx->RenderMode==GL_FEEDBACK) {
@@ -103,9 +102,8 @@ _mesa_FeedbackBuffer(GLsizei size, GLenum type, GLfloat *buffer)
 
 
 void GLAPIENTRY
-_mesa_PassThrough(GLfloat token)
+_mesa_PassThrough(ctx, GLcontext *ctx, GLfloat token)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (ctx->RenderMode==GL_FEEDBACK) {
@@ -120,7 +118,7 @@ _mesa_PassThrough(GLfloat token)
 /*
  * Put a vertex into the feedback buffer.
  */
-void _mesa_feedback_vertex(GLcontext *ctx,
+void _mesa_feedback_vertex(ctx, GLcontext *ctx,
 			   const GLfloat win[4],
 			   const GLfloat color[4],
 			   GLfloat index,
@@ -184,9 +182,8 @@ void _mesa_feedback_vertex(GLcontext *ctx,
  * the fields in __GLcontextRec::Select with the given buffer.
  */
 void GLAPIENTRY
-_mesa_SelectBuffer(GLsizei size, GLuint *buffer)
+_mesa_SelectBuffer(ctx, GLcontext *ctx, GLsizei size, GLuint *buffer)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (ctx->RenderMode==GL_SELECT) {
@@ -229,7 +226,7 @@ _mesa_SelectBuffer(GLsizei size, GLuint *buffer)
  * Sets gl_selection::HitFlag and updates gl_selection::HitMinZ and
  * gl_selection::HitMaxZ.
  */
-void _mesa_update_hitflag(GLcontext *ctx, GLfloat z)
+void _mesa_update_hitflag(ctx, GLcontext *ctx, GLfloat z)
 {
     ctx->Select.HitFlag = GL_TRUE;
     if (z < ctx->Select.HitMinZ) {
@@ -286,9 +283,8 @@ static void write_hit_record(GLcontext *ctx)
  * __GLcontextRec::NewState.
  */
 void GLAPIENTRY
-_mesa_InitNames(void)
+_mesa_InitNames(ctx, GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     /* Record the hit before the HitFlag is wiped out again. */
@@ -317,9 +313,8 @@ _mesa_InitNames(void)
  * sa __GLcontextRec::Select.
  */
 void GLAPIENTRY
-_mesa_LoadName(GLuint name)
+_mesa_LoadName(ctx, GLcontext *ctx, GLuint name)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (ctx->RenderMode != GL_SELECT) {
@@ -355,9 +350,8 @@ _mesa_LoadName(GLuint name)
  * sa __GLcontextRec::Select.
  */
 void GLAPIENTRY
-_mesa_PushName(GLuint name)
+_mesa_PushName(ctx, GLcontext *ctx, GLuint name)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (ctx->RenderMode != GL_SELECT) {
@@ -385,9 +379,8 @@ _mesa_PushName(GLuint name)
  * sa __GLcontextRec::Select.
  */
 void GLAPIENTRY
-_mesa_PopName(void)
+_mesa_PopName(ctx, GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (ctx->RenderMode != GL_SELECT) {
@@ -427,9 +420,8 @@ _mesa_PopName(void)
  * dd_function_table::RenderMode callback.
  */
 GLint GLAPIENTRY
-_mesa_RenderMode(GLenum mode)
+_mesa_RenderMode(ctx, GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLint result;
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, 0);
 
@@ -514,7 +506,7 @@ _mesa_RenderMode(GLenum mode)
 /**
  * Initialize context feedback data.
  */
-void _mesa_init_feedback(GLcontext * ctx)
+void _mesa_init_feedback(ctx, GLcontext * ctx)
 {
     /* Feedback */
     ctx->Feedback.Type = GL_2D;   /* TODO: verify */

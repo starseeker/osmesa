@@ -234,7 +234,7 @@ static void clip_elt_triangles(GLcontext *ctx,
 /*              Helper functions for drivers                  */
 /**********************************************************************/
 
-void _tnl_RenderClippedPolygon(GLcontext *ctx, const GLuint *elts, GLuint n)
+void _tnl_RenderClippedPolygon(ctx, GLcontext *ctx, const GLuint *elts, GLuint n)
 {
     TNLcontext *tnl = TNL_CONTEXT(ctx);
     struct vertex_buffer *VB = &tnl->vb;
@@ -245,7 +245,7 @@ void _tnl_RenderClippedPolygon(GLcontext *ctx, const GLuint *elts, GLuint n)
     VB->Elts = tmp;
 }
 
-void _tnl_RenderClippedLine(GLcontext *ctx, GLuint ii, GLuint jj)
+void _tnl_RenderClippedLine(ctx, GLcontext *ctx, GLuint ii, GLuint jj)
 {
     TNLcontext *tnl = TNL_CONTEXT(ctx);
     tnl->Driver.Render.Line(ctx, ii, jj);

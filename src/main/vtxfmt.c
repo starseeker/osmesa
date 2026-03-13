@@ -45,9 +45,8 @@
  * the entire module's 60 or so function pointers.
  */
 
-#define PRE_LOOPBACK( FUNC )						\
+#define PRE_LOOPBACK(FUNC)						\
 {									\
-   GET_CURRENT_CONTEXT(ctx);						\
    struct gl_tnl_module * const tnl = &(ctx->TnlModule);		\
    const int tmp_offset = _gloffset_ ## FUNC ;				\
 									\
@@ -156,7 +155,7 @@ install_vtxfmt(struct _glapi_table *tab, const GLvertexformat *vfmt)
 }
 
 
-void _mesa_init_exec_vtxfmt(GLcontext *ctx)
+void _mesa_init_exec_vtxfmt(ctx, GLcontext *ctx)
 {
     if (!ctx || !ctx->Exec)
 	return;
@@ -165,20 +164,20 @@ void _mesa_init_exec_vtxfmt(GLcontext *ctx)
 }
 
 
-void _mesa_install_exec_vtxfmt(GLcontext *ctx, const GLvertexformat *vfmt)
+void _mesa_install_exec_vtxfmt(ctx, GLcontext *ctx, const GLvertexformat *vfmt)
 {
     ctx->TnlModule.Current = vfmt;
     _mesa_restore_exec_vtxfmt(ctx);
 }
 
 
-void _mesa_install_save_vtxfmt(GLcontext *ctx, const GLvertexformat *vfmt)
+void _mesa_install_save_vtxfmt(ctx, GLcontext *ctx, const GLvertexformat *vfmt)
 {
     install_vtxfmt(ctx->Save, vfmt);
 }
 
 
-void _mesa_restore_exec_vtxfmt(GLcontext *ctx)
+void _mesa_restore_exec_vtxfmt(ctx, GLcontext *ctx)
 {
     struct gl_tnl_module *tnl = &(ctx->TnlModule);
     GLuint i;

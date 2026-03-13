@@ -627,7 +627,7 @@ _mesa_float_to_half(float val)
 		    m = 1;
 		    break;
 		default:
-		    _mesa_warning(NULL,
+		    _mesa_warning(ctx, NULL,
 				  "float_to_half: logical error in denorm creation!\n");
 		    break;
 	    }
@@ -786,7 +786,7 @@ _mesa_printf(const char *fmtString, ...)
  * \param fmtString printf() alike format string.
  */
 void
-_mesa_warning(GLcontext *ctx, const char *fmtString, ...)
+_mesa_warning(ctx, GLcontext *ctx, const char *fmtString, ...)
 {
     GLboolean debug;
     char str[MAXSTRING];
@@ -840,7 +840,7 @@ _mesa_problem(const GLcontext *ctx, const char *fmtString, ...)
  * \param fmtString printf() style format string, followed by optional args
  */
 void
-_mesa_error(GLcontext *ctx, GLenum error, const char *fmtString, ...)
+_mesa_error(ctx, GLcontext *ctx, GLenum error, const char *fmtString, ...)
 {
     const char *debugEnv;
     GLboolean debug;

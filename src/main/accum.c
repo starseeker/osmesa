@@ -32,10 +32,9 @@
 
 
 void GLAPIENTRY
-_mesa_ClearAccum(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
+_mesa_ClearAccum(ctx, GLcontext *ctx, GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 {
     GLfloat tmp[4];
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     tmp[0] = CLAMP(red,   -1.0F, 1.0F);
@@ -52,9 +51,8 @@ _mesa_ClearAccum(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 
 
 void GLAPIENTRY
-_mesa_Accum(GLenum op, GLfloat value)
+_mesa_Accum(ctx, GLcontext *ctx, GLenum op, GLfloat value)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     switch (op) {
@@ -100,7 +98,7 @@ _mesa_Accum(GLenum op, GLfloat value)
 
 
 void
-_mesa_init_accum(GLcontext *ctx)
+_mesa_init_accum(ctx, GLcontext *ctx)
 {
     /* Accumulate buffer group */
     ASSIGN_4V(ctx->Accum.ClearColor, 0.0, 0.0, 0.0, 0.0);

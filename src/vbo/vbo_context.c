@@ -33,7 +33,7 @@
 
 /* Reach out and grab this to use as the default:
  */
-extern void _tnl_draw_prims(GLcontext *ctx,
+extern void _tnl_draw_prims(ctx, GLcontext *ctx,
 			    const struct gl_client_array *arrays[],
 			    const struct _mesa_prim *prims,
 			    GLuint nr_prims,

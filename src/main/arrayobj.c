@@ -91,7 +91,7 @@ _mesa_new_array_object(GLcontext *ctx, GLuint name)
  * \c dd_function_table::DeleteArrayObject.
  */
 void
-_mesa_delete_array_object(GLcontext *ctx, struct gl_array_object *obj)
+_mesa_delete_array_object(ctx, GLcontext *ctx, struct gl_array_object *obj)
 {
     (void) ctx;
     free(obj);
@@ -99,7 +99,7 @@ _mesa_delete_array_object(GLcontext *ctx, struct gl_array_object *obj)
 
 
 void
-_mesa_initialize_array_object(GLcontext *ctx,
+_mesa_initialize_array_object(ctx, GLcontext *ctx,
 			      struct gl_array_object *obj,
 			      GLuint name)
 {
@@ -187,7 +187,7 @@ _mesa_initialize_array_object(GLcontext *ctx,
  * Add the given array object to the array object pool.
  */
 void
-_mesa_save_array_object(GLcontext *ctx, struct gl_array_object *obj)
+_mesa_save_array_object(ctx, GLcontext *ctx, struct gl_array_object *obj)
 {
     if (obj->Name > 0) {
 	/* insert into hash table */
@@ -201,7 +201,7 @@ _mesa_save_array_object(GLcontext *ctx, struct gl_array_object *obj)
  * Do not deallocate the array object though.
  */
 void
-_mesa_remove_array_object(GLcontext *ctx, struct gl_array_object *obj)
+_mesa_remove_array_object(ctx, GLcontext *ctx, struct gl_array_object *obj)
 {
     if (obj->Name > 0) {
 	/* remove from hash table */
@@ -223,9 +223,8 @@ _mesa_remove_array_object(GLcontext *ctx, struct gl_array_object *obj)
  * the ones that are non-NULL in either object.
  */
 void GLAPIENTRY
-_mesa_BindVertexArrayAPPLE(GLuint id)
+_mesa_BindVertexArrayAPPLE(ctx, GLcontext *ctx, GLuint id)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_array_object * const oldObj = ctx->Array.ArrayObj;
     struct gl_array_object *newObj = NULL;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -278,9 +277,8 @@ _mesa_BindVertexArrayAPPLE(GLuint id)
  * \param ids    Array of \c n array object IDs.
  */
 void GLAPIENTRY
-_mesa_DeleteVertexArraysAPPLE(GLsizei n, const GLuint *ids)
+_mesa_DeleteVertexArraysAPPLE(ctx, GLcontext *ctx, GLsizei n, const GLuint *ids)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLsizei i;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -303,7 +301,7 @@ _mesa_DeleteVertexArraysAPPLE(GLsizei n, const GLuint *ids)
 	     * becomes current."
 	     */
 	    if (obj == ctx->Array.ArrayObj) {
-		CALL_BindVertexArrayAPPLE(ctx->Exec, (0));
+		CALL_BindVertexArrayAPPLE(ctx->Exec, (ctx, 0));
 	    }
 
 #if FEATURE_ARB_vertex_buffer_object
@@ -342,9 +340,8 @@ _mesa_DeleteVertexArraysAPPLE(GLsizei n, const GLuint *ids)
  * \param arrays  Array of \c n locations to store the IDs.
  */
 void GLAPIENTRY
-_mesa_GenVertexArraysAPPLE(GLsizei n, GLuint *arrays)
+_mesa_GenVertexArraysAPPLE(ctx, GLcontext *ctx, GLsizei n, GLuint *arrays)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLuint first;
     GLint i;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -392,10 +389,9 @@ _mesa_GenVertexArraysAPPLE(GLsizei n, GLuint *arrays)
  *          \c GL_FALSE otherwise.
  */
 GLboolean GLAPIENTRY
-_mesa_IsVertexArrayAPPLE(GLuint id)
+_mesa_IsVertexArrayAPPLE(ctx, GLcontext *ctx, GLuint id)
 {
     struct gl_array_object * obj;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, GL_FALSE);
 
     if (id == 0)

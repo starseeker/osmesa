@@ -248,7 +248,7 @@ struct tnl_pipeline_stage {
      */
     void (*validate)(GLcontext *ctx, struct tnl_pipeline_stage *);
 
-    /* Called from _tnl_run_pipeline().  The stage.changed_inputs value
+    /* Called from _tnl_run_pipeline(ctx).  The stage.changed_inputs value
      * encodes all inputs to thee struct which have changed.  If
      * non-zero, recompute all affected outputs of the stage, otherwise
      * execute any 'sideeffects' of the stage.
@@ -401,7 +401,7 @@ struct tnl_device_driver {
 
     void (*RunPipeline)(GLcontext *ctx);
     /* Replaces PipelineStart/PipelineFinish -- intended to allow
-     * drivers to wrap _tnl_run_pipeline() with code to validate state
+     * drivers to wrap _tnl_run_pipeline(ctx) with code to validate state
      * and grab/release hardware locks.
      */
 

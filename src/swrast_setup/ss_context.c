@@ -104,7 +104,7 @@ do {						\
 /**
  * Tell the tnl module how to build SWvertex objects for swrast.
  * We'll build the map[] array with that info and pass it to
- * _tnl_install_attrs().
+ * _tnl_install_attrs(ctx).
  */
 static void
 setup_vertex_format(GLcontext *ctx)

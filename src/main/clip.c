@@ -41,9 +41,8 @@
 
 
 void GLAPIENTRY
-_mesa_ClipPlane(GLenum plane, const GLdouble *eq)
+_mesa_ClipPlane(ctx, GLcontext *ctx, GLenum plane, const GLdouble *eq)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLint p;
     GLfloat equation[4];
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -81,7 +80,7 @@ _mesa_ClipPlane(GLenum plane, const GLdouble *eq)
 
     /* Update derived state.  This state also depends on the projection
      * matrix, and is recalculated on changes to the projection matrix by
-     * code in _mesa_update_state().
+     * code in _mesa_update_state(ctx).
      */
     if (ctx->Transform.ClipPlanesEnabled & (1 << p)) {
 	if (_math_matrix_is_dirty(ctx->ProjectionMatrixStack.Top))
@@ -98,9 +97,8 @@ _mesa_ClipPlane(GLenum plane, const GLdouble *eq)
 
 
 void GLAPIENTRY
-_mesa_GetClipPlane(GLenum plane, GLdouble *equation)
+_mesa_GetClipPlane(ctx, GLcontext *ctx, GLenum plane, GLdouble *equation)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLint p;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -117,9 +115,8 @@ _mesa_GetClipPlane(GLenum plane, GLdouble *equation)
 }
 
 void GLAPIENTRY
-_mesa_CullParameterfvEXT(GLenum cap, GLfloat *v)
+_mesa_CullParameterfvEXT(ctx, GLcontext *ctx, GLenum cap, GLfloat *v)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     switch (cap) {
@@ -155,7 +152,7 @@ _mesa_CullParameterdvEXT(GLenum cap, GLdouble *v)
     f[2] = (GLfloat)v[2];
     f[3] = (GLfloat)v[3];
 
-    _mesa_CullParameterfvEXT(cap, f);
+    _mesa_CullParameterfvEXT(ctx, cap, f);
 }
 
 

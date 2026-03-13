@@ -159,7 +159,7 @@ set_component_sizes(struct gl_color_table *table)
 
 /**
  * Update/replace all or part of a color table.  Helper function
- * used by _mesa_ColorTable() and _mesa_ColorSubTable().
+ * used by _mesa_ColorTable(ctx) and _mesa_ColorSubTable(ctx).
  * The table->Table buffer should already be allocated.
  * \param start first entry to update
  * \param count number of entries to update
@@ -287,13 +287,12 @@ store_colortable_entries(GLcontext *ctx, struct gl_color_table *table,
 
 
 void GLAPIENTRY
-_mesa_ColorTable(GLenum target, GLenum internalFormat,
+_mesa_ColorTable(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat,
 		 GLsizei width, GLenum format, GLenum type,
 		 const GLvoid *data)
 {
     static const GLfloat one[4] = { 1.0, 1.0, 1.0, 1.0 };
     static const GLfloat zero[4] = { 0.0, 0.0, 0.0, 0.0 };
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_texture_unit *texUnit = &ctx->Texture.Unit[ctx->Texture.CurrentUnit];
     struct gl_texture_object *texObj = NULL;
     struct gl_color_table *table = NULL;
@@ -482,13 +481,12 @@ _mesa_ColorTable(GLenum target, GLenum internalFormat,
 
 
 void GLAPIENTRY
-_mesa_ColorSubTable(GLenum target, GLsizei start,
+_mesa_ColorSubTable(ctx, GLcontext *ctx, GLenum target, GLsizei start,
 		    GLsizei count, GLenum format, GLenum type,
 		    const GLvoid *data)
 {
     static const GLfloat one[4] = { 1.0, 1.0, 1.0, 1.0 };
     static const GLfloat zero[4] = { 0.0, 0.0, 0.0, 0.0 };
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_texture_unit *texUnit = &ctx->Texture.Unit[ctx->Texture.CurrentUnit];
     struct gl_texture_object *texObj = NULL;
     struct gl_color_table *table = NULL;
@@ -595,10 +593,9 @@ _mesa_ColorSubTable(GLenum target, GLsizei start,
 
 
 void GLAPIENTRY
-_mesa_CopyColorTable(GLenum target, GLenum internalformat,
+_mesa_CopyColorTable(ctx, GLcontext *ctx, GLenum target, GLenum internalformat,
 		     GLint x, GLint y, GLsizei width)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     /* Select buffer to read from */
@@ -608,10 +605,9 @@ _mesa_CopyColorTable(GLenum target, GLenum internalformat,
 
 
 void GLAPIENTRY
-_mesa_CopyColorSubTable(GLenum target, GLsizei start,
+_mesa_CopyColorSubTable(ctx, GLcontext *ctx, GLenum target, GLsizei start,
 			GLint x, GLint y, GLsizei width)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     ctx->Driver.CopyColorSubTable(ctx, target, start, x, y, width);
@@ -620,10 +616,9 @@ _mesa_CopyColorSubTable(GLenum target, GLsizei start,
 
 
 void GLAPIENTRY
-_mesa_GetColorTable(GLenum target, GLenum format,
+_mesa_GetColorTable(ctx, GLcontext *ctx, GLenum target, GLenum format,
 		    GLenum type, GLvoid *data)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_texture_unit *texUnit = &ctx->Texture.Unit[ctx->Texture.CurrentUnit];
     struct gl_color_table *table = NULL;
     GLfloat rgba[MAX_COLOR_TABLE_SIZE][4];
@@ -772,9 +767,8 @@ _mesa_GetColorTable(GLenum target, GLenum format,
 
 
 void GLAPIENTRY
-_mesa_ColorTableParameterfv(GLenum target, GLenum pname, const GLfloat *params)
+_mesa_ColorTableParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     switch (target) {
@@ -849,15 +843,14 @@ _mesa_ColorTableParameteriv(GLenum target, GLenum pname, const GLint *params)
 	/* one values */
 	fparams[0] = (GLfloat) params[0];
     }
-    _mesa_ColorTableParameterfv(target, pname, fparams);
+    _mesa_ColorTableParameterfv(ctx, target, pname, fparams);
 }
 
 
 
 void GLAPIENTRY
-_mesa_GetColorTableParameterfv(GLenum target, GLenum pname, GLfloat *params)
+_mesa_GetColorTableParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_texture_unit *texUnit = &ctx->Texture.Unit[ctx->Texture.CurrentUnit];
     struct gl_color_table *table = NULL;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -1001,9 +994,8 @@ _mesa_GetColorTableParameterfv(GLenum target, GLenum pname, GLfloat *params)
 
 
 void GLAPIENTRY
-_mesa_GetColorTableParameteriv(GLenum target, GLenum pname, GLint *params)
+_mesa_GetColorTableParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_texture_unit *texUnit = &ctx->Texture.Unit[ctx->Texture.CurrentUnit];
     struct gl_color_table *table = NULL;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -1208,7 +1200,7 @@ _mesa_free_colortable_data(struct gl_color_table *p)
  * Initialize all colortables for a context.
  */
 void
-_mesa_init_colortables(GLcontext * ctx)
+_mesa_init_colortables(ctx, GLcontext * ctx)
 {
     GLuint i;
     for (i = 0; i < COLORTABLE_MAX; i++) {
@@ -1222,7 +1214,7 @@ _mesa_init_colortables(GLcontext * ctx)
  * Free all colortable data for a context
  */
 void
-_mesa_free_colortables_data(GLcontext *ctx)
+_mesa_free_colortables_data(ctx, GLcontext *ctx)
 {
     GLuint i;
     for (i = 0; i < COLORTABLE_MAX; i++) {

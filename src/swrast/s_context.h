@@ -129,7 +129,7 @@ typedef struct {
     GLboolean AllowPixelFog;
 
     /** Derived values, invalidated on statechanges, updated from
-     * _swrast_validate_derived():
+     * _swrast_validate_derived(ctx):
      */
     GLbitfield _RasterMask;
     GLfloat _BackfaceSign;      /** +1 or -1 */
@@ -236,10 +236,10 @@ typedef struct {
 
 
 extern void
-_swrast_validate_derived(GLcontext *ctx);
+_swrast_validate_derived(ctx, GLcontext *ctx);
 
 extern void
-_swrast_update_texture_samplers(GLcontext *ctx);
+_swrast_update_texture_samplers(ctx, GLcontext *ctx);
 
 
 #define SWRAST_CONTEXT(ctx) ((SWcontext *)ctx->swrast_context)

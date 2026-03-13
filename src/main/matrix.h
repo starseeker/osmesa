@@ -36,53 +36,53 @@
 
 
 extern void GLAPIENTRY
-_mesa_Frustum(GLdouble left, GLdouble right,
+_mesa_Frustum(ctx, GLcontext *ctx, GLdouble left, GLdouble right,
 	      GLdouble bottom, GLdouble top,
 	      GLdouble nearval, GLdouble farval);
 
 extern void GLAPIENTRY
-_mesa_Ortho(GLdouble left, GLdouble right,
+_mesa_Ortho(ctx, GLcontext *ctx, GLdouble left, GLdouble right,
 	    GLdouble bottom, GLdouble top,
 	    GLdouble nearval, GLdouble farval);
 
 extern void GLAPIENTRY
-_mesa_PushMatrix(void);
+_mesa_PushMatrix(ctx, GLcontext *ctx);
 
 extern void GLAPIENTRY
-_mesa_PopMatrix(void);
+_mesa_PopMatrix(ctx, GLcontext *ctx);
 
 extern void GLAPIENTRY
-_mesa_LoadIdentity(void);
+_mesa_LoadIdentity(ctx, GLcontext *ctx);
 
 extern void GLAPIENTRY
-_mesa_LoadMatrixf(const GLfloat *m);
+_mesa_LoadMatrixf(ctx, GLcontext *ctx, const GLfloat *m);
 
 extern void GLAPIENTRY
 _mesa_LoadMatrixd(const GLdouble *m);
 
 extern void GLAPIENTRY
-_mesa_MatrixMode(GLenum mode);
+_mesa_MatrixMode(ctx, GLcontext *ctx, GLenum mode);
 
 extern void GLAPIENTRY
-_mesa_MultMatrixf(const GLfloat *m);
+_mesa_MultMatrixf(ctx, GLcontext *ctx, const GLfloat *m);
 
 extern void GLAPIENTRY
 _mesa_MultMatrixd(const GLdouble *m);
 
 extern void GLAPIENTRY
-_mesa_Rotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
+_mesa_Rotatef(ctx, GLcontext *ctx, GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
 
 extern void GLAPIENTRY
 _mesa_Rotated(GLdouble angle, GLdouble x, GLdouble y, GLdouble z);
 
 extern void GLAPIENTRY
-_mesa_Scalef(GLfloat x, GLfloat y, GLfloat z);
+_mesa_Scalef(ctx, GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z);
 
 extern void GLAPIENTRY
 _mesa_Scaled(GLdouble x, GLdouble y, GLdouble z);
 
 extern void GLAPIENTRY
-_mesa_Translatef(GLfloat x, GLfloat y, GLfloat z);
+_mesa_Translatef(ctx, GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z);
 
 extern void GLAPIENTRY
 _mesa_Translated(GLdouble x, GLdouble y, GLdouble z);
@@ -100,32 +100,32 @@ extern void GLAPIENTRY
 _mesa_MultTransposeMatrixdARB(const GLdouble *m);
 
 extern void GLAPIENTRY
-_mesa_Viewport(GLint x, GLint y, GLsizei width, GLsizei height);
+_mesa_Viewport(ctx, GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height);
 
 extern void
-_mesa_set_viewport(GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height);
+_mesa_set_viewport(ctx, GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height);
 
 extern void GLAPIENTRY
-_mesa_DepthRange(GLclampd nearval, GLclampd farval);
+_mesa_DepthRange(ctx, GLcontext *ctx, GLclampd nearval, GLclampd farval);
 
 
 extern void
-_mesa_init_matrix(GLcontext * ctx);
+_mesa_init_matrix(ctx, GLcontext * ctx);
 
 extern void
-_mesa_init_transform(GLcontext *ctx);
+_mesa_init_transform(ctx, GLcontext *ctx);
 
 extern void
-_mesa_init_viewport(GLcontext *ctx);
+_mesa_init_viewport(ctx, GLcontext *ctx);
 
 extern void
-_mesa_free_matrix_data(GLcontext *ctx);
+_mesa_free_matrix_data(ctx, GLcontext *ctx);
 
 extern void
-_mesa_free_viewport_data(GLcontext *ctx);
+_mesa_free_viewport_data(ctx, GLcontext *ctx);
 
 extern void
-_mesa_update_modelview_project(GLcontext *ctx, GLuint newstate);
+_mesa_update_modelview_project(ctx, GLcontext *ctx, GLuint newstate);
 
 
 #endif

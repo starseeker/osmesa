@@ -37,48 +37,48 @@
 
 
 extern void GLAPIENTRY
-_mesa_BlendFunc(GLenum sfactor, GLenum dfactor);
+_mesa_BlendFunc(ctx, GLcontext *ctx, GLenum sfactor, GLenum dfactor);
 
 
 extern void GLAPIENTRY
-_mesa_BlendFuncSeparateEXT(GLenum sfactorRGB, GLenum dfactorRGB,
+_mesa_BlendFuncSeparateEXT(ctx, GLcontext *ctx, GLenum sfactorRGB, GLenum dfactorRGB,
 			   GLenum sfactorA, GLenum dfactorA);
 
 
 extern void GLAPIENTRY
-_mesa_BlendEquation(GLenum mode);
+_mesa_BlendEquation(ctx, GLcontext *ctx, GLenum mode);
 
 
 extern void GLAPIENTRY
-_mesa_BlendEquationSeparateEXT(GLenum modeRGB, GLenum modeA);
+_mesa_BlendEquationSeparateEXT(ctx, GLcontext *ctx, GLenum modeRGB, GLenum modeA);
 
 
 extern void GLAPIENTRY
-_mesa_BlendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
+_mesa_BlendColor(ctx, GLcontext *ctx, GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
 
 
 extern void GLAPIENTRY
-_mesa_AlphaFunc(GLenum func, GLclampf ref);
+_mesa_AlphaFunc(ctx, GLcontext *ctx, GLenum func, GLclampf ref);
 
 
 extern void GLAPIENTRY
-_mesa_LogicOp(GLenum opcode);
+_mesa_LogicOp(ctx, GLcontext *ctx, GLenum opcode);
 
 
 extern void GLAPIENTRY
-_mesa_IndexMask(GLuint mask);
+_mesa_IndexMask(ctx, GLcontext *ctx, GLuint mask);
 
 extern void GLAPIENTRY
-_mesa_ColorMask(GLboolean red, GLboolean green,
+_mesa_ColorMask(ctx, GLcontext *ctx, GLboolean red, GLboolean green,
 		GLboolean blue, GLboolean alpha);
 
 
 extern void GLAPIENTRY
-_mesa_ClampColorARB(GLenum target, GLenum clamp);
+_mesa_ClampColorARB(ctx, GLenum target, GLenum clamp);
 
 
 extern void
-_mesa_init_color(GLcontext * ctx);
+_mesa_init_color(ctx, GLcontext * ctx);
 
 #endif
 

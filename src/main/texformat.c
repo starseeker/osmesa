@@ -96,7 +96,7 @@ static void fetch_null_texel(const struct gl_texture_image *texImage,
     texel[GCOMP] = 0;
     texel[BCOMP] = 0;
     texel[ACOMP] = 0;
-    _mesa_warning(NULL, "fetch_null_texel() called!");
+    _mesa_warning(ctx, NULL, "fetch_null_texel() called!");
 }
 
 static void fetch_null_texelf(const struct gl_texture_image *texImage,
@@ -110,7 +110,7 @@ static void fetch_null_texelf(const struct gl_texture_image *texImage,
     texel[GCOMP] = 0.0;
     texel[BCOMP] = 0.0;
     texel[ACOMP] = 0.0;
-    _mesa_warning(NULL, "fetch_null_texelf() called!");
+    _mesa_warning(ctx, NULL, "fetch_null_texelf() called!");
 }
 
 static void store_null_texel(struct gl_texture_image *texImage,

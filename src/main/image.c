@@ -386,7 +386,7 @@ _mesa_bytes_per_pixel(GLenum format, GLenum type)
  * otherwise.
  */
 GLboolean
-_mesa_is_legal_format_and_type(GLcontext *ctx, GLenum format, GLenum type)
+_mesa_is_legal_format_and_type(ctx, GLcontext *ctx, GLenum format, GLenum type)
 {
     switch (format) {
 	case GL_COLOR_INDEX:
@@ -996,7 +996,7 @@ _mesa_pack_bitmap(GLint width, GLint height, const GLubyte *source,
  * as indicated by the transferOps bitmask
  */
 void
-_mesa_apply_rgba_transfer_ops(GLcontext *ctx, GLbitfield transferOps,
+_mesa_apply_rgba_transfer_ops(ctx, GLcontext *ctx, GLbitfield transferOps,
 			      GLuint n, GLfloat rgba[][4])
 {
     /* scale & bias */
@@ -1160,7 +1160,7 @@ _mesa_apply_stencil_transfer_ops(const GLcontext *ctx, GLuint n,
  * transfer ops are enabled.
  */
 void
-_mesa_pack_rgba_span_float(GLcontext *ctx, GLuint n, GLfloat rgba[][4],
+_mesa_pack_rgba_span_float(ctx, GLcontext *ctx, GLuint n, GLfloat rgba[][4],
 			   GLenum dstFormat, GLenum dstType,
 			   GLvoid *dstAddr,
 			   const struct gl_pixelstore_attrib *dstPacking,
@@ -2859,7 +2859,7 @@ extract_float_rgba(GLuint n, GLfloat rgba[][4],
  * XXX perhaps expand this to process whole images someday.
  */
 void
-_mesa_unpack_color_span_chan(GLcontext *ctx,
+_mesa_unpack_color_span_chan(ctx, GLcontext *ctx,
 			     GLuint n, GLenum dstFormat, GLchan dest[],
 			     GLenum srcFormat, GLenum srcType,
 			     const GLvoid *source,
@@ -3184,11 +3184,11 @@ _mesa_unpack_color_span_chan(GLcontext *ctx,
 
 
 /**
- * Same as _mesa_unpack_color_span_chan(), but return GLfloat data
+ * Same as _mesa_unpack_color_span_chan(ctx), but return GLfloat data
  * instead of GLchan.
  */
 void
-_mesa_unpack_color_span_float(GLcontext *ctx,
+_mesa_unpack_color_span_float(ctx, GLcontext *ctx,
 			      GLuint n, GLenum dstFormat, GLfloat dest[],
 			      GLenum srcFormat, GLenum srcType,
 			      const GLvoid *source,
@@ -3328,7 +3328,7 @@ _mesa_unpack_color_span_float(GLcontext *ctx,
 		dstLuminanceIndex = dstIntensityIndex = -1;
 		break;
 	    default:
-		_mesa_problem(ctx, "bad dstFormat in _mesa_unpack_color_span_float()");
+		_mesa_problem(ctx, "bad dstFormat in _mesa_unpack_color_span_float(ctx)");
 		return;
 	}
 

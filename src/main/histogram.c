@@ -40,7 +40,7 @@
  * Update the min/max values from an array of fragment colors.
  */
 void
-_mesa_update_minmax(GLcontext *ctx, GLuint n, const GLfloat rgba[][4])
+_mesa_update_minmax(ctx, GLcontext *ctx, GLuint n, const GLfloat rgba[][4])
 {
     GLuint i;
     for (i = 0; i < n; i++) {
@@ -71,7 +71,7 @@ _mesa_update_minmax(GLcontext *ctx, GLuint n, const GLfloat rgba[][4])
  * Update the histogram values from an array of fragment colors.
  */
 void
-_mesa_update_histogram(GLcontext *ctx, GLuint n, const GLfloat rgba[][4])
+_mesa_update_histogram(ctx, GLcontext *ctx, GLuint n, const GLfloat rgba[][4])
 {
     const GLint max = ctx->Histogram.Width - 1;
     GLfloat w = (GLfloat) max;
@@ -652,9 +652,8 @@ base_histogram_format(GLenum format)
 
 
 void GLAPIENTRY
-_mesa_GetMinmax(GLenum target, GLboolean reset, GLenum format, GLenum type, GLvoid *values)
+_mesa_GetMinmax(ctx, GLcontext *ctx, GLenum target, GLboolean reset, GLenum format, GLenum type, GLvoid *values)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     if (!ctx->Extensions.EXT_histogram && !ctx->Extensions.ARB_imaging) {
@@ -729,15 +728,14 @@ _mesa_GetMinmax(GLenum target, GLboolean reset, GLenum format, GLenum type, GLvo
     }
 
     if (reset) {
-	_mesa_ResetMinmax(GL_MINMAX);
+	_mesa_ResetMinmax(ctx, GL_MINMAX);
     }
 }
 
 
 void GLAPIENTRY
-_mesa_GetHistogram(GLenum target, GLboolean reset, GLenum format, GLenum type, GLvoid *values)
+_mesa_GetHistogram(ctx, GLcontext *ctx, GLenum target, GLboolean reset, GLenum format, GLenum type, GLvoid *values)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     if (!ctx->Extensions.EXT_histogram && !ctx->Extensions.ARB_imaging) {
@@ -814,9 +812,8 @@ _mesa_GetHistogram(GLenum target, GLboolean reset, GLenum format, GLenum type, G
 
 
 void GLAPIENTRY
-_mesa_GetHistogramParameterfv(GLenum target, GLenum pname, GLfloat *params)
+_mesa_GetHistogramParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (!ctx->Extensions.EXT_histogram && !ctx->Extensions.ARB_imaging) {
@@ -861,9 +858,8 @@ _mesa_GetHistogramParameterfv(GLenum target, GLenum pname, GLfloat *params)
 
 
 void GLAPIENTRY
-_mesa_GetHistogramParameteriv(GLenum target, GLenum pname, GLint *params)
+_mesa_GetHistogramParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (!ctx->Extensions.EXT_histogram && !ctx->Extensions.ARB_imaging) {
@@ -908,9 +904,8 @@ _mesa_GetHistogramParameteriv(GLenum target, GLenum pname, GLint *params)
 
 
 void GLAPIENTRY
-_mesa_GetMinmaxParameterfv(GLenum target, GLenum pname, GLfloat *params)
+_mesa_GetMinmaxParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (!ctx->Extensions.EXT_histogram && !ctx->Extensions.ARB_imaging) {
@@ -932,9 +927,8 @@ _mesa_GetMinmaxParameterfv(GLenum target, GLenum pname, GLfloat *params)
 
 
 void GLAPIENTRY
-_mesa_GetMinmaxParameteriv(GLenum target, GLenum pname, GLint *params)
+_mesa_GetMinmaxParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (!ctx->Extensions.EXT_histogram && !ctx->Extensions.ARB_imaging) {
@@ -956,11 +950,10 @@ _mesa_GetMinmaxParameteriv(GLenum target, GLenum pname, GLint *params)
 
 
 void GLAPIENTRY
-_mesa_Histogram(GLenum target, GLsizei width, GLenum internalFormat, GLboolean sink)
+_mesa_Histogram(ctx, GLcontext *ctx, GLenum target, GLsizei width, GLenum internalFormat, GLboolean sink)
 {
     GLuint i;
     GLboolean error = GL_FALSE;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx); /* sideeffects */
 
     if (!ctx->Extensions.EXT_histogram && !ctx->Extensions.ARB_imaging) {
@@ -1035,9 +1028,8 @@ _mesa_Histogram(GLenum target, GLsizei width, GLenum internalFormat, GLboolean s
 
 
 void GLAPIENTRY
-_mesa_Minmax(GLenum target, GLenum internalFormat, GLboolean sink)
+_mesa_Minmax(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLboolean sink)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (!ctx->Extensions.EXT_histogram && !ctx->Extensions.ARB_imaging) {
@@ -1063,10 +1055,9 @@ _mesa_Minmax(GLenum target, GLenum internalFormat, GLboolean sink)
 
 
 void GLAPIENTRY
-_mesa_ResetHistogram(GLenum target)
+_mesa_ResetHistogram(ctx, GLcontext *ctx, GLenum target)
 {
     GLuint i;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx); /* sideeffects */
 
     if (!ctx->Extensions.EXT_histogram && !ctx->Extensions.ARB_imaging) {
@@ -1091,9 +1082,8 @@ _mesa_ResetHistogram(GLenum target)
 
 
 void GLAPIENTRY
-_mesa_ResetMinmax(GLenum target)
+_mesa_ResetMinmax(ctx, GLcontext *ctx, GLenum target)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     if (!ctx->Extensions.EXT_histogram && !ctx->Extensions.ARB_imaging) {
@@ -1123,7 +1113,7 @@ _mesa_ResetMinmax(GLenum target)
 /*****                      Initialization                        *****/
 /**********************************************************************/
 
-void _mesa_init_histogram(GLcontext * ctx)
+void _mesa_init_histogram(ctx, GLcontext * ctx)
 {
     int i;
 

@@ -36,13 +36,13 @@
  */
 
 extern void
-_mesa_init_buffer_objects(GLcontext *ctx);
+_mesa_init_buffer_objects(ctx, GLcontext *ctx);
 
 extern struct gl_buffer_object *
 _mesa_new_buffer_object(GLcontext *ctx, GLuint name, GLenum target);
 
 extern void
-_mesa_delete_buffer_object(GLcontext *ctx, struct gl_buffer_object *bufObj);
+_mesa_delete_buffer_object(ctx, GLcontext *ctx, struct gl_buffer_object *bufObj);
 
 extern struct gl_buffer_object *
 _mesa_lookup_bufferobj(GLcontext *ctx, GLuint buffer);
@@ -52,23 +52,23 @@ _mesa_initialize_buffer_object(struct gl_buffer_object *obj,
 			       GLuint name, GLenum target);
 
 extern void
-_mesa_save_buffer_object(GLcontext *ctx, struct gl_buffer_object *obj);
+_mesa_save_buffer_object(ctx, GLcontext *ctx, struct gl_buffer_object *obj);
 
 extern void
-_mesa_remove_buffer_object(GLcontext *ctx, struct gl_buffer_object *bufObj);
+_mesa_remove_buffer_object(ctx, GLcontext *ctx, struct gl_buffer_object *bufObj);
 
 extern void
-_mesa_buffer_data(GLcontext *ctx, GLenum target, GLsizeiptrARB size,
+_mesa_buffer_data(ctx, GLcontext *ctx, GLenum target, GLsizeiptrARB size,
 		  const GLvoid * data, GLenum usage,
 		  struct gl_buffer_object * bufObj);
 
 extern void
-_mesa_buffer_subdata(GLcontext *ctx, GLenum target, GLintptrARB offset,
+_mesa_buffer_subdata(ctx, GLcontext *ctx, GLenum target, GLintptrARB offset,
 		     GLsizeiptrARB size, const GLvoid * data,
 		     struct gl_buffer_object * bufObj);
 
 extern void
-_mesa_buffer_get_subdata(GLcontext *ctx, GLenum target, GLintptrARB offset,
+_mesa_buffer_get_subdata(ctx, GLcontext *ctx, GLenum target, GLintptrARB offset,
 			 GLsizeiptrARB size, GLvoid * data,
 			 struct gl_buffer_object * bufObj);
 
@@ -77,7 +77,7 @@ _mesa_buffer_map(GLcontext *ctx, GLenum target, GLenum access,
 		 struct gl_buffer_object * bufObj);
 
 extern GLboolean
-_mesa_buffer_unmap(GLcontext *ctx, GLenum target,
+_mesa_buffer_unmap(ctx, GLcontext *ctx, GLenum target,
 		   struct gl_buffer_object * bufObj);
 
 extern GLboolean
@@ -87,44 +87,47 @@ _mesa_validate_pbo_access(GLuint dimensions,
 			  GLenum format, GLenum type, const GLvoid *ptr);
 
 extern void
-_mesa_unbind_buffer_object(GLcontext *ctx, struct gl_buffer_object *bufObj);
+_mesa_unbind_buffer_object(ctx, GLcontext *ctx, struct gl_buffer_object *bufObj);
 
 /*
  * API functions
  */
 
 extern void GLAPIENTRY
-_mesa_BindBufferARB(GLenum target, GLuint buffer);
+_mesa_BindBufferARB(ctx, GLcontext *ctx, GLenum target, GLuint buffer);
 
 extern void GLAPIENTRY
-_mesa_DeleteBuffersARB(GLsizei n, const GLuint * buffer);
+_mesa_DeleteBuffersARB(ctx, GLcontext *ctx, GLsizei n, const GLuint *ids);
 
 extern void GLAPIENTRY
-_mesa_GenBuffersARB(GLsizei n, GLuint * buffer);
+_mesa_GenBuffersARB(ctx, GLcontext *ctx, GLsizei n, GLuint *buffer);
 
 extern GLboolean GLAPIENTRY
-_mesa_IsBufferARB(GLuint buffer);
+_mesa_IsBufferARB(ctx, GLcontext *ctx, GLuint id);
 
 extern void GLAPIENTRY
-_mesa_BufferDataARB(GLenum target, GLsizeiptrARB size, const GLvoid * data, GLenum usage);
+_mesa_BufferDataARB(ctx, GLcontext *ctx, GLenum target, GLsizeiptrARB size,
+		    const GLvoid * data, GLenum usage);
 
 extern void GLAPIENTRY
-_mesa_BufferSubDataARB(GLenum target, GLintptrARB offset, GLsizeiptrARB size, const GLvoid * data);
+_mesa_BufferSubDataARB(ctx, GLcontext *ctx, GLenum target, GLintptrARB offset,
+		       GLsizeiptrARB size, const GLvoid * data);
 
 extern void GLAPIENTRY
-_mesa_GetBufferSubDataARB(GLenum target, GLintptrARB offset, GLsizeiptrARB size, void * data);
+_mesa_GetBufferSubDataARB(ctx, GLcontext *ctx, GLenum target, GLintptrARB offset,
+			  GLsizeiptrARB size, void * data);
 
 extern void * GLAPIENTRY
 _mesa_MapBufferARB(GLenum target, GLenum access);
 
 extern GLboolean GLAPIENTRY
-_mesa_UnmapBufferARB(GLenum target);
+_mesa_UnmapBufferARB(ctx, GLcontext *ctx, GLenum target);
 
 extern void GLAPIENTRY
-_mesa_GetBufferParameterivARB(GLenum target, GLenum pname, GLint *params);
+_mesa_GetBufferParameterivARB(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetBufferPointervARB(GLenum target, GLenum pname, GLvoid **params);
+_mesa_GetBufferPointervARB(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLvoid **params);
 
 #endif
 

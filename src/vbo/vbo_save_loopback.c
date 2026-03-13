@@ -50,22 +50,22 @@ typedef void (*attr_func)(GLcontext *ctx, GLint target, const GLfloat *);
  */
 static void VertexAttrib1fvNV(GLcontext *ctx, GLint target, const GLfloat *v)
 {
-    CALL_VertexAttrib1fvNV(ctx->Exec, (target, v));
+    CALL_VertexAttrib1fvNV(ctx->Exec, (ctx, target, v));
 }
 
 static void VertexAttrib2fvNV(GLcontext *ctx, GLint target, const GLfloat *v)
 {
-    CALL_VertexAttrib2fvNV(ctx->Exec, (target, v));
+    CALL_VertexAttrib2fvNV(ctx->Exec, (ctx, target, v));
 }
 
 static void VertexAttrib3fvNV(GLcontext *ctx, GLint target, const GLfloat *v)
 {
-    CALL_VertexAttrib3fvNV(ctx->Exec, (target, v));
+    CALL_VertexAttrib3fvNV(ctx->Exec, (ctx, target, v));
 }
 
 static void VertexAttrib4fvNV(GLcontext *ctx, GLint target, const GLfloat *v)
 {
-    CALL_VertexAttrib4fvNV(ctx->Exec, (target, v));
+    CALL_VertexAttrib4fvNV(ctx->Exec, (ctx, target, v));
 }
 
 static attr_func vert_attrfunc[4] = {
@@ -107,7 +107,7 @@ static void loopback_prim(GLcontext *ctx,
 		     end);
 
     if (prim->begin) {
-	CALL_Begin(GET_DISPATCH(), (prim->mode));
+	CALL_Begin(ctx->CurrentDispatch, (ctx, prim->mode));
     } else {
 	assert(start == 0);
 	start += wrap_count;
@@ -130,7 +130,7 @@ static void loopback_prim(GLcontext *ctx,
     }
 
     if (prim->end) {
-	CALL_End(GET_DISPATCH(), ());
+	CALL_End(ctx->CurrentDispatch, (ctx));
     }
 }
 
@@ -156,7 +156,7 @@ static void loopback_weak_prim(GLcontext *ctx,
 }
 
 
-void vbo_loopback_vertex_list(GLcontext *ctx,
+void vbo_loopback_vertex_list(ctx, GLcontext *ctx,
 			      const GLfloat *buffer,
 			      const GLubyte *attrsz,
 			      const struct _mesa_prim *prim,

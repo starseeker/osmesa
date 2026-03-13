@@ -38,24 +38,24 @@
 #if _HAVE_FULL_GL
 
 extern void GLAPIENTRY
-_mesa_ClearDepth(GLclampd depth);
+_mesa_ClearDepth(ctx, GLcontext *ctx, GLclampd depth);
 
 extern void GLAPIENTRY
-_mesa_DepthFunc(GLenum func);
+_mesa_DepthFunc(ctx, GLcontext *ctx, GLenum func);
 
 extern void GLAPIENTRY
-_mesa_DepthMask(GLboolean flag);
+_mesa_DepthMask(ctx, GLcontext *ctx, GLboolean flag);
 
 extern void GLAPIENTRY
-_mesa_DepthBoundsEXT(GLclampd zmin, GLclampd zmax);
+_mesa_DepthBoundsEXT(ctx, GLcontext *ctx, GLclampd zmin, GLclampd zmax);
 
 extern void
-_mesa_init_depth(GLcontext * ctx);
+_mesa_init_depth(ctx, GLcontext * ctx);
 
 #else
 
 /** No-op */
-#define _mesa_init_depth( c ) ((void)0)
+#define _mesa_init_depth(ctx, c) ((void)0)
 
 #endif
 

@@ -32,7 +32,7 @@
 /**
  * \mainpage The VBO splitter
  *
- * This is the private data used internally to the vbo_split_prims()
+ * This is the private data used internally to the vbo_split_prims(ctx)
  * helper function.  Nobody outside the vbo_split* files needs to
  * include or know about this structure.
  */
@@ -49,7 +49,7 @@
  */
 GLboolean split_prim_inplace(GLenum mode, GLuint *first, GLuint *incr);
 
-void vbo_split_inplace(GLcontext *ctx,
+void vbo_split_inplace(ctx, GLcontext *ctx,
 		       const struct gl_client_array *arrays[],
 		       const struct _mesa_prim *prim,
 		       GLuint nr_prims,
@@ -61,7 +61,7 @@ void vbo_split_inplace(GLcontext *ctx,
 
 /* Requires ib != NULL:
  */
-void vbo_split_copy(GLcontext *ctx,
+void vbo_split_copy(ctx, GLcontext *ctx,
 		    const struct gl_client_array *arrays[],
 		    const struct _mesa_prim *prim,
 		    GLuint nr_prims,

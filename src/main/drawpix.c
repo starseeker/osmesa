@@ -143,10 +143,9 @@ error_check_format_type(GLcontext *ctx, GLenum format, GLenum type,
  * Execute glDrawPixels
  */
 void GLAPIENTRY
-_mesa_DrawPixels(GLsizei width, GLsizei height,
+_mesa_DrawPixels(ctx, GLcontext *ctx, GLsizei width, GLsizei height,
 		 GLenum format, GLenum type, const GLvoid *pixels)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     if (width < 0 || height < 0) {
@@ -202,10 +201,9 @@ _mesa_DrawPixels(GLsizei width, GLsizei height,
 
 
 void GLAPIENTRY
-_mesa_CopyPixels(GLint srcx, GLint srcy, GLsizei width, GLsizei height,
+_mesa_CopyPixels(GLcontext *ctx, GLint srcx, GLint srcy, GLsizei width, GLsizei height,
 		 GLenum type)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     if (ctx->NewState) {
@@ -266,10 +264,9 @@ _mesa_CopyPixels(GLint srcx, GLint srcy, GLsizei width, GLsizei height,
 
 
 void GLAPIENTRY
-_mesa_ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height,
+_mesa_ReadPixels(GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height,
 		 GLenum format, GLenum type, GLvoid *pixels)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     if (width < 0 || height < 0) {
@@ -304,11 +301,10 @@ _mesa_ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height,
 
 
 void GLAPIENTRY
-_mesa_Bitmap(GLsizei width, GLsizei height,
+_mesa_Bitmap(GLcontext *ctx, GLsizei width, GLsizei height,
 	     GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove,
 	     const GLubyte *bitmap)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     if (width < 0 || height < 0) {
@@ -374,12 +370,11 @@ _mesa_Bitmap(GLsizei width, GLsizei height,
  * calls with stencil testing.
  */
 void GLAPIENTRY
-_mesa_DrawDepthPixelsMESA(GLsizei width, GLsizei height,
+_mesa_DrawDepthPixelsMESA(GLcontext *ctx, GLsizei width, GLsizei height,
 			  GLenum colorFormat, GLenum colorType,
 			  const GLvoid *colors,
 			  GLenum depthType, const GLvoid *depths)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     if (width < 0 || height < 0) {
@@ -434,4 +429,4 @@ _mesa_DrawDepthPixelsMESA(GLsizei width, GLsizei height,
  * c-file-style: "stroustrup"
  * End:
  * ex: shiftwidth=4 tabstop=8
- */
+ */)

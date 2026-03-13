@@ -41,6 +41,7 @@
 #include "glapi.h"
 #include "glapitable.h"
 #include "glthread.h"
+#include "mtypes.h"   /* for GLcontext - needed by DISPATCH macros */
 
 
 #if !(defined(USE_X86_ASM) || defined(USE_X86_64_ASM) || defined(USE_SPARC_ASM))
@@ -59,24 +60,43 @@
 #define NAME(func)  gl##func
 #endif
 
+/*
+ * _GLCTX_COMMA_ARGS(a, b, c) expands to ", a, b, c"
+ * _GLCTX_COMMA_ARGS()        expands to ""   (GNU ##__VA_ARGS__ suppresses comma)
+ *
+ * This lets DISPATCH prepend ctx to whatever argument list glapitemp.h
+ * provides as a parenthesised tuple, without modifying glapitemp.h.
+ */
+#define _GLCTX_COMMA_ARGS(...) , ##__VA_ARGS__
+
 #if 0  /* Use this to log GL calls to stdout (for DEBUG only!) */
 
 #define F stdout
-#define DISPATCH(FUNC, ARGS, MESSAGE)		\
-   fprintf MESSAGE;				\
-   CALL_ ## FUNC(GET_DISPATCH(), ARGS);
+#define DISPATCH(FUNC, ARGS, MESSAGE)					\
+   do {									\
+       GLcontext *_ctx = (GLcontext *)_glapi_get_context();		\
+       fprintf MESSAGE;							\
+       GET_DISPATCH()->FUNC(_ctx _GLCTX_COMMA_ARGS ARGS);		\
+   } while (0)
 
-#define RETURN_DISPATCH(FUNC, ARGS, MESSAGE) 	\
-   fprintf MESSAGE;				\
-   return CALL_ ## FUNC(GET_DISPATCH(), ARGS);
+#define RETURN_DISPATCH(FUNC, ARGS, MESSAGE)				\
+   do {									\
+       GLcontext *_ctx = (GLcontext *)_glapi_get_context();		\
+       fprintf MESSAGE;							\
+       return GET_DISPATCH()->FUNC(_ctx _GLCTX_COMMA_ARGS ARGS);	\
+   } while (0)
 
 #else
 
-#define DISPATCH(FUNC, ARGS, MESSAGE)		\
-   CALL_ ## FUNC(GET_DISPATCH(), ARGS);
+#define DISPATCH(FUNC, ARGS, MESSAGE)					\
+   do {									\
+       GLcontext *_ctx = (GLcontext *)_glapi_get_context();		\
+       GET_DISPATCH()->FUNC(_ctx _GLCTX_COMMA_ARGS ARGS);		\
+   } while (0)
 
-#define RETURN_DISPATCH(FUNC, ARGS, MESSAGE) 	\
-   return CALL_ ## FUNC(GET_DISPATCH(), ARGS);
+#define RETURN_DISPATCH(FUNC, ARGS, MESSAGE)				\
+   return GET_DISPATCH()->FUNC(					\
+       (GLcontext *)_glapi_get_context() _GLCTX_COMMA_ARGS ARGS)
 
 #endif /* logging */
 

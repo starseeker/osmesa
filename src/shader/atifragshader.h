@@ -57,25 +57,25 @@ extern struct ati_fragment_shader *
 _mesa_new_ati_fragment_shader(GLcontext *ctx, GLuint id);
 
 extern void
-_mesa_delete_ati_fragment_shader(GLcontext *ctx,
+_mesa_delete_ati_fragment_shader(ctx, GLcontext *ctx,
 				 struct ati_fragment_shader *s);
 
 
-extern GLuint GLAPIENTRY _mesa_GenFragmentShadersATI(GLuint range);
+extern GLuint GLAPIENTRY _mesa_GenFragmentShadersATI(ctx, GLcontext *ctx, GLuint range);
 
-extern void GLAPIENTRY _mesa_BindFragmentShaderATI(GLuint id);
+extern void GLAPIENTRY _mesa_BindFragmentShaderATI(ctx, GLcontext *ctx, GLuint id);
 
-extern void GLAPIENTRY _mesa_DeleteFragmentShaderATI(GLuint id);
+extern void GLAPIENTRY _mesa_DeleteFragmentShaderATI(ctx, GLcontext *ctx, GLuint id);
 
-extern void GLAPIENTRY _mesa_BeginFragmentShaderATI(void);
+extern void GLAPIENTRY _mesa_BeginFragmentShaderATI(ctx, GLcontext *ctx);
 
-extern void GLAPIENTRY _mesa_EndFragmentShaderATI(void);
-
-extern void GLAPIENTRY
-_mesa_PassTexCoordATI(GLuint dst, GLuint coord, GLenum swizzle);
+extern void GLAPIENTRY _mesa_EndFragmentShaderATI(ctx, GLcontext *ctx);
 
 extern void GLAPIENTRY
-_mesa_SampleMapATI(GLuint dst, GLuint interp, GLenum swizzle);
+_mesa_PassTexCoordATI(ctx, GLcontext *ctx, GLuint dst, GLuint coord, GLenum swizzle);
+
+extern void GLAPIENTRY
+_mesa_SampleMapATI(ctx, GLcontext *ctx, GLuint dst, GLuint interp, GLenum swizzle);
 
 extern void GLAPIENTRY
 _mesa_ColorFragmentOp1ATI(GLenum op, GLuint dst, GLuint dstMask,
@@ -111,7 +111,7 @@ _mesa_AlphaFragmentOp3ATI(GLenum op, GLuint dst, GLuint dstMod, GLuint arg1,
 			  GLuint arg3Rep, GLuint arg3Mod);
 
 extern void GLAPIENTRY
-_mesa_SetFragmentShaderConstantATI(GLuint dst, const GLfloat * value);
+_mesa_SetFragmentShaderConstantATI(ctx, GLcontext *ctx, GLuint dst, const GLfloat * value);
 
 #endif
 

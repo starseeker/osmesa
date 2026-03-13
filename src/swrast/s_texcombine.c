@@ -1148,7 +1148,7 @@ texture_apply(const GLcontext *ctx,
  * Apply texture mapping to a span of fragments.
  */
 void
-_swrast_texture_span(GLcontext *ctx, SWspan *span)
+_swrast_texture_span(ctx, GLcontext *ctx, SWspan *span)
 {
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
     GLchan primary_rgba[MAX_WIDTH][4];

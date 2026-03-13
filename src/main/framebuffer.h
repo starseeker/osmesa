@@ -50,31 +50,31 @@ extern void
 _mesa_unreference_framebuffer(struct gl_framebuffer **fb);
 
 extern void
-_mesa_resize_framebuffer(GLcontext *ctx, struct gl_framebuffer *fb,
+_mesa_resize_framebuffer(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
 			 GLuint width, GLuint height);
 
 extern void
-_mesa_update_draw_buffer_bounds(GLcontext *ctx);
+_mesa_update_draw_buffer_bounds(ctx, GLcontext *ctx);
 
 extern void
 _mesa_update_framebuffer_visual(struct gl_framebuffer *fb);
 
 extern void
-_mesa_update_depth_buffer(GLcontext *ctx, struct gl_framebuffer *fb,
+_mesa_update_depth_buffer(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
 			  GLuint attIndex);
 
 extern void
-_mesa_update_stencil_buffer(GLcontext *ctx, struct gl_framebuffer *fb,
+_mesa_update_stencil_buffer(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
 			    GLuint attIndex);
 
 extern void
-_mesa_update_framebuffer(GLcontext *ctx);
+_mesa_update_framebuffer(ctx, GLcontext *ctx);
 
 extern GLboolean
-_mesa_source_buffer_exists(GLcontext *ctx, GLenum format);
+_mesa_source_buffer_exists(ctx, GLcontext *ctx, GLenum format);
 
 extern GLboolean
-_mesa_dest_buffer_exists(GLcontext *ctx, GLenum format);
+_mesa_dest_buffer_exists(ctx, GLcontext *ctx, GLenum format);
 
 
 #endif /* FRAMEBUFFER_H */

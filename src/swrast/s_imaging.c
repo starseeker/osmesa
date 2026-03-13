@@ -34,7 +34,7 @@
 
 
 void
-_swrast_CopyColorTable(GLcontext *ctx,
+_swrast_CopyColorTable(ctx, GLcontext *ctx,
 		       GLenum target, GLenum internalformat,
 		       GLint x, GLint y, GLsizei width)
 {
@@ -62,7 +62,7 @@ _swrast_CopyColorTable(GLcontext *ctx,
     bufferSave = ctx->Unpack.BufferObj;
     ctx->Unpack.BufferObj = ctx->Array.NullBufferObj;
 
-    _mesa_ColorTable(target, internalformat, width, GL_RGBA, CHAN_TYPE, data);
+    _mesa_ColorTable(ctx, target, internalformat, width, GL_RGBA, CHAN_TYPE, data);
 
     /* restore PBO binding */
     ctx->Unpack.BufferObj = bufferSave;
@@ -70,7 +70,7 @@ _swrast_CopyColorTable(GLcontext *ctx,
 
 
 void
-_swrast_CopyColorSubTable(GLcontext *ctx,GLenum target, GLsizei start,
+_swrast_CopyColorSubTable(ctx, GLcontext *ctx,GLenum target, GLsizei start,
 			  GLint x, GLint y, GLsizei width)
 {
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
@@ -97,7 +97,7 @@ _swrast_CopyColorSubTable(GLcontext *ctx,GLenum target, GLsizei start,
     bufferSave = ctx->Unpack.BufferObj;
     ctx->Unpack.BufferObj = ctx->Array.NullBufferObj;
 
-    _mesa_ColorSubTable(target, start, width, GL_RGBA, CHAN_TYPE, data);
+    _mesa_ColorSubTable(ctx, target, start, width, GL_RGBA, CHAN_TYPE, data);
 
     /* restore PBO binding */
     ctx->Unpack.BufferObj = bufferSave;
@@ -105,7 +105,7 @@ _swrast_CopyColorSubTable(GLcontext *ctx,GLenum target, GLsizei start,
 
 
 void
-_swrast_CopyConvolutionFilter1D(GLcontext *ctx, GLenum target,
+_swrast_CopyConvolutionFilter1D(ctx, GLcontext *ctx, GLenum target,
 				GLenum internalFormat,
 				GLint x, GLint y, GLsizei width)
 {
@@ -131,7 +131,7 @@ _swrast_CopyConvolutionFilter1D(GLcontext *ctx, GLenum target,
     ctx->Unpack.BufferObj = ctx->Array.NullBufferObj;
 
     /* store as convolution filter */
-    _mesa_ConvolutionFilter1D(target, internalFormat, width,
+    _mesa_ConvolutionFilter1D(ctx, target, internalFormat, width,
 			      GL_RGBA, CHAN_TYPE, rgba);
 
     /* restore PBO binding */
@@ -140,7 +140,7 @@ _swrast_CopyConvolutionFilter1D(GLcontext *ctx, GLenum target,
 
 
 void
-_swrast_CopyConvolutionFilter2D(GLcontext *ctx, GLenum target,
+_swrast_CopyConvolutionFilter2D(ctx, GLcontext *ctx, GLenum target,
 				GLenum internalFormat,
 				GLint x, GLint y, GLsizei width, GLsizei height)
 {
@@ -188,7 +188,7 @@ _swrast_CopyConvolutionFilter2D(GLcontext *ctx, GLenum target,
     bufferSave = ctx->Unpack.BufferObj;
     ctx->Unpack.BufferObj = ctx->Array.NullBufferObj;
 
-    _mesa_ConvolutionFilter2D(target, internalFormat, width, height,
+    _mesa_ConvolutionFilter2D(ctx, target, internalFormat, width, height,
 			      GL_RGBA, CHAN_TYPE, rgba);
 
     /* restore PBO binding */

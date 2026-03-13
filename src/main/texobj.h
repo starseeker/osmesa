@@ -51,7 +51,7 @@ _mesa_initialize_texture_object(struct gl_texture_object *obj,
 				GLuint name, GLenum target);
 
 extern void
-_mesa_delete_texture_object(GLcontext *ctx, struct gl_texture_object *obj);
+_mesa_delete_texture_object(ctx, GLcontext *ctx, struct gl_texture_object *obj);
 
 extern void
 _mesa_copy_texture_object(struct gl_texture_object *dest,
@@ -65,8 +65,8 @@ extern void
 _mesa_test_texobj_completeness(const GLcontext *ctx,
 			       struct gl_texture_object *obj);
 
-extern void _mesa_unlock_context_textures(GLcontext *ctx);
-extern void _mesa_lock_context_textures(GLcontext *ctx);
+extern void _mesa_unlock_context_textures(ctx, GLcontext *ctx);
+extern void _mesa_lock_context_textures(ctx, GLcontext *ctx);
 
 /*@}*/
 
@@ -77,28 +77,28 @@ extern void _mesa_lock_context_textures(GLcontext *ctx);
 /*@{*/
 
 extern void GLAPIENTRY
-_mesa_GenTextures(GLsizei n, GLuint *textures);
+_mesa_GenTextures(ctx, GLcontext *ctx, GLsizei n, GLuint *textures);
 
 
 extern void GLAPIENTRY
-_mesa_DeleteTextures(GLsizei n, const GLuint *textures);
+_mesa_DeleteTextures(ctx, GLcontext *ctx, GLsizei n, const GLuint *textures);
 
 
 extern void GLAPIENTRY
-_mesa_BindTexture(GLenum target, GLuint texture);
+_mesa_BindTexture(ctx, GLcontext *ctx, GLenum target, GLuint texName);
 
 
 extern void GLAPIENTRY
-_mesa_PrioritizeTextures(GLsizei n, const GLuint *textures,
+_mesa_PrioritizeTextures(ctx, GLcontext *ctx, GLsizei n, const GLuint *texName,
 			 const GLclampf *priorities);
 
 
 extern GLboolean GLAPIENTRY
-_mesa_AreTexturesResident(GLsizei n, const GLuint *textures,
+_mesa_AreTexturesResident(ctx, GLcontext *ctx, GLsizei n, const GLuint *texName,
 			  GLboolean *residences);
 
 extern GLboolean GLAPIENTRY
-_mesa_IsTexture(GLuint texture);
+_mesa_IsTexture(ctx, GLcontext *ctx, GLuint texture);
 
 /*@}*/
 

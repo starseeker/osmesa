@@ -36,7 +36,7 @@ _mesa_Fogf(GLenum pname, GLfloat param)
 {
     GLfloat p[4] = {0.0};
     p[0] = param;
-    _mesa_Fogfv(pname, p);
+    _mesa_Fogfv(ctx, pname, p);
 }
 
 
@@ -72,7 +72,7 @@ _mesa_Fogiv(GLenum pname, const GLint *params)
 	    /* Error will be caught later in _mesa_Fogfv */
 	    ;
     }
-    _mesa_Fogfv(pname, p);
+    _mesa_Fogfv(ctx, pname, p);
 }
 
 
@@ -85,9 +85,8 @@ _mesa_Fogiv(GLenum pname, const GLint *params)
 
 
 void GLAPIENTRY
-_mesa_Fogfv(GLenum pname, const GLfloat *params)
+_mesa_Fogfv(ctx, GLcontext *ctx, GLenum pname, const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLenum m;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -175,7 +174,7 @@ _mesa_Fogfv(GLenum pname, const GLfloat *params)
 /*****                      Initialization                        *****/
 /**********************************************************************/
 
-void _mesa_init_fog(GLcontext * ctx)
+void _mesa_init_fog(ctx, GLcontext * ctx)
 {
     /* Fog group */
     ctx->Fog.Enabled = GL_FALSE;

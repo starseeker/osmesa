@@ -196,7 +196,7 @@ vp_fetch_texel(GLcontext *ctx, const GLfloat texcoord[4], GLfloat lambda,
  * string has been parsed.
  */
 void
-_tnl_program_string(GLcontext *ctx, GLenum target, struct gl_program *program)
+_tnl_program_string(ctx, GLcontext *ctx, GLenum target, struct gl_program *program)
 {
     /* No-op.
      * If we had derived anything from the program that was private to this

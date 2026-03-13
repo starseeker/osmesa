@@ -67,10 +67,9 @@
 
 
 void GLAPIENTRY
-_mesa_GetBooleanv(GLenum pname, GLboolean *params)
+_mesa_GetBooleanv(ctx, GLcontext *ctx, GLenum pname, GLboolean *params)
 {
     int itmp = 0;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (!params)
@@ -865,13 +864,13 @@ _mesa_GetBooleanv(GLenum pname, GLboolean *params)
 	    params[0] = INT_TO_BOOLEAN(ctx->Const.SubPixelBits);
 	    break;
 	case GL_TEXTURE_1D:
-	    params[0] = _mesa_IsEnabled(GL_TEXTURE_1D);
+	    params[0] = _mesa_IsEnabled(ctx, GL_TEXTURE_1D);
 	    break;
 	case GL_TEXTURE_2D:
-	    params[0] = _mesa_IsEnabled(GL_TEXTURE_2D);
+	    params[0] = _mesa_IsEnabled(ctx, GL_TEXTURE_2D);
 	    break;
 	case GL_TEXTURE_3D:
-	    params[0] = _mesa_IsEnabled(GL_TEXTURE_3D);
+	    params[0] = _mesa_IsEnabled(ctx, GL_TEXTURE_3D);
 	    break;
 	case GL_TEXTURE_BINDING_1D:
 	    params[0] = INT_TO_BOOLEAN(ctx->Texture.Unit[ctx->Texture.CurrentUnit].Current1D->Name);
@@ -1048,7 +1047,7 @@ _mesa_GetBooleanv(GLenum pname, GLboolean *params)
 	    break;
 	case GL_TEXTURE_CUBE_MAP_ARB:
 	    CHECK_EXT1(ARB_texture_cube_map, "GetBooleanv");
-	    params[0] = _mesa_IsEnabled(GL_TEXTURE_CUBE_MAP_ARB);
+	    params[0] = _mesa_IsEnabled(ctx, GL_TEXTURE_CUBE_MAP_ARB);
 	    break;
 	case GL_TEXTURE_BINDING_CUBE_MAP_ARB:
 	    CHECK_EXT1(ARB_texture_cube_map, "GetBooleanv");
@@ -1542,7 +1541,7 @@ _mesa_GetBooleanv(GLenum pname, GLboolean *params)
 	    break;
 	case GL_TEXTURE_RECTANGLE_NV:
 	    CHECK_EXT1(NV_texture_rectangle, "GetBooleanv");
-	    params[0] = _mesa_IsEnabled(GL_TEXTURE_RECTANGLE_NV);
+	    params[0] = _mesa_IsEnabled(ctx, GL_TEXTURE_RECTANGLE_NV);
 	    break;
 	case GL_TEXTURE_BINDING_RECTANGLE_NV:
 	    CHECK_EXT1(NV_texture_rectangle, "GetBooleanv");
@@ -1890,9 +1889,8 @@ _mesa_GetBooleanv(GLenum pname, GLboolean *params)
 }
 
 void GLAPIENTRY
-_mesa_GetFloatv(GLenum pname, GLfloat *params)
+_mesa_GetFloatv(ctx, GLcontext *ctx, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (!params)
@@ -2685,13 +2683,13 @@ _mesa_GetFloatv(GLenum pname, GLfloat *params)
 	    params[0] = (GLfloat)(ctx->Const.SubPixelBits);
 	    break;
 	case GL_TEXTURE_1D:
-	    params[0] = BOOLEAN_TO_FLOAT(_mesa_IsEnabled(GL_TEXTURE_1D));
+	    params[0] = BOOLEAN_TO_FLOAT(_mesa_IsEnabled(ctx, GL_TEXTURE_1D));
 	    break;
 	case GL_TEXTURE_2D:
-	    params[0] = BOOLEAN_TO_FLOAT(_mesa_IsEnabled(GL_TEXTURE_2D));
+	    params[0] = BOOLEAN_TO_FLOAT(_mesa_IsEnabled(ctx, GL_TEXTURE_2D));
 	    break;
 	case GL_TEXTURE_3D:
-	    params[0] = BOOLEAN_TO_FLOAT(_mesa_IsEnabled(GL_TEXTURE_3D));
+	    params[0] = BOOLEAN_TO_FLOAT(_mesa_IsEnabled(ctx, GL_TEXTURE_3D));
 	    break;
 	case GL_TEXTURE_BINDING_1D:
 	    params[0] = (GLfloat)(ctx->Texture.Unit[ctx->Texture.CurrentUnit].Current1D->Name);
@@ -2868,7 +2866,7 @@ _mesa_GetFloatv(GLenum pname, GLfloat *params)
 	    break;
 	case GL_TEXTURE_CUBE_MAP_ARB:
 	    CHECK_EXT1(ARB_texture_cube_map, "GetFloatv");
-	    params[0] = BOOLEAN_TO_FLOAT(_mesa_IsEnabled(GL_TEXTURE_CUBE_MAP_ARB));
+	    params[0] = BOOLEAN_TO_FLOAT(_mesa_IsEnabled(ctx, GL_TEXTURE_CUBE_MAP_ARB));
 	    break;
 	case GL_TEXTURE_BINDING_CUBE_MAP_ARB:
 	    CHECK_EXT1(ARB_texture_cube_map, "GetFloatv");
@@ -3361,7 +3359,7 @@ _mesa_GetFloatv(GLenum pname, GLfloat *params)
 	    break;
 	case GL_TEXTURE_RECTANGLE_NV:
 	    CHECK_EXT1(NV_texture_rectangle, "GetFloatv");
-	    params[0] = BOOLEAN_TO_FLOAT(_mesa_IsEnabled(GL_TEXTURE_RECTANGLE_NV));
+	    params[0] = BOOLEAN_TO_FLOAT(_mesa_IsEnabled(ctx, GL_TEXTURE_RECTANGLE_NV));
 	    break;
 	case GL_TEXTURE_BINDING_RECTANGLE_NV:
 	    CHECK_EXT1(NV_texture_rectangle, "GetFloatv");
@@ -3707,9 +3705,8 @@ _mesa_GetFloatv(GLenum pname, GLfloat *params)
 }
 
 void GLAPIENTRY
-_mesa_GetIntegerv(GLenum pname, GLint *params)
+_mesa_GetIntegerv(ctx, GLcontext *ctx, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (!params)
@@ -4502,13 +4499,13 @@ _mesa_GetIntegerv(GLenum pname, GLint *params)
 	    params[0] = ctx->Const.SubPixelBits;
 	    break;
 	case GL_TEXTURE_1D:
-	    params[0] = BOOLEAN_TO_INT(_mesa_IsEnabled(GL_TEXTURE_1D));
+	    params[0] = BOOLEAN_TO_INT(_mesa_IsEnabled(ctx, GL_TEXTURE_1D));
 	    break;
 	case GL_TEXTURE_2D:
-	    params[0] = BOOLEAN_TO_INT(_mesa_IsEnabled(GL_TEXTURE_2D));
+	    params[0] = BOOLEAN_TO_INT(_mesa_IsEnabled(ctx, GL_TEXTURE_2D));
 	    break;
 	case GL_TEXTURE_3D:
-	    params[0] = BOOLEAN_TO_INT(_mesa_IsEnabled(GL_TEXTURE_3D));
+	    params[0] = BOOLEAN_TO_INT(_mesa_IsEnabled(ctx, GL_TEXTURE_3D));
 	    break;
 	case GL_TEXTURE_BINDING_1D:
 	    params[0] = ctx->Texture.Unit[ctx->Texture.CurrentUnit].Current1D->Name;
@@ -4685,7 +4682,7 @@ _mesa_GetIntegerv(GLenum pname, GLint *params)
 	    break;
 	case GL_TEXTURE_CUBE_MAP_ARB:
 	    CHECK_EXT1(ARB_texture_cube_map, "GetIntegerv");
-	    params[0] = BOOLEAN_TO_INT(_mesa_IsEnabled(GL_TEXTURE_CUBE_MAP_ARB));
+	    params[0] = BOOLEAN_TO_INT(_mesa_IsEnabled(ctx, GL_TEXTURE_CUBE_MAP_ARB));
 	    break;
 	case GL_TEXTURE_BINDING_CUBE_MAP_ARB:
 	    CHECK_EXT1(ARB_texture_cube_map, "GetIntegerv");
@@ -5178,7 +5175,7 @@ _mesa_GetIntegerv(GLenum pname, GLint *params)
 	    break;
 	case GL_TEXTURE_RECTANGLE_NV:
 	    CHECK_EXT1(NV_texture_rectangle, "GetIntegerv");
-	    params[0] = BOOLEAN_TO_INT(_mesa_IsEnabled(GL_TEXTURE_RECTANGLE_NV));
+	    params[0] = BOOLEAN_TO_INT(_mesa_IsEnabled(ctx, GL_TEXTURE_RECTANGLE_NV));
 	    break;
 	case GL_TEXTURE_BINDING_RECTANGLE_NV:
 	    CHECK_EXT1(NV_texture_rectangle, "GetIntegerv");
@@ -5540,7 +5537,7 @@ _mesa_GetDoublev(GLenum pname, GLdouble *params)
     for (i = 0; i < 16; i++)
 	values[i] = magic;
 
-    _mesa_GetFloatv(pname, values);
+    _mesa_GetFloatv(ctx, pname, values);
 
     for (i = 0; i < 16 && values[i] != magic; i++)
 	params[i] = (GLdouble) values[i];

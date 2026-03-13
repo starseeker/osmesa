@@ -42,35 +42,34 @@
 #if _HAVE_FULL_GL
 
 extern void GLAPIENTRY
-_mesa_VertexPointer(GLint size, GLenum type, GLsizei stride,
-		    const GLvoid *ptr);
+_mesa_VertexPointer(ctx, GLcontext *ctx, GLint size, GLenum type, GLsizei stride, const GLvoid *ptr);
 
 extern void GLAPIENTRY
-_mesa_UnlockArraysEXT(void);
+_mesa_UnlockArraysEXT(ctx, GLcontext *ctx);
 
 extern void GLAPIENTRY
-_mesa_LockArraysEXT(GLint first, GLsizei count);
-
-
-extern void GLAPIENTRY
-_mesa_NormalPointer(GLenum type, GLsizei stride, const GLvoid *ptr);
+_mesa_LockArraysEXT(ctx, GLcontext *ctx, GLint first, GLsizei count);
 
 
 extern void GLAPIENTRY
-_mesa_ColorPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr);
+_mesa_NormalPointer(ctx, GLcontext *ctx, GLenum type, GLsizei stride, const GLvoid *ptr);
 
 
 extern void GLAPIENTRY
-_mesa_IndexPointer(GLenum type, GLsizei stride, const GLvoid *ptr);
+_mesa_ColorPointer(ctx, GLcontext *ctx, GLint size, GLenum type, GLsizei stride, const GLvoid *ptr);
 
 
 extern void GLAPIENTRY
-_mesa_TexCoordPointer(GLint size, GLenum type, GLsizei stride,
+_mesa_IndexPointer(ctx, GLcontext *ctx, GLenum type, GLsizei stride, const GLvoid *ptr);
+
+
+extern void GLAPIENTRY
+_mesa_TexCoordPointer(ctx, GLcontext *ctx, GLint size, GLenum type, GLsizei stride,
 		      const GLvoid *ptr);
 
 
 extern void GLAPIENTRY
-_mesa_EdgeFlagPointer(GLsizei stride, const GLvoid *ptr);
+_mesa_EdgeFlagPointer(ctx, GLcontext *ctx, GLsizei stride, const GLvoid *ptr);
 
 
 extern void GLAPIENTRY
@@ -103,57 +102,57 @@ _mesa_EdgeFlagPointerEXT(GLsizei stride, GLsizei count, const GLboolean *ptr);
 
 
 extern void GLAPIENTRY
-_mesa_FogCoordPointerEXT(GLenum type, GLsizei stride, const GLvoid *ptr);
+_mesa_FogCoordPointerEXT(ctx, GLcontext *ctx, GLenum type, GLsizei stride, const GLvoid *ptr);
 
 
 extern void GLAPIENTRY
-_mesa_SecondaryColorPointerEXT(GLint size, GLenum type,
+_mesa_SecondaryColorPointerEXT(ctx, GLcontext *ctx, GLint size, GLenum type,
 			       GLsizei stride, const GLvoid *ptr);
 
 
 extern void GLAPIENTRY
-_mesa_VertexAttribPointerNV(GLuint index, GLint size, GLenum type,
-			    GLsizei stride, const GLvoid *pointer);
+_mesa_VertexAttribPointerNV(ctx, GLcontext *ctx, GLuint index, GLint size, GLenum type,
+			    GLsizei stride, const GLvoid *ptr);
 
 
 extern void GLAPIENTRY
-_mesa_VertexAttribPointerARB(GLuint index, GLint size, GLenum type,
-			     GLboolean normalized, GLsizei stride,
-			     const GLvoid *pointer);
+_mesa_VertexAttribPointerARB(ctx, GLcontext *ctx, GLuint index, GLint size, GLenum type,
+			     GLboolean normalized,
+			     GLsizei stride, const GLvoid *ptr);
 
 
 extern void GLAPIENTRY
-_mesa_InterleavedArrays(GLenum format, GLsizei stride, const GLvoid *pointer);
+_mesa_InterleavedArrays(ctx, GLcontext *ctx, GLenum format, GLsizei stride, const GLvoid *pointer);
 
 
 extern void GLAPIENTRY
-_mesa_MultiDrawArraysEXT(GLenum mode, GLint *first,
+_mesa_MultiDrawArraysEXT(ctx, GLcontext *ctx, GLenum mode, GLint *first,
 			 GLsizei *count, GLsizei primcount);
 
 extern void GLAPIENTRY
-_mesa_MultiDrawElementsEXT(GLenum mode, const GLsizei *count, GLenum type,
+_mesa_MultiDrawElementsEXT(ctx, GLcontext *ctx, GLenum mode, const GLsizei *count, GLenum type,
 			   const GLvoid **indices, GLsizei primcount);
 
 
 extern void GLAPIENTRY
-_mesa_MultiModeDrawArraysIBM(const GLenum * mode, const GLint * first,
+_mesa_MultiModeDrawArraysIBM(ctx, GLcontext *ctx, const GLenum * mode, const GLint * first,
 			     const GLsizei * count,
 			     GLsizei primcount, GLint modestride);
 
 
 extern void GLAPIENTRY
-_mesa_MultiModeDrawElementsIBM(const GLenum * mode, const GLsizei * count,
+_mesa_MultiModeDrawElementsIBM(ctx, GLcontext *ctx, const GLenum * mode, const GLsizei * count,
 			       GLenum type, const GLvoid * const * indices,
 			       GLsizei primcount, GLint modestride);
 
 
 extern void
-_mesa_init_varray(GLcontext * ctx);
+_mesa_init_varray(ctx, GLcontext *ctx);
 
 #else
 
 /** No-op */
-#define _mesa_init_varray( c )  ((void)0)
+#define _mesa_init_varray(ctx, c)  ((void)0)
 
 #endif
 

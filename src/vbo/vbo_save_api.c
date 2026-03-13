@@ -594,7 +594,7 @@ static void _save_reset_vertex(GLcontext *ctx)
 
 
 
-#define ERROR()   _mesa_compile_error( ctx, GL_INVALID_ENUM, __func__ );
+#define ERROR()   _mesa_compile_error(ctx, GL_INVALID_ENUM, __func__);
 
 
 /* Only one size for each attribute may be active at once.  Eg. if
@@ -652,62 +652,54 @@ do {									\
    _save_copy_to_current( ctx );					\
    _save_reset_vertex( ctx );						\
    _save_reset_counters( ctx );  \
-   _mesa_install_save_vtxfmt( ctx, &ctx->ListState.ListVtxfmt );	\
+   _mesa_install_save_vtxfmt(ctx, &ctx->ListState.ListVtxfmt);	\
    ctx->Driver.SaveNeedFlush = 0;					\
 } while (0)
 
-static void GLAPIENTRY _save_EvalCoord1f(GLfloat u)
+static void GLAPIENTRY _save_EvalCoord1f(GLcontext *ctx, GLfloat u)
 {
-    GET_CURRENT_CONTEXT(ctx);
     DO_FALLBACK(ctx);
     ctx->Save->EvalCoord1f(u);
 }
 
-static void GLAPIENTRY _save_EvalCoord1fv(const GLfloat *v)
+static void GLAPIENTRY _save_EvalCoord1fv(GLcontext *ctx, const GLfloat *v)
 {
-    GET_CURRENT_CONTEXT(ctx);
     DO_FALLBACK(ctx);
     ctx->Save->EvalCoord1fv(v);
 }
 
-static void GLAPIENTRY _save_EvalCoord2f(GLfloat u, GLfloat v)
+static void GLAPIENTRY _save_EvalCoord2f(GLcontext *ctx, GLfloat u, GLfloat v)
 {
-    GET_CURRENT_CONTEXT(ctx);
     DO_FALLBACK(ctx);
     ctx->Save->EvalCoord2f(u, v);
 }
 
-static void GLAPIENTRY _save_EvalCoord2fv(const GLfloat *v)
+static void GLAPIENTRY _save_EvalCoord2fv(GLcontext *ctx, const GLfloat *v)
 {
-    GET_CURRENT_CONTEXT(ctx);
     DO_FALLBACK(ctx);
     ctx->Save->EvalCoord2fv(v);
 }
 
-static void GLAPIENTRY _save_EvalPoint1(GLint i)
+static void GLAPIENTRY _save_EvalPoint1(GLcontext *ctx, GLint i)
 {
-    GET_CURRENT_CONTEXT(ctx);
     DO_FALLBACK(ctx);
     ctx->Save->EvalPoint1(i);
 }
 
-static void GLAPIENTRY _save_EvalPoint2(GLint i, GLint j)
+static void GLAPIENTRY _save_EvalPoint2(GLcontext *ctx, GLint i, GLint j)
 {
-    GET_CURRENT_CONTEXT(ctx);
     DO_FALLBACK(ctx);
     ctx->Save->EvalPoint2(i, j);
 }
 
-static void GLAPIENTRY _save_CallList(GLuint l)
+static void GLAPIENTRY _save_CallList(GLcontext *ctx, GLuint l)
 {
-    GET_CURRENT_CONTEXT(ctx);
     DO_FALLBACK(ctx);
     ctx->Save->CallList(l);
 }
 
-static void GLAPIENTRY _save_CallLists(GLsizei n, GLenum type, const GLvoid *v)
+static void GLAPIENTRY _save_CallLists(GLcontext *ctx, GLsizei n, GLenum type, const GLvoid *v)
 {
-    GET_CURRENT_CONTEXT(ctx);
     DO_FALLBACK(ctx);
     ctx->Save->CallLists(n, type, v);
 }
@@ -718,7 +710,7 @@ static void GLAPIENTRY _save_CallLists(GLsizei n, GLenum type, const GLvoid *v)
 /* This begin is hooked into ...  Updating of
  * ctx->Driver.CurrentSavePrimitive is already taken care of.
  */
-GLboolean vbo_save_NotifyBegin(GLcontext *ctx, GLenum mode)
+GLboolean vbo_save_NotifyBegin(ctx, GLcontext *ctx, GLenum mode)
 {
     struct vbo_save_context *save = &vbo_context(ctx)->save;
 
@@ -740,9 +732,8 @@ GLboolean vbo_save_NotifyBegin(GLcontext *ctx, GLenum mode)
 
 
 
-static void GLAPIENTRY _save_End(void)
+static void GLAPIENTRY _save_End(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct vbo_save_context *save = &vbo_context(ctx)->save;
     GLint i = save->prim_count - 1;
 
@@ -767,10 +758,9 @@ static void GLAPIENTRY _save_End(void)
 /* These are all errors as this vtxfmt is only installed inside
  * begin/end pairs.
  */
-static void GLAPIENTRY _save_DrawElements(GLenum mode, GLsizei count, GLenum type,
+static void GLAPIENTRY _save_DrawElements(GLcontext *ctx, GLenum mode, GLsizei count, GLenum type,
 	const GLvoid *indices)
 {
-    GET_CURRENT_CONTEXT(ctx);
     (void) mode;
     (void) count;
     (void) type;
@@ -779,12 +769,11 @@ static void GLAPIENTRY _save_DrawElements(GLenum mode, GLsizei count, GLenum typ
 }
 
 
-static void GLAPIENTRY _save_DrawRangeElements(GLenum mode,
+static void GLAPIENTRY _save_DrawRangeElements(GLcontext *ctx, GLenum mode,
 	GLuint start, GLuint end,
 	GLsizei count, GLenum type,
 	const GLvoid *indices)
 {
-    GET_CURRENT_CONTEXT(ctx);
     (void) mode;
     (void) start;
     (void) end;
@@ -794,18 +783,16 @@ static void GLAPIENTRY _save_DrawRangeElements(GLenum mode,
     _mesa_compile_error(ctx, GL_INVALID_OPERATION, "glDrawRangeElements");
 }
 
-static void GLAPIENTRY _save_DrawArrays(GLenum mode, GLint start, GLsizei count)
+static void GLAPIENTRY _save_DrawArrays(GLcontext *ctx, GLenum mode, GLint start, GLsizei count)
 {
-    GET_CURRENT_CONTEXT(ctx);
     (void) mode;
     (void) start;
     (void) count;
     _mesa_compile_error(ctx, GL_INVALID_OPERATION, "glDrawArrays");
 }
 
-static void GLAPIENTRY _save_Rectf(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
+static void GLAPIENTRY _save_Rectf(GLcontext *ctx, GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
 {
-    GET_CURRENT_CONTEXT(ctx);
     (void) x1;
     (void) y1;
     (void) x2;
@@ -813,19 +800,17 @@ static void GLAPIENTRY _save_Rectf(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y
     _mesa_compile_error(ctx, GL_INVALID_OPERATION, "glRectf");
 }
 
-static void GLAPIENTRY _save_EvalMesh1(GLenum mode, GLint i1, GLint i2)
+static void GLAPIENTRY _save_EvalMesh1(GLcontext *ctx, GLenum mode, GLint i1, GLint i2)
 {
-    GET_CURRENT_CONTEXT(ctx);
     (void) mode;
     (void) i1;
     (void) i2;
     _mesa_compile_error(ctx, GL_INVALID_OPERATION, "glEvalMesh1");
 }
 
-static void GLAPIENTRY _save_EvalMesh2(GLenum mode, GLint i1, GLint i2,
+static void GLAPIENTRY _save_EvalMesh2(GLcontext *ctx, GLenum mode, GLint i1, GLint i2,
 				       GLint j1, GLint j2)
 {
-    GET_CURRENT_CONTEXT(ctx);
     (void) mode;
     (void) i1;
     (void) i2;
@@ -834,9 +819,8 @@ static void GLAPIENTRY _save_EvalMesh2(GLenum mode, GLint i1, GLint i2,
     _mesa_compile_error(ctx, GL_INVALID_OPERATION, "glEvalMesh2");
 }
 
-static void GLAPIENTRY _save_Begin(GLenum mode)
+static void GLAPIENTRY _save_Begin(GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     (void) mode;
     _mesa_compile_error(ctx, GL_INVALID_OPERATION, "Recursive glBegin");
 }
@@ -846,21 +830,19 @@ static void GLAPIENTRY _save_Begin(GLenum mode)
  * maintained in ctx->ListState, active when the list is known or
  * suspected to be outside any begin/end primitive.
  */
-static void GLAPIENTRY _save_OBE_Rectf(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
+static void GLAPIENTRY _save_OBE_Rectf(GLcontext *ctx, GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
 {
-    GET_CURRENT_CONTEXT(ctx);
     vbo_save_NotifyBegin(ctx, GL_QUADS | VBO_SAVE_PRIM_WEAK);
-    CALL_Vertex2f(GET_DISPATCH(), (x1, y1));
-    CALL_Vertex2f(GET_DISPATCH(), (x2, y1));
-    CALL_Vertex2f(GET_DISPATCH(), (x2, y2));
-    CALL_Vertex2f(GET_DISPATCH(), (x1, y2));
-    CALL_End(GET_DISPATCH(), ());
+    CALL_Vertex2f(ctx->CurrentDispatch, (ctx, x1, y1));
+    CALL_Vertex2f(ctx->CurrentDispatch, (ctx, x2, y1));
+    CALL_Vertex2f(ctx->CurrentDispatch, (ctx, x2, y2));
+    CALL_Vertex2f(ctx->CurrentDispatch, (ctx, x1, y2));
+    CALL_End(ctx->CurrentDispatch, (ctx));
 }
 
 
-static void GLAPIENTRY _save_OBE_DrawArrays(GLenum mode, GLint start, GLsizei count)
+static void GLAPIENTRY _save_OBE_DrawArrays(GLcontext *ctx, GLenum mode, GLint start, GLsizei count)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLint i;
 
     if (!_mesa_validate_DrawArrays(ctx, mode, start, count))
@@ -871,8 +853,8 @@ static void GLAPIENTRY _save_OBE_DrawArrays(GLenum mode, GLint start, GLsizei co
     vbo_save_NotifyBegin(ctx, mode | VBO_SAVE_PRIM_WEAK);
 
     for (i = 0; i < count; i++)
-	CALL_ArrayElement(GET_DISPATCH(), (start + i));
-    CALL_End(GET_DISPATCH(), ());
+	CALL_ArrayElement(ctx->CurrentDispatch, (ctx, start + i));
+    CALL_End(ctx->CurrentDispatch, (ctx));
 
     _ae_unmap_vbos(ctx);
 }
@@ -880,10 +862,9 @@ static void GLAPIENTRY _save_OBE_DrawArrays(GLenum mode, GLint start, GLsizei co
 /* Could do better by copying the arrays and element list intact and
  * then emitting an indexed prim at runtime.
  */
-static void GLAPIENTRY _save_OBE_DrawElements(GLenum mode, GLsizei count, GLenum type,
+static void GLAPIENTRY _save_OBE_DrawElements(GLcontext *ctx, GLenum mode, GLsizei count, GLenum type,
 	const GLvoid *indices)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLint i;
 
     if (!_mesa_validate_DrawElements(ctx, mode, count, type, indices))
@@ -899,32 +880,31 @@ static void GLAPIENTRY _save_OBE_DrawElements(GLenum mode, GLsizei count, GLenum
     switch (type) {
 	case GL_UNSIGNED_BYTE:
 	    for (i = 0 ; i < count ; i++)
-		CALL_ArrayElement(GET_DISPATCH(), (((GLubyte *)indices)[i]));
+		CALL_ArrayElement(ctx->CurrentDispatch, (ctx, ((GLubyte *)indices)[i]));
 	    break;
 	case GL_UNSIGNED_SHORT:
 	    for (i = 0 ; i < count ; i++)
-		CALL_ArrayElement(GET_DISPATCH(), (((GLushort *)indices)[i]));
+		CALL_ArrayElement(ctx->CurrentDispatch, (ctx, ((GLushort *)indices)[i]));
 	    break;
 	case GL_UNSIGNED_INT:
 	    for (i = 0 ; i < count ; i++)
-		CALL_ArrayElement(GET_DISPATCH(), (((GLuint *)indices)[i]));
+		CALL_ArrayElement(ctx->CurrentDispatch, (ctx, ((GLuint *)indices)[i]));
 	    break;
 	default:
 	    _mesa_error(ctx, GL_INVALID_ENUM, "glDrawElements(type)");
 	    break;
     }
 
-    CALL_End(GET_DISPATCH(), ());
+    CALL_End(ctx->CurrentDispatch, (ctx));
 
     _ae_unmap_vbos(ctx);
 }
 
-static void GLAPIENTRY _save_OBE_DrawRangeElements(GLenum mode,
+static void GLAPIENTRY _save_OBE_DrawRangeElements(GLcontext *ctx, GLenum mode,
 	GLuint start, GLuint end,
 	GLsizei count, GLenum type,
 	const GLvoid *indices)
 {
-    GET_CURRENT_CONTEXT(ctx);
     if (_mesa_validate_DrawRangeElements(ctx, mode,
 					 start, end,
 					 count, type, indices))
@@ -1022,7 +1002,7 @@ static void _save_vtxfmt_init(GLcontext *ctx)
 }
 
 
-void vbo_save_SaveFlushVertices(GLcontext *ctx)
+void vbo_save_SaveFlushVertices(ctx, GLcontext *ctx)
 {
     struct vbo_save_context *save = &vbo_context(ctx)->save;
 
@@ -1042,7 +1022,7 @@ void vbo_save_SaveFlushVertices(GLcontext *ctx)
     ctx->Driver.SaveNeedFlush = 0;
 }
 
-void vbo_save_NewList(GLcontext *ctx, GLuint list, GLenum mode)
+void vbo_save_NewList(ctx, GLcontext *ctx, GLuint list, GLenum mode)
 {
     struct vbo_save_context *save = &vbo_context(ctx)->save;
 
@@ -1062,7 +1042,7 @@ void vbo_save_NewList(GLcontext *ctx, GLuint list, GLenum mode)
     ctx->Driver.SaveNeedFlush = 0;
 }
 
-void vbo_save_EndList(GLcontext *ctx)
+void vbo_save_EndList(ctx, GLcontext *ctx)
 {
     struct vbo_save_context *save = &vbo_context(ctx)->save;
     unmap_vertex_store(ctx, save->vertex_store);
@@ -1070,13 +1050,13 @@ void vbo_save_EndList(GLcontext *ctx)
     assert(save->vertex_size == 0);
 }
 
-void vbo_save_BeginCallList(GLcontext *ctx, struct mesa_display_list *dlist)
+void vbo_save_BeginCallList(ctx, GLcontext *ctx, struct mesa_display_list *dlist)
 {
     struct vbo_save_context *save = &vbo_context(ctx)->save;
     save->replay_flags |= dlist->flags;
 }
 
-void vbo_save_EndCallList(GLcontext *ctx)
+void vbo_save_EndCallList(ctx, GLcontext *ctx)
 {
     struct vbo_save_context *save = &vbo_context(ctx)->save;
 
@@ -1089,7 +1069,7 @@ void vbo_save_EndCallList(GLcontext *ctx)
 }
 
 
-static void vbo_destroy_vertex_list(GLcontext *ctx, void *data)
+static void vbo_destroy_vertex_list(ctx, GLcontext *ctx, void *data)
 {
     struct vbo_save_vertex_list *node = (struct vbo_save_vertex_list *)data;
     (void) ctx;
@@ -1102,7 +1082,7 @@ static void vbo_destroy_vertex_list(GLcontext *ctx, void *data)
 }
 
 
-static void vbo_print_vertex_list(GLcontext *ctx, void *data)
+static void vbo_print_vertex_list(ctx, GLcontext *ctx, void *data)
 {
     struct vbo_save_vertex_list *node = (struct vbo_save_vertex_list *)data;
     GLuint i;

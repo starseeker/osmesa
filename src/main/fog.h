@@ -49,17 +49,17 @@ extern void GLAPIENTRY
 _mesa_Fogi(GLenum pname, GLint param);
 
 extern void GLAPIENTRY
-_mesa_Fogfv(GLenum pname, const GLfloat *params);
+_mesa_Fogfv(ctx, GLcontext *ctx, GLenum pname, const GLfloat *params);
 
 extern void GLAPIENTRY
 _mesa_Fogiv(GLenum pname, const GLint *params);
 
-extern void _mesa_init_fog(GLcontext * ctx);
+extern void _mesa_init_fog(ctx, GLcontext * ctx);
 
 #else
 
 /** No-op */
-#define _mesa_init_fog( c ) ((void)0)
+#define _mesa_init_fog(ctx, c) ((void)0)
 
 #endif
 

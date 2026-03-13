@@ -464,7 +464,7 @@ store_vector4(const struct prog_instruction *inst,
  * \return GL_TRUE if program completed or GL_FALSE if program executed KIL.
  */
 GLboolean
-_mesa_execute_program(GLcontext * ctx,
+_mesa_execute_program(ctx, GLcontext * ctx,
 		      const struct gl_program *program,
 		      struct gl_program_machine *machine)
 {

@@ -45,6 +45,7 @@
  */
 
 typedef struct __GLcontextRec __GLcontext;
+typedef struct __GLcontextRec GLcontext;   /* public alias used throughout Mesa */
 
 typedef struct __GLcontextModesRec {
     struct __GLcontextModesRec * next;

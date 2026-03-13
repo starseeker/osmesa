@@ -552,13 +552,13 @@ _mesa_printf(const char *fmtString, ...);
 
 
 extern void
-_mesa_warning(__GLcontext *gc, const char *fmtString, ...);
+_mesa_warning(ctx, GLcontext *ctx, const char *fmtString, ...);
 
 extern void
 _mesa_problem(const __GLcontext *ctx, const char *fmtString, ...);
 
 extern void
-_mesa_error(__GLcontext *ctx, GLenum error, const char *fmtString, ...);
+_mesa_error(ctx, GLcontext *ctx, GLenum error, const char *fmtString, ...);
 
 extern void
 _mesa_debug(const __GLcontext *ctx, const char *fmtString, ...);

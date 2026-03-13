@@ -90,7 +90,7 @@ _mesa_set_fetch_functions(struct gl_texture_image *texImage, GLuint dims);
 
 
 extern void
-_mesa_store_teximage1d(GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_teximage1d(ctx, GLcontext *ctx, GLenum target, GLint level,
 		       GLint internalFormat,
 		       GLint width, GLint border,
 		       GLenum format, GLenum type, const GLvoid *pixels,
@@ -100,7 +100,7 @@ _mesa_store_teximage1d(GLcontext *ctx, GLenum target, GLint level,
 
 
 extern void
-_mesa_store_teximage2d(GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_teximage2d(ctx, GLcontext *ctx, GLenum target, GLint level,
 		       GLint internalFormat,
 		       GLint width, GLint height, GLint border,
 		       GLenum format, GLenum type, const GLvoid *pixels,
@@ -110,7 +110,7 @@ _mesa_store_teximage2d(GLcontext *ctx, GLenum target, GLint level,
 
 
 extern void
-_mesa_store_teximage3d(GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_teximage3d(ctx, GLcontext *ctx, GLenum target, GLint level,
 		       GLint internalFormat,
 		       GLint width, GLint height, GLint depth, GLint border,
 		       GLenum format, GLenum type, const GLvoid *pixels,
@@ -120,7 +120,7 @@ _mesa_store_teximage3d(GLcontext *ctx, GLenum target, GLint level,
 
 
 extern void
-_mesa_store_texsubimage1d(GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_texsubimage1d(ctx, GLcontext *ctx, GLenum target, GLint level,
 			  GLint xoffset, GLint width,
 			  GLenum format, GLenum type, const GLvoid *pixels,
 			  const struct gl_pixelstore_attrib *packing,
@@ -129,7 +129,7 @@ _mesa_store_texsubimage1d(GLcontext *ctx, GLenum target, GLint level,
 
 
 extern void
-_mesa_store_texsubimage2d(GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_texsubimage2d(ctx, GLcontext *ctx, GLenum target, GLint level,
 			  GLint xoffset, GLint yoffset,
 			  GLint width, GLint height,
 			  GLenum format, GLenum type, const GLvoid *pixels,
@@ -139,7 +139,7 @@ _mesa_store_texsubimage2d(GLcontext *ctx, GLenum target, GLint level,
 
 
 extern void
-_mesa_store_texsubimage3d(GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_texsubimage3d(ctx, GLcontext *ctx, GLenum target, GLint level,
 			  GLint xoffset, GLint yoffset, GLint zoffset,
 			  GLint width, GLint height, GLint depth,
 			  GLenum format, GLenum type, const GLvoid *pixels,
@@ -149,7 +149,7 @@ _mesa_store_texsubimage3d(GLcontext *ctx, GLenum target, GLint level,
 
 
 extern void
-_mesa_store_compressed_teximage1d(GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_compressed_teximage1d(ctx, GLcontext *ctx, GLenum target, GLint level,
 				  GLint internalFormat,
 				  GLint width, GLint border,
 				  GLsizei imageSize, const GLvoid *data,
@@ -157,7 +157,7 @@ _mesa_store_compressed_teximage1d(GLcontext *ctx, GLenum target, GLint level,
 				  struct gl_texture_image *texImage);
 
 extern void
-_mesa_store_compressed_teximage2d(GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_compressed_teximage2d(ctx, GLcontext *ctx, GLenum target, GLint level,
 				  GLint internalFormat,
 				  GLint width, GLint height, GLint border,
 				  GLsizei imageSize, const GLvoid *data,
@@ -165,7 +165,7 @@ _mesa_store_compressed_teximage2d(GLcontext *ctx, GLenum target, GLint level,
 				  struct gl_texture_image *texImage);
 
 extern void
-_mesa_store_compressed_teximage3d(GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_compressed_teximage3d(ctx, GLcontext *ctx, GLenum target, GLint level,
 				  GLint internalFormat,
 				  GLint width, GLint height, GLint depth,
 				  GLint border,
@@ -175,7 +175,7 @@ _mesa_store_compressed_teximage3d(GLcontext *ctx, GLenum target, GLint level,
 
 
 extern void
-_mesa_store_compressed_texsubimage1d(GLcontext *ctx, GLenum target,
+_mesa_store_compressed_texsubimage1d(ctx, GLcontext *ctx, GLenum target,
 				     GLint level,
 				     GLint xoffset, GLsizei width,
 				     GLenum format,
@@ -184,7 +184,7 @@ _mesa_store_compressed_texsubimage1d(GLcontext *ctx, GLenum target,
 				     struct gl_texture_image *texImage);
 
 extern void
-_mesa_store_compressed_texsubimage2d(GLcontext *ctx, GLenum target,
+_mesa_store_compressed_texsubimage2d(ctx, GLcontext *ctx, GLenum target,
 				     GLint level,
 				     GLint xoffset, GLint yoffset,
 				     GLsizei width, GLsizei height,
@@ -194,7 +194,7 @@ _mesa_store_compressed_texsubimage2d(GLcontext *ctx, GLenum target,
 				     struct gl_texture_image *texImage);
 
 extern void
-_mesa_store_compressed_texsubimage3d(GLcontext *ctx, GLenum target,
+_mesa_store_compressed_texsubimage3d(ctx, GLcontext *ctx, GLenum target,
 				     GLint level,
 				     GLint xoffset, GLint yoffset, GLint zoffset,
 				     GLsizei width, GLsizei height, GLsizei depth,
@@ -205,33 +205,33 @@ _mesa_store_compressed_texsubimage3d(GLcontext *ctx, GLenum target,
 
 
 extern void
-_mesa_get_teximage(GLcontext *ctx, GLenum target, GLint level,
+_mesa_get_teximage(ctx, GLcontext *ctx, GLenum target, GLint level,
 		   GLenum format, GLenum type, GLvoid *pixels,
 		   struct gl_texture_object *texObj,
 		   struct gl_texture_image *texImage);
 
 
 extern void
-_mesa_get_compressed_teximage(GLcontext *ctx, GLenum target, GLint level,
+_mesa_get_compressed_teximage(ctx, GLcontext *ctx, GLenum target, GLint level,
 			      GLvoid *img,
 			      const struct gl_texture_object *texObj,
 			      const struct gl_texture_image *texImage);
 
 extern const GLvoid *
-_mesa_validate_pbo_teximage(GLcontext *ctx, GLuint dimensions,
+_mesa_validate_pbo_teximage(ctx, GLcontext *ctx, GLuint dimensions,
 			    GLsizei width, GLsizei height, GLsizei depth,
 			    GLenum format, GLenum type, const GLvoid *pixels,
 			    const struct gl_pixelstore_attrib *unpack,
 			    const char *funcName);
 
 extern const GLvoid *
-_mesa_validate_pbo_compressed_teximage(GLcontext *ctx,
+_mesa_validate_pbo_compressed_teximage(ctx, GLcontext *ctx,
 				       GLsizei imageSize, const GLvoid *pixels,
 				       const struct gl_pixelstore_attrib *packing,
 				       const char *funcName);
 
 extern void
-_mesa_unmap_teximage_pbo(GLcontext *ctx,
+_mesa_unmap_teximage_pbo(ctx, GLcontext *ctx,
 			 const struct gl_pixelstore_attrib *unpack);
 
 

@@ -37,48 +37,47 @@
 
 
 extern void GLAPIENTRY
-_mesa_ClearIndex(GLfloat c);
+_mesa_ClearIndex(ctx, GLcontext *ctx, GLfloat c);
 
 extern void GLAPIENTRY
-_mesa_ClearColor(GLclampf red, GLclampf green,
-		 GLclampf blue, GLclampf alpha);
+_mesa_ClearColor(ctx, GLcontext *ctx, GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
 
 extern void GLAPIENTRY
-_mesa_Clear(GLbitfield mask);
+_mesa_Clear(ctx, GLcontext *ctx, GLbitfield mask);
 
 extern void GLAPIENTRY
-_mesa_DrawBuffer(GLenum mode);
+_mesa_DrawBuffer(ctx, GLcontext *ctx, GLenum buffer);
 
 extern void GLAPIENTRY
-_mesa_DrawBuffersARB(GLsizei n, const GLenum *buffers);
+_mesa_DrawBuffersARB(ctx, GLcontext *ctx, GLsizei n, const GLenum *buffers);
 
 extern void
-_mesa_drawbuffers(GLcontext *ctx, GLuint n, const GLenum *buffers,
+_mesa_drawbuffers(ctx, GLcontext *ctx, GLuint n, const GLenum *buffers,
 		  const GLbitfield *destMask);
 
 extern void GLAPIENTRY
-_mesa_ReadBuffer(GLenum mode);
+_mesa_ReadBuffer(ctx, GLcontext *ctx, GLenum buffer);
 
 extern void GLAPIENTRY
-_mesa_ResizeBuffersMESA(void);
+_mesa_ResizeBuffersMESA(ctx, GLcontext *ctx);
 
 extern void GLAPIENTRY
-_mesa_Scissor(GLint x, GLint y, GLsizei width, GLsizei height);
+_mesa_Scissor(ctx, GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height);
 
 extern void GLAPIENTRY
-_mesa_SampleCoverageARB(GLclampf value, GLboolean invert);
+_mesa_SampleCoverageARB(ctx, GLcontext *ctx, GLclampf value, GLboolean invert);
 
 extern void
-_mesa_init_scissor(GLcontext *ctx);
+_mesa_init_scissor(ctx, GLcontext *ctx);
 
 extern void
-_mesa_init_multisample(GLcontext *ctx);
+_mesa_init_multisample(ctx, GLcontext *ctx);
 
 extern void
-_mesa_set_scissor(GLcontext *ctx,
+_mesa_set_scissor(ctx, GLcontext *ctx,
 		  GLint x, GLint y, GLsizei width, GLsizei height);
 
-extern void _mesa_resizebuffers(GLcontext *ctx);
+extern void _mesa_resizebuffers(ctx, GLcontext *ctx);
 
 #endif
 

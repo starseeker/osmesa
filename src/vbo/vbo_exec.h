@@ -137,10 +137,10 @@ struct vbo_exec_context {
 
 /* External API:
  */
-void vbo_exec_init(GLcontext *ctx);
-void vbo_exec_destroy(GLcontext *ctx);
-void vbo_exec_invalidate_state(GLcontext *ctx, GLuint new_state);
-void vbo_exec_FlushVertices(GLcontext *ctx, GLuint flags);
+void vbo_exec_init(ctx, GLcontext *ctx);
+void vbo_exec_destroy(ctx, GLcontext *ctx);
+void vbo_exec_invalidate_state(ctx, GLcontext *ctx, GLuint new_state);
+void vbo_exec_FlushVertices(ctx, GLcontext *ctx, GLuint flags);
 
 
 /* Internal functions:
@@ -163,7 +163,7 @@ void vbo_exec_do_EvalCoord1f(struct vbo_exec_context *exec,
 			     GLfloat u);
 
 extern GLboolean
-vbo_validate_shaders(GLcontext *ctx);
+vbo_validate_shaders(ctx, GLcontext *ctx);
 
 #endif
 

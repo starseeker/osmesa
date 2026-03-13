@@ -32,425 +32,425 @@
 #include "dispatch.h"
 #include "glapioffsets.h"
 
-static void GLAPIENTRY TAG(ArrayElement)(GLint i)
+static void GLAPIENTRY TAG(ArrayElement)(GLcontext *ctx, GLint i)
 {
     PRE_LOOPBACK(ArrayElement);
-    CALL_ArrayElement(GET_DISPATCH(), (i));
+    CALL_ArrayElement(ctx->CurrentDispatch, (ctx, i));
 }
 
-static void GLAPIENTRY TAG(Color3f)(GLfloat r, GLfloat g, GLfloat b)
+static void GLAPIENTRY TAG(Color3f)(GLcontext *ctx, GLfloat r, GLfloat g, GLfloat b)
 {
     PRE_LOOPBACK(Color3f);
-    CALL_Color3f(GET_DISPATCH(), (r, g, b));
+    CALL_Color3f(ctx->CurrentDispatch, (ctx, r, g, b));
 }
 
-static void GLAPIENTRY TAG(Color3fv)(const GLfloat *v)
+static void GLAPIENTRY TAG(Color3fv)(GLcontext *ctx, const GLfloat *v)
 {
     PRE_LOOPBACK(Color3fv);
-    CALL_Color3fv(GET_DISPATCH(), (v));
+    CALL_Color3fv(ctx->CurrentDispatch, (ctx, v));
 }
 
-static void GLAPIENTRY TAG(Color4f)(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+static void GLAPIENTRY TAG(Color4f)(GLcontext *ctx, GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
     PRE_LOOPBACK(Color4f);
-    CALL_Color4f(GET_DISPATCH(), (r, g, b, a));
+    CALL_Color4f(ctx->CurrentDispatch, (ctx, r, g, b, a));
 }
 
-static void GLAPIENTRY TAG(Color4fv)(const GLfloat *v)
+static void GLAPIENTRY TAG(Color4fv)(GLcontext *ctx, const GLfloat *v)
 {
     PRE_LOOPBACK(Color4fv);
-    CALL_Color4fv(GET_DISPATCH(), (v));
+    CALL_Color4fv(ctx->CurrentDispatch, (ctx, v));
 }
 
-static void GLAPIENTRY TAG(EdgeFlag)(GLboolean e)
+static void GLAPIENTRY TAG(EdgeFlag)(GLcontext *ctx, GLboolean e)
 {
     PRE_LOOPBACK(EdgeFlag);
-    CALL_EdgeFlag(GET_DISPATCH(), (e));
+    CALL_EdgeFlag(ctx->CurrentDispatch, (ctx, e));
 }
 
-static void GLAPIENTRY TAG(EvalCoord1f)(GLfloat s)
+static void GLAPIENTRY TAG(EvalCoord1f)(GLcontext *ctx, GLfloat s)
 {
     PRE_LOOPBACK(EvalCoord1f);
-    CALL_EvalCoord1f(GET_DISPATCH(), (s));
+    CALL_EvalCoord1f(ctx->CurrentDispatch, (ctx, s));
 }
 
-static void GLAPIENTRY TAG(EvalCoord1fv)(const GLfloat *v)
+static void GLAPIENTRY TAG(EvalCoord1fv)(GLcontext *ctx, const GLfloat *v)
 {
     PRE_LOOPBACK(EvalCoord1fv);
-    CALL_EvalCoord1fv(GET_DISPATCH(), (v));
+    CALL_EvalCoord1fv(ctx->CurrentDispatch, (ctx, v));
 }
 
-static void GLAPIENTRY TAG(EvalCoord2f)(GLfloat s, GLfloat t)
+static void GLAPIENTRY TAG(EvalCoord2f)(GLcontext *ctx, GLfloat s, GLfloat t)
 {
     PRE_LOOPBACK(EvalCoord2f);
-    CALL_EvalCoord2f(GET_DISPATCH(), (s, t));
+    CALL_EvalCoord2f(ctx->CurrentDispatch, (ctx, s, t));
 }
 
-static void GLAPIENTRY TAG(EvalCoord2fv)(const GLfloat *v)
+static void GLAPIENTRY TAG(EvalCoord2fv)(GLcontext *ctx, const GLfloat *v)
 {
     PRE_LOOPBACK(EvalCoord2fv);
-    CALL_EvalCoord2fv(GET_DISPATCH(), (v));
+    CALL_EvalCoord2fv(ctx->CurrentDispatch, (ctx, v));
 }
 
-static void GLAPIENTRY TAG(EvalPoint1)(GLint i)
+static void GLAPIENTRY TAG(EvalPoint1)(GLcontext *ctx, GLint i)
 {
     PRE_LOOPBACK(EvalPoint1);
-    CALL_EvalPoint1(GET_DISPATCH(), (i));
+    CALL_EvalPoint1(ctx->CurrentDispatch, (ctx, i));
 }
 
-static void GLAPIENTRY TAG(EvalPoint2)(GLint i, GLint j)
+static void GLAPIENTRY TAG(EvalPoint2)(GLcontext *ctx, GLint i, GLint j)
 {
     PRE_LOOPBACK(EvalPoint2);
-    CALL_EvalPoint2(GET_DISPATCH(), (i, j));
+    CALL_EvalPoint2(ctx->CurrentDispatch, (ctx, i, j));
 }
 
-static void GLAPIENTRY TAG(FogCoordfEXT)(GLfloat f)
+static void GLAPIENTRY TAG(FogCoordfEXT)(GLcontext *ctx, GLfloat f)
 {
     PRE_LOOPBACK(FogCoordfEXT);
-    CALL_FogCoordfEXT(GET_DISPATCH(), (f));
+    CALL_FogCoordfEXT(ctx->CurrentDispatch, (ctx, f));
 }
 
-static void GLAPIENTRY TAG(FogCoordfvEXT)(const GLfloat *v)
+static void GLAPIENTRY TAG(FogCoordfvEXT)(GLcontext *ctx, const GLfloat *v)
 {
     PRE_LOOPBACK(FogCoordfvEXT);
-    CALL_FogCoordfvEXT(GET_DISPATCH(), (v));
+    CALL_FogCoordfvEXT(ctx->CurrentDispatch, (ctx, v));
 }
 
-static void GLAPIENTRY TAG(Indexf)(GLfloat f)
+static void GLAPIENTRY TAG(Indexf)(GLcontext *ctx, GLfloat f)
 {
     PRE_LOOPBACK(Indexf);
-    CALL_Indexf(GET_DISPATCH(), (f));
+    CALL_Indexf(ctx->CurrentDispatch, (ctx, f));
 }
 
-static void GLAPIENTRY TAG(Indexfv)(const GLfloat *v)
+static void GLAPIENTRY TAG(Indexfv)(GLcontext *ctx, const GLfloat *v)
 {
     PRE_LOOPBACK(Indexfv);
-    CALL_Indexfv(GET_DISPATCH(), (v));
+    CALL_Indexfv(ctx->CurrentDispatch, (ctx, v));
 }
 
-static void GLAPIENTRY TAG(Materialfv)(GLenum face, GLenum pname, const GLfloat *v)
+static void GLAPIENTRY TAG(Materialfv)(GLcontext *ctx, GLenum face, GLenum pname, const GLfloat *v)
 {
     PRE_LOOPBACK(Materialfv);
-    CALL_Materialfv(GET_DISPATCH(), (face, pname, v));
+    CALL_Materialfv(ctx->CurrentDispatch, (ctx, face, pname, v));
 }
 
-static void GLAPIENTRY TAG(MultiTexCoord1fARB)(GLenum target, GLfloat a)
+static void GLAPIENTRY TAG(MultiTexCoord1fARB)(GLcontext *ctx, GLenum target, GLfloat a)
 {
     PRE_LOOPBACK(MultiTexCoord1fARB);
-    CALL_MultiTexCoord1fARB(GET_DISPATCH(), (target, a));
+    CALL_MultiTexCoord1fARB(ctx->CurrentDispatch, (ctx, target, a));
 }
 
-static void GLAPIENTRY TAG(MultiTexCoord1fvARB)(GLenum target, const GLfloat *tc)
+static void GLAPIENTRY TAG(MultiTexCoord1fvARB)(GLcontext *ctx, GLenum target, const GLfloat *tc)
 {
     PRE_LOOPBACK(MultiTexCoord1fvARB);
-    CALL_MultiTexCoord1fvARB(GET_DISPATCH(), (target, tc));
+    CALL_MultiTexCoord1fvARB(ctx->CurrentDispatch, (ctx, target, tc));
 }
 
-static void GLAPIENTRY TAG(MultiTexCoord2fARB)(GLenum target, GLfloat s, GLfloat t)
+static void GLAPIENTRY TAG(MultiTexCoord2fARB)(GLcontext *ctx, GLenum target, GLfloat s, GLfloat t)
 {
     PRE_LOOPBACK(MultiTexCoord2fARB);
-    CALL_MultiTexCoord2fARB(GET_DISPATCH(), (target, s, t));
+    CALL_MultiTexCoord2fARB(ctx->CurrentDispatch, (ctx, target, s, t));
 }
 
-static void GLAPIENTRY TAG(MultiTexCoord2fvARB)(GLenum target, const GLfloat *tc)
+static void GLAPIENTRY TAG(MultiTexCoord2fvARB)(GLcontext *ctx, GLenum target, const GLfloat *tc)
 {
     PRE_LOOPBACK(MultiTexCoord2fvARB);
-    CALL_MultiTexCoord2fvARB(GET_DISPATCH(), (target, tc));
+    CALL_MultiTexCoord2fvARB(ctx->CurrentDispatch, (ctx, target, tc));
 }
 
-static void GLAPIENTRY TAG(MultiTexCoord3fARB)(GLenum target, GLfloat s,
+static void GLAPIENTRY TAG(MultiTexCoord3fARB)(GLcontext *ctx, GLenum target, GLfloat s,
 	GLfloat t, GLfloat r)
 {
     PRE_LOOPBACK(MultiTexCoord3fARB);
-    CALL_MultiTexCoord3fARB(GET_DISPATCH(), (target, s, t, r));
+    CALL_MultiTexCoord3fARB(ctx->CurrentDispatch, (ctx, target, s, t, r));
 }
 
-static void GLAPIENTRY TAG(MultiTexCoord3fvARB)(GLenum target, const GLfloat *tc)
+static void GLAPIENTRY TAG(MultiTexCoord3fvARB)(GLcontext *ctx, GLenum target, const GLfloat *tc)
 {
     PRE_LOOPBACK(MultiTexCoord3fvARB);
-    CALL_MultiTexCoord3fvARB(GET_DISPATCH(), (target, tc));
+    CALL_MultiTexCoord3fvARB(ctx->CurrentDispatch, (ctx, target, tc));
 }
 
-static void GLAPIENTRY TAG(MultiTexCoord4fARB)(GLenum target, GLfloat s,
+static void GLAPIENTRY TAG(MultiTexCoord4fARB)(GLcontext *ctx, GLenum target, GLfloat s,
 	GLfloat t, GLfloat r, GLfloat q)
 {
     PRE_LOOPBACK(MultiTexCoord4fARB);
-    CALL_MultiTexCoord4fARB(GET_DISPATCH(), (target, s, t, r, q));
+    CALL_MultiTexCoord4fARB(ctx->CurrentDispatch, (ctx, target, s, t, r, q));
 }
 
-static void GLAPIENTRY TAG(MultiTexCoord4fvARB)(GLenum target, const GLfloat *tc)
+static void GLAPIENTRY TAG(MultiTexCoord4fvARB)(GLcontext *ctx, GLenum target, const GLfloat *tc)
 {
     PRE_LOOPBACK(MultiTexCoord4fvARB);
-    CALL_MultiTexCoord4fvARB(GET_DISPATCH(), (target, tc));
+    CALL_MultiTexCoord4fvARB(ctx->CurrentDispatch, (ctx, target, tc));
 }
 
-static void GLAPIENTRY TAG(Normal3f)(GLfloat x, GLfloat y, GLfloat z)
+static void GLAPIENTRY TAG(Normal3f)(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
     PRE_LOOPBACK(Normal3f);
-    CALL_Normal3f(GET_DISPATCH(), (x, y, z));
+    CALL_Normal3f(ctx->CurrentDispatch, (ctx, x, y, z));
 }
 
-static void GLAPIENTRY TAG(Normal3fv)(const GLfloat *v)
+static void GLAPIENTRY TAG(Normal3fv)(GLcontext *ctx, const GLfloat *v)
 {
     PRE_LOOPBACK(Normal3fv);
-    CALL_Normal3fv(GET_DISPATCH(), (v));
+    CALL_Normal3fv(ctx->CurrentDispatch, (ctx, v));
 }
 
-static void GLAPIENTRY TAG(SecondaryColor3fEXT)(GLfloat r, GLfloat g, GLfloat b)
+static void GLAPIENTRY TAG(SecondaryColor3fEXT)(GLcontext *ctx, GLfloat r, GLfloat g, GLfloat b)
 {
     PRE_LOOPBACK(SecondaryColor3fEXT);
-    CALL_SecondaryColor3fEXT(GET_DISPATCH(), (r, g, b));
+    CALL_SecondaryColor3fEXT(ctx->CurrentDispatch, (ctx, r, g, b));
 }
 
-static void GLAPIENTRY TAG(SecondaryColor3fvEXT)(const GLfloat *v)
+static void GLAPIENTRY TAG(SecondaryColor3fvEXT)(GLcontext *ctx, const GLfloat *v)
 {
     PRE_LOOPBACK(SecondaryColor3fvEXT);
-    CALL_SecondaryColor3fvEXT(GET_DISPATCH(), (v));
+    CALL_SecondaryColor3fvEXT(ctx->CurrentDispatch, (ctx, v));
 }
 
-static void GLAPIENTRY TAG(TexCoord1f)(GLfloat s)
+static void GLAPIENTRY TAG(TexCoord1f)(GLcontext *ctx, GLfloat s)
 {
     PRE_LOOPBACK(TexCoord1f);
-    CALL_TexCoord1f(GET_DISPATCH(), (s));
+    CALL_TexCoord1f(ctx->CurrentDispatch, (ctx, s));
 }
 
-static void GLAPIENTRY TAG(TexCoord1fv)(const GLfloat *tc)
+static void GLAPIENTRY TAG(TexCoord1fv)(GLcontext *ctx, const GLfloat *tc)
 {
     PRE_LOOPBACK(TexCoord1fv);
-    CALL_TexCoord1fv(GET_DISPATCH(), (tc));
+    CALL_TexCoord1fv(ctx->CurrentDispatch, (ctx, tc));
 }
 
-static void GLAPIENTRY TAG(TexCoord2f)(GLfloat s, GLfloat t)
+static void GLAPIENTRY TAG(TexCoord2f)(GLcontext *ctx, GLfloat s, GLfloat t)
 {
     PRE_LOOPBACK(TexCoord2f);
-    CALL_TexCoord2f(GET_DISPATCH(), (s, t));
+    CALL_TexCoord2f(ctx->CurrentDispatch, (ctx, s, t));
 }
 
-static void GLAPIENTRY TAG(TexCoord2fv)(const GLfloat *tc)
+static void GLAPIENTRY TAG(TexCoord2fv)(GLcontext *ctx, const GLfloat *tc)
 {
     PRE_LOOPBACK(TexCoord2fv);
-    CALL_TexCoord2fv(GET_DISPATCH(), (tc));
+    CALL_TexCoord2fv(ctx->CurrentDispatch, (ctx, tc));
 }
 
-static void GLAPIENTRY TAG(TexCoord3f)(GLfloat s, GLfloat t, GLfloat r)
+static void GLAPIENTRY TAG(TexCoord3f)(GLcontext *ctx, GLfloat s, GLfloat t, GLfloat r)
 {
     PRE_LOOPBACK(TexCoord3f);
-    CALL_TexCoord3f(GET_DISPATCH(), (s, t, r));
+    CALL_TexCoord3f(ctx->CurrentDispatch, (ctx, s, t, r));
 }
 
-static void GLAPIENTRY TAG(TexCoord3fv)(const GLfloat *tc)
+static void GLAPIENTRY TAG(TexCoord3fv)(GLcontext *ctx, const GLfloat *tc)
 {
     PRE_LOOPBACK(TexCoord3fv);
-    CALL_TexCoord3fv(GET_DISPATCH(), (tc));
+    CALL_TexCoord3fv(ctx->CurrentDispatch, (ctx, tc));
 }
 
-static void GLAPIENTRY TAG(TexCoord4f)(GLfloat s, GLfloat t, GLfloat r, GLfloat q)
+static void GLAPIENTRY TAG(TexCoord4f)(GLcontext *ctx, GLfloat s, GLfloat t, GLfloat r, GLfloat q)
 {
     PRE_LOOPBACK(TexCoord4f);
-    CALL_TexCoord4f(GET_DISPATCH(), (s, t, r, q));
+    CALL_TexCoord4f(ctx->CurrentDispatch, (ctx, s, t, r, q));
 }
 
-static void GLAPIENTRY TAG(TexCoord4fv)(const GLfloat *tc)
+static void GLAPIENTRY TAG(TexCoord4fv)(GLcontext *ctx, const GLfloat *tc)
 {
     PRE_LOOPBACK(TexCoord4fv);
-    CALL_TexCoord4fv(GET_DISPATCH(), (tc));
+    CALL_TexCoord4fv(ctx->CurrentDispatch, (ctx, tc));
 }
 
-static void GLAPIENTRY TAG(Vertex2f)(GLfloat x, GLfloat y)
+static void GLAPIENTRY TAG(Vertex2f)(GLcontext *ctx, GLfloat x, GLfloat y)
 {
     PRE_LOOPBACK(Vertex2f);
-    CALL_Vertex2f(GET_DISPATCH(), (x, y));
+    CALL_Vertex2f(ctx->CurrentDispatch, (ctx, x, y));
 }
 
-static void GLAPIENTRY TAG(Vertex2fv)(const GLfloat *v)
+static void GLAPIENTRY TAG(Vertex2fv)(GLcontext *ctx, const GLfloat *v)
 {
     PRE_LOOPBACK(Vertex2fv);
-    CALL_Vertex2fv(GET_DISPATCH(), (v));
+    CALL_Vertex2fv(ctx->CurrentDispatch, (ctx, v));
 }
 
-static void GLAPIENTRY TAG(Vertex3f)(GLfloat x, GLfloat y, GLfloat z)
+static void GLAPIENTRY TAG(Vertex3f)(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
     PRE_LOOPBACK(Vertex3f);
-    CALL_Vertex3f(GET_DISPATCH(), (x, y, z));
+    CALL_Vertex3f(ctx->CurrentDispatch, (ctx, x, y, z));
 }
 
-static void GLAPIENTRY TAG(Vertex3fv)(const GLfloat *v)
+static void GLAPIENTRY TAG(Vertex3fv)(GLcontext *ctx, const GLfloat *v)
 {
     PRE_LOOPBACK(Vertex3fv);
-    CALL_Vertex3fv(GET_DISPATCH(), (v));
+    CALL_Vertex3fv(ctx->CurrentDispatch, (ctx, v));
 }
 
-static void GLAPIENTRY TAG(Vertex4f)(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+static void GLAPIENTRY TAG(Vertex4f)(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
     PRE_LOOPBACK(Vertex4f);
-    CALL_Vertex4f(GET_DISPATCH(), (x, y, z, w));
+    CALL_Vertex4f(ctx->CurrentDispatch, (ctx, x, y, z, w));
 }
 
-static void GLAPIENTRY TAG(Vertex4fv)(const GLfloat *v)
+static void GLAPIENTRY TAG(Vertex4fv)(GLcontext *ctx, const GLfloat *v)
 {
     PRE_LOOPBACK(Vertex4fv);
-    CALL_Vertex4fv(GET_DISPATCH(), (v));
+    CALL_Vertex4fv(ctx->CurrentDispatch, (ctx, v));
 }
 
-static void GLAPIENTRY TAG(CallList)(GLuint i)
+static void GLAPIENTRY TAG(CallList)(GLcontext *ctx, GLuint i)
 {
     PRE_LOOPBACK(CallList);
-    CALL_CallList(GET_DISPATCH(), (i));
+    CALL_CallList(ctx->CurrentDispatch, (ctx, i));
 }
 
-static void GLAPIENTRY TAG(CallLists)(GLsizei sz, GLenum type, const GLvoid *v)
+static void GLAPIENTRY TAG(CallLists)(GLcontext *ctx, GLsizei sz, GLenum type, const GLvoid *v)
 {
     PRE_LOOPBACK(CallLists);
-    CALL_CallLists(GET_DISPATCH(), (sz, type, v));
+    CALL_CallLists(ctx->CurrentDispatch, (ctx, sz, type, v));
 }
 
-static void GLAPIENTRY TAG(Begin)(GLenum mode)
+static void GLAPIENTRY TAG(Begin)(GLcontext *ctx, GLenum mode)
 {
     PRE_LOOPBACK(Begin);
-    CALL_Begin(GET_DISPATCH(), (mode));
+    CALL_Begin(ctx->CurrentDispatch, (ctx, mode));
 }
 
-static void GLAPIENTRY TAG(End)(void)
+static void GLAPIENTRY TAG(End)(GLcontext *ctx)
 {
     PRE_LOOPBACK(End);
-    CALL_End(GET_DISPATCH(), ());
+    CALL_End(ctx->CurrentDispatch, (ctx));
 }
 
-static void GLAPIENTRY TAG(Rectf)(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
+static void GLAPIENTRY TAG(Rectf)(GLcontext *ctx, GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
 {
     PRE_LOOPBACK(Rectf);
-    CALL_Rectf(GET_DISPATCH(), (x1, y1, x2, y2));
+    CALL_Rectf(ctx->CurrentDispatch, (ctx, x1, y1, x2, y2));
 }
 
-static void GLAPIENTRY TAG(DrawArrays)(GLenum mode, GLint start, GLsizei count)
+static void GLAPIENTRY TAG(DrawArrays)(GLcontext *ctx, GLenum mode, GLint start, GLsizei count)
 {
     PRE_LOOPBACK(DrawArrays);
-    CALL_DrawArrays(GET_DISPATCH(), (mode, start, count));
+    CALL_DrawArrays(ctx->CurrentDispatch, (ctx, mode, start, count));
 }
 
-static void GLAPIENTRY TAG(DrawElements)(GLenum mode, GLsizei count, GLenum type,
+static void GLAPIENTRY TAG(DrawElements)(GLcontext *ctx, GLenum mode, GLsizei count, GLenum type,
 	const GLvoid *indices)
 {
     PRE_LOOPBACK(DrawElements);
-    CALL_DrawElements(GET_DISPATCH(), (mode, count, type, indices));
+    CALL_DrawElements(ctx->CurrentDispatch, (ctx, mode, count, type, indices));
 }
 
-static void GLAPIENTRY TAG(DrawRangeElements)(GLenum mode, GLuint start,
+static void GLAPIENTRY TAG(DrawRangeElements)(GLcontext *ctx, GLenum mode, GLuint start,
 	GLuint end, GLsizei count,
 	GLenum type, const GLvoid *indices)
 {
     PRE_LOOPBACK(DrawRangeElements);
-    CALL_DrawRangeElements(GET_DISPATCH(), (mode, start, end, count, type, indices));
+    CALL_DrawRangeElements(ctx->CurrentDispatch, (ctx, mode, start, end, count, type, indices));
 }
 
-static void GLAPIENTRY TAG(EvalMesh1)(GLenum mode, GLint i1, GLint i2)
+static void GLAPIENTRY TAG(EvalMesh1)(GLcontext *ctx, GLenum mode, GLint i1, GLint i2)
 {
     PRE_LOOPBACK(EvalMesh1);
-    CALL_EvalMesh1(GET_DISPATCH(), (mode, i1, i2));
+    CALL_EvalMesh1(ctx->CurrentDispatch, (ctx, mode, i1, i2));
 }
 
-static void GLAPIENTRY TAG(EvalMesh2)(GLenum mode, GLint i1, GLint i2,
+static void GLAPIENTRY TAG(EvalMesh2)(GLcontext *ctx, GLenum mode, GLint i1, GLint i2,
 				      GLint j1, GLint j2)
 {
     PRE_LOOPBACK(EvalMesh2);
-    CALL_EvalMesh2(GET_DISPATCH(), (mode, i1, i2, j1, j2));
+    CALL_EvalMesh2(ctx->CurrentDispatch, (ctx, mode, i1, i2, j1, j2));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib1fNV)(GLuint index, GLfloat x)
+static void GLAPIENTRY TAG(VertexAttrib1fNV)(GLcontext *ctx, GLuint index, GLfloat x)
 {
     PRE_LOOPBACK(VertexAttrib1fNV);
-    CALL_VertexAttrib1fNV(GET_DISPATCH(), (index, x));
+    CALL_VertexAttrib1fNV(ctx->CurrentDispatch, (ctx, index, x));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib1fvNV)(GLuint index, const GLfloat *v)
+static void GLAPIENTRY TAG(VertexAttrib1fvNV)(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     PRE_LOOPBACK(VertexAttrib1fvNV);
-    CALL_VertexAttrib1fvNV(GET_DISPATCH(), (index, v));
+    CALL_VertexAttrib1fvNV(ctx->CurrentDispatch, (ctx, index, v));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib2fNV)(GLuint index, GLfloat x, GLfloat y)
+static void GLAPIENTRY TAG(VertexAttrib2fNV)(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y)
 {
     PRE_LOOPBACK(VertexAttrib2fNV);
-    CALL_VertexAttrib2fNV(GET_DISPATCH(), (index, x, y));
+    CALL_VertexAttrib2fNV(ctx->CurrentDispatch, (ctx, index, x, y));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib2fvNV)(GLuint index, const GLfloat *v)
+static void GLAPIENTRY TAG(VertexAttrib2fvNV)(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     PRE_LOOPBACK(VertexAttrib2fvNV);
-    CALL_VertexAttrib2fvNV(GET_DISPATCH(), (index, v));
+    CALL_VertexAttrib2fvNV(ctx->CurrentDispatch, (ctx, index, v));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib3fNV)(GLuint index, GLfloat x, GLfloat y, GLfloat z)
+static void GLAPIENTRY TAG(VertexAttrib3fNV)(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y, GLfloat z)
 {
     PRE_LOOPBACK(VertexAttrib3fNV);
-    CALL_VertexAttrib3fNV(GET_DISPATCH(), (index, x, y, z));
+    CALL_VertexAttrib3fNV(ctx->CurrentDispatch, (ctx, index, x, y, z));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib3fvNV)(GLuint index, const GLfloat *v)
+static void GLAPIENTRY TAG(VertexAttrib3fvNV)(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     PRE_LOOPBACK(VertexAttrib3fvNV);
-    CALL_VertexAttrib3fvNV(GET_DISPATCH(), (index, v));
+    CALL_VertexAttrib3fvNV(ctx->CurrentDispatch, (ctx, index, v));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib4fNV)(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+static void GLAPIENTRY TAG(VertexAttrib4fNV)(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
     PRE_LOOPBACK(VertexAttrib4fNV);
-    CALL_VertexAttrib4fNV(GET_DISPATCH(), (index, x, y, z, w));
+    CALL_VertexAttrib4fNV(ctx->CurrentDispatch, (ctx, index, x, y, z, w));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib4fvNV)(GLuint index, const GLfloat *v)
+static void GLAPIENTRY TAG(VertexAttrib4fvNV)(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     PRE_LOOPBACK(VertexAttrib4fvNV);
-    CALL_VertexAttrib4fvNV(GET_DISPATCH(), (index, v));
+    CALL_VertexAttrib4fvNV(ctx->CurrentDispatch, (ctx, index, v));
 }
 
 
-static void GLAPIENTRY TAG(VertexAttrib1fARB)(GLuint index, GLfloat x)
+static void GLAPIENTRY TAG(VertexAttrib1fARB)(GLcontext *ctx, GLuint index, GLfloat x)
 {
     PRE_LOOPBACK(VertexAttrib1fARB);
-    CALL_VertexAttrib1fARB(GET_DISPATCH(), (index, x));
+    CALL_VertexAttrib1fARB(ctx->CurrentDispatch, (ctx, index, x));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib1fvARB)(GLuint index, const GLfloat *v)
+static void GLAPIENTRY TAG(VertexAttrib1fvARB)(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     PRE_LOOPBACK(VertexAttrib1fvARB);
-    CALL_VertexAttrib1fvARB(GET_DISPATCH(), (index, v));
+    CALL_VertexAttrib1fvARB(ctx->CurrentDispatch, (ctx, index, v));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib2fARB)(GLuint index, GLfloat x, GLfloat y)
+static void GLAPIENTRY TAG(VertexAttrib2fARB)(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y)
 {
     PRE_LOOPBACK(VertexAttrib2fARB);
-    CALL_VertexAttrib2fARB(GET_DISPATCH(), (index, x, y));
+    CALL_VertexAttrib2fARB(ctx->CurrentDispatch, (ctx, index, x, y));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib2fvARB)(GLuint index, const GLfloat *v)
+static void GLAPIENTRY TAG(VertexAttrib2fvARB)(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     PRE_LOOPBACK(VertexAttrib2fvARB);
-    CALL_VertexAttrib2fvARB(GET_DISPATCH(), (index, v));
+    CALL_VertexAttrib2fvARB(ctx->CurrentDispatch, (ctx, index, v));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib3fARB)(GLuint index, GLfloat x, GLfloat y, GLfloat z)
+static void GLAPIENTRY TAG(VertexAttrib3fARB)(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y, GLfloat z)
 {
     PRE_LOOPBACK(VertexAttrib3fARB);
-    CALL_VertexAttrib3fARB(GET_DISPATCH(), (index, x, y, z));
+    CALL_VertexAttrib3fARB(ctx->CurrentDispatch, (ctx, index, x, y, z));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib3fvARB)(GLuint index, const GLfloat *v)
+static void GLAPIENTRY TAG(VertexAttrib3fvARB)(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     PRE_LOOPBACK(VertexAttrib3fvARB);
-    CALL_VertexAttrib3fvARB(GET_DISPATCH(), (index, v));
+    CALL_VertexAttrib3fvARB(ctx->CurrentDispatch, (ctx, index, v));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib4fARB)(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+static void GLAPIENTRY TAG(VertexAttrib4fARB)(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
     PRE_LOOPBACK(VertexAttrib4fARB);
-    CALL_VertexAttrib4fARB(GET_DISPATCH(), (index, x, y, z, w));
+    CALL_VertexAttrib4fARB(ctx->CurrentDispatch, (ctx, index, x, y, z, w));
 }
 
-static void GLAPIENTRY TAG(VertexAttrib4fvARB)(GLuint index, const GLfloat *v)
+static void GLAPIENTRY TAG(VertexAttrib4fvARB)(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     PRE_LOOPBACK(VertexAttrib4fvARB);
-    CALL_VertexAttrib4fvARB(GET_DISPATCH(), (index, v));
+    CALL_VertexAttrib4fvARB(ctx->CurrentDispatch, (ctx, index, v));
 }
 
 

@@ -29,16 +29,16 @@
 #include "context.h"
 
 extern void GLAPIENTRY
-_mesa_noop_Rectf(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);
+_mesa_noop_Rectf(ctx, GLcontext *ctx, GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);
 
 extern void GLAPIENTRY
-_mesa_noop_EvalMesh1(GLenum mode, GLint i1, GLint i2);
+_mesa_noop_EvalMesh1(ctx, GLcontext *ctx, GLenum mode, GLint i1, GLint i2);
 
 extern void GLAPIENTRY
-_mesa_noop_EvalMesh2(GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2);
+_mesa_noop_EvalMesh2(ctx, GLcontext *ctx, GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2);
 
 extern void GLAPIENTRY
-_mesa_noop_Materialfv(GLenum face, GLenum pname, const GLfloat *param);
+_mesa_noop_Materialfv(ctx, GLcontext *ctx, GLenum face, GLenum pname, const GLfloat *params);
 
 extern void
 _mesa_noop_vtxfmt_init(GLvertexformat *vfmt);

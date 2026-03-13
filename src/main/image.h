@@ -49,7 +49,7 @@ extern GLint
 _mesa_bytes_per_pixel(GLenum format, GLenum type);
 
 extern GLboolean
-_mesa_is_legal_format_and_type(GLcontext *ctx, GLenum format, GLenum type);
+_mesa_is_legal_format_and_type(ctx, GLcontext *ctx, GLenum format, GLenum type);
 
 
 extern GLvoid *
@@ -112,7 +112,7 @@ _mesa_pack_bitmap(GLint width, GLint height, const GLubyte *source,
 
 
 extern void
-_mesa_apply_rgba_transfer_ops(GLcontext *ctx, GLbitfield transferOps,
+_mesa_apply_rgba_transfer_ops(ctx, GLcontext *ctx, GLbitfield transferOps,
 			      GLuint n, GLfloat rgba[][4]);
 
 
@@ -127,14 +127,14 @@ _mesa_apply_stencil_transfer_ops(const GLcontext *ctx, GLuint n,
 
 
 extern void
-_mesa_pack_rgba_span_float(GLcontext *ctx, GLuint n, GLfloat rgba[][4],
+_mesa_pack_rgba_span_float(ctx, GLcontext *ctx, GLuint n, GLfloat rgba[][4],
 			   GLenum dstFormat, GLenum dstType, GLvoid *dstAddr,
 			   const struct gl_pixelstore_attrib *dstPacking,
 			   GLbitfield transferOps);
 
 
 extern void
-_mesa_unpack_color_span_chan(GLcontext *ctx,
+_mesa_unpack_color_span_chan(ctx, GLcontext *ctx,
 			     GLuint n, GLenum dstFormat, GLchan dest[],
 			     GLenum srcFormat, GLenum srcType,
 			     const GLvoid *source,
@@ -143,7 +143,7 @@ _mesa_unpack_color_span_chan(GLcontext *ctx,
 
 
 extern void
-_mesa_unpack_color_span_float(GLcontext *ctx,
+_mesa_unpack_color_span_float(ctx, GLcontext *ctx,
 			      GLuint n, GLenum dstFormat, GLfloat dest[],
 			      GLenum srcFormat, GLenum srcType,
 			      const GLvoid *source,

@@ -92,7 +92,7 @@ static void free_space(GLcontext *ctx)
 /* Adjust pointer to point at first requested element, convert to
  * floating point, populate VB->AttribPtr[].
  */
-static void _tnl_import_array(GLcontext *ctx,
+static void _tnl_import_array(ctx, GLcontext *ctx,
 			      GLuint attrib,
 			      GLuint count,
 			      const struct gl_client_array *input,
@@ -331,7 +331,7 @@ static void unmap_vbos(GLcontext *ctx,
  * module.  In a regular swtnl driver, this can be plugged straight
  * into the vbo->Driver.DrawPrims() callback.
  */
-void _tnl_draw_prims(GLcontext *ctx,
+void _tnl_draw_prims(ctx, GLcontext *ctx,
 		     const struct gl_client_array *arrays[],
 		     const struct _mesa_prim *prim,
 		     GLuint nr_prims,

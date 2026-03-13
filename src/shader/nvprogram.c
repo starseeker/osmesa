@@ -56,10 +56,9 @@
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_ExecuteProgramNV(GLenum target, GLuint id, const GLfloat *params)
+_mesa_ExecuteProgramNV(ctx, GLcontext *ctx, GLenum target, GLuint id, const GLfloat *params)
 {
     struct gl_vertex_program *vprog;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (target != GL_VERTEX_STATE_PROGRAM_NV) {
@@ -86,12 +85,11 @@ _mesa_ExecuteProgramNV(GLenum target, GLuint id, const GLfloat *params)
  * \note Called from the GL API dispatcher.
  */
 GLboolean GLAPIENTRY
-_mesa_AreProgramsResidentNV(GLsizei n, const GLuint *ids,
+_mesa_AreProgramsResidentNV(ctx, GLcontext *ctx, GLsizei n, const GLuint *ids,
 			    GLboolean *residences)
 {
     GLint i, j;
     GLboolean allResident = GL_TRUE;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, GL_FALSE);
 
     if (n < 0) {
@@ -132,10 +130,9 @@ _mesa_AreProgramsResidentNV(GLsizei n, const GLuint *ids,
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_RequestResidentProgramsNV(GLsizei n, const GLuint *ids)
+_mesa_RequestResidentProgramsNV(ctx, GLcontext *ctx, GLsizei n, const GLuint *ids)
 {
     GLint i;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (n < 0) {
@@ -170,10 +167,9 @@ _mesa_RequestResidentProgramsNV(GLsizei n, const GLuint *ids)
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_GetProgramParameterfvNV(GLenum target, GLuint index,
+_mesa_GetProgramParameterfvNV(ctx, GLcontext *ctx, GLenum target, GLuint index,
 			      GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (target == GL_VERTEX_PROGRAM_NV) {
@@ -202,10 +198,9 @@ _mesa_GetProgramParameterfvNV(GLenum target, GLuint index,
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_GetProgramParameterdvNV(GLenum target, GLuint index,
+_mesa_GetProgramParameterdvNV(ctx, GLcontext *ctx, GLenum target, GLuint index,
 			      GLenum pname, GLdouble *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (target == GL_VERTEX_PROGRAM_NV) {
@@ -234,11 +229,9 @@ _mesa_GetProgramParameterdvNV(GLenum target, GLuint index,
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_GetProgramivNV(GLuint id, GLenum pname, GLint *params)
+_mesa_GetProgramivNV(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLint *params)
 {
     struct gl_program *prog;
-    GET_CURRENT_CONTEXT(ctx);
-
     if (!ctx->_CurrentProgram)
 	ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -271,11 +264,9 @@ _mesa_GetProgramivNV(GLuint id, GLenum pname, GLint *params)
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_GetProgramStringNV(GLuint id, GLenum pname, GLubyte *program)
+_mesa_GetProgramStringNV(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLubyte *program)
 {
     struct gl_program *prog;
-    GET_CURRENT_CONTEXT(ctx);
-
     if (!ctx->_CurrentProgram)
 	ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -304,10 +295,9 @@ _mesa_GetProgramStringNV(GLuint id, GLenum pname, GLubyte *program)
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_GetTrackMatrixivNV(GLenum target, GLuint address,
+_mesa_GetTrackMatrixivNV(ctx, GLcontext *ctx, GLenum target, GLuint address,
 			 GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (target == GL_VERTEX_PROGRAM_NV
@@ -345,9 +335,8 @@ _mesa_GetTrackMatrixivNV(GLenum target, GLuint address,
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_GetVertexAttribdvNV(GLuint index, GLenum pname, GLdouble *params)
+_mesa_GetVertexAttribdvNV(ctx, GLcontext *ctx, GLuint index, GLenum pname, GLdouble *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (index >= MAX_NV_VERTEX_PROGRAM_INPUTS) {
@@ -386,9 +375,8 @@ _mesa_GetVertexAttribdvNV(GLuint index, GLenum pname, GLdouble *params)
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_GetVertexAttribfvNV(GLuint index, GLenum pname, GLfloat *params)
+_mesa_GetVertexAttribfvNV(ctx, GLcontext *ctx, GLuint index, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (index >= MAX_NV_VERTEX_PROGRAM_INPUTS) {
@@ -427,9 +415,8 @@ _mesa_GetVertexAttribfvNV(GLuint index, GLenum pname, GLfloat *params)
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_GetVertexAttribivNV(GLuint index, GLenum pname, GLint *params)
+_mesa_GetVertexAttribivNV(ctx, GLcontext *ctx, GLuint index, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (index >= MAX_NV_VERTEX_PROGRAM_INPUTS) {
@@ -479,9 +466,8 @@ _mesa_GetVertexAttribivNV(GLuint index, GLenum pname, GLint *params)
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_GetVertexAttribPointervNV(GLuint index, GLenum pname, GLvoid **pointer)
+_mesa_GetVertexAttribPointervNV(ctx, GLcontext *ctx, GLuint index, GLenum pname, GLvoid **pointer)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (index >= MAX_NV_VERTEX_PROGRAM_INPUTS) {
@@ -504,11 +490,10 @@ _mesa_GetVertexAttribPointervNV(GLuint index, GLenum pname, GLvoid **pointer)
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_LoadProgramNV(GLenum target, GLuint id, GLsizei len,
+_mesa_LoadProgramNV(ctx, GLcontext *ctx, GLenum target, GLuint id, GLsizei len,
 		    const GLubyte *program)
 {
     struct gl_program *prog;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (id == 0) {
@@ -572,7 +557,7 @@ void GLAPIENTRY
 _mesa_ProgramParameter4dNV(GLenum target, GLuint index,
 			   GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-    _mesa_ProgramParameter4fNV(target, index,
+    _mesa_ProgramParameter4fNV(ctx, target, index,
 			       (GLfloat)x, (GLfloat)y, (GLfloat)z, (GLfloat)w);
 }
 
@@ -585,7 +570,7 @@ void GLAPIENTRY
 _mesa_ProgramParameter4dvNV(GLenum target, GLuint index,
 			    const GLdouble *params)
 {
-    _mesa_ProgramParameter4fNV(target, index,
+    _mesa_ProgramParameter4fNV(ctx, target, index,
 			       (GLfloat)params[0], (GLfloat)params[1],
 			       (GLfloat)params[2], (GLfloat)params[3]);
 }
@@ -596,10 +581,9 @@ _mesa_ProgramParameter4dvNV(GLenum target, GLuint index,
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_ProgramParameter4fNV(GLenum target, GLuint index,
+_mesa_ProgramParameter4fNV(ctx, GLcontext *ctx, GLenum target, GLuint index,
 			   GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (target == GL_VERTEX_PROGRAM_NV && ctx->Extensions.NV_vertex_program) {
@@ -625,7 +609,7 @@ void GLAPIENTRY
 _mesa_ProgramParameter4fvNV(GLenum target, GLuint index,
 			    const GLfloat *params)
 {
-    _mesa_ProgramParameter4fNV(target, index,
+    _mesa_ProgramParameter4fNV(ctx, target, index,
 			       params[0], params[1], params[2], params[3]);
 }
 
@@ -636,10 +620,9 @@ _mesa_ProgramParameter4fvNV(GLenum target, GLuint index,
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_ProgramParameters4dvNV(GLenum target, GLuint index,
+_mesa_ProgramParameters4dvNV(ctx, GLcontext *ctx, GLenum target, GLuint index,
 			     GLuint num, const GLdouble *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (target == GL_VERTEX_PROGRAM_NV && ctx->Extensions.NV_vertex_program) {
@@ -667,10 +650,9 @@ _mesa_ProgramParameters4dvNV(GLenum target, GLuint index,
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_ProgramParameters4fvNV(GLenum target, GLuint index,
+_mesa_ProgramParameters4fvNV(ctx, GLcontext *ctx, GLenum target, GLuint index,
 			     GLuint num, const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (target == GL_VERTEX_PROGRAM_NV && ctx->Extensions.NV_vertex_program) {
@@ -696,10 +678,9 @@ _mesa_ProgramParameters4fvNV(GLenum target, GLuint index,
  * \note Called from the GL API dispatcher.
  */
 void GLAPIENTRY
-_mesa_TrackMatrixNV(GLenum target, GLuint address,
+_mesa_TrackMatrixNV(ctx, GLcontext *ctx, GLenum target, GLuint address,
 		    GLenum matrix, GLenum transform)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     FLUSH_VERTICES(ctx, _NEW_PROGRAM);
@@ -755,14 +736,13 @@ _mesa_TrackMatrixNV(GLenum target, GLuint address,
 
 
 void GLAPIENTRY
-_mesa_ProgramNamedParameter4fNV(GLuint id, GLsizei len, const GLubyte *name,
+_mesa_ProgramNamedParameter4fNV(ctx, GLcontext *ctx, GLuint id, GLsizei len, const GLubyte *name,
 				GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
     struct gl_program *prog;
     struct gl_fragment_program *fragProg;
     GLfloat *v;
 
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     FLUSH_VERTICES(ctx, _NEW_PROGRAM);
@@ -797,7 +777,7 @@ void GLAPIENTRY
 _mesa_ProgramNamedParameter4fvNV(GLuint id, GLsizei len, const GLubyte *name,
 				 const float v[])
 {
-    _mesa_ProgramNamedParameter4fNV(id, len, name, v[0], v[1], v[2], v[3]);
+    _mesa_ProgramNamedParameter4fNV(ctx, id, len, name, v[0], v[1], v[2], v[3]);
 }
 
 
@@ -805,7 +785,7 @@ void GLAPIENTRY
 _mesa_ProgramNamedParameter4dNV(GLuint id, GLsizei len, const GLubyte *name,
 				GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-    _mesa_ProgramNamedParameter4fNV(id, len, name, (GLfloat)x, (GLfloat)y,
+    _mesa_ProgramNamedParameter4fNV(ctx, id, len, name, (GLfloat)x, (GLfloat)y,
 				    (GLfloat)z, (GLfloat)w);
 }
 
@@ -814,21 +794,19 @@ void GLAPIENTRY
 _mesa_ProgramNamedParameter4dvNV(GLuint id, GLsizei len, const GLubyte *name,
 				 const double v[])
 {
-    _mesa_ProgramNamedParameter4fNV(id, len, name,
+    _mesa_ProgramNamedParameter4fNV(ctx, id, len, name,
 				    (GLfloat)v[0], (GLfloat)v[1],
 				    (GLfloat)v[2], (GLfloat)v[3]);
 }
 
 
 void GLAPIENTRY
-_mesa_GetProgramNamedParameterfvNV(GLuint id, GLsizei len, const GLubyte *name,
+_mesa_GetProgramNamedParameterfvNV(ctx, GLcontext *ctx, GLuint id, GLsizei len, const GLubyte *name,
 				   GLfloat *params)
 {
     struct gl_program *prog;
     struct gl_fragment_program *fragProg;
     const GLfloat *v;
-
-    GET_CURRENT_CONTEXT(ctx);
 
     if (!ctx->_CurrentProgram)
 	ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -864,7 +842,7 @@ _mesa_GetProgramNamedParameterdvNV(GLuint id, GLsizei len, const GLubyte *name,
 				   GLdouble *params)
 {
     GLfloat floatParams[4] = {0.0};
-    _mesa_GetProgramNamedParameterfvNV(id, len, name, floatParams);
+    _mesa_GetProgramNamedParameterfvNV(ctx, id, len, name, floatParams);
     COPY_4V(params, floatParams);
 }
 

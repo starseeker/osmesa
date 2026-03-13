@@ -44,28 +44,28 @@
 #if _HAVE_FULL_GL
 
 extern void GLAPIENTRY
-_mesa_PushAttrib(GLbitfield mask);
+_mesa_PushAttrib(ctx, GLcontext *ctx, GLbitfield mask);
 
 extern void GLAPIENTRY
-_mesa_PopAttrib(void);
+_mesa_PopAttrib(ctx, GLcontext *ctx);
 
 extern void GLAPIENTRY
-_mesa_PushClientAttrib(GLbitfield mask);
+_mesa_PushClientAttrib(ctx, GLcontext *ctx, GLbitfield mask);
 
 extern void GLAPIENTRY
-_mesa_PopClientAttrib(void);
+_mesa_PopClientAttrib(ctx, GLcontext *ctx);
 
 extern void
-_mesa_init_attrib(GLcontext *ctx);
+_mesa_init_attrib(ctx, GLcontext *ctx);
 
 extern void
-_mesa_free_attrib_data(GLcontext *ctx);
+_mesa_free_attrib_data(ctx, GLcontext *ctx);
 
 #else
 
 /** No-op */
-#define _mesa_init_attrib( c ) ((void)0)
-#define _mesa_free_attrib_data( c ) ((void)0)
+#define _mesa_init_attrib(ctx, c) ((void)0)
+#define _mesa_free_attrib_data(ctx, c) ((void)0)
 
 #endif
 

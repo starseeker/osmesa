@@ -753,7 +753,7 @@ free_shared_state(GLcontext *ctx, struct gl_shared_state *ss)
  * Initialize fields of gl_current_attrib (aka ctx->Current.*)
  */
 static void
-_mesa_init_current(GLcontext *ctx)
+_mesa_init_current(ctx, GLcontext *ctx)
 {
     GLuint i;
 
@@ -795,7 +795,7 @@ init_natives(struct gl_program_constants *prog)
  * some of these values (such as number of texture units).
  */
 static void
-_mesa_init_constants(GLcontext *ctx)
+_mesa_init_constants(ctx, GLcontext *ctx)
 {
     assert(ctx);
 
@@ -1055,7 +1055,7 @@ alloc_dispatch_table(void)
  * \param driverContext pointer to driver-specific context data
  */
 GLboolean
-_mesa_initialize_context(GLcontext *ctx,
+_mesa_initialize_context(ctx, GLcontext *ctx,
 			 const GLvisual *visual,
 			 GLcontext *share_list,
 			 const struct dd_function_table *driverFunctions,
@@ -1182,10 +1182,10 @@ _mesa_create_context(const GLvisual *visual,
  *
  * But doesn't free the GLcontext struct itself.
  *
- * \sa _mesa_initialize_context() and init_attrib_groups().
+ * \sa _mesa_initialize_context(ctx) and init_attrib_groups().
  */
 void
-_mesa_free_context_data(GLcontext *ctx)
+_mesa_free_context_data(ctx, GLcontext *ctx)
 {
     if (!_mesa_get_current_context()) {
 	/* No current context, but we may need one in order to delete
@@ -1235,7 +1235,7 @@ _mesa_free_context_data(GLcontext *ctx)
 
     /* unbind the context if it's currently bound */
     if (ctx == _mesa_get_current_context()) {
-	_mesa_make_current(NULL, NULL, NULL);
+	_mesa_make_current(ctx, NULL, NULL, NULL);
     }
 }
 
@@ -1245,10 +1245,10 @@ _mesa_free_context_data(GLcontext *ctx)
  *
  * \param ctx GL context.
  *
- * Calls _mesa_free_context_data() and frees the GLcontext structure itself.
+ * Calls _mesa_free_context_data(ctx) and frees the GLcontext structure itself.
  */
 void
-_mesa_destroy_context(GLcontext *ctx)
+_mesa_destroy_context(ctx, GLcontext *ctx)
 {
     if (ctx) {
 	_mesa_free_context_data(ctx);
@@ -1465,24 +1465,24 @@ initialize_framebuffer_size(GLcontext *ctx, GLframebuffer *fb)
  * \param readBuffer  the reading framebuffer
  */
 void
-_mesa_make_current(GLcontext *newCtx, GLframebuffer *drawBuffer,
+_mesa_make_current(ctx, GLcontext *newCtx, GLframebuffer *drawBuffer,
 		   GLframebuffer *readBuffer)
 {
     if (MESA_VERBOSE & VERBOSE_API)
-	_mesa_debug(newCtx, "_mesa_make_current()\n");
+	_mesa_debug(newCtx, "_mesa_make_current(ctx)\n");
 
     /* Check that the context's and framebuffer's visuals are compatible.
      */
     if (newCtx && drawBuffer && newCtx->WinSysDrawBuffer != drawBuffer) {
 	if (!check_compatible(newCtx, drawBuffer)) {
-	    _mesa_warning(newCtx,
+	    _mesa_warning(ctx, newCtx,
 			  "MakeCurrent: incompatible visuals for context and drawbuffer");
 	    return;
 	}
     }
     if (newCtx && readBuffer && newCtx->WinSysReadBuffer != readBuffer) {
 	if (!check_compatible(newCtx, readBuffer)) {
-	    _mesa_warning(newCtx,
+	    _mesa_warning(ctx, newCtx,
 			  "MakeCurrent: incompatible visuals for context and readbuffer");
 	    return;
 	}
@@ -1529,7 +1529,7 @@ _mesa_make_current(GLcontext *newCtx, GLframebuffer *drawBuffer,
 		initialize_framebuffer_size(newCtx, readBuffer);
 	    }
 
-	    _mesa_resizebuffers(newCtx);
+	    _mesa_resizebuffers(ctx, newCtx);
 #endif
 
 #else
@@ -1538,7 +1538,7 @@ _mesa_make_current(GLcontext *newCtx, GLframebuffer *drawBuffer,
 	     * This generally means the Width and Height match the actual
 	     * window size and the renderbuffers (both hardware and software
 	     * based) are allocated to match.  The later can generally be
-	     * done with a call to _mesa_resize_framebuffer().
+	     * done with a call to _mesa_resize_framebuffer(ctx).
 	     *
 	     * It's theoretically possible for a buffer to have zero width
 	     * or height, but for now, assert check that the driver did what's
@@ -1550,9 +1550,9 @@ _mesa_make_current(GLcontext *newCtx, GLframebuffer *drawBuffer,
 
 	    if (newCtx->FirstTimeCurrent) {
 		/* set initial viewport and scissor size now */
-		_mesa_set_viewport(newCtx, 0, 0,
+		_mesa_set_viewport(ctx, newCtx, 0, 0,
 				   drawBuffer->Width, drawBuffer->Height);
-		_mesa_set_scissor(newCtx, 0, 0,
+		_mesa_set_scissor(ctx, newCtx, 0, 0,
 				  drawBuffer->Width, drawBuffer->Height);
 		check_context_limits(newCtx);
 	    }
@@ -1580,7 +1580,7 @@ _mesa_make_current(GLcontext *newCtx, GLframebuffer *drawBuffer,
  * be deleted if nobody else is sharing them.
  */
 GLboolean
-_mesa_share_state(GLcontext *ctx, GLcontext *ctxToShare)
+_mesa_share_state(ctx, GLcontext *ctx, GLcontext *ctxToShare)
 {
     if (ctx && ctxToShare && ctx->Shared && ctxToShare->Shared) {
 	_glthread_LOCK_MUTEX(ctx->Shared->Mutex);
@@ -1651,10 +1651,10 @@ _mesa_get_dispatch(GLcontext *ctx)
  * function if defined.
  *
  * \sa
- * This is called via _mesa_error().
+ * This is called via _mesa_error(ctx).
  */
 void
-_mesa_record_error(GLcontext *ctx, GLenum error)
+_mesa_record_error(ctx, GLcontext *ctx, GLenum error)
 {
     if (!ctx)
 	return;
@@ -1677,9 +1677,8 @@ _mesa_record_error(GLcontext *ctx, GLenum error)
  * dd_function_table::Finish driver callback, if not NULL.
  */
 void GLAPIENTRY
-_mesa_Finish(void)
+_mesa_Finish(ctx, GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
     if (ctx->Driver.Finish) {
 	ctx->Driver.Finish(ctx);
@@ -1694,9 +1693,8 @@ _mesa_Finish(void)
  * dd_function_table::Flush driver callback, if not NULL.
  */
 void GLAPIENTRY
-_mesa_Flush(void)
+_mesa_Flush(ctx, GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
     if (ctx->Driver.Flush) {
 	ctx->Driver.Flush(ctx);

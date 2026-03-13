@@ -42,9 +42,8 @@
  * \sa glPointSize().
  */
 void GLAPIENTRY
-_mesa_PointSize(GLfloat size)
+_mesa_PointSize(ctx, GLcontext *ctx, GLfloat size)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (size <= 0.0) {
@@ -77,7 +76,7 @@ _mesa_PointParameteriNV(GLenum pname, GLint param)
 {
     GLfloat value[3] = {0.0};
     value[0] = (GLfloat)param;
-    _mesa_PointParameterfvEXT(pname, value);
+    _mesa_PointParameterfvEXT(ctx, pname, value);
 }
 
 
@@ -93,7 +92,7 @@ _mesa_PointParameterivNV(GLenum pname, const GLint *params)
 	p[1] = (GLfloat) params[1];
 	p[2] = (GLfloat) params[2];
     }
-    _mesa_PointParameterfvEXT(pname, p);
+    _mesa_PointParameterfvEXT(ctx, pname, p);
 }
 
 
@@ -106,7 +105,7 @@ _mesa_PointParameterfEXT(GLenum pname, GLfloat param)
 {
     GLfloat p[3] = {0.0};
     p[0] = param;
-    _mesa_PointParameterfvEXT(pname, p);
+    _mesa_PointParameterfvEXT(ctx, pname, p);
 }
 
 
@@ -115,9 +114,8 @@ _mesa_PointParameterfEXT(GLenum pname, GLfloat param)
  * Same for both GL_EXT_point_parameters and GL_ARB_point_parameters.
  */
 void GLAPIENTRY
-_mesa_PointParameterfvEXT(GLenum pname, const GLfloat *params)
+_mesa_PointParameterfvEXT(ctx, GLcontext *ctx, GLenum pname, const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     switch (pname) {
@@ -263,7 +261,7 @@ _mesa_PointParameterfvEXT(GLenum pname, const GLfloat *params)
  * __GLcontextRec::Const.
  */
 void
-_mesa_init_point(GLcontext *ctx)
+_mesa_init_point(ctx, GLcontext *ctx)
 {
     GLuint i;
 

@@ -92,7 +92,7 @@ REBASE(GLubyte)
  *    - can't save time by trying to upload half a vbo - typically it is
  *      all or nothing.
  */
-void vbo_rebase_prims(GLcontext *ctx,
+void vbo_rebase_prims(ctx, GLcontext *ctx,
 		      const struct gl_client_array *arrays[],
 		      const struct _mesa_prim *prim,
 		      GLuint nr_prims,

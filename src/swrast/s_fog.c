@@ -36,7 +36,7 @@
  * Used to convert current raster distance to a fog factor in [0,1].
  */
 GLfloat
-_swrast_z_to_fogfactor(GLcontext *ctx, GLfloat z)
+_swrast_z_to_fogfactor(ctx, GLcontext *ctx, GLfloat z)
 {
     GLfloat d, f;
 

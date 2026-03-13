@@ -56,7 +56,7 @@
  * Used during setup for glDraw/CopyPixels.
  */
 void
-_swrast_span_default_z(GLcontext *ctx, SWspan *span)
+_swrast_span_default_z(ctx, GLcontext *ctx, SWspan *span)
 {
     const GLfloat depthMax = ctx->DrawBuffer->_DepthMaxF;
     if (ctx->DrawBuffer->Visual.depthBits <= 16)
@@ -76,7 +76,7 @@ _swrast_span_default_z(GLcontext *ctx, SWspan *span)
  * Used during setup for glDraw/CopyPixels.
  */
 void
-_swrast_span_default_fog(GLcontext *ctx, SWspan *span)
+_swrast_span_default_fog(ctx, GLcontext *ctx, SWspan *span)
 {
     const SWcontext *swrast = SWRAST_CONTEXT(ctx);
     GLfloat fogVal; /* a coord or a blend factor */
@@ -99,7 +99,7 @@ _swrast_span_default_fog(GLcontext *ctx, SWspan *span)
  * Used during setup for glDraw/CopyPixels.
  */
 void
-_swrast_span_default_color(GLcontext *ctx, SWspan *span)
+_swrast_span_default_color(ctx, GLcontext *ctx, SWspan *span)
 {
     if (ctx->Visual.rgbMode) {
 	GLchan r, g, b, a;
@@ -136,7 +136,7 @@ _swrast_span_default_color(GLcontext *ctx, SWspan *span)
  * secondary color, when needed (lighting enabled or colorsum enabled).
  */
 void
-_swrast_span_default_secondary_color(GLcontext *ctx, SWspan *span)
+_swrast_span_default_secondary_color(ctx, GLcontext *ctx, SWspan *span)
 {
     if (ctx->Visual.rgbMode && (ctx->Light.Enabled || ctx->Fog.ColorSumEnabled)) {
 	GLchan r, g, b;
@@ -170,7 +170,7 @@ _swrast_span_default_secondary_color(GLcontext *ctx, SWspan *span)
  * Used during setup for glDraw/CopyPixels.
  */
 void
-_swrast_span_default_texcoords(GLcontext *ctx, SWspan *span)
+_swrast_span_default_texcoords(ctx, GLcontext *ctx, SWspan *span)
 {
     GLuint i;
     for (i = 0; i < ctx->Const.MaxTextureCoordUnits; i++) {
@@ -199,7 +199,7 @@ _swrast_span_default_texcoords(GLcontext *ctx, SWspan *span)
  *
  * Marked NOINLINE with no-tree-vectorize: GCC's auto-vectorizer generates
  * incorrect AoS byte-interleaving both when this function is inlined into
- * the large _swrast_write_rgba_span() context under -O3, AND when compiled
+ * the large _swrast_write_rgba_span(ctx) context under -O3, AND when compiled
  * as a standalone out-of-line function under GCC 13+ — in both cases causing
  * the blue channel to equal the red channel on every affected span (B=R).
  * Disabling auto-vectorization via the NOINLINE macro eliminates the bug.
@@ -907,7 +907,7 @@ clip_span(GLcontext *ctx, SWspan *span)
  * to their original values before returning.
  */
 void
-_swrast_write_index_span(GLcontext *ctx, SWspan *span)
+_swrast_write_index_span(ctx, GLcontext *ctx, SWspan *span)
 {
     const SWcontext *swrast = SWRAST_CONTEXT(ctx);
     const GLbitfield origInterpMask = span->interpMask;
@@ -1351,7 +1351,7 @@ shade_texture_span(GLcontext *ctx, SWspan *span)
  * to their original values before returning.
  */
 void
-_swrast_write_rgba_span(GLcontext *ctx, SWspan *span)
+_swrast_write_rgba_span(ctx, GLcontext *ctx, SWspan *span)
 {
     const SWcontext *swrast = SWRAST_CONTEXT(ctx);
     const GLuint colorMask = *((GLuint *) ctx->Color.ColorMask);
@@ -1632,7 +1632,7 @@ end:
  * \param rgba  the returned colors
  */
 void
-_swrast_read_rgba_span(GLcontext *ctx, struct gl_renderbuffer *rb,
+_swrast_read_rgba_span(ctx, GLcontext *ctx, struct gl_renderbuffer *rb,
 		       GLuint n, GLint x, GLint y, GLenum dstType,
 		       GLvoid *rgba)
 {
@@ -1693,7 +1693,7 @@ _swrast_read_rgba_span(GLcontext *ctx, struct gl_renderbuffer *rb,
  * reading ouside the buffer's boundaries.
  */
 void
-_swrast_read_index_span(GLcontext *ctx, struct gl_renderbuffer *rb,
+_swrast_read_index_span(ctx, GLcontext *ctx, struct gl_renderbuffer *rb,
 			GLuint n, GLint x, GLint y, GLuint index[])
 {
     const GLint bufWidth = (GLint) rb->Width;
@@ -1759,7 +1759,7 @@ _swrast_read_index_span(GLcontext *ctx, struct gl_renderbuffer *rb,
  *                  values array.
  */
 void
-_swrast_get_values(GLcontext *ctx, struct gl_renderbuffer *rb,
+_swrast_get_values(ctx, GLcontext *ctx, struct gl_renderbuffer *rb,
 		   GLuint count, const GLint x[], const GLint y[],
 		   void *values, GLuint valueSize)
 {
@@ -1794,7 +1794,7 @@ _swrast_get_values(GLcontext *ctx, struct gl_renderbuffer *rb,
  * \param valueSize  size of each value (pixel) in bytes
  */
 void
-_swrast_put_row(GLcontext *ctx, struct gl_renderbuffer *rb,
+_swrast_put_row(ctx, GLcontext *ctx, struct gl_renderbuffer *rb,
 		GLuint count, GLint x, GLint y,
 		const GLvoid *values, GLuint valueSize)
 {
@@ -1829,7 +1829,7 @@ _swrast_put_row(GLcontext *ctx, struct gl_renderbuffer *rb,
  * \param valueSize  size of each value (pixel) in bytes
  */
 void
-_swrast_get_row(GLcontext *ctx, struct gl_renderbuffer *rb,
+_swrast_get_row(ctx, GLcontext *ctx, struct gl_renderbuffer *rb,
 		GLuint count, GLint x, GLint y,
 		GLvoid *values, GLuint valueSize)
 {

@@ -293,7 +293,7 @@ clear_color_buffers(GLcontext *ctx)
  * \param all  if GL_TRUE, clear whole buffer, else clear specified region.
  */
 void
-_swrast_Clear(GLcontext *ctx, GLbitfield buffers)
+_swrast_Clear(ctx, GLcontext *ctx, GLbitfield buffers)
 {
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
 

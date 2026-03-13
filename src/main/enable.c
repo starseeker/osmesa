@@ -150,9 +150,8 @@ client_state(GLcontext *ctx, GLenum cap, GLboolean state)
  * calls client_state().
  */
 void GLAPIENTRY
-_mesa_EnableClientState(GLenum cap)
+_mesa_EnableClientState(ctx, GLcontext *ctx, GLenum cap)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
     client_state(ctx, cap, GL_TRUE);
 }
@@ -166,9 +165,8 @@ _mesa_EnableClientState(GLenum cap)
  * calls client_state().
  */
 void GLAPIENTRY
-_mesa_DisableClientState(GLenum cap)
+_mesa_DisableClientState(ctx, GLcontext *ctx, GLenum cap)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
     client_state(ctx, cap, GL_FALSE);
 }
@@ -223,7 +221,7 @@ enable_texture(GLcontext *ctx, GLboolean state, GLbitfield bit)
  * dd_function_table::Enable.
  */
 void
-_mesa_set_enable(GLcontext *ctx, GLenum cap, GLboolean state)
+_mesa_set_enable(ctx, GLcontext *ctx, GLenum cap, GLboolean state)
 {
     if (MESA_VERBOSE & VERBOSE_API)
 	_mesa_debug(ctx, "%s %s (newstate is %x)\n",
@@ -271,7 +269,7 @@ _mesa_set_enable(GLcontext *ctx, GLenum cap, GLboolean state)
 		    _math_matrix_analyse(ctx->ProjectionMatrixStack.Top);
 
 		/* This derived state also calculated in clip.c and
-		 * from _mesa_update_state() on changes to EyeUserPlane
+		 * from _mesa_update_state(ctx) on changes to EyeUserPlane
 		 * and ctx->ProjectionMatrix respectively.
 		 */
 		_mesa_transform_vector(ctx->Transform._ClipUserPlane[p],
@@ -949,9 +947,8 @@ _mesa_set_enable(GLcontext *ctx, GLenum cap, GLboolean state)
  * \param cap  state to enable.
  */
 void GLAPIENTRY
-_mesa_Enable(GLenum cap)
+_mesa_Enable(ctx, GLcontext *ctx, GLenum cap)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     _mesa_set_enable(ctx, cap, GL_TRUE);
@@ -963,9 +960,8 @@ _mesa_Enable(GLenum cap)
  * \param cap  state to disable.
  */
 void GLAPIENTRY
-_mesa_Disable(GLenum cap)
+_mesa_Disable(ctx, GLcontext *ctx, GLenum cap)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     _mesa_set_enable(ctx, cap, GL_FALSE);
@@ -1009,9 +1005,8 @@ is_texture_enabled(GLcontext *ctx, GLbitfield bit)
  * extensions are effectively present before reporting.
  */
 GLboolean GLAPIENTRY
-_mesa_IsEnabled(GLenum cap)
+_mesa_IsEnabled(ctx, GLcontext *ctx, GLenum cap)
 {
-    GET_CURRENT_CONTEXT(ctx);
     switch (cap) {
 	case GL_ALPHA_TEST:
 	    return ctx->Color.AlphaEnabled;

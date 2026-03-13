@@ -167,9 +167,9 @@ void vbo_exec_do_EvalCoord1f(struct vbo_exec_context *exec, GLfloat u)
 				  map->Order);
 
 	if (exec->eval.map1[0].sz == 4)
-	    CALL_Vertex4fv(GET_DISPATCH(), (vertex));
+	    CALL_Vertex4fv(exec->ctx->CurrentDispatch, (exec->ctx, vertex));
 	else
-	    CALL_Vertex3fv(GET_DISPATCH(), (vertex));
+	    CALL_Vertex3fv(exec->ctx->CurrentDispatch, (exec->ctx, vertex));
     }
 }
 
@@ -245,9 +245,9 @@ void vbo_exec_do_EvalCoord2f(struct vbo_exec_context *exec,
 	}
 
 	if (exec->vtx.attrsz[0] == 4)
-	    CALL_Vertex4fv(GET_DISPATCH(), (vertex));
+	    CALL_Vertex4fv(exec->ctx->CurrentDispatch, (exec->ctx, vertex));
 	else
-	    CALL_Vertex3fv(GET_DISPATCH(), (vertex));
+	    CALL_Vertex3fv(exec->ctx->CurrentDispatch, (exec->ctx, vertex));
     }
 }
 

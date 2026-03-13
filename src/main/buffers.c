@@ -44,9 +44,8 @@
 
 #if _HAVE_FULL_GL
 void GLAPIENTRY
-_mesa_ClearIndex(GLfloat c)
+_mesa_ClearIndex(ctx, GLcontext *ctx, GLfloat c)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (ctx->Color.ClearIndex == (GLuint) c)
@@ -78,10 +77,9 @@ _mesa_ClearIndex(GLfloat c)
  * dd_function_table::ClearColor callback.
  */
 void GLAPIENTRY
-_mesa_ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
+_mesa_ClearColor(ctx, GLcontext *ctx, GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
     GLfloat tmp[4];
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     tmp[0] = CLAMP(red,   0.0F, 1.0F);
@@ -108,14 +106,13 @@ _mesa_ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
  * \param mask bit-mask indicating the buffers to be cleared.
  *
  * Flushes the vertices and verifies the parameter. If __GLcontextRec::NewState
- * is set then calls _mesa_update_state() to update gl_frame_buffer::_Xmin,
+ * is set then calls _mesa_update_state(ctx) to update gl_frame_buffer::_Xmin,
  * etc. If the rasterization mode is set to GL_RENDER then requests the driver
  * to clear the buffers, via the dd_function_table::Clear callback.
  */
 void GLAPIENTRY
-_mesa_Clear(GLbitfield mask)
+_mesa_Clear(ctx, GLcontext *ctx, GLbitfield mask)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     if (MESA_VERBOSE & VERBOSE_API)
@@ -350,11 +347,10 @@ read_buffer_enum_to_index(GLenum buffer)
  * \param buffer  buffer token such as GL_LEFT or GL_FRONT_AND_BACK, etc.
  */
 void GLAPIENTRY
-_mesa_DrawBuffer(GLenum buffer)
+_mesa_DrawBuffer(ctx, GLcontext *ctx, GLenum buffer)
 {
     GLuint bufferID;
     GLbitfield destMask;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx); /* too complex... */
 
     if (MESA_VERBOSE & VERBOSE_API) {
@@ -396,13 +392,12 @@ _mesa_DrawBuffer(GLenum buffer)
  *                 GL_FRONT_AND_BACK is illegal.
  */
 void GLAPIENTRY
-_mesa_DrawBuffersARB(GLsizei n, const GLenum *buffers)
+_mesa_DrawBuffersARB(ctx, GLcontext *ctx, GLsizei n, const GLenum *buffers)
 {
     GLint output;
     GLuint bufferID;
     GLbitfield usedBufferMask, supportedMask;
     GLbitfield destMask[MAX_DRAW_BUFFERS];
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     if (!ctx->Extensions.ARB_draw_buffers) {
@@ -496,7 +491,7 @@ set_color_output(GLcontext *ctx, GLuint output, GLenum buffer,
  *                  BUFFER_BIT_FRONT_LEFT | BUFFER_BIT_BACK_LEFT).
  */
 void
-_mesa_drawbuffers(GLcontext *ctx, GLuint n, const GLenum *buffers,
+_mesa_drawbuffers(ctx, GLcontext *ctx, GLuint n, const GLenum *buffers,
 		  const GLbitfield *destMask)
 {
     GLbitfield mask[MAX_DRAW_BUFFERS] = {0};
@@ -541,13 +536,12 @@ _mesa_drawbuffers(GLcontext *ctx, GLuint n, const GLenum *buffers,
  * \param mode color buffer such as GL_FRONT, GL_BACK, etc.
  */
 void GLAPIENTRY
-_mesa_ReadBuffer(GLenum buffer)
+_mesa_ReadBuffer(ctx, GLcontext *ctx, GLenum buffer)
 {
     struct gl_framebuffer *fb;
     GLbitfield supportedMask;
     GLint srcBuffer;
     GLuint bufferID;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
     fb = ctx->ReadBuffer;
@@ -593,7 +587,7 @@ _mesa_ReadBuffer(GLenum buffer)
 
 /**
  * XXX THIS IS OBSOLETE - drivers should take care of detecting window
- * size changes and act accordingly, likely calling _mesa_resize_framebuffer().
+ * size changes and act accordingly, likely calling _mesa_resize_framebuffer(ctx).
  *
  * GL_MESA_resize_buffers extension.
  *
@@ -606,7 +600,7 @@ _mesa_ReadBuffer(GLenum buffer)
  * from device drivers (as was done in the past).
  */
 
-void _mesa_resizebuffers(GLcontext *ctx)
+void _mesa_resizebuffers(ctx, GLcontext *ctx)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -658,10 +652,8 @@ void _mesa_resizebuffers(GLcontext *ctx)
  * XXX THIS IS OBSOLETE
  */
 void GLAPIENTRY
-_mesa_ResizeBuffersMESA(void)
+_mesa_ResizeBuffersMESA(ctx, GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
-
     if (ctx->Extensions.MESA_resize_buffers)
 	_mesa_resizebuffers(ctx);
 }
@@ -671,10 +663,8 @@ _mesa_ResizeBuffersMESA(void)
  * XXX move somewhere else someday?
  */
 void GLAPIENTRY
-_mesa_SampleCoverageARB(GLclampf value, GLboolean invert)
+_mesa_SampleCoverageARB(ctx, GLcontext *ctx, GLclampf value, GLboolean invert)
 {
-    GET_CURRENT_CONTEXT(ctx);
-
     if (!ctx->Extensions.ARB_multisample) {
 	_mesa_error(ctx, GL_INVALID_OPERATION, "glSampleCoverageARB");
 	return;
@@ -704,7 +694,7 @@ _mesa_SampleCoverageARB(GLclampf value, GLboolean invert)
  * the dd_function_table::Scissor callback.
  */
 void
-_mesa_set_scissor(GLcontext *ctx,
+_mesa_set_scissor(ctx, GLcontext *ctx,
 		  GLint x, GLint y, GLsizei width, GLsizei height)
 {
     if (x == ctx->Scissor.X &&
@@ -725,9 +715,8 @@ _mesa_set_scissor(GLcontext *ctx,
 
 
 void GLAPIENTRY
-_mesa_Scissor(GLint x, GLint y, GLsizei width, GLsizei height)
+_mesa_Scissor(ctx, GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (width < 0 || height < 0) {
@@ -752,7 +741,7 @@ _mesa_Scissor(GLint x, GLint y, GLsizei width, GLsizei height)
  * \param ctx  the GL context.
  */
 void
-_mesa_init_scissor(GLcontext *ctx)
+_mesa_init_scissor(ctx, GLcontext *ctx)
 {
     /* Scissor group */
     ctx->Scissor.Enabled = GL_FALSE;
@@ -768,7 +757,7 @@ _mesa_init_scissor(GLcontext *ctx)
  * \param ctx  the GL context.
  */
 void
-_mesa_init_multisample(GLcontext *ctx)
+_mesa_init_multisample(ctx, GLcontext *ctx)
 {
     ctx->Multisample.Enabled = GL_FALSE;
     ctx->Multisample.SampleAlphaToCoverage = GL_FALSE;

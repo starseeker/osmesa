@@ -525,7 +525,7 @@ static void replay_finish(struct copy_context *copy)
     }
 }
 
-void vbo_split_copy(GLcontext *ctx,
+void vbo_split_copy(ctx, GLcontext *ctx,
 		    const struct gl_client_array *arrays[],
 		    const struct _mesa_prim *prim,
 		    GLuint nr_prims,

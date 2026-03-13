@@ -726,7 +726,7 @@ clip_blit(GLcontext *ctx,
  * Software fallback for glBlitFramebufferEXT().
  */
 void
-_swrast_BlitFramebuffer(GLcontext *ctx,
+_swrast_BlitFramebuffer(ctx, GLcontext *ctx,
 			GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
 			GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1,
 			GLbitfield mask, GLenum filter)

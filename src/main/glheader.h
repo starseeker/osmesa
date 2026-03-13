@@ -151,7 +151,7 @@
 
 /* Prevent inlining and auto-vectorization.  The interpolate_colors() loop
  * produces an incorrect AoS byte-shuffle under GCC's auto-vectorizer both
- * when inlined into _swrast_write_rgba_span() (B == R on every affected span)
+ * when inlined into _swrast_write_rgba_span(ctx) (B == R on every affected span)
  * AND when compiled as a standalone function under GCC 13+ (same symptom).
  * Disabling tree-vectorization for the function body eliminates the bug.
  * The equivalent for MSVC is __declspec(noinline); no vectorization guard is

@@ -1801,10 +1801,9 @@ parse_declaration(slang_parse_ctx * C, slang_output_ctx * O)
 #define EXTERNAL_DECLARATION 2
 
 static GLboolean
-parse_code_unit(slang_parse_ctx * C, slang_code_unit * unit,
+parse_code_unit(GLcontext *ctx, slang_parse_ctx * C, slang_code_unit * unit,
 		struct gl_program *program)
 {
-    GET_CURRENT_CONTEXT(ctx);
     slang_output_ctx o;
     GLboolean success;
     GLuint maxRegs;

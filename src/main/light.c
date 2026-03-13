@@ -35,9 +35,8 @@
 
 
 void GLAPIENTRY
-_mesa_ShadeModel(GLenum mode)
+_mesa_ShadeModel(ctx, GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (MESA_VERBOSE & VERBOSE_API)
@@ -71,7 +70,7 @@ _mesa_ShadeModel(GLenum mode)
  * Also, all error checking should have already been done.
  */
 void
-_mesa_light(GLcontext *ctx, GLuint lnum, GLenum pname, const GLfloat *params)
+_mesa_light(ctx, GLcontext *ctx, GLuint lnum, GLenum pname, const GLfloat *params)
 {
     struct gl_light *light;
 
@@ -162,7 +161,7 @@ _mesa_light(GLcontext *ctx, GLuint lnum, GLenum pname, const GLfloat *params)
 	    light->QuadraticAttenuation = params[0];
 	    break;
 	default:
-	    _mesa_problem(ctx, "Unexpected pname in _mesa_light()");
+	    _mesa_problem(ctx, "Unexpected pname in _mesa_light(ctx)");
 	    return;
     }
 
@@ -176,14 +175,13 @@ _mesa_Lightf(GLenum light, GLenum pname, GLfloat param)
 {
     GLfloat p[4] = {0.0};
     p[0] = param;
-    _mesa_Lightfv(light, pname, p);
+    _mesa_Lightfv(ctx, light, pname, p);
 }
 
 
 void GLAPIENTRY
-_mesa_Lightfv(GLenum light, GLenum pname, const GLfloat *params)
+_mesa_Lightfv(ctx, GLcontext *ctx, GLenum light, GLenum pname, const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLint i = (GLint)(light - GL_LIGHT0);
     GLfloat temp[4];
 
@@ -297,15 +295,14 @@ _mesa_Lightiv(GLenum light, GLenum pname, const GLint *params)
 	    ;
     }
 
-    _mesa_Lightfv(light, pname, fparam);
+    _mesa_Lightfv(ctx, light, pname, fparam);
 }
 
 
 
 void GLAPIENTRY
-_mesa_GetLightfv(GLenum light, GLenum pname, GLfloat *params)
+_mesa_GetLightfv(ctx, GLcontext *ctx, GLenum light, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLint l = (GLint)(light - GL_LIGHT0);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -353,9 +350,8 @@ _mesa_GetLightfv(GLenum light, GLenum pname, GLfloat *params)
 
 
 void GLAPIENTRY
-_mesa_GetLightiv(GLenum light, GLenum pname, GLint *params)
+_mesa_GetLightiv(ctx, GLcontext *ctx, GLenum light, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLint l = (GLint)(light - GL_LIGHT0);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -423,11 +419,10 @@ _mesa_GetLightiv(GLenum light, GLenum pname, GLint *params)
 
 
 void GLAPIENTRY
-_mesa_LightModelfv(GLenum pname, const GLfloat *params)
+_mesa_LightModelfv(ctx, GLcontext *ctx, GLenum pname, const GLfloat *params)
 {
     GLenum newenum;
     GLboolean newbool;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     switch (pname) {
@@ -501,7 +496,7 @@ _mesa_LightModeliv(GLenum pname, const GLint *params)
 	    /* Error will be caught later in gl_LightModelfv */
 	    ;
     }
-    _mesa_LightModelfv(pname, fparam);
+    _mesa_LightModelfv(ctx, pname, fparam);
 }
 
 
@@ -519,7 +514,7 @@ _mesa_LightModelf(GLenum pname, GLfloat param)
 {
     GLfloat p[4] = {0.0};
     p[0] = param;
-    _mesa_LightModelfv(pname, p);
+    _mesa_LightModelfv(ctx, pname, p);
 }
 
 
@@ -532,7 +527,7 @@ _mesa_LightModelf(GLenum pname, GLfloat param)
  * of the targeted material values.
  */
 GLuint
-_mesa_material_bitmask(GLcontext *ctx, GLenum face, GLenum pname,
+_mesa_material_bitmask(ctx, GLcontext *ctx, GLenum face, GLenum pname,
 		       GLuint legal, const char *where)
 {
     GLuint bitmask = 0;
@@ -604,7 +599,7 @@ _mesa_copy_materials(struct gl_material *dst,
 /* Update derived values following a change in ctx->Light.Material
  */
 void
-_mesa_update_material(GLcontext *ctx, GLuint bitmask)
+_mesa_update_material(ctx, GLcontext *ctx, GLuint bitmask)
 {
     struct gl_light *light, *list = &ctx->Light.EnabledList;
     GLfloat(*mat)[4] = ctx->Light.Material.Attrib;
@@ -689,7 +684,7 @@ _mesa_update_material(GLcontext *ctx, GLuint bitmask)
  * set by glColorMaterial().
  */
 void
-_mesa_update_color_material(GLcontext *ctx, const GLfloat color[4])
+_mesa_update_color_material(ctx, GLcontext *ctx, const GLfloat color[4])
 {
     GLuint bitmask = ctx->Light.ColorMaterialBitmask;
     struct gl_material *mat = &ctx->Light.Material;
@@ -704,9 +699,8 @@ _mesa_update_color_material(GLcontext *ctx, const GLfloat color[4])
 
 
 void GLAPIENTRY
-_mesa_ColorMaterial(GLenum face, GLenum mode)
+_mesa_ColorMaterial(ctx, GLcontext *ctx, GLenum face, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLuint bitmask;
     GLuint legal = (MAT_BIT_FRONT_EMISSION | MAT_BIT_BACK_EMISSION |
 		    MAT_BIT_FRONT_SPECULAR | MAT_BIT_BACK_SPECULAR |
@@ -742,9 +736,8 @@ _mesa_ColorMaterial(GLenum face, GLenum mode)
 
 
 void GLAPIENTRY
-_mesa_GetMaterialfv(GLenum face, GLenum pname, GLfloat *params)
+_mesa_GetMaterialfv(ctx, GLcontext *ctx, GLenum face, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLuint f;
     GLfloat(*mat)[4] = ctx->Light.Material.Attrib;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx); /* update materials */
@@ -788,9 +781,8 @@ _mesa_GetMaterialfv(GLenum face, GLenum pname, GLfloat *params)
 
 
 void GLAPIENTRY
-_mesa_GetMaterialiv(GLenum face, GLenum pname, GLint *params)
+_mesa_GetMaterialiv(ctx, GLcontext *ctx, GLenum face, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLuint f;
     GLfloat(*mat)[4] = ctx->Light.Material.Attrib;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx); /* update materials */
@@ -929,7 +921,7 @@ validate_spot_exp_table(struct gl_light *l)
  * by keeping a MRU cache of shine tables for various shine values.
  */
 void
-_mesa_invalidate_shine_table(GLcontext *ctx, GLuint side)
+_mesa_invalidate_shine_table(ctx, GLcontext *ctx, GLuint side)
 {
     ASSERT(side < 2);
     if (ctx->_ShineTable[side])
@@ -990,7 +982,7 @@ validate_shine_table(GLcontext *ctx, GLuint side, GLfloat shininess)
 
 
 void
-_mesa_validate_all_lighting_tables(GLcontext *ctx)
+_mesa_validate_all_lighting_tables(ctx, GLcontext *ctx)
 {
     GLuint i;
     GLfloat shininess;
@@ -1016,7 +1008,7 @@ _mesa_validate_all_lighting_tables(GLcontext *ctx)
  * source and material ambient, diffuse and specular coefficients.
  */
 void
-_mesa_update_lighting(GLcontext *ctx)
+_mesa_update_lighting(ctx, GLcontext *ctx)
 {
     struct gl_light *light;
     ctx->Light._NeedEyeCoords = GL_FALSE;
@@ -1182,7 +1174,7 @@ update_modelview_scale(GLcontext *ctx)
  * Bring up to date any state that relies on _NeedEyeCoords.
  */
 void
-_mesa_update_tnl_spaces(GLcontext *ctx, GLuint new_state)
+_mesa_update_tnl_spaces(ctx, GLcontext *ctx, GLuint new_state)
 {
     const GLuint oldneedeyecoords = ctx->_NeedEyeCoords;
 
@@ -1230,7 +1222,7 @@ _mesa_update_tnl_spaces(GLcontext *ctx, GLuint new_state)
  * light-in-modelspace optimization.  It's also useful for debugging.
  */
 void
-_mesa_allow_light_in_model(GLcontext *ctx, GLboolean flag)
+_mesa_allow_light_in_model(ctx, GLcontext *ctx, GLboolean flag)
 {
     ctx->_ForceEyeCoords = !flag;
     ctx->NewState |= _NEW_POINT;	/* one of the bits from
@@ -1321,7 +1313,7 @@ init_material(struct gl_material *m)
  * Initialize all lighting state for the given context.
  */
 void
-_mesa_init_lighting(GLcontext *ctx)
+_mesa_init_lighting(ctx, GLcontext *ctx)
 {
     GLuint i;
 
@@ -1367,7 +1359,7 @@ _mesa_init_lighting(GLcontext *ctx)
  * Deallocate malloc'd lighting state attached to given context.
  */
 void
-_mesa_free_lighting_data(GLcontext *ctx)
+_mesa_free_lighting_data(ctx, GLcontext *ctx)
 {
     struct gl_shine_tab *s, *tmps;
 

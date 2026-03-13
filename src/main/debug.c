@@ -114,13 +114,13 @@ _mesa_print_tri_caps(const char *name, GLuint flags)
 void _mesa_print_info(void)
 {
     _mesa_debug(NULL, "Mesa GL_VERSION = %s\n",
-		(char *) _mesa_GetString(GL_VERSION));
+		(char *) _mesa_GetString(ctx, GL_VERSION));
     _mesa_debug(NULL, "Mesa GL_RENDERER = %s\n",
-		(char *) _mesa_GetString(GL_RENDERER));
+		(char *) _mesa_GetString(ctx, GL_RENDERER));
     _mesa_debug(NULL, "Mesa GL_VENDOR = %s\n",
-		(char *) _mesa_GetString(GL_VENDOR));
+		(char *) _mesa_GetString(ctx, GL_VENDOR));
     _mesa_debug(NULL, "Mesa GL_EXTENSIONS = %s\n",
-		(char *) _mesa_GetString(GL_EXTENSIONS));
+		(char *) _mesa_GetString(ctx, GL_EXTENSIONS));
 #if defined(THREADS)
     _mesa_debug(NULL, "Mesa thread-safe: YES\n");
 #else
@@ -184,7 +184,7 @@ static void add_debug_flags(const char *debug)
 
 
 void
-_mesa_init_debug(GLcontext *ctx)
+_mesa_init_debug(ctx, GLcontext *ctx)
 {
     char *c;
 

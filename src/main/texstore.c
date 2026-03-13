@@ -831,7 +831,7 @@ byteswap_mapping(GLboolean swapBytes,
  * Transfer a GLubyte texture image with component swizzling.
  */
 static void
-_mesa_swizzle_ubyte_image(GLcontext *ctx,
+_mesa_swizzle_ubyte_image(ctx, GLcontext *ctx,
 			  GLuint dimensions,
 			  GLenum srcFormat,
 			  GLenum srcType,
@@ -2658,10 +2658,10 @@ _mesa_texstore_sla8(TEXSTORE_PARAMS)
  * Check if an unpack PBO is active prior to fetching a texture image.
  * If so, do bounds checking and map the buffer into main memory.
  * Any errors detected will be recorded.
- * The caller _must_ call _mesa_unmap_teximage_pbo() too!
+ * The caller _must_ call _mesa_unmap_teximage_pbo(ctx) too!
  */
 const GLvoid *
-_mesa_validate_pbo_teximage(GLcontext *ctx, GLuint dimensions,
+_mesa_validate_pbo_teximage(ctx, GLcontext *ctx, GLuint dimensions,
 			    GLsizei width, GLsizei height, GLsizei depth,
 			    GLenum format, GLenum type, const GLvoid *pixels,
 			    const struct gl_pixelstore_attrib *unpack,
@@ -3724,4 +3724,4 @@ _mesa_get_compressed_teximage(GLcontext *ctx, GLenum target, GLint level,
  * c-file-style: "stroustrup"
  * End:
  * ex: shiftwidth=4 tabstop=8
- */
+ */)

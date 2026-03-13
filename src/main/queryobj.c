@@ -75,10 +75,9 @@ lookup_query_object(GLcontext *ctx, GLuint id)
 
 
 void GLAPIENTRY
-_mesa_GenQueriesARB(GLsizei n, GLuint *ids)
+_mesa_GenQueriesARB(ctx, GLcontext *ctx, GLsizei n, GLuint *ids)
 {
     GLuint first;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (n < 0) {
@@ -111,10 +110,9 @@ _mesa_GenQueriesARB(GLsizei n, GLuint *ids)
 
 
 void GLAPIENTRY
-_mesa_DeleteQueriesARB(GLsizei n, const GLuint *ids)
+_mesa_DeleteQueriesARB(ctx, GLcontext *ctx, GLsizei n, const GLuint *ids)
 {
     GLint i;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (n < 0) {
@@ -143,9 +141,8 @@ _mesa_DeleteQueriesARB(GLsizei n, const GLuint *ids)
 
 
 GLboolean GLAPIENTRY
-_mesa_IsQueryARB(GLuint id)
+_mesa_IsQueryARB(ctx, GLcontext *ctx, GLuint id)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, GL_FALSE);
 
     if (id && lookup_query_object(ctx, id))
@@ -156,10 +153,9 @@ _mesa_IsQueryARB(GLuint id)
 
 
 void GLAPIENTRY
-_mesa_BeginQueryARB(GLenum target, GLuint id)
+_mesa_BeginQueryARB(ctx, GLcontext *ctx, GLenum target, GLuint id)
 {
     struct gl_query_object *q;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     FLUSH_VERTICES(ctx, _NEW_DEPTH);
@@ -235,10 +231,9 @@ _mesa_BeginQueryARB(GLenum target, GLuint id)
 
 
 void GLAPIENTRY
-_mesa_EndQueryARB(GLenum target)
+_mesa_EndQueryARB(ctx, GLcontext *ctx, GLenum target)
 {
     struct gl_query_object *q;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     FLUSH_VERTICES(ctx, _NEW_DEPTH);
@@ -284,10 +279,9 @@ _mesa_EndQueryARB(GLenum target)
 
 
 void GLAPIENTRY
-_mesa_GetQueryivARB(GLenum target, GLenum pname, GLint *params)
+_mesa_GetQueryivARB(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
     struct gl_query_object *q;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     switch (target) {
@@ -327,10 +321,9 @@ _mesa_GetQueryivARB(GLenum target, GLenum pname, GLint *params)
 
 
 void GLAPIENTRY
-_mesa_GetQueryObjectivARB(GLuint id, GLenum pname, GLint *params)
+_mesa_GetQueryObjectivARB(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLint *params)
 {
     struct gl_query_object *q = NULL;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (id)
@@ -370,10 +363,9 @@ _mesa_GetQueryObjectivARB(GLuint id, GLenum pname, GLint *params)
 
 
 void GLAPIENTRY
-_mesa_GetQueryObjectuivARB(GLuint id, GLenum pname, GLuint *params)
+_mesa_GetQueryObjectuivARB(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLuint *params)
 {
     struct gl_query_object *q = NULL;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (id)
@@ -418,10 +410,9 @@ _mesa_GetQueryObjectuivARB(GLuint id, GLenum pname, GLuint *params)
  * New with GL_EXT_timer_query
  */
 void GLAPIENTRY
-_mesa_GetQueryObjecti64vEXT(GLuint id, GLenum pname, GLint64EXT *params)
+_mesa_GetQueryObjecti64vEXT(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLint64EXT *params)
 {
     struct gl_query_object *q = NULL;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (id)
@@ -459,10 +450,9 @@ _mesa_GetQueryObjecti64vEXT(GLuint id, GLenum pname, GLint64EXT *params)
  * New with GL_EXT_timer_query
  */
 void GLAPIENTRY
-_mesa_GetQueryObjectui64vEXT(GLuint id, GLenum pname, GLuint64EXT *params)
+_mesa_GetQueryObjectui64vEXT(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLuint64EXT *params)
 {
     struct gl_query_object *q = NULL;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (id)
@@ -502,7 +492,7 @@ _mesa_GetQueryObjectui64vEXT(GLuint id, GLenum pname, GLuint64EXT *params)
  * Allocate/init the context state related to query objects.
  */
 void
-_mesa_init_query(GLcontext *ctx)
+_mesa_init_query(ctx, GLcontext *ctx)
 {
 #if FEATURE_ARB_occlusion_query
     ctx->Query.QueryObjects = _mesa_NewHashTable();
@@ -527,7 +517,7 @@ delete_queryobj_cb(GLuint id, void *data, void *userData)
  * Free the context state related to query objects.
  */
 void
-_mesa_free_query_data(GLcontext *ctx)
+_mesa_free_query_data(ctx, GLcontext *ctx)
 {
     _mesa_HashDeleteAll(ctx->Query.QueryObjects, delete_queryobj_cb, NULL);
     _mesa_DeleteHashTable(ctx->Query.QueryObjects);

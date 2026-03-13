@@ -41,8 +41,8 @@
 
 #if _HAVE_FULL_GL
 
-extern void _mesa_init_eval(GLcontext *ctx);
-extern void _mesa_free_eval_data(GLcontext *ctx);
+extern void _mesa_init_eval(ctx, GLcontext *ctx);
+extern void _mesa_free_eval_data(ctx, GLcontext *ctx);
 
 
 extern GLuint _mesa_evaluator_components(GLenum target);
@@ -93,13 +93,13 @@ _mesa_Map2d(GLenum target,
 	    const GLdouble *points);
 
 extern void GLAPIENTRY
-_mesa_MapGrid1f(GLint un, GLfloat u1, GLfloat u2);
+_mesa_MapGrid1f(ctx, GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2);
 
 extern void GLAPIENTRY
 _mesa_MapGrid1d(GLint un, GLdouble u1, GLdouble u2);
 
 extern void GLAPIENTRY
-_mesa_MapGrid2f(GLint un, GLfloat u1, GLfloat u2,
+_mesa_MapGrid2f(ctx, GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2,
 		GLint vn, GLfloat v1, GLfloat v2);
 
 extern void GLAPIENTRY
@@ -107,21 +107,21 @@ _mesa_MapGrid2d(GLint un, GLdouble u1, GLdouble u2,
 		GLint vn, GLdouble v1, GLdouble v2);
 
 extern void GLAPIENTRY
-_mesa_GetMapdv(GLenum target, GLenum query, GLdouble *v);
+_mesa_GetMapdv(ctx, GLcontext *ctx, GLenum target, GLenum query, GLdouble *v);
 
 extern void GLAPIENTRY
-_mesa_GetMapfv(GLenum target, GLenum query, GLfloat *v);
+_mesa_GetMapfv(ctx, GLcontext *ctx, GLenum target, GLenum query, GLfloat *v);
 
 extern void GLAPIENTRY
-_mesa_GetMapiv(GLenum target, GLenum query, GLint *v);
+_mesa_GetMapiv(ctx, GLcontext *ctx, GLenum target, GLenum query, GLint *v);
 
 #else
 
 /** No-op */
-#define _mesa_init_eval( c ) ((void)0)
+#define _mesa_init_eval(ctx, c) ((void)0)
 
 /** No-op */
-#define _mesa_free_eval_data( c ) ((void)0)
+#define _mesa_free_eval_data(ctx, c) ((void)0)
 
 #endif
 

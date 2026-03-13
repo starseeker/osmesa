@@ -882,7 +882,7 @@ fast_copy_pixels(GLcontext *ctx,
  * By time we get here, all parameters will have been error-checked.
  */
 void
-_swrast_CopyPixels(GLcontext *ctx,
+_swrast_CopyPixels(ctx, GLcontext *ctx,
 		   GLint srcx, GLint srcy, GLsizei width, GLsizei height,
 		   GLint destx, GLint desty, GLenum type)
 {

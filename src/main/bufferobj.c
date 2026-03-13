@@ -160,7 +160,7 @@ _mesa_new_buffer_object(GLcontext *ctx, GLuint name, GLenum target)
  * \c dd_function_table::DeleteBuffer.
  */
 void
-_mesa_delete_buffer_object(GLcontext *ctx, struct gl_buffer_object *bufObj)
+_mesa_delete_buffer_object(ctx, GLcontext *ctx, struct gl_buffer_object *bufObj)
 {
     (void) ctx;
 
@@ -171,7 +171,7 @@ _mesa_delete_buffer_object(GLcontext *ctx, struct gl_buffer_object *bufObj)
 
 
 void
-_mesa_unbind_buffer_object(GLcontext *ctx, struct gl_buffer_object *bufObj)
+_mesa_unbind_buffer_object(ctx, GLcontext *ctx, struct gl_buffer_object *bufObj)
 {
     if (bufObj != ctx->Array.NullBufferObj) {
 	bufObj->RefCount--;
@@ -207,7 +207,7 @@ _mesa_initialize_buffer_object(struct gl_buffer_object *obj,
  * Add the given buffer object to the buffer object pool.
  */
 void
-_mesa_save_buffer_object(GLcontext *ctx, struct gl_buffer_object *obj)
+_mesa_save_buffer_object(ctx, GLcontext *ctx, struct gl_buffer_object *obj)
 {
     if (obj->Name > 0) {
 	/* insert into hash table */
@@ -221,7 +221,7 @@ _mesa_save_buffer_object(GLcontext *ctx, struct gl_buffer_object *obj)
  * Do not deallocate the buffer object though.
  */
 void
-_mesa_remove_buffer_object(GLcontext *ctx, struct gl_buffer_object *bufObj)
+_mesa_remove_buffer_object(ctx, GLcontext *ctx, struct gl_buffer_object *bufObj)
 {
     if (bufObj->Name > 0) {
 	/* remove from hash table */
@@ -250,7 +250,7 @@ _mesa_remove_buffer_object(GLcontext *ctx, struct gl_buffer_object *bufObj)
  * \sa glBufferDataARB, dd_function_table::BufferData.
  */
 void
-_mesa_buffer_data(GLcontext *ctx, GLenum target, GLsizeiptrARB size,
+_mesa_buffer_data(ctx, GLcontext *ctx, GLenum target, GLsizeiptrARB size,
 		  const GLvoid * data, GLenum usage,
 		  struct gl_buffer_object * bufObj)
 {
@@ -291,7 +291,7 @@ _mesa_buffer_data(GLcontext *ctx, GLenum target, GLsizeiptrARB size,
  * \sa glBufferSubDataARB, dd_function_table::BufferSubData.
  */
 void
-_mesa_buffer_subdata(GLcontext *ctx, GLenum target, GLintptrARB offset,
+_mesa_buffer_subdata(ctx, GLcontext *ctx, GLenum target, GLintptrARB offset,
 		     GLsizeiptrARB size, const GLvoid * data,
 		     struct gl_buffer_object * bufObj)
 {
@@ -326,7 +326,7 @@ _mesa_buffer_subdata(GLcontext *ctx, GLenum target, GLintptrARB offset,
  * \sa glBufferGetSubDataARB, dd_function_table::GetBufferSubData.
  */
 void
-_mesa_buffer_get_subdata(GLcontext *ctx, GLenum target, GLintptrARB offset,
+_mesa_buffer_get_subdata(ctx, GLcontext *ctx, GLenum target, GLintptrARB offset,
 			 GLsizeiptrARB size, GLvoid * data,
 			 struct gl_buffer_object * bufObj)
 {
@@ -383,7 +383,7 @@ _mesa_buffer_map(GLcontext *ctx, GLenum target, GLenum access,
  * \sa glUnmapBufferARB, dd_function_table::UnmapBuffer
  */
 GLboolean
-_mesa_buffer_unmap(GLcontext *ctx, GLenum target,
+_mesa_buffer_unmap(ctx, GLcontext *ctx, GLenum target,
 		   struct gl_buffer_object *bufObj)
 {
     (void) ctx;
@@ -399,7 +399,7 @@ _mesa_buffer_unmap(GLcontext *ctx, GLenum target,
  * Initialize the state associated with buffer objects
  */
 void
-_mesa_init_buffer_objects(GLcontext *ctx)
+_mesa_init_buffer_objects(ctx, GLcontext *ctx)
 {
     /* Allocate the default buffer object and set refcount so high that
      * it never gets deleted.
@@ -490,9 +490,8 @@ _mesa_lookup_bufferobj(GLcontext *ctx, GLuint buffer)
 /**********************************************************************/
 
 void GLAPIENTRY
-_mesa_BindBufferARB(GLenum target, GLuint buffer)
+_mesa_BindBufferARB(ctx, GLcontext *ctx, GLenum target, GLuint buffer)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_buffer_object *oldBufObj;
     struct gl_buffer_object *newBufObj = NULL;
     struct gl_buffer_object **bindTarget = NULL;
@@ -572,9 +571,8 @@ _mesa_BindBufferARB(GLenum target, GLuint buffer)
  * \param ids    Array of \c n buffer object IDs.
  */
 void GLAPIENTRY
-_mesa_DeleteBuffersARB(GLsizei n, const GLuint *ids)
+_mesa_DeleteBuffersARB(ctx, GLcontext *ctx, GLsizei n, const GLuint *ids)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLsizei i;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -644,17 +642,17 @@ _mesa_DeleteBuffersARB(GLsizei n, const GLuint *ids)
 	    }
 
 	    if (ctx->Array.ArrayBufferObj == bufObj) {
-		_mesa_BindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+		_mesa_BindBufferARB(ctx, GL_ARRAY_BUFFER_ARB, 0);
 	    }
 	    if (ctx->Array.ElementArrayBufferObj == bufObj) {
-		_mesa_BindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+		_mesa_BindBufferARB(ctx, GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 	    }
 
 	    if (ctx->Pack.BufferObj == bufObj) {
-		_mesa_BindBufferARB(GL_PIXEL_PACK_BUFFER_EXT, 0);
+		_mesa_BindBufferARB(ctx, GL_PIXEL_PACK_BUFFER_EXT, 0);
 	    }
 	    if (ctx->Unpack.BufferObj == bufObj) {
-		_mesa_BindBufferARB(GL_PIXEL_UNPACK_BUFFER_EXT, 0);
+		_mesa_BindBufferARB(ctx, GL_PIXEL_UNPACK_BUFFER_EXT, 0);
 	    }
 
 	    /* The ID is immediately freed for re-use */
@@ -674,9 +672,8 @@ _mesa_DeleteBuffersARB(GLsizei n, const GLuint *ids)
  * \param buffer  Array of \c n locations to store the IDs.
  */
 void GLAPIENTRY
-_mesa_GenBuffersARB(GLsizei n, GLuint *buffer)
+_mesa_GenBuffersARB(ctx, GLcontext *ctx, GLsizei n, GLuint *buffer)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLuint first;
     GLint i;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -724,10 +721,9 @@ _mesa_GenBuffersARB(GLsizei n, GLuint *buffer)
  *          \c GL_FALSE otherwise.
  */
 GLboolean GLAPIENTRY
-_mesa_IsBufferARB(GLuint id)
+_mesa_IsBufferARB(ctx, GLcontext *ctx, GLuint id)
 {
     struct gl_buffer_object *bufObj;
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, GL_FALSE);
 
     _glthread_LOCK_MUTEX(ctx->Shared->Mutex);
@@ -739,10 +735,9 @@ _mesa_IsBufferARB(GLuint id)
 
 
 void GLAPIENTRY
-_mesa_BufferDataARB(GLenum target, GLsizeiptrARB size,
+_mesa_BufferDataARB(ctx, GLcontext *ctx, GLenum target, GLsizeiptrARB size,
 		    const GLvoid * data, GLenum usage)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_buffer_object *bufObj;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -791,10 +786,9 @@ _mesa_BufferDataARB(GLenum target, GLsizeiptrARB size,
 
 
 void GLAPIENTRY
-_mesa_BufferSubDataARB(GLenum target, GLintptrARB offset,
+_mesa_BufferSubDataARB(ctx, GLcontext *ctx, GLenum target, GLintptrARB offset,
 		       GLsizeiptrARB size, const GLvoid * data)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_buffer_object *bufObj;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -811,10 +805,9 @@ _mesa_BufferSubDataARB(GLenum target, GLintptrARB offset,
 
 
 void GLAPIENTRY
-_mesa_GetBufferSubDataARB(GLenum target, GLintptrARB offset,
+_mesa_GetBufferSubDataARB(ctx, GLcontext *ctx, GLenum target, GLintptrARB offset,
 			  GLsizeiptrARB size, void * data)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_buffer_object *bufObj;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -831,9 +824,8 @@ _mesa_GetBufferSubDataARB(GLenum target, GLintptrARB offset,
 
 
 void * GLAPIENTRY
-_mesa_MapBufferARB(GLenum target, GLenum access)
+_mesa_MapBufferARB(GLcontext *ctx, GLenum target, GLenum access)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_buffer_object * bufObj;
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, NULL);
 
@@ -875,9 +867,8 @@ _mesa_MapBufferARB(GLenum target, GLenum access)
 
 
 GLboolean GLAPIENTRY
-_mesa_UnmapBufferARB(GLenum target)
+_mesa_UnmapBufferARB(ctx, GLcontext *ctx, GLenum target)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_buffer_object *bufObj;
     GLboolean status = GL_TRUE;
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, GL_FALSE);
@@ -908,9 +899,8 @@ _mesa_UnmapBufferARB(GLenum target)
 
 
 void GLAPIENTRY
-_mesa_GetBufferParameterivARB(GLenum target, GLenum pname, GLint *params)
+_mesa_GetBufferParameterivARB(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_buffer_object *bufObj;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -945,9 +935,8 @@ _mesa_GetBufferParameterivARB(GLenum target, GLenum pname, GLint *params)
 
 
 void GLAPIENTRY
-_mesa_GetBufferPointervARB(GLenum target, GLenum pname, GLvoid **params)
+_mesa_GetBufferPointervARB(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLvoid **params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_buffer_object * bufObj;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 

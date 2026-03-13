@@ -117,7 +117,7 @@ do {						\
 do {									\
    if (ctx->Driver.CurrentSavePrimitive <= GL_POLYGON ||		\
        ctx->Driver.CurrentSavePrimitive == PRIM_INSIDE_UNKNOWN_PRIM) {	\
-      _mesa_compile_error( ctx, GL_INVALID_OPERATION, "begin/end" );	\
+      _mesa_compile_error(ctx, GL_INVALID_OPERATION, "begin/end");	\
       return retval;							\
    }									\
 } while (0)
@@ -132,7 +132,7 @@ do {									\
 do {									\
    if (ctx->Driver.CurrentSavePrimitive <= GL_POLYGON ||		\
        ctx->Driver.CurrentSavePrimitive == PRIM_INSIDE_UNKNOWN_PRIM) {	\
-      _mesa_compile_error( ctx, GL_INVALID_OPERATION, "begin/end" );	\
+      _mesa_compile_error(ctx, GL_INVALID_OPERATION, "begin/end");	\
       return;								\
    }									\
 } while (0)
@@ -147,7 +147,7 @@ do {									\
 do {									\
    if (ctx->Driver.CurrentSavePrimitive <= GL_POLYGON ||		\
        ctx->Driver.CurrentSavePrimitive == PRIM_INSIDE_UNKNOWN_PRIM) {	\
-      _mesa_compile_error( ctx, GL_INVALID_OPERATION, "begin/end" );	\
+      _mesa_compile_error(ctx, GL_INVALID_OPERATION, "begin/end");	\
       free(_tofree);						\
       return;								\
    }									\
@@ -471,7 +471,7 @@ lookup_list(GLcontext *ctx, GLuint list)
  * \param dlist - display list pointer
  */
 void
-_mesa_delete_list(GLcontext *ctx, struct mesa_display_list *dlist)
+_mesa_delete_list(ctx, GLcontext *ctx, struct mesa_display_list *dlist)
 {
     Node *n, *block;
     GLboolean done;
@@ -786,7 +786,7 @@ _mesa_alloc_instruction(GLcontext *ctx, GLuint opcode, GLuint bytes)
  * \return  the new opcode number or -1 if error
  */
 GLint
-_mesa_alloc_opcode(GLcontext *ctx,
+_mesa_alloc_opcode(ctx, GLcontext *ctx,
 		   GLuint size,
 		   void (*execute)(GLcontext *, void *),
 		   void (*destroy)(GLcontext *, void *),
@@ -822,9 +822,8 @@ _mesa_alloc_opcode(GLcontext *ctx,
  * Display List compilation functions
  */
 static void GLAPIENTRY
-save_Accum(GLenum op, GLfloat value)
+save_Accum(GLcontext *ctx, GLenum op, GLfloat value)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ACCUM, 2);
@@ -833,15 +832,14 @@ save_Accum(GLenum op, GLfloat value)
 	n[2].f = value;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Accum(ctx->Exec, (op, value));
+	CALL_Accum(ctx->Exec, (ctx, op, value));
     }
 }
 
 
 static void GLAPIENTRY
-save_AlphaFunc(GLenum func, GLclampf ref)
+save_AlphaFunc(GLcontext *ctx, GLenum func, GLclampf ref)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ALPHA_FUNC, 2);
@@ -850,15 +848,14 @@ save_AlphaFunc(GLenum func, GLclampf ref)
 	n[2].f = (GLfloat) ref;
     }
     if (ctx->ExecuteFlag) {
-	CALL_AlphaFunc(ctx->Exec, (func, ref));
+	CALL_AlphaFunc(ctx->Exec, (ctx, func, ref));
     }
 }
 
 
 static void GLAPIENTRY
-save_BindTexture(GLenum target, GLuint texture)
+save_BindTexture(GLcontext *ctx, GLenum target, GLuint texture)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_BIND_TEXTURE, 2);
@@ -867,17 +864,16 @@ save_BindTexture(GLenum target, GLuint texture)
 	n[2].ui = texture;
     }
     if (ctx->ExecuteFlag) {
-	CALL_BindTexture(ctx->Exec, (target, texture));
+	CALL_BindTexture(ctx->Exec, (ctx, target, texture));
     }
 }
 
 
 static void GLAPIENTRY
-save_Bitmap(GLsizei width, GLsizei height,
+save_Bitmap(GLcontext *ctx, GLsizei width, GLsizei height,
 	    GLfloat xorig, GLfloat yorig,
 	    GLfloat xmove, GLfloat ymove, const GLubyte * pixels)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLvoid *image = _mesa_unpack_bitmap(width, height, pixels, &ctx->Unpack);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_FREE_AND_FLUSH(ctx, image);
@@ -890,16 +886,15 @@ save_Bitmap(GLsizei width, GLsizei height,
     n[6].f = ymove;
     n[7].data = image;
     if (ctx->ExecuteFlag) {
-	CALL_Bitmap(ctx->Exec, (width, height,
+	CALL_Bitmap(ctx->Exec, (ctx, width, height,
 				xorig, yorig, xmove, ymove, pixels));
     }
 }
 
 
 static void GLAPIENTRY
-save_BlendEquation(GLenum mode)
+save_BlendEquation(GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_BLEND_EQUATION, 1);
@@ -907,15 +902,14 @@ save_BlendEquation(GLenum mode)
 	n[1].e = mode;
     }
     if (ctx->ExecuteFlag) {
-	CALL_BlendEquation(ctx->Exec, (mode));
+	CALL_BlendEquation(ctx->Exec, (ctx, mode));
     }
 }
 
 
 static void GLAPIENTRY
-save_BlendEquationSeparateEXT(GLenum modeRGB, GLenum modeA)
+save_BlendEquationSeparateEXT(GLcontext *ctx, GLenum modeRGB, GLenum modeA)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_BLEND_EQUATION_SEPARATE, 2);
@@ -924,16 +918,15 @@ save_BlendEquationSeparateEXT(GLenum modeRGB, GLenum modeA)
 	n[2].e = modeA;
     }
     if (ctx->ExecuteFlag) {
-	CALL_BlendEquationSeparateEXT(ctx->Exec, (modeRGB, modeA));
+	CALL_BlendEquationSeparateEXT(ctx->Exec, (ctx, modeRGB, modeA));
     }
 }
 
 
 static void GLAPIENTRY
-save_BlendFuncSeparateEXT(GLenum sfactorRGB, GLenum dfactorRGB,
+save_BlendFuncSeparateEXT(GLcontext *ctx, GLenum sfactorRGB, GLenum dfactorRGB,
 			  GLenum sfactorA, GLenum dfactorA)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_BLEND_FUNC_SEPARATE, 4);
@@ -944,16 +937,14 @@ save_BlendFuncSeparateEXT(GLenum sfactorRGB, GLenum dfactorRGB,
 	n[4].e = dfactorA;
     }
     if (ctx->ExecuteFlag) {
-	CALL_BlendFuncSeparateEXT(ctx->Exec,
-				  (sfactorRGB, dfactorRGB, sfactorA, dfactorA));
+	CALL_BlendFuncSeparateEXT(ctx->Exec, (ctx, sfactorRGB, dfactorRGB, sfactorA, dfactorA));
     }
 }
 
 
 static void GLAPIENTRY
-save_BlendColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
+save_BlendColor(GLcontext *ctx, GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_BLEND_COLOR, 4);
@@ -964,15 +955,14 @@ save_BlendColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 	n[4].f = alpha;
     }
     if (ctx->ExecuteFlag) {
-	CALL_BlendColor(ctx->Exec, (red, green, blue, alpha));
+	CALL_BlendColor(ctx->Exec, (ctx, red, green, blue, alpha));
     }
 }
 
 
 void GLAPIENTRY
-_mesa_save_CallList(GLuint list)
+_mesa_save_CallList(ctx, GLcontext *ctx, GLuint list)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
 
@@ -986,15 +976,14 @@ _mesa_save_CallList(GLuint list)
     ctx->Driver.CurrentSavePrimitive = PRIM_UNKNOWN;
 
     if (ctx->ExecuteFlag) {
-	CALL_CallList(ctx->Exec, (list));
+	CALL_CallList(ctx->Exec, (ctx, list));
     }
 }
 
 
 void GLAPIENTRY
-_mesa_save_CallLists(GLsizei n, GLenum type, const GLvoid * lists)
+_mesa_save_CallLists(ctx, GLcontext *ctx, GLsizei n, GLenum type, const GLvoid * lists)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLint i;
     GLboolean typeErrorFlag;
 
@@ -1031,15 +1020,14 @@ _mesa_save_CallLists(GLsizei n, GLenum type, const GLvoid * lists)
     ctx->Driver.CurrentSavePrimitive = PRIM_UNKNOWN;
 
     if (ctx->ExecuteFlag) {
-	CALL_CallLists(ctx->Exec, (n, type, lists));
+	CALL_CallLists(ctx->Exec, (ctx, n, type, lists));
     }
 }
 
 
 static void GLAPIENTRY
-save_Clear(GLbitfield mask)
+save_Clear(GLcontext *ctx, GLbitfield mask)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_CLEAR, 1);
@@ -1047,15 +1035,14 @@ save_Clear(GLbitfield mask)
 	n[1].bf = mask;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Clear(ctx->Exec, (mask));
+	CALL_Clear(ctx->Exec, (ctx, mask));
     }
 }
 
 
 static void GLAPIENTRY
-save_ClearAccum(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
+save_ClearAccum(GLcontext *ctx, GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_CLEAR_ACCUM, 4);
@@ -1066,15 +1053,14 @@ save_ClearAccum(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 	n[4].f = alpha;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ClearAccum(ctx->Exec, (red, green, blue, alpha));
+	CALL_ClearAccum(ctx->Exec, (ctx, red, green, blue, alpha));
     }
 }
 
 
 static void GLAPIENTRY
-save_ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
+save_ClearColor(GLcontext *ctx, GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_CLEAR_COLOR, 4);
@@ -1085,15 +1071,14 @@ save_ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 	n[4].f = alpha;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ClearColor(ctx->Exec, (red, green, blue, alpha));
+	CALL_ClearColor(ctx->Exec, (ctx, red, green, blue, alpha));
     }
 }
 
 
 static void GLAPIENTRY
-save_ClearDepth(GLclampd depth)
+save_ClearDepth(GLcontext *ctx, GLclampd depth)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_CLEAR_DEPTH, 1);
@@ -1101,15 +1086,14 @@ save_ClearDepth(GLclampd depth)
 	n[1].f = (GLfloat) depth;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ClearDepth(ctx->Exec, (depth));
+	CALL_ClearDepth(ctx->Exec, (ctx, depth));
     }
 }
 
 
 static void GLAPIENTRY
-save_ClearIndex(GLfloat c)
+save_ClearIndex(GLcontext *ctx, GLfloat c)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_CLEAR_INDEX, 1);
@@ -1117,15 +1101,14 @@ save_ClearIndex(GLfloat c)
 	n[1].f = c;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ClearIndex(ctx->Exec, (c));
+	CALL_ClearIndex(ctx->Exec, (ctx, c));
     }
 }
 
 
 static void GLAPIENTRY
-save_ClearStencil(GLint s)
+save_ClearStencil(GLcontext *ctx, GLint s)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_CLEAR_STENCIL, 1);
@@ -1133,15 +1116,14 @@ save_ClearStencil(GLint s)
 	n[1].i = s;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ClearStencil(ctx->Exec, (s));
+	CALL_ClearStencil(ctx->Exec, (ctx, s));
     }
 }
 
 
 static void GLAPIENTRY
-save_ClipPlane(GLenum plane, const GLdouble * equ)
+save_ClipPlane(GLcontext *ctx, GLenum plane, const GLdouble * equ)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_CLIP_PLANE, 5);
@@ -1153,17 +1135,16 @@ save_ClipPlane(GLenum plane, const GLdouble * equ)
 	n[5].f = (GLfloat) equ[3];
     }
     if (ctx->ExecuteFlag) {
-	CALL_ClipPlane(ctx->Exec, (plane, equ));
+	CALL_ClipPlane(ctx->Exec, (ctx, plane, equ));
     }
 }
 
 
 
 static void GLAPIENTRY
-save_ColorMask(GLboolean red, GLboolean green,
+save_ColorMask(GLcontext *ctx, GLboolean red, GLboolean green,
 	       GLboolean blue, GLboolean alpha)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_COLOR_MASK, 4);
@@ -1174,15 +1155,14 @@ save_ColorMask(GLboolean red, GLboolean green,
 	n[4].b = alpha;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ColorMask(ctx->Exec, (red, green, blue, alpha));
+	CALL_ColorMask(ctx->Exec, (ctx, red, green, blue, alpha));
     }
 }
 
 
 static void GLAPIENTRY
-save_ColorMaterial(GLenum face, GLenum mode)
+save_ColorMaterial(GLcontext *ctx, GLenum face, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -1192,20 +1172,19 @@ save_ColorMaterial(GLenum face, GLenum mode)
 	n[2].e = mode;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ColorMaterial(ctx->Exec, (face, mode));
+	CALL_ColorMaterial(ctx->Exec, (ctx, face, mode));
     }
 }
 
 
 static void GLAPIENTRY
-save_ColorTable(GLenum target, GLenum internalFormat,
+save_ColorTable(GLcontext *ctx, GLenum target, GLenum internalFormat,
 		GLsizei width, GLenum format, GLenum type,
 		const GLvoid * table)
 {
-    GET_CURRENT_CONTEXT(ctx);
     if (_mesa_is_proxy_texture(target)) {
 	/* execute immediately */
-	CALL_ColorTable(ctx->Exec, (target, internalFormat, width,
+	CALL_ColorTable(ctx->Exec, (ctx, target, internalFormat, width,
 				    format, type, table));
     } else {
 	GLvoid *image = unpack_image(1, width, 1, 1, format, type, table,
@@ -1220,7 +1199,7 @@ save_ColorTable(GLenum target, GLenum internalFormat,
 	n[5].e = type;
 	n[6].data = image;
 	if (ctx->ExecuteFlag) {
-	    CALL_ColorTable(ctx->Exec, (target, internalFormat, width,
+	    CALL_ColorTable(ctx->Exec, (ctx, target, internalFormat, width,
 					format, type, table));
 	}
     }
@@ -1229,10 +1208,9 @@ save_ColorTable(GLenum target, GLenum internalFormat,
 
 
 static void GLAPIENTRY
-save_ColorTableParameterfv(GLenum target, GLenum pname,
+save_ColorTableParameterfv(GLcontext *ctx, GLenum target, GLenum pname,
 			   const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
 
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
@@ -1253,15 +1231,14 @@ save_ColorTableParameterfv(GLenum target, GLenum pname,
     }
 
     if (ctx->ExecuteFlag) {
-	CALL_ColorTableParameterfv(ctx->Exec, (target, pname, params));
+	CALL_ColorTableParameterfv(ctx->Exec, (ctx, target, pname, params));
     }
 }
 
 
 static void GLAPIENTRY
-save_ColorTableParameteriv(GLenum target, GLenum pname, const GLint *params)
+save_ColorTableParameteriv(GLcontext *ctx, GLenum target, GLenum pname, const GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
 
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
@@ -1282,17 +1259,16 @@ save_ColorTableParameteriv(GLenum target, GLenum pname, const GLint *params)
     }
 
     if (ctx->ExecuteFlag) {
-	CALL_ColorTableParameteriv(ctx->Exec, (target, pname, params));
+	CALL_ColorTableParameteriv(ctx->Exec, (ctx, target, pname, params));
     }
 }
 
 
 
 static void GLAPIENTRY
-save_ColorSubTable(GLenum target, GLsizei start, GLsizei count,
+save_ColorSubTable(GLcontext *ctx, GLenum target, GLsizei start, GLsizei count,
 		   GLenum format, GLenum type, const GLvoid * table)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLvoid *image = unpack_image(1, count, 1, 1, format, type, table,
 				 &ctx->Unpack);
     Node *n;
@@ -1305,17 +1281,15 @@ save_ColorSubTable(GLenum target, GLsizei start, GLsizei count,
     n[5].e = type;
     n[6].data = image;
     if (ctx->ExecuteFlag) {
-	CALL_ColorSubTable(ctx->Exec,
-			   (target, start, count, format, type, table));
+	CALL_ColorSubTable(ctx->Exec, (ctx, target, start, count, format, type, table));
     }
 }
 
 
 static void GLAPIENTRY
-save_CopyColorSubTable(GLenum target, GLsizei start,
+save_CopyColorSubTable(GLcontext *ctx, GLenum target, GLsizei start,
 		       GLint x, GLint y, GLsizei width)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
 
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
@@ -1328,16 +1302,15 @@ save_CopyColorSubTable(GLenum target, GLsizei start,
 	n[5].i = width;
     }
     if (ctx->ExecuteFlag) {
-	CALL_CopyColorSubTable(ctx->Exec, (target, start, x, y, width));
+	CALL_CopyColorSubTable(ctx->Exec, (ctx, target, start, x, y, width));
     }
 }
 
 
 static void GLAPIENTRY
-save_CopyColorTable(GLenum target, GLenum internalformat,
+save_CopyColorTable(GLcontext *ctx, GLenum target, GLenum internalformat,
 		    GLint x, GLint y, GLsizei width)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
 
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
@@ -1350,16 +1323,15 @@ save_CopyColorTable(GLenum target, GLenum internalformat,
 	n[5].i = width;
     }
     if (ctx->ExecuteFlag) {
-	CALL_CopyColorTable(ctx->Exec, (target, internalformat, x, y, width));
+	CALL_CopyColorTable(ctx->Exec, (ctx, target, internalformat, x, y, width));
     }
 }
 
 
 static void GLAPIENTRY
-save_ConvolutionFilter1D(GLenum target, GLenum internalFormat, GLsizei width,
+save_ConvolutionFilter1D(GLcontext *ctx, GLenum target, GLenum internalFormat, GLsizei width,
 			 GLenum format, GLenum type, const GLvoid * filter)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLvoid *image = unpack_image(1, width, 1, 1, format, type, filter,
 				 &ctx->Unpack);
     Node *n;
@@ -1372,18 +1344,17 @@ save_ConvolutionFilter1D(GLenum target, GLenum internalFormat, GLsizei width,
     n[5].e = type;
     n[6].data = image;
     if (ctx->ExecuteFlag) {
-	CALL_ConvolutionFilter1D(ctx->Exec, (target, internalFormat, width,
+	CALL_ConvolutionFilter1D(ctx->Exec, (ctx, target, internalFormat, width,
 					     format, type, filter));
     }
 }
 
 
 static void GLAPIENTRY
-save_ConvolutionFilter2D(GLenum target, GLenum internalFormat,
+save_ConvolutionFilter2D(GLcontext *ctx, GLenum target, GLenum internalFormat,
 			 GLsizei width, GLsizei height, GLenum format,
 			 GLenum type, const GLvoid * filter)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLvoid *image = unpack_image(2, width, height, 1, format, type, filter,
 				 &ctx->Unpack);
     Node *n;
@@ -1397,17 +1368,15 @@ save_ConvolutionFilter2D(GLenum target, GLenum internalFormat,
     n[6].e = type;
     n[7].data = image;
     if (ctx->ExecuteFlag) {
-	CALL_ConvolutionFilter2D(ctx->Exec,
-				 (target, internalFormat, width, height, format,
+	CALL_ConvolutionFilter2D(ctx->Exec, (ctx, target, internalFormat, width, height, format,
 				  type, filter));
     }
 }
 
 
 static void GLAPIENTRY
-save_ConvolutionParameteri(GLenum target, GLenum pname, GLint param)
+save_ConvolutionParameteri(GLcontext *ctx, GLenum target, GLenum pname, GLint param)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_CONVOLUTION_PARAMETER_I, 3);
@@ -1417,15 +1386,14 @@ save_ConvolutionParameteri(GLenum target, GLenum pname, GLint param)
 	n[3].i = param;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ConvolutionParameteri(ctx->Exec, (target, pname, param));
+	CALL_ConvolutionParameteri(ctx->Exec, (ctx, target, pname, param));
     }
 }
 
 
 static void GLAPIENTRY
-save_ConvolutionParameteriv(GLenum target, GLenum pname, const GLint *params)
+save_ConvolutionParameteriv(GLcontext *ctx, GLenum target, GLenum pname, const GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_CONVOLUTION_PARAMETER_IV, 6);
@@ -1444,15 +1412,14 @@ save_ConvolutionParameteriv(GLenum target, GLenum pname, const GLint *params)
 	}
     }
     if (ctx->ExecuteFlag) {
-	CALL_ConvolutionParameteriv(ctx->Exec, (target, pname, params));
+	CALL_ConvolutionParameteriv(ctx->Exec, (ctx, target, pname, params));
     }
 }
 
 
 static void GLAPIENTRY
-save_ConvolutionParameterf(GLenum target, GLenum pname, GLfloat param)
+save_ConvolutionParameterf(GLcontext *ctx, GLenum target, GLenum pname, GLfloat param)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_CONVOLUTION_PARAMETER_F, 3);
@@ -1462,16 +1429,15 @@ save_ConvolutionParameterf(GLenum target, GLenum pname, GLfloat param)
 	n[3].f = param;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ConvolutionParameterf(ctx->Exec, (target, pname, param));
+	CALL_ConvolutionParameterf(ctx->Exec, (ctx, target, pname, param));
     }
 }
 
 
 static void GLAPIENTRY
-save_ConvolutionParameterfv(GLenum target, GLenum pname,
+save_ConvolutionParameterfv(GLcontext *ctx, GLenum target, GLenum pname,
 			    const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_CONVOLUTION_PARAMETER_FV, 6);
@@ -1490,15 +1456,14 @@ save_ConvolutionParameterfv(GLenum target, GLenum pname,
 	}
     }
     if (ctx->ExecuteFlag) {
-	CALL_ConvolutionParameterfv(ctx->Exec, (target, pname, params));
+	CALL_ConvolutionParameterfv(ctx->Exec, (ctx, target, pname, params));
     }
 }
 
 
 static void GLAPIENTRY
-save_CopyPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum type)
+save_CopyPixels(GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height, GLenum type)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_COPY_PIXELS, 5);
@@ -1510,17 +1475,16 @@ save_CopyPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum type)
 	n[5].e = type;
     }
     if (ctx->ExecuteFlag) {
-	CALL_CopyPixels(ctx->Exec, (x, y, width, height, type));
+	CALL_CopyPixels(ctx->Exec, (ctx, x, y, width, height, type));
     }
 }
 
 
 
 static void GLAPIENTRY
-save_CopyTexImage1D(GLenum target, GLint level, GLenum internalformat,
+save_CopyTexImage1D(GLcontext *ctx, GLenum target, GLint level, GLenum internalformat,
 		    GLint x, GLint y, GLsizei width, GLint border)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_COPY_TEX_IMAGE1D, 7);
@@ -1534,19 +1498,18 @@ save_CopyTexImage1D(GLenum target, GLint level, GLenum internalformat,
 	n[7].i = border;
     }
     if (ctx->ExecuteFlag) {
-	CALL_CopyTexImage1D(ctx->Exec, (target, level, internalformat,
+	CALL_CopyTexImage1D(ctx->Exec, (ctx, target, level, internalformat,
 					x, y, width, border));
     }
 }
 
 
 static void GLAPIENTRY
-save_CopyTexImage2D(GLenum target, GLint level,
+save_CopyTexImage2D(GLcontext *ctx, GLenum target, GLint level,
 		    GLenum internalformat,
 		    GLint x, GLint y, GLsizei width,
 		    GLsizei height, GLint border)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_COPY_TEX_IMAGE2D, 8);
@@ -1561,7 +1524,7 @@ save_CopyTexImage2D(GLenum target, GLint level,
 	n[8].i = border;
     }
     if (ctx->ExecuteFlag) {
-	CALL_CopyTexImage2D(ctx->Exec, (target, level, internalformat,
+	CALL_CopyTexImage2D(ctx->Exec, (ctx, target, level, internalformat,
 					x, y, width, height, border));
     }
 }
@@ -1569,10 +1532,9 @@ save_CopyTexImage2D(GLenum target, GLint level,
 
 
 static void GLAPIENTRY
-save_CopyTexSubImage1D(GLenum target, GLint level,
+save_CopyTexSubImage1D(GLcontext *ctx, GLenum target, GLint level,
 		       GLint xoffset, GLint x, GLint y, GLsizei width)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_COPY_TEX_SUB_IMAGE1D, 6);
@@ -1585,18 +1547,16 @@ save_CopyTexSubImage1D(GLenum target, GLint level,
 	n[6].i = width;
     }
     if (ctx->ExecuteFlag) {
-	CALL_CopyTexSubImage1D(ctx->Exec,
-			       (target, level, xoffset, x, y, width));
+	CALL_CopyTexSubImage1D(ctx->Exec, (ctx, target, level, xoffset, x, y, width));
     }
 }
 
 
 static void GLAPIENTRY
-save_CopyTexSubImage2D(GLenum target, GLint level,
+save_CopyTexSubImage2D(GLcontext *ctx, GLenum target, GLint level,
 		       GLint xoffset, GLint yoffset,
 		       GLint x, GLint y, GLsizei width, GLint height)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_COPY_TEX_SUB_IMAGE2D, 8);
@@ -1611,18 +1571,17 @@ save_CopyTexSubImage2D(GLenum target, GLint level,
 	n[8].i = height;
     }
     if (ctx->ExecuteFlag) {
-	CALL_CopyTexSubImage2D(ctx->Exec, (target, level, xoffset, yoffset,
+	CALL_CopyTexSubImage2D(ctx->Exec, (ctx, target, level, xoffset, yoffset,
 					   x, y, width, height));
     }
 }
 
 
 static void GLAPIENTRY
-save_CopyTexSubImage3D(GLenum target, GLint level,
+save_CopyTexSubImage3D(GLcontext *ctx, GLenum target, GLint level,
 		       GLint xoffset, GLint yoffset, GLint zoffset,
 		       GLint x, GLint y, GLsizei width, GLint height)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_COPY_TEX_SUB_IMAGE3D, 9);
@@ -1638,7 +1597,7 @@ save_CopyTexSubImage3D(GLenum target, GLint level,
 	n[9].i = height;
     }
     if (ctx->ExecuteFlag) {
-	CALL_CopyTexSubImage3D(ctx->Exec, (target, level,
+	CALL_CopyTexSubImage3D(ctx->Exec, (ctx, target, level,
 					   xoffset, yoffset, zoffset,
 					   x, y, width, height));
     }
@@ -1646,9 +1605,8 @@ save_CopyTexSubImage3D(GLenum target, GLint level,
 
 
 static void GLAPIENTRY
-save_CullFace(GLenum mode)
+save_CullFace(GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_CULL_FACE, 1);
@@ -1656,15 +1614,14 @@ save_CullFace(GLenum mode)
 	n[1].e = mode;
     }
     if (ctx->ExecuteFlag) {
-	CALL_CullFace(ctx->Exec, (mode));
+	CALL_CullFace(ctx->Exec, (ctx, mode));
     }
 }
 
 
 static void GLAPIENTRY
-save_DepthFunc(GLenum func)
+save_DepthFunc(GLcontext *ctx, GLenum func)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_DEPTH_FUNC, 1);
@@ -1672,15 +1629,14 @@ save_DepthFunc(GLenum func)
 	n[1].e = func;
     }
     if (ctx->ExecuteFlag) {
-	CALL_DepthFunc(ctx->Exec, (func));
+	CALL_DepthFunc(ctx->Exec, (ctx, func));
     }
 }
 
 
 static void GLAPIENTRY
-save_DepthMask(GLboolean mask)
+save_DepthMask(GLcontext *ctx, GLboolean mask)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_DEPTH_MASK, 1);
@@ -1688,15 +1644,14 @@ save_DepthMask(GLboolean mask)
 	n[1].b = mask;
     }
     if (ctx->ExecuteFlag) {
-	CALL_DepthMask(ctx->Exec, (mask));
+	CALL_DepthMask(ctx->Exec, (ctx, mask));
     }
 }
 
 
 static void GLAPIENTRY
-save_DepthRange(GLclampd nearval, GLclampd farval)
+save_DepthRange(GLcontext *ctx, GLclampd nearval, GLclampd farval)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_DEPTH_RANGE, 2);
@@ -1705,15 +1660,14 @@ save_DepthRange(GLclampd nearval, GLclampd farval)
 	n[2].f = (GLfloat) farval;
     }
     if (ctx->ExecuteFlag) {
-	CALL_DepthRange(ctx->Exec, (nearval, farval));
+	CALL_DepthRange(ctx->Exec, (ctx, nearval, farval));
     }
 }
 
 
 static void GLAPIENTRY
-save_Disable(GLenum cap)
+save_Disable(GLcontext *ctx, GLenum cap)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_DISABLE, 1);
@@ -1721,15 +1675,14 @@ save_Disable(GLenum cap)
 	n[1].e = cap;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Disable(ctx->Exec, (cap));
+	CALL_Disable(ctx->Exec, (ctx, cap));
     }
 }
 
 
 static void GLAPIENTRY
-save_DrawBuffer(GLenum mode)
+save_DrawBuffer(GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_DRAW_BUFFER, 1);
@@ -1737,16 +1690,15 @@ save_DrawBuffer(GLenum mode)
 	n[1].e = mode;
     }
     if (ctx->ExecuteFlag) {
-	CALL_DrawBuffer(ctx->Exec, (mode));
+	CALL_DrawBuffer(ctx->Exec, (ctx, mode));
     }
 }
 
 
 static void GLAPIENTRY
-save_DrawPixels(GLsizei width, GLsizei height,
+save_DrawPixels(GLcontext *ctx, GLsizei width, GLsizei height,
 		GLenum format, GLenum type, const GLvoid * pixels)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLvoid *image = unpack_image(2, width, height, 1, format, type,
 				 pixels, &ctx->Unpack);
     Node *n;
@@ -1758,16 +1710,15 @@ save_DrawPixels(GLsizei width, GLsizei height,
     n[4].e = type;
     n[5].data = image;
     if (ctx->ExecuteFlag) {
-	CALL_DrawPixels(ctx->Exec, (width, height, format, type, pixels));
+	CALL_DrawPixels(ctx->Exec, (ctx, width, height, format, type, pixels));
     }
 }
 
 
 
 static void GLAPIENTRY
-save_Enable(GLenum cap)
+save_Enable(GLcontext *ctx, GLenum cap)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ENABLE, 1);
@@ -1775,16 +1726,15 @@ save_Enable(GLenum cap)
 	n[1].e = cap;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Enable(ctx->Exec, (cap));
+	CALL_Enable(ctx->Exec, (ctx, cap));
     }
 }
 
 
 
 static void GLAPIENTRY
-_mesa_save_EvalMesh1(GLenum mode, GLint i1, GLint i2)
+_mesa_save_EvalMesh1(ctx, GLcontext *ctx, GLenum mode, GLint i1, GLint i2)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_EVALMESH1, 3);
@@ -1794,15 +1744,14 @@ _mesa_save_EvalMesh1(GLenum mode, GLint i1, GLint i2)
 	n[3].i = i2;
     }
     if (ctx->ExecuteFlag) {
-	CALL_EvalMesh1(ctx->Exec, (mode, i1, i2));
+	CALL_EvalMesh1(ctx->Exec, (ctx, mode, i1, i2));
     }
 }
 
 
 static void GLAPIENTRY
-_mesa_save_EvalMesh2(GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2)
+_mesa_save_EvalMesh2(ctx, GLcontext *ctx, GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_EVALMESH2, 5);
@@ -1814,7 +1763,7 @@ _mesa_save_EvalMesh2(GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2)
 	n[5].i = j2;
     }
     if (ctx->ExecuteFlag) {
-	CALL_EvalMesh2(ctx->Exec, (mode, i1, i2, j1, j2));
+	CALL_EvalMesh2(ctx->Exec, (ctx, mode, i1, i2, j1, j2));
     }
 }
 
@@ -1822,9 +1771,8 @@ _mesa_save_EvalMesh2(GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2)
 
 
 static void GLAPIENTRY
-save_Fogfv(GLenum pname, const GLfloat *params)
+save_Fogfv(GLcontext *ctx, GLenum pname, const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_FOG, 5);
@@ -1836,7 +1784,7 @@ save_Fogfv(GLenum pname, const GLfloat *params)
 	n[5].f = params[3];
     }
     if (ctx->ExecuteFlag) {
-	CALL_Fogfv(ctx->Exec, (pname, params));
+	CALL_Fogfv(ctx->Exec, (ctx, pname, params));
     }
 }
 
@@ -1886,9 +1834,8 @@ save_Fogi(GLenum pname, GLint param)
 
 
 static void GLAPIENTRY
-save_FrontFace(GLenum mode)
+save_FrontFace(GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_FRONT_FACE, 1);
@@ -1896,16 +1843,15 @@ save_FrontFace(GLenum mode)
 	n[1].e = mode;
     }
     if (ctx->ExecuteFlag) {
-	CALL_FrontFace(ctx->Exec, (mode));
+	CALL_FrontFace(ctx->Exec, (ctx, mode));
     }
 }
 
 
 static void GLAPIENTRY
-save_Frustum(GLdouble left, GLdouble right,
+save_Frustum(GLcontext *ctx, GLdouble left, GLdouble right,
 	     GLdouble bottom, GLdouble top, GLdouble nearval, GLdouble farval)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_FRUSTUM, 6);
@@ -1918,15 +1864,14 @@ save_Frustum(GLdouble left, GLdouble right,
 	n[6].f = (GLfloat) farval;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Frustum(ctx->Exec, (left, right, bottom, top, nearval, farval));
+	CALL_Frustum(ctx->Exec, (ctx, left, right, bottom, top, nearval, farval));
     }
 }
 
 
 static void GLAPIENTRY
-save_Hint(GLenum target, GLenum mode)
+save_Hint(GLcontext *ctx, GLenum target, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_HINT, 2);
@@ -1935,16 +1880,15 @@ save_Hint(GLenum target, GLenum mode)
 	n[2].e = mode;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Hint(ctx->Exec, (target, mode));
+	CALL_Hint(ctx->Exec, (ctx, target, mode));
     }
 }
 
 
 static void GLAPIENTRY
-save_Histogram(GLenum target, GLsizei width, GLenum internalFormat,
+save_Histogram(GLcontext *ctx, GLenum target, GLsizei width, GLenum internalFormat,
 	       GLboolean sink)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
 
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
@@ -1956,15 +1900,14 @@ save_Histogram(GLenum target, GLsizei width, GLenum internalFormat,
 	n[4].b = sink;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Histogram(ctx->Exec, (target, width, internalFormat, sink));
+	CALL_Histogram(ctx->Exec, (ctx, target, width, internalFormat, sink));
     }
 }
 
 
 static void GLAPIENTRY
-save_IndexMask(GLuint mask)
+save_IndexMask(GLcontext *ctx, GLuint mask)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_INDEX_MASK, 1);
@@ -1972,27 +1915,25 @@ save_IndexMask(GLuint mask)
 	n[1].ui = mask;
     }
     if (ctx->ExecuteFlag) {
-	CALL_IndexMask(ctx->Exec, (mask));
+	CALL_IndexMask(ctx->Exec, (ctx, mask));
     }
 }
 
 
 static void GLAPIENTRY
-save_InitNames(void)
+save_InitNames(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     (void) ALLOC_INSTRUCTION(ctx, OPCODE_INIT_NAMES, 0);
     if (ctx->ExecuteFlag) {
-	CALL_InitNames(ctx->Exec, ());
+	CALL_InitNames(ctx->Exec, (ctx));
     }
 }
 
 
 static void GLAPIENTRY
-save_Lightfv(GLenum light, GLenum pname, const GLfloat *params)
+save_Lightfv(GLcontext *ctx, GLenum light, GLenum pname, const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_LIGHT, 6);
@@ -2039,7 +1980,7 @@ save_Lightfv(GLenum light, GLenum pname, const GLfloat *params)
 	}
     }
     if (ctx->ExecuteFlag) {
-	CALL_Lightfv(ctx->Exec, (light, pname, params));
+	CALL_Lightfv(ctx->Exec, (ctx, light, pname, params));
     }
 }
 
@@ -2102,9 +2043,8 @@ save_Lighti(GLenum light, GLenum pname, GLint param)
 
 
 static void GLAPIENTRY
-save_LightModelfv(GLenum pname, const GLfloat *params)
+save_LightModelfv(GLcontext *ctx, GLenum pname, const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_LIGHT_MODEL, 5);
@@ -2116,7 +2056,7 @@ save_LightModelfv(GLenum pname, const GLfloat *params)
 	n[5].f = params[3];
     }
     if (ctx->ExecuteFlag) {
-	CALL_LightModelfv(ctx->Exec, (pname, params));
+	CALL_LightModelfv(ctx->Exec, (ctx, pname, params));
     }
 }
 
@@ -2164,9 +2104,8 @@ save_LightModeli(GLenum pname, GLint param)
 
 
 static void GLAPIENTRY
-save_LineStipple(GLint factor, GLushort pattern)
+save_LineStipple(GLcontext *ctx, GLint factor, GLushort pattern)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_LINE_STIPPLE, 2);
@@ -2175,15 +2114,14 @@ save_LineStipple(GLint factor, GLushort pattern)
 	n[2].us = pattern;
     }
     if (ctx->ExecuteFlag) {
-	CALL_LineStipple(ctx->Exec, (factor, pattern));
+	CALL_LineStipple(ctx->Exec, (ctx, factor, pattern));
     }
 }
 
 
 static void GLAPIENTRY
-save_LineWidth(GLfloat width)
+save_LineWidth(GLcontext *ctx, GLfloat width)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_LINE_WIDTH, 1);
@@ -2191,15 +2129,14 @@ save_LineWidth(GLfloat width)
 	n[1].f = width;
     }
     if (ctx->ExecuteFlag) {
-	CALL_LineWidth(ctx->Exec, (width));
+	CALL_LineWidth(ctx->Exec, (ctx, width));
     }
 }
 
 
 static void GLAPIENTRY
-save_ListBase(GLuint base)
+save_ListBase(GLcontext *ctx, GLuint base)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_LIST_BASE, 1);
@@ -2207,27 +2144,25 @@ save_ListBase(GLuint base)
 	n[1].ui = base;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ListBase(ctx->Exec, (base));
+	CALL_ListBase(ctx->Exec, (ctx, base));
     }
 }
 
 
 static void GLAPIENTRY
-save_LoadIdentity(void)
+save_LoadIdentity(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     (void) ALLOC_INSTRUCTION(ctx, OPCODE_LOAD_IDENTITY, 0);
     if (ctx->ExecuteFlag) {
-	CALL_LoadIdentity(ctx->Exec, ());
+	CALL_LoadIdentity(ctx->Exec, (ctx));
     }
 }
 
 
 static void GLAPIENTRY
-save_LoadMatrixf(const GLfloat * m)
+save_LoadMatrixf(GLcontext *ctx, const GLfloat * m)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_LOAD_MATRIX, 16);
@@ -2238,7 +2173,7 @@ save_LoadMatrixf(const GLfloat * m)
 	}
     }
     if (ctx->ExecuteFlag) {
-	CALL_LoadMatrixf(ctx->Exec, (m));
+	CALL_LoadMatrixf(ctx->Exec, (ctx, m));
     }
 }
 
@@ -2256,9 +2191,8 @@ save_LoadMatrixd(const GLdouble * m)
 
 
 static void GLAPIENTRY
-save_LoadName(GLuint name)
+save_LoadName(GLcontext *ctx, GLuint name)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_LOAD_NAME, 1);
@@ -2266,15 +2200,14 @@ save_LoadName(GLuint name)
 	n[1].ui = name;
     }
     if (ctx->ExecuteFlag) {
-	CALL_LoadName(ctx->Exec, (name));
+	CALL_LoadName(ctx->Exec, (ctx, name));
     }
 }
 
 
 static void GLAPIENTRY
-save_LogicOp(GLenum opcode)
+save_LogicOp(GLcontext *ctx, GLenum opcode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_LOGIC_OP, 1);
@@ -2282,16 +2215,15 @@ save_LogicOp(GLenum opcode)
 	n[1].e = opcode;
     }
     if (ctx->ExecuteFlag) {
-	CALL_LogicOp(ctx->Exec, (opcode));
+	CALL_LogicOp(ctx->Exec, (ctx, opcode));
     }
 }
 
 
 static void GLAPIENTRY
-save_Map1d(GLenum target, GLdouble u1, GLdouble u2, GLint stride,
+save_Map1d(GLcontext *ctx, GLenum target, GLdouble u1, GLdouble u2, GLint stride,
 	   GLint order, const GLdouble * points)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_MAP1, 6);
@@ -2305,15 +2237,14 @@ save_Map1d(GLenum target, GLdouble u1, GLdouble u2, GLint stride,
 	n[6].data = (void *) pnts;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Map1d(ctx->Exec, (target, u1, u2, stride, order, points));
+	CALL_Map1d(ctx->Exec, (ctx, target, u1, u2, stride, order, points));
     }
 }
 
 static void GLAPIENTRY
-save_Map1f(GLenum target, GLfloat u1, GLfloat u2, GLint stride,
+save_Map1f(GLcontext *ctx, GLenum target, GLfloat u1, GLfloat u2, GLint stride,
 	   GLint order, const GLfloat * points)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_MAP1, 6);
@@ -2327,18 +2258,17 @@ save_Map1f(GLenum target, GLfloat u1, GLfloat u2, GLint stride,
 	n[6].data = (void *) pnts;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Map1f(ctx->Exec, (target, u1, u2, stride, order, points));
+	CALL_Map1f(ctx->Exec, (ctx, target, u1, u2, stride, order, points));
     }
 }
 
 
 static void GLAPIENTRY
-save_Map2d(GLenum target,
+save_Map2d(GLcontext *ctx, GLenum target,
 	   GLdouble u1, GLdouble u2, GLint ustride, GLint uorder,
 	   GLdouble v1, GLdouble v2, GLint vstride, GLint vorder,
 	   const GLdouble * points)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_MAP2, 10);
@@ -2358,7 +2288,7 @@ save_Map2d(GLenum target,
 	n[10].data = (void *) pnts;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Map2d(ctx->Exec, (target,
+	CALL_Map2d(ctx->Exec, (ctx, target,
 			       u1, u2, ustride, uorder,
 			       v1, v2, vstride, vorder, points));
     }
@@ -2366,12 +2296,11 @@ save_Map2d(GLenum target,
 
 
 static void GLAPIENTRY
-save_Map2f(GLenum target,
+save_Map2f(GLcontext *ctx, GLenum target,
 	   GLfloat u1, GLfloat u2, GLint ustride, GLint uorder,
 	   GLfloat v1, GLfloat v2, GLint vstride, GLint vorder,
 	   const GLfloat * points)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_MAP2, 10);
@@ -2391,16 +2320,15 @@ save_Map2f(GLenum target,
 	n[10].data = (void *) pnts;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Map2f(ctx->Exec, (target, u1, u2, ustride, uorder,
+	CALL_Map2f(ctx->Exec, (ctx, target, u1, u2, ustride, uorder,
 			       v1, v2, vstride, vorder, points));
     }
 }
 
 
 static void GLAPIENTRY
-save_MapGrid1f(GLint un, GLfloat u1, GLfloat u2)
+save_MapGrid1f(GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_MAPGRID1, 3);
@@ -2410,7 +2338,7 @@ save_MapGrid1f(GLint un, GLfloat u1, GLfloat u2)
 	n[3].f = u2;
     }
     if (ctx->ExecuteFlag) {
-	CALL_MapGrid1f(ctx->Exec, (un, u1, u2));
+	CALL_MapGrid1f(ctx->Exec, (ctx, un, u1, u2));
     }
 }
 
@@ -2423,10 +2351,9 @@ save_MapGrid1d(GLint un, GLdouble u1, GLdouble u2)
 
 
 static void GLAPIENTRY
-save_MapGrid2f(GLint un, GLfloat u1, GLfloat u2,
+save_MapGrid2f(GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2,
 	       GLint vn, GLfloat v1, GLfloat v2)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_MAPGRID2, 6);
@@ -2439,7 +2366,7 @@ save_MapGrid2f(GLint un, GLfloat u1, GLfloat u2,
 	n[6].f = v2;
     }
     if (ctx->ExecuteFlag) {
-	CALL_MapGrid2f(ctx->Exec, (un, u1, u2, vn, v1, v2));
+	CALL_MapGrid2f(ctx->Exec, (ctx, un, u1, u2, vn, v1, v2));
     }
 }
 
@@ -2455,9 +2382,8 @@ save_MapGrid2d(GLint un, GLdouble u1, GLdouble u2,
 
 
 static void GLAPIENTRY
-save_MatrixMode(GLenum mode)
+save_MatrixMode(GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_MATRIX_MODE, 1);
@@ -2465,15 +2391,14 @@ save_MatrixMode(GLenum mode)
 	n[1].e = mode;
     }
     if (ctx->ExecuteFlag) {
-	CALL_MatrixMode(ctx->Exec, (mode));
+	CALL_MatrixMode(ctx->Exec, (ctx, mode));
     }
 }
 
 
 static void GLAPIENTRY
-save_Minmax(GLenum target, GLenum internalFormat, GLboolean sink)
+save_Minmax(GLcontext *ctx, GLenum target, GLenum internalFormat, GLboolean sink)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
 
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
@@ -2484,15 +2409,14 @@ save_Minmax(GLenum target, GLenum internalFormat, GLboolean sink)
 	n[3].b = sink;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Minmax(ctx->Exec, (target, internalFormat, sink));
+	CALL_Minmax(ctx->Exec, (ctx, target, internalFormat, sink));
     }
 }
 
 
 static void GLAPIENTRY
-save_MultMatrixf(const GLfloat * m)
+save_MultMatrixf(GLcontext *ctx, const GLfloat * m)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_MULT_MATRIX, 16);
@@ -2503,7 +2427,7 @@ save_MultMatrixf(const GLfloat * m)
 	}
     }
     if (ctx->ExecuteFlag) {
-	CALL_MultMatrixf(ctx->Exec, (m));
+	CALL_MultMatrixf(ctx->Exec, (ctx, m));
     }
 }
 
@@ -2521,9 +2445,8 @@ save_MultMatrixd(const GLdouble * m)
 
 
 static void GLAPIENTRY
-save_NewList(GLuint list, GLenum mode)
+save_NewList(GLcontext *ctx, GLuint list, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     /* It's an error to call this function while building a display list */
     _mesa_error(ctx, GL_INVALID_OPERATION, "glNewList");
     (void) list;
@@ -2533,10 +2456,9 @@ save_NewList(GLuint list, GLenum mode)
 
 
 static void GLAPIENTRY
-save_Ortho(GLdouble left, GLdouble right,
+save_Ortho(GLcontext *ctx, GLdouble left, GLdouble right,
 	   GLdouble bottom, GLdouble top, GLdouble nearval, GLdouble farval)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ORTHO, 6);
@@ -2549,15 +2471,14 @@ save_Ortho(GLdouble left, GLdouble right,
 	n[6].f = (GLfloat) farval;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Ortho(ctx->Exec, (left, right, bottom, top, nearval, farval));
+	CALL_Ortho(ctx->Exec, (ctx, left, right, bottom, top, nearval, farval));
     }
 }
 
 
 static void GLAPIENTRY
-save_PixelMapfv(GLenum map, GLint mapsize, const GLfloat *values)
+save_PixelMapfv(GLcontext *ctx, GLenum map, GLint mapsize, const GLfloat *values)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_PIXEL_MAP, 3);
@@ -2568,7 +2489,7 @@ save_PixelMapfv(GLenum map, GLint mapsize, const GLfloat *values)
 	memcpy(n[3].data, (void *) values, mapsize * sizeof(GLfloat));
     }
     if (ctx->ExecuteFlag) {
-	CALL_PixelMapfv(ctx->Exec, (map, mapsize, values));
+	CALL_PixelMapfv(ctx->Exec, (ctx, map, mapsize, values));
     }
 }
 
@@ -2610,9 +2531,8 @@ save_PixelMapusv(GLenum map, GLint mapsize, const GLushort *values)
 
 
 static void GLAPIENTRY
-save_PixelTransferf(GLenum pname, GLfloat param)
+save_PixelTransferf(GLcontext *ctx, GLenum pname, GLfloat param)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_PIXEL_TRANSFER, 2);
@@ -2621,7 +2541,7 @@ save_PixelTransferf(GLenum pname, GLfloat param)
 	n[2].f = param;
     }
     if (ctx->ExecuteFlag) {
-	CALL_PixelTransferf(ctx->Exec, (pname, param));
+	CALL_PixelTransferf(ctx->Exec, (ctx, pname, param));
     }
 }
 
@@ -2634,9 +2554,8 @@ save_PixelTransferi(GLenum pname, GLint param)
 
 
 static void GLAPIENTRY
-save_PixelZoom(GLfloat xfactor, GLfloat yfactor)
+save_PixelZoom(GLcontext *ctx, GLfloat xfactor, GLfloat yfactor)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_PIXEL_ZOOM, 2);
@@ -2645,15 +2564,14 @@ save_PixelZoom(GLfloat xfactor, GLfloat yfactor)
 	n[2].f = yfactor;
     }
     if (ctx->ExecuteFlag) {
-	CALL_PixelZoom(ctx->Exec, (xfactor, yfactor));
+	CALL_PixelZoom(ctx->Exec, (ctx, xfactor, yfactor));
     }
 }
 
 
 static void GLAPIENTRY
-save_PointParameterfvEXT(GLenum pname, const GLfloat *params)
+save_PointParameterfvEXT(GLcontext *ctx, GLenum pname, const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_POINT_PARAMETERS, 4);
@@ -2664,7 +2582,7 @@ save_PointParameterfvEXT(GLenum pname, const GLfloat *params)
 	n[4].f = params[2];
     }
     if (ctx->ExecuteFlag) {
-	CALL_PointParameterfvEXT(ctx->Exec, (pname, params));
+	CALL_PointParameterfvEXT(ctx->Exec, (ctx, pname, params));
     }
 }
 
@@ -2695,9 +2613,8 @@ save_PointParameterivNV(GLenum pname, const GLint * param)
 
 
 static void GLAPIENTRY
-save_PointSize(GLfloat size)
+save_PointSize(GLcontext *ctx, GLfloat size)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_POINT_SIZE, 1);
@@ -2705,15 +2622,14 @@ save_PointSize(GLfloat size)
 	n[1].f = size;
     }
     if (ctx->ExecuteFlag) {
-	CALL_PointSize(ctx->Exec, (size));
+	CALL_PointSize(ctx->Exec, (ctx, size));
     }
 }
 
 
 static void GLAPIENTRY
-save_PolygonMode(GLenum face, GLenum mode)
+save_PolygonMode(GLcontext *ctx, GLenum face, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_POLYGON_MODE, 2);
@@ -2722,15 +2638,14 @@ save_PolygonMode(GLenum face, GLenum mode)
 	n[2].e = mode;
     }
     if (ctx->ExecuteFlag) {
-	CALL_PolygonMode(ctx->Exec, (face, mode));
+	CALL_PolygonMode(ctx->Exec, (ctx, face, mode));
     }
 }
 
 
 static void GLAPIENTRY
-save_PolygonStipple(const GLubyte * pattern)
+save_PolygonStipple(GLcontext *ctx, const GLubyte * pattern)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLvoid *image = unpack_image(2, 32, 32, 1, GL_COLOR_INDEX, GL_BITMAP,
 				 pattern, &ctx->Unpack);
     Node *n;
@@ -2738,15 +2653,14 @@ save_PolygonStipple(const GLubyte * pattern)
     n = ALLOC_INSTRUCTION(ctx, OPCODE_POLYGON_STIPPLE, 1);
     n[1].data = image;
     if (ctx->ExecuteFlag) {
-	CALL_PolygonStipple(ctx->Exec, ((GLubyte *) pattern));
+	CALL_PolygonStipple(ctx->Exec, (ctx, (GLubyte *) pattern));
     }
 }
 
 
 static void GLAPIENTRY
-save_PolygonOffset(GLfloat factor, GLfloat units)
+save_PolygonOffset(GLcontext *ctx, GLfloat factor, GLfloat units)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_POLYGON_OFFSET, 2);
@@ -2755,61 +2669,56 @@ save_PolygonOffset(GLfloat factor, GLfloat units)
 	n[2].f = units;
     }
     if (ctx->ExecuteFlag) {
-	CALL_PolygonOffset(ctx->Exec, (factor, units));
+	CALL_PolygonOffset(ctx->Exec, (ctx, factor, units));
     }
 }
 
 
 static void GLAPIENTRY
-save_PolygonOffsetEXT(GLfloat factor, GLfloat bias)
+save_PolygonOffsetEXT(GLcontext *ctx, GLfloat factor, GLfloat bias)
 {
-    GET_CURRENT_CONTEXT(ctx);
     /* XXX mult by DepthMaxF here??? */
     save_PolygonOffset(factor, ctx->DrawBuffer->_DepthMaxF * bias);
 }
 
 
 static void GLAPIENTRY
-save_PopAttrib(void)
+save_PopAttrib(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     (void) ALLOC_INSTRUCTION(ctx, OPCODE_POP_ATTRIB, 0);
     if (ctx->ExecuteFlag) {
-	CALL_PopAttrib(ctx->Exec, ());
+	CALL_PopAttrib(ctx->Exec, (ctx));
     }
 }
 
 
 static void GLAPIENTRY
-save_PopMatrix(void)
+save_PopMatrix(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     (void) ALLOC_INSTRUCTION(ctx, OPCODE_POP_MATRIX, 0);
     if (ctx->ExecuteFlag) {
-	CALL_PopMatrix(ctx->Exec, ());
+	CALL_PopMatrix(ctx->Exec, (ctx));
     }
 }
 
 
 static void GLAPIENTRY
-save_PopName(void)
+save_PopName(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     (void) ALLOC_INSTRUCTION(ctx, OPCODE_POP_NAME, 0);
     if (ctx->ExecuteFlag) {
-	CALL_PopName(ctx->Exec, ());
+	CALL_PopName(ctx->Exec, (ctx));
     }
 }
 
 
 static void GLAPIENTRY
-save_PrioritizeTextures(GLsizei num, const GLuint * textures,
+save_PrioritizeTextures(GLcontext *ctx, GLsizei num, const GLuint * textures,
 			const GLclampf * priorities)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLint i;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -2822,15 +2731,14 @@ save_PrioritizeTextures(GLsizei num, const GLuint * textures,
 	}
     }
     if (ctx->ExecuteFlag) {
-	CALL_PrioritizeTextures(ctx->Exec, (num, textures, priorities));
+	CALL_PrioritizeTextures(ctx->Exec, (ctx, num, textures, priorities));
     }
 }
 
 
 static void GLAPIENTRY
-save_PushAttrib(GLbitfield mask)
+save_PushAttrib(GLcontext *ctx, GLbitfield mask)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_PUSH_ATTRIB, 1);
@@ -2838,27 +2746,25 @@ save_PushAttrib(GLbitfield mask)
 	n[1].bf = mask;
     }
     if (ctx->ExecuteFlag) {
-	CALL_PushAttrib(ctx->Exec, (mask));
+	CALL_PushAttrib(ctx->Exec, (ctx, mask));
     }
 }
 
 
 static void GLAPIENTRY
-save_PushMatrix(void)
+save_PushMatrix(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     (void) ALLOC_INSTRUCTION(ctx, OPCODE_PUSH_MATRIX, 0);
     if (ctx->ExecuteFlag) {
-	CALL_PushMatrix(ctx->Exec, ());
+	CALL_PushMatrix(ctx->Exec, (ctx));
     }
 }
 
 
 static void GLAPIENTRY
-save_PushName(GLuint name)
+save_PushName(GLcontext *ctx, GLuint name)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_PUSH_NAME, 1);
@@ -2866,15 +2772,14 @@ save_PushName(GLuint name)
 	n[1].ui = name;
     }
     if (ctx->ExecuteFlag) {
-	CALL_PushName(ctx->Exec, (name));
+	CALL_PushName(ctx->Exec, (ctx, name));
     }
 }
 
 
 static void GLAPIENTRY
-save_RasterPos4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+save_RasterPos4f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_RASTER_POS, 4);
@@ -2885,7 +2790,7 @@ save_RasterPos4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 	n[4].f = w;
     }
     if (ctx->ExecuteFlag) {
-	CALL_RasterPos4f(ctx->Exec, (x, y, z, w));
+	CALL_RasterPos4f(ctx->Exec, (ctx, x, y, z, w));
     }
 }
 
@@ -3031,9 +2936,8 @@ save_RasterPos4sv(const GLshort * v)
 
 
 static void GLAPIENTRY
-save_PassThrough(GLfloat token)
+save_PassThrough(GLcontext *ctx, GLfloat token)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_PASSTHROUGH, 1);
@@ -3041,15 +2945,14 @@ save_PassThrough(GLfloat token)
 	n[1].f = token;
     }
     if (ctx->ExecuteFlag) {
-	CALL_PassThrough(ctx->Exec, (token));
+	CALL_PassThrough(ctx->Exec, (ctx, token));
     }
 }
 
 
 static void GLAPIENTRY
-save_ReadBuffer(GLenum mode)
+save_ReadBuffer(GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_READ_BUFFER, 1);
@@ -3057,15 +2960,14 @@ save_ReadBuffer(GLenum mode)
 	n[1].e = mode;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ReadBuffer(ctx->Exec, (mode));
+	CALL_ReadBuffer(ctx->Exec, (ctx, mode));
     }
 }
 
 
 static void GLAPIENTRY
-save_ResetHistogram(GLenum target)
+save_ResetHistogram(GLcontext *ctx, GLenum target)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_RESET_HISTOGRAM, 1);
@@ -3073,15 +2975,14 @@ save_ResetHistogram(GLenum target)
 	n[1].e = target;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ResetHistogram(ctx->Exec, (target));
+	CALL_ResetHistogram(ctx->Exec, (ctx, target));
     }
 }
 
 
 static void GLAPIENTRY
-save_ResetMinmax(GLenum target)
+save_ResetMinmax(GLcontext *ctx, GLenum target)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_RESET_MIN_MAX, 1);
@@ -3089,15 +2990,14 @@ save_ResetMinmax(GLenum target)
 	n[1].e = target;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ResetMinmax(ctx->Exec, (target));
+	CALL_ResetMinmax(ctx->Exec, (ctx, target));
     }
 }
 
 
 static void GLAPIENTRY
-save_Rotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
+save_Rotatef(GLcontext *ctx, GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ROTATE, 4);
@@ -3108,7 +3008,7 @@ save_Rotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 	n[4].f = z;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Rotatef(ctx->Exec, (angle, x, y, z));
+	CALL_Rotatef(ctx->Exec, (ctx, angle, x, y, z));
     }
 }
 
@@ -3121,9 +3021,8 @@ save_Rotated(GLdouble angle, GLdouble x, GLdouble y, GLdouble z)
 
 
 static void GLAPIENTRY
-save_Scalef(GLfloat x, GLfloat y, GLfloat z)
+save_Scalef(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_SCALE, 3);
@@ -3133,7 +3032,7 @@ save_Scalef(GLfloat x, GLfloat y, GLfloat z)
 	n[3].f = z;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Scalef(ctx->Exec, (x, y, z));
+	CALL_Scalef(ctx->Exec, (ctx, x, y, z));
     }
 }
 
@@ -3146,9 +3045,8 @@ save_Scaled(GLdouble x, GLdouble y, GLdouble z)
 
 
 static void GLAPIENTRY
-save_Scissor(GLint x, GLint y, GLsizei width, GLsizei height)
+save_Scissor(GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_SCISSOR, 4);
@@ -3159,15 +3057,14 @@ save_Scissor(GLint x, GLint y, GLsizei width, GLsizei height)
 	n[4].i = height;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Scissor(ctx->Exec, (x, y, width, height));
+	CALL_Scissor(ctx->Exec, (ctx, x, y, width, height));
     }
 }
 
 
 static void GLAPIENTRY
-save_ShadeModel(GLenum mode)
+save_ShadeModel(GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_SHADE_MODEL, 1);
@@ -3175,15 +3072,14 @@ save_ShadeModel(GLenum mode)
 	n[1].e = mode;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ShadeModel(ctx->Exec, (mode));
+	CALL_ShadeModel(ctx->Exec, (ctx, mode));
     }
 }
 
 
 static void GLAPIENTRY
-save_StencilFunc(GLenum func, GLint ref, GLuint mask)
+save_StencilFunc(GLcontext *ctx, GLenum func, GLint ref, GLuint mask)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_STENCIL_FUNC, 3);
@@ -3193,15 +3089,14 @@ save_StencilFunc(GLenum func, GLint ref, GLuint mask)
 	n[3].ui = mask;
     }
     if (ctx->ExecuteFlag) {
-	CALL_StencilFunc(ctx->Exec, (func, ref, mask));
+	CALL_StencilFunc(ctx->Exec, (ctx, func, ref, mask));
     }
 }
 
 
 static void GLAPIENTRY
-save_StencilMask(GLuint mask)
+save_StencilMask(GLcontext *ctx, GLuint mask)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_STENCIL_MASK, 1);
@@ -3209,15 +3104,14 @@ save_StencilMask(GLuint mask)
 	n[1].ui = mask;
     }
     if (ctx->ExecuteFlag) {
-	CALL_StencilMask(ctx->Exec, (mask));
+	CALL_StencilMask(ctx->Exec, (ctx, mask));
     }
 }
 
 
 static void GLAPIENTRY
-save_StencilOp(GLenum fail, GLenum zfail, GLenum zpass)
+save_StencilOp(GLcontext *ctx, GLenum fail, GLenum zfail, GLenum zpass)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_STENCIL_OP, 3);
@@ -3227,15 +3121,14 @@ save_StencilOp(GLenum fail, GLenum zfail, GLenum zpass)
 	n[3].e = zpass;
     }
     if (ctx->ExecuteFlag) {
-	CALL_StencilOp(ctx->Exec, (fail, zfail, zpass));
+	CALL_StencilOp(ctx->Exec, (ctx, fail, zfail, zpass));
     }
 }
 
 
 static void GLAPIENTRY
-save_StencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask)
+save_StencilFuncSeparate(GLcontext *ctx, GLenum face, GLenum func, GLint ref, GLuint mask)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_STENCIL_FUNC_SEPARATE, 4);
@@ -3246,16 +3139,15 @@ save_StencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask)
 	n[4].ui = mask;
     }
     if (ctx->ExecuteFlag) {
-	CALL_StencilFuncSeparate(ctx->Exec, (face, func, ref, mask));
+	CALL_StencilFuncSeparate(ctx->Exec, (ctx, face, func, ref, mask));
     }
 }
 
 
 static void GLAPIENTRY
-save_StencilFuncSeparateATI(GLenum frontfunc, GLenum backfunc, GLint ref,
+save_StencilFuncSeparateATI(GLcontext *ctx, GLenum frontfunc, GLenum backfunc, GLint ref,
 			    GLuint mask)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     /* GL_FRONT */
@@ -3275,16 +3167,15 @@ save_StencilFuncSeparateATI(GLenum frontfunc, GLenum backfunc, GLint ref,
 	n[4].ui = mask;
     }
     if (ctx->ExecuteFlag) {
-	CALL_StencilFuncSeparate(ctx->Exec, (GL_FRONT, frontfunc, ref, mask));
-	CALL_StencilFuncSeparate(ctx->Exec, (GL_BACK, backfunc, ref, mask));
+	CALL_StencilFuncSeparate(ctx->Exec, (ctx, GL_FRONT, frontfunc, ref, mask));
+	CALL_StencilFuncSeparate(ctx->Exec, (ctx, GL_BACK, backfunc, ref, mask));
     }
 }
 
 
 static void GLAPIENTRY
-save_StencilMaskSeparate(GLenum face, GLuint mask)
+save_StencilMaskSeparate(GLcontext *ctx, GLenum face, GLuint mask)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_STENCIL_MASK_SEPARATE, 2);
@@ -3293,15 +3184,14 @@ save_StencilMaskSeparate(GLenum face, GLuint mask)
 	n[2].ui = mask;
     }
     if (ctx->ExecuteFlag) {
-	CALL_StencilMaskSeparate(ctx->Exec, (face, mask));
+	CALL_StencilMaskSeparate(ctx->Exec, (ctx, face, mask));
     }
 }
 
 
 static void GLAPIENTRY
-save_StencilOpSeparate(GLenum face, GLenum fail, GLenum zfail, GLenum zpass)
+save_StencilOpSeparate(GLcontext *ctx, GLenum face, GLenum fail, GLenum zfail, GLenum zpass)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_STENCIL_OP_SEPARATE, 4);
@@ -3312,15 +3202,14 @@ save_StencilOpSeparate(GLenum face, GLenum fail, GLenum zfail, GLenum zpass)
 	n[4].e = zpass;
     }
     if (ctx->ExecuteFlag) {
-	CALL_StencilOpSeparate(ctx->Exec, (face, fail, zfail, zpass));
+	CALL_StencilOpSeparate(ctx->Exec, (ctx, face, fail, zfail, zpass));
     }
 }
 
 
 static void GLAPIENTRY
-save_TexEnvfv(GLenum target, GLenum pname, const GLfloat *params)
+save_TexEnvfv(GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_TEXENV, 6);
@@ -3338,7 +3227,7 @@ save_TexEnvfv(GLenum target, GLenum pname, const GLfloat *params)
 	}
     }
     if (ctx->ExecuteFlag) {
-	CALL_TexEnvfv(ctx->Exec, (target, pname, params));
+	CALL_TexEnvfv(ctx->Exec, (ctx, target, pname, params));
     }
 }
 
@@ -3380,9 +3269,8 @@ save_TexEnviv(GLenum target, GLenum pname, const GLint * param)
 
 
 static void GLAPIENTRY
-save_TexGenfv(GLenum coord, GLenum pname, const GLfloat *params)
+save_TexGenfv(GLcontext *ctx, GLenum coord, GLenum pname, const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_TEXGEN, 6);
@@ -3395,7 +3283,7 @@ save_TexGenfv(GLenum coord, GLenum pname, const GLfloat *params)
 	n[6].f = params[3];
     }
     if (ctx->ExecuteFlag) {
-	CALL_TexGenfv(ctx->Exec, (coord, pname, params));
+	CALL_TexGenfv(ctx->Exec, (ctx, coord, pname, params));
     }
 }
 
@@ -3452,9 +3340,8 @@ save_TexGeni(GLenum coord, GLenum pname, GLint param)
 
 
 static void GLAPIENTRY
-save_TexParameterfv(GLenum target, GLenum pname, const GLfloat *params)
+save_TexParameterfv(GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_TEXPARAMETER, 6);
@@ -3467,7 +3354,7 @@ save_TexParameterfv(GLenum target, GLenum pname, const GLfloat *params)
 	n[6].f = params[3];
     }
     if (ctx->ExecuteFlag) {
-	CALL_TexParameterfv(ctx->Exec, (target, pname, params));
+	CALL_TexParameterfv(ctx->Exec, (ctx, target, pname, params));
     }
 }
 
@@ -3502,15 +3389,14 @@ save_TexParameteriv(GLenum target, GLenum pname, const GLint *params)
 
 
 static void GLAPIENTRY
-save_TexImage1D(GLenum target,
+save_TexImage1D(GLcontext *ctx, GLenum target,
 		GLint level, GLint components,
 		GLsizei width, GLint border,
 		GLenum format, GLenum type, const GLvoid * pixels)
 {
-    GET_CURRENT_CONTEXT(ctx);
     if (target == GL_PROXY_TEXTURE_1D) {
 	/* don't compile, execute immediately */
-	CALL_TexImage1D(ctx->Exec, (target, level, components, width,
+	CALL_TexImage1D(ctx->Exec, (ctx, target, level, components, width,
 				    border, format, type, pixels));
     } else {
 	GLvoid *image = unpack_image(1, width, 1, 1, format, type,
@@ -3527,7 +3413,7 @@ save_TexImage1D(GLenum target,
 	n[7].e = type;
 	n[8].data = image;
 	if (ctx->ExecuteFlag) {
-	    CALL_TexImage1D(ctx->Exec, (target, level, components, width,
+	    CALL_TexImage1D(ctx->Exec, (ctx, target, level, components, width,
 					border, format, type, pixels));
 	}
     }
@@ -3535,15 +3421,14 @@ save_TexImage1D(GLenum target,
 
 
 static void GLAPIENTRY
-save_TexImage2D(GLenum target,
+save_TexImage2D(GLcontext *ctx, GLenum target,
 		GLint level, GLint components,
 		GLsizei width, GLsizei height, GLint border,
 		GLenum format, GLenum type, const GLvoid * pixels)
 {
-    GET_CURRENT_CONTEXT(ctx);
     if (target == GL_PROXY_TEXTURE_2D) {
 	/* don't compile, execute immediately */
-	CALL_TexImage2D(ctx->Exec, (target, level, components, width,
+	CALL_TexImage2D(ctx->Exec, (ctx, target, level, components, width,
 				    height, border, format, type, pixels));
     } else {
 	GLvoid *image = unpack_image(2, width, height, 1, format, type,
@@ -3561,7 +3446,7 @@ save_TexImage2D(GLenum target,
 	n[8].e = type;
 	n[9].data = image;
 	if (ctx->ExecuteFlag) {
-	    CALL_TexImage2D(ctx->Exec, (target, level, components, width,
+	    CALL_TexImage2D(ctx->Exec, (ctx, target, level, components, width,
 					height, border, format, type, pixels));
 	}
     }
@@ -3569,16 +3454,15 @@ save_TexImage2D(GLenum target,
 
 
 static void GLAPIENTRY
-save_TexImage3D(GLenum target,
+save_TexImage3D(GLcontext *ctx, GLenum target,
 		GLint level, GLint internalFormat,
 		GLsizei width, GLsizei height, GLsizei depth,
 		GLint border,
 		GLenum format, GLenum type, const GLvoid * pixels)
 {
-    GET_CURRENT_CONTEXT(ctx);
     if (target == GL_PROXY_TEXTURE_3D) {
 	/* don't compile, execute immediately */
-	CALL_TexImage3D(ctx->Exec, (target, level, internalFormat, width,
+	CALL_TexImage3D(ctx->Exec, (ctx, target, level, internalFormat, width,
 				    height, depth, border, format, type,
 				    pixels));
     } else {
@@ -3598,7 +3482,7 @@ save_TexImage3D(GLenum target,
 	n[9].e = type;
 	n[10].data = image;
 	if (ctx->ExecuteFlag) {
-	    CALL_TexImage3D(ctx->Exec, (target, level, internalFormat, width,
+	    CALL_TexImage3D(ctx->Exec, (ctx, target, level, internalFormat, width,
 			height, depth, border, format, type,
 					pixels));
 	}
@@ -3607,11 +3491,10 @@ save_TexImage3D(GLenum target,
 
 
 static void GLAPIENTRY
-save_TexSubImage1D(GLenum target, GLint level, GLint xoffset,
+save_TexSubImage1D(GLcontext *ctx, GLenum target, GLint level, GLint xoffset,
 		   GLsizei width, GLenum format, GLenum type,
 		   const GLvoid * pixels)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     GLvoid *image = unpack_image(1, width, 1, 1, format, type,
 				 pixels, &ctx->Unpack);
@@ -3625,19 +3508,18 @@ save_TexSubImage1D(GLenum target, GLint level, GLint xoffset,
     n[6].e = type;
     n[7].data = image;
     if (ctx->ExecuteFlag) {
-	CALL_TexSubImage1D(ctx->Exec, (target, level, xoffset, width,
+	CALL_TexSubImage1D(ctx->Exec, (ctx, target, level, xoffset, width,
 				       format, type, pixels));
     }
 }
 
 
 static void GLAPIENTRY
-save_TexSubImage2D(GLenum target, GLint level,
+save_TexSubImage2D(GLcontext *ctx, GLenum target, GLint level,
 		   GLint xoffset, GLint yoffset,
 		   GLsizei width, GLsizei height,
 		   GLenum format, GLenum type, const GLvoid * pixels)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     GLvoid *image = unpack_image(2, width, height, 1, format, type,
 				 pixels, &ctx->Unpack);
@@ -3653,19 +3535,18 @@ save_TexSubImage2D(GLenum target, GLint level,
     n[8].e = type;
     n[9].data = image;
     if (ctx->ExecuteFlag) {
-	CALL_TexSubImage2D(ctx->Exec, (target, level, xoffset, yoffset,
+	CALL_TexSubImage2D(ctx->Exec, (ctx, target, level, xoffset, yoffset,
 				       width, height, format, type, pixels));
     }
 }
 
 
 static void GLAPIENTRY
-save_TexSubImage3D(GLenum target, GLint level,
+save_TexSubImage3D(GLcontext *ctx, GLenum target, GLint level,
 		   GLint xoffset, GLint yoffset, GLint zoffset,
 		   GLsizei width, GLsizei height, GLsizei depth,
 		   GLenum format, GLenum type, const GLvoid * pixels)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     GLvoid *image = unpack_image(3, width, height, depth, format, type,
 				 pixels, &ctx->Unpack);
@@ -3683,7 +3564,7 @@ save_TexSubImage3D(GLenum target, GLint level,
     n[10].e = type;
     n[11].data = image;
     if (ctx->ExecuteFlag) {
-	CALL_TexSubImage3D(ctx->Exec, (target, level,
+	CALL_TexSubImage3D(ctx->Exec, (ctx, target, level,
 				       xoffset, yoffset, zoffset,
 				       width, height, depth, format, type,
 				       pixels));
@@ -3692,9 +3573,8 @@ save_TexSubImage3D(GLenum target, GLint level,
 
 
 static void GLAPIENTRY
-save_Translatef(GLfloat x, GLfloat y, GLfloat z)
+save_Translatef(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_TRANSLATE, 3);
@@ -3704,7 +3584,7 @@ save_Translatef(GLfloat x, GLfloat y, GLfloat z)
 	n[3].f = z;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Translatef(ctx->Exec, (x, y, z));
+	CALL_Translatef(ctx->Exec, (ctx, x, y, z));
     }
 }
 
@@ -3718,9 +3598,8 @@ save_Translated(GLdouble x, GLdouble y, GLdouble z)
 
 
 static void GLAPIENTRY
-save_Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
+save_Viewport(GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_VIEWPORT, 4);
@@ -3731,15 +3610,14 @@ save_Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
 	n[4].i = (GLint) height;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Viewport(ctx->Exec, (x, y, width, height));
+	CALL_Viewport(ctx->Exec, (ctx, x, y, width, height));
     }
 }
 
 
 static void GLAPIENTRY
-save_WindowPos4fMESA(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+save_WindowPos4fMESA(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_WINDOW_POS, 4);
@@ -3750,7 +3628,7 @@ save_WindowPos4fMESA(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 	n[4].f = w;
     }
     if (ctx->ExecuteFlag) {
-	CALL_WindowPos4fMESA(ctx->Exec, (x, y, z, w));
+	CALL_WindowPos4fMESA(ctx->Exec, (ctx, x, y, z, w));
     }
 }
 
@@ -3898,9 +3776,8 @@ save_WindowPos4svMESA(const GLshort * v)
 
 /* GL_ARB_multitexture */
 static void GLAPIENTRY
-save_ActiveTextureARB(GLenum target)
+save_ActiveTextureARB(GLcontext *ctx, GLenum target)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ACTIVE_TEXTURE, 1);
@@ -3908,7 +3785,7 @@ save_ActiveTextureARB(GLenum target)
 	n[1].e = target;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ActiveTextureARB(ctx->Exec, (target));
+	CALL_ActiveTextureARB(ctx->Exec, (ctx, target));
     }
 }
 
@@ -3953,15 +3830,14 @@ save_MultTransposeMatrixfARB(const GLfloat m[16])
 
 /* GL_ARB_texture_compression */
 static void GLAPIENTRY
-save_CompressedTexImage1DARB(GLenum target, GLint level,
+save_CompressedTexImage1DARB(GLcontext *ctx, GLenum target, GLint level,
 			     GLenum internalFormat, GLsizei width,
 			     GLint border, GLsizei imageSize,
 			     const GLvoid * data)
 {
-    GET_CURRENT_CONTEXT(ctx);
     if (target == GL_PROXY_TEXTURE_1D) {
 	/* don't compile, execute immediately */
-	CALL_CompressedTexImage1DARB(ctx->Exec, (target, level, internalFormat,
+	CALL_CompressedTexImage1DARB(ctx->Exec, (ctx, target, level, internalFormat,
 				     width, border, imageSize,
 				     data));
     } else {
@@ -3984,8 +3860,7 @@ save_CompressedTexImage1DARB(GLenum target, GLint level,
 	n[6].i = imageSize;
 	n[7].data = image;
 	if (ctx->ExecuteFlag) {
-	    CALL_CompressedTexImage1DARB(ctx->Exec,
-					 (target, level, internalFormat, width,
+	    CALL_CompressedTexImage1DARB(ctx->Exec, (ctx, target, level, internalFormat, width,
 					  border, imageSize, data));
 	}
     }
@@ -3993,15 +3868,14 @@ save_CompressedTexImage1DARB(GLenum target, GLint level,
 
 
 static void GLAPIENTRY
-save_CompressedTexImage2DARB(GLenum target, GLint level,
+save_CompressedTexImage2DARB(GLcontext *ctx, GLenum target, GLint level,
 			     GLenum internalFormat, GLsizei width,
 			     GLsizei height, GLint border, GLsizei imageSize,
 			     const GLvoid * data)
 {
-    GET_CURRENT_CONTEXT(ctx);
     if (target == GL_PROXY_TEXTURE_2D) {
 	/* don't compile, execute immediately */
-	CALL_CompressedTexImage2DARB(ctx->Exec, (target, level, internalFormat,
+	CALL_CompressedTexImage2DARB(ctx->Exec, (ctx, target, level, internalFormat,
 				     width, height, border,
 				     imageSize, data));
     } else {
@@ -4025,8 +3899,7 @@ save_CompressedTexImage2DARB(GLenum target, GLint level,
 	n[7].i = imageSize;
 	n[8].data = image;
 	if (ctx->ExecuteFlag) {
-	    CALL_CompressedTexImage2DARB(ctx->Exec,
-					 (target, level, internalFormat, width,
+	    CALL_CompressedTexImage2DARB(ctx->Exec, (ctx, target, level, internalFormat, width,
 					  height, border, imageSize, data));
 	}
     }
@@ -4034,15 +3907,14 @@ save_CompressedTexImage2DARB(GLenum target, GLint level,
 
 
 static void GLAPIENTRY
-save_CompressedTexImage3DARB(GLenum target, GLint level,
+save_CompressedTexImage3DARB(GLcontext *ctx, GLenum target, GLint level,
 			     GLenum internalFormat, GLsizei width,
 			     GLsizei height, GLsizei depth, GLint border,
 			     GLsizei imageSize, const GLvoid * data)
 {
-    GET_CURRENT_CONTEXT(ctx);
     if (target == GL_PROXY_TEXTURE_3D) {
 	/* don't compile, execute immediately */
-	CALL_CompressedTexImage3DARB(ctx->Exec, (target, level, internalFormat,
+	CALL_CompressedTexImage3DARB(ctx->Exec, (ctx, target, level, internalFormat,
 				     width, height, depth, border,
 				     imageSize, data));
     } else {
@@ -4067,8 +3939,7 @@ save_CompressedTexImage3DARB(GLenum target, GLint level,
 	n[8].i = imageSize;
 	n[9].data = image;
 	if (ctx->ExecuteFlag) {
-	    CALL_CompressedTexImage3DARB(ctx->Exec,
-					 (target, level, internalFormat, width,
+	    CALL_CompressedTexImage3DARB(ctx->Exec, (ctx, target, level, internalFormat, width,
 					  height, depth, border, imageSize,
 					  data));
 	}
@@ -4077,14 +3948,13 @@ save_CompressedTexImage3DARB(GLenum target, GLint level,
 
 
 static void GLAPIENTRY
-save_CompressedTexSubImage1DARB(GLenum target, GLint level, GLint xoffset,
+save_CompressedTexSubImage1DARB(GLcontext *ctx, GLenum target, GLint level, GLint xoffset,
 				GLsizei width, GLenum format,
 				GLsizei imageSize, const GLvoid * data)
 {
     Node *n;
     GLvoid *image;
 
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
 
     /* make copy of image */
@@ -4103,7 +3973,7 @@ save_CompressedTexSubImage1DARB(GLenum target, GLint level, GLint xoffset,
     n[6].i = imageSize;
     n[7].data = image;
     if (ctx->ExecuteFlag) {
-	CALL_CompressedTexSubImage1DARB(ctx->Exec, (target, level, xoffset,
+	CALL_CompressedTexSubImage1DARB(ctx->Exec, (ctx, target, level, xoffset,
 					width, format, imageSize,
 					data));
     }
@@ -4111,7 +3981,7 @@ save_CompressedTexSubImage1DARB(GLenum target, GLint level, GLint xoffset,
 
 
 static void GLAPIENTRY
-save_CompressedTexSubImage2DARB(GLenum target, GLint level, GLint xoffset,
+save_CompressedTexSubImage2DARB(GLcontext *ctx, GLenum target, GLint level, GLint xoffset,
 				GLint yoffset, GLsizei width, GLsizei height,
 				GLenum format, GLsizei imageSize,
 				const GLvoid * data)
@@ -4119,7 +3989,6 @@ save_CompressedTexSubImage2DARB(GLenum target, GLint level, GLint xoffset,
     Node *n;
     GLvoid *image;
 
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
 
     /* make copy of image */
@@ -4140,15 +4009,14 @@ save_CompressedTexSubImage2DARB(GLenum target, GLint level, GLint xoffset,
     n[8].i = imageSize;
     n[9].data = image;
     if (ctx->ExecuteFlag) {
-	CALL_CompressedTexSubImage2DARB(ctx->Exec,
-					(target, level, xoffset, yoffset, width,
+	CALL_CompressedTexSubImage2DARB(ctx->Exec, (ctx, target, level, xoffset, yoffset, width,
 					 height, format, imageSize, data));
     }
 }
 
 
 static void GLAPIENTRY
-save_CompressedTexSubImage3DARB(GLenum target, GLint level, GLint xoffset,
+save_CompressedTexSubImage3DARB(GLcontext *ctx, GLenum target, GLint level, GLint xoffset,
 				GLint yoffset, GLint zoffset, GLsizei width,
 				GLsizei height, GLsizei depth, GLenum format,
 				GLsizei imageSize, const GLvoid * data)
@@ -4156,7 +4024,6 @@ save_CompressedTexSubImage3DARB(GLenum target, GLint level, GLint xoffset,
     Node *n;
     GLvoid *image;
 
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
 
     /* make copy of image */
@@ -4179,8 +4046,7 @@ save_CompressedTexSubImage3DARB(GLenum target, GLint level, GLint xoffset,
     n[10].i = imageSize;
     n[11].data = image;
     if (ctx->ExecuteFlag) {
-	CALL_CompressedTexSubImage3DARB(ctx->Exec,
-					(target, level, xoffset, yoffset,
+	CALL_CompressedTexSubImage3DARB(ctx->Exec, (ctx, target, level, xoffset, yoffset,
 					 zoffset, width, height, depth, format,
 					 imageSize, data));
     }
@@ -4189,9 +4055,8 @@ save_CompressedTexSubImage3DARB(GLenum target, GLint level, GLint xoffset,
 
 /* GL_ARB_multisample */
 static void GLAPIENTRY
-save_SampleCoverageARB(GLclampf value, GLboolean invert)
+save_SampleCoverageARB(GLcontext *ctx, GLclampf value, GLboolean invert)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_SAMPLE_COVERAGE, 2);
@@ -4200,7 +4065,7 @@ save_SampleCoverageARB(GLclampf value, GLboolean invert)
 	n[2].b = invert;
     }
     if (ctx->ExecuteFlag) {
-	CALL_SampleCoverageARB(ctx->Exec, (value, invert));
+	CALL_SampleCoverageARB(ctx->Exec, (ctx, value, invert));
     }
 }
 
@@ -4210,9 +4075,8 @@ save_SampleCoverageARB(GLclampf value, GLboolean invert)
  */
 #if FEATURE_NV_vertex_program || FEATURE_ARB_vertex_program || FEATURE_ARB_fragment_program
 static void GLAPIENTRY
-save_BindProgramNV(GLenum target, GLuint id)
+save_BindProgramNV(GLcontext *ctx, GLenum target, GLuint id)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_BIND_PROGRAM_NV, 2);
@@ -4221,16 +4085,15 @@ save_BindProgramNV(GLenum target, GLuint id)
 	n[2].ui = id;
     }
     if (ctx->ExecuteFlag) {
-	CALL_BindProgramNV(ctx->Exec, (target, id));
+	CALL_BindProgramNV(ctx->Exec, (ctx, target, id));
     }
 }
 #endif /* FEATURE_NV_vertex_program || FEATURE_ARB_vertex_program || FEATURE_ARB_fragment_program */
 
 #if FEATURE_NV_vertex_program
 static void GLAPIENTRY
-save_ExecuteProgramNV(GLenum target, GLuint id, const GLfloat *params)
+save_ExecuteProgramNV(GLcontext *ctx, GLenum target, GLuint id, const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_EXECUTE_PROGRAM_NV, 6);
@@ -4243,16 +4106,15 @@ save_ExecuteProgramNV(GLenum target, GLuint id, const GLfloat *params)
 	n[6].f = params[3];
     }
     if (ctx->ExecuteFlag) {
-	CALL_ExecuteProgramNV(ctx->Exec, (target, id, params));
+	CALL_ExecuteProgramNV(ctx->Exec, (ctx, target, id, params));
     }
 }
 
 
 static void GLAPIENTRY
-save_ProgramParameter4fNV(GLenum target, GLuint index,
+save_ProgramParameter4fNV(GLcontext *ctx, GLenum target, GLuint index,
 			  GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_PROGRAM_PARAMETER4F_NV, 6);
@@ -4265,7 +4127,7 @@ save_ProgramParameter4fNV(GLenum target, GLuint index,
 	n[6].f = w;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ProgramParameter4fNV(ctx->Exec, (target, index, x, y, z, w));
+	CALL_ProgramParameter4fNV(ctx->Exec, (ctx, target, index, x, y, z, w));
     }
 }
 
@@ -4321,10 +4183,9 @@ save_ProgramParameters4fvNV(GLenum target, GLuint index,
 
 
 static void GLAPIENTRY
-save_LoadProgramNV(GLenum target, GLuint id, GLsizei len,
+save_LoadProgramNV(GLcontext *ctx, GLenum target, GLuint id, GLsizei len,
 		   const GLubyte * program)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     GLubyte *programCopy;
 
@@ -4346,15 +4207,14 @@ save_LoadProgramNV(GLenum target, GLuint id, GLsizei len,
 	free(programCopy);
     }
     if (ctx->ExecuteFlag) {
-	CALL_LoadProgramNV(ctx->Exec, (target, id, len, program));
+	CALL_LoadProgramNV(ctx->Exec, (ctx, target, id, len, program));
     }
 }
 
 
 static void GLAPIENTRY
-save_RequestResidentProgramsNV(GLsizei num, const GLuint * ids)
+save_RequestResidentProgramsNV(GLcontext *ctx, GLsizei num, const GLuint * ids)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     GLuint *idCopy = (GLuint *) malloc(num * sizeof(GLuint));
     if (!idCopy) {
@@ -4371,16 +4231,15 @@ save_RequestResidentProgramsNV(GLsizei num, const GLuint * ids)
 	free(idCopy);
     }
     if (ctx->ExecuteFlag) {
-	CALL_RequestResidentProgramsNV(ctx->Exec, (num, ids));
+	CALL_RequestResidentProgramsNV(ctx->Exec, (ctx, num, ids));
     }
 }
 
 
 static void GLAPIENTRY
-save_TrackMatrixNV(GLenum target, GLuint address,
+save_TrackMatrixNV(GLcontext *ctx, GLenum target, GLuint address,
 		   GLenum matrix, GLenum transform)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_TRACK_MATRIX_NV, 4);
@@ -4391,7 +4250,7 @@ save_TrackMatrixNV(GLenum target, GLuint address,
 	n[4].e = transform;
     }
     if (ctx->ExecuteFlag) {
-	CALL_TrackMatrixNV(ctx->Exec, (target, address, matrix, transform));
+	CALL_TrackMatrixNV(ctx->Exec, (ctx, target, address, matrix, transform));
     }
 }
 #endif /* FEATURE_NV_vertex_program */
@@ -4402,10 +4261,9 @@ save_TrackMatrixNV(GLenum target, GLuint address,
  */
 #if FEATURE_NV_fragment_program
 static void GLAPIENTRY
-save_ProgramLocalParameter4fARB(GLenum target, GLuint index,
+save_ProgramLocalParameter4fARB(GLcontext *ctx, GLenum target, GLuint index,
 				GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_PROGRAM_LOCAL_PARAMETER_ARB, 6);
@@ -4418,16 +4276,15 @@ save_ProgramLocalParameter4fARB(GLenum target, GLuint index,
 	n[6].f = w;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ProgramLocalParameter4fARB(ctx->Exec, (target, index, x, y, z, w));
+	CALL_ProgramLocalParameter4fARB(ctx->Exec, (ctx, target, index, x, y, z, w));
     }
 }
 
 
 static void GLAPIENTRY
-save_ProgramLocalParameter4fvARB(GLenum target, GLuint index,
+save_ProgramLocalParameter4fvARB(GLcontext *ctx, GLenum target, GLuint index,
 				 const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_PROGRAM_LOCAL_PARAMETER_ARB, 6);
@@ -4440,16 +4297,15 @@ save_ProgramLocalParameter4fvARB(GLenum target, GLuint index,
 	n[6].f = params[3];
     }
     if (ctx->ExecuteFlag) {
-	CALL_ProgramLocalParameter4fvARB(ctx->Exec, (target, index, params));
+	CALL_ProgramLocalParameter4fvARB(ctx->Exec, (ctx, target, index, params));
     }
 }
 
 
 static void GLAPIENTRY
-save_ProgramLocalParameters4fvEXT(GLenum target, GLuint index, GLsizei count,
+save_ProgramLocalParameters4fvEXT(GLcontext *ctx, GLenum target, GLuint index, GLsizei count,
 				  const GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -4472,17 +4328,16 @@ save_ProgramLocalParameters4fvEXT(GLenum target, GLuint index, GLsizei count,
     }
 
     if (ctx->ExecuteFlag) {
-	CALL_ProgramLocalParameters4fvEXT(ctx->Exec, (target, index, count, params));
+	CALL_ProgramLocalParameters4fvEXT(ctx->Exec, (ctx, target, index, count, params));
     }
 }
 
 
 static void GLAPIENTRY
-save_ProgramLocalParameter4dARB(GLenum target, GLuint index,
+save_ProgramLocalParameter4dARB(GLcontext *ctx, GLenum target, GLuint index,
 				GLdouble x, GLdouble y,
 				GLdouble z, GLdouble w)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_PROGRAM_LOCAL_PARAMETER_ARB, 6);
@@ -4495,16 +4350,15 @@ save_ProgramLocalParameter4dARB(GLenum target, GLuint index,
 	n[6].f = (GLfloat) w;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ProgramLocalParameter4dARB(ctx->Exec, (target, index, x, y, z, w));
+	CALL_ProgramLocalParameter4dARB(ctx->Exec, (ctx, target, index, x, y, z, w));
     }
 }
 
 
 static void GLAPIENTRY
-save_ProgramLocalParameter4dvARB(GLenum target, GLuint index,
+save_ProgramLocalParameter4dvARB(GLcontext *ctx, GLenum target, GLuint index,
 				 const GLdouble *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_PROGRAM_LOCAL_PARAMETER_ARB, 6);
@@ -4517,15 +4371,14 @@ save_ProgramLocalParameter4dvARB(GLenum target, GLuint index,
 	n[6].f = (GLfloat) params[3];
     }
     if (ctx->ExecuteFlag) {
-	CALL_ProgramLocalParameter4dvARB(ctx->Exec, (target, index, params));
+	CALL_ProgramLocalParameter4dvARB(ctx->Exec, (ctx, target, index, params));
     }
 }
 
 static void GLAPIENTRY
-save_ProgramNamedParameter4fNV(GLuint id, GLsizei len, const GLubyte * name,
+save_ProgramNamedParameter4fNV(GLcontext *ctx, GLuint id, GLsizei len, const GLubyte * name,
 			       GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     GLubyte *nameCopy = (GLubyte *) malloc(len);
     if (!nameCopy) {
@@ -4548,7 +4401,7 @@ save_ProgramNamedParameter4fNV(GLuint id, GLsizei len, const GLubyte * name,
 	free(nameCopy);
     }
     if (ctx->ExecuteFlag) {
-	CALL_ProgramNamedParameter4fNV(ctx->Exec, (id, len, name, x, y, z, w));
+	CALL_ProgramNamedParameter4fNV(ctx->Exec, (ctx, id, len, name, x, y, z, w));
     }
 }
 
@@ -4585,9 +4438,8 @@ save_ProgramNamedParameter4dvNV(GLuint id, GLsizei len, const GLubyte * name,
 
 /* GL_EXT_stencil_two_side */
 static void GLAPIENTRY
-save_ActiveStencilFaceEXT(GLenum face)
+save_ActiveStencilFaceEXT(GLcontext *ctx, GLenum face)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ACTIVE_STENCIL_FACE_EXT, 1);
@@ -4595,16 +4447,15 @@ save_ActiveStencilFaceEXT(GLenum face)
 	n[1].e = face;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ActiveStencilFaceEXT(ctx->Exec, (face));
+	CALL_ActiveStencilFaceEXT(ctx->Exec, (ctx, face));
     }
 }
 
 
 /* GL_EXT_depth_bounds_test */
 static void GLAPIENTRY
-save_DepthBoundsEXT(GLclampd zmin, GLclampd zmax)
+save_DepthBoundsEXT(GLcontext *ctx, GLclampd zmin, GLclampd zmax)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_DEPTH_BOUNDS_EXT, 2);
@@ -4613,7 +4464,7 @@ save_DepthBoundsEXT(GLclampd zmin, GLclampd zmax)
 	n[2].f = (GLfloat) zmax;
     }
     if (ctx->ExecuteFlag) {
-	CALL_DepthBoundsEXT(ctx->Exec, (zmin, zmax));
+	CALL_DepthBoundsEXT(ctx->Exec, (ctx, zmin, zmax));
     }
 }
 
@@ -4622,10 +4473,9 @@ save_DepthBoundsEXT(GLclampd zmin, GLclampd zmax)
 #if FEATURE_ARB_vertex_program || FEATURE_ARB_fragment_program
 
 static void GLAPIENTRY
-save_ProgramStringARB(GLenum target, GLenum format, GLsizei len,
+save_ProgramStringARB(GLcontext *ctx, GLenum target, GLenum format, GLsizei len,
 		      const GLvoid * string)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     GLubyte *programCopy;
 
@@ -4647,16 +4497,15 @@ save_ProgramStringARB(GLenum target, GLenum format, GLsizei len,
 	free(programCopy);
     }
     if (ctx->ExecuteFlag) {
-	CALL_ProgramStringARB(ctx->Exec, (target, format, len, string));
+	CALL_ProgramStringARB(ctx->Exec, (ctx, target, format, len, string));
     }
 }
 
 
 static void GLAPIENTRY
-save_ProgramEnvParameter4fARB(GLenum target, GLuint index,
+save_ProgramEnvParameter4fARB(GLcontext *ctx, GLenum target, GLuint index,
 			      GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_PROGRAM_ENV_PARAMETER_ARB, 6);
@@ -4669,7 +4518,7 @@ save_ProgramEnvParameter4fARB(GLenum target, GLuint index,
 	n[6].f = w;
     }
     if (ctx->ExecuteFlag) {
-	CALL_ProgramEnvParameter4fARB(ctx->Exec, (target, index, x, y, z, w));
+	CALL_ProgramEnvParameter4fARB(ctx->Exec, (ctx, target, index, x, y, z, w));
     }
 }
 
@@ -4684,10 +4533,9 @@ save_ProgramEnvParameter4fvARB(GLenum target, GLuint index,
 
 
 static void GLAPIENTRY
-save_ProgramEnvParameters4fvEXT(GLenum target, GLuint index, GLsizei count,
+save_ProgramEnvParameters4fvEXT(GLcontext *ctx, GLenum target, GLuint index, GLsizei count,
 				const GLfloat * params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -4710,7 +4558,7 @@ save_ProgramEnvParameters4fvEXT(GLenum target, GLuint index, GLsizei count,
     }
 
     if (ctx->ExecuteFlag) {
-	CALL_ProgramEnvParameters4fvEXT(ctx->Exec, (target, index, count, params));
+	CALL_ProgramEnvParameters4fvEXT(ctx->Exec, (ctx, target, index, count, params));
     }
 }
 
@@ -4741,9 +4589,8 @@ save_ProgramEnvParameter4dvARB(GLenum target, GLuint index,
 #if FEATURE_ARB_occlusion_query
 
 static void GLAPIENTRY
-save_BeginQueryARB(GLenum target, GLuint id)
+save_BeginQueryARB(GLcontext *ctx, GLenum target, GLuint id)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_BEGIN_QUERY_ARB, 2);
@@ -4752,15 +4599,14 @@ save_BeginQueryARB(GLenum target, GLuint id)
 	n[2].ui = id;
     }
     if (ctx->ExecuteFlag) {
-	CALL_BeginQueryARB(ctx->Exec, (target, id));
+	CALL_BeginQueryARB(ctx->Exec, (ctx, target, id));
     }
 }
 
 
 static void GLAPIENTRY
-save_EndQueryARB(GLenum target)
+save_EndQueryARB(GLcontext *ctx, GLenum target)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_END_QUERY_ARB, 1);
@@ -4768,7 +4614,7 @@ save_EndQueryARB(GLenum target)
 	n[1].e = target;
     }
     if (ctx->ExecuteFlag) {
-	CALL_EndQueryARB(ctx->Exec, (target));
+	CALL_EndQueryARB(ctx->Exec, (ctx, target));
     }
 }
 
@@ -4776,9 +4622,8 @@ save_EndQueryARB(GLenum target)
 
 
 static void GLAPIENTRY
-save_DrawBuffersARB(GLsizei count, const GLenum * buffers)
+save_DrawBuffersARB(GLcontext *ctx, GLsizei count, const GLenum * buffers)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_DRAW_BUFFERS_ARB, 1 + MAX_DRAW_BUFFERS);
@@ -4792,15 +4637,14 @@ save_DrawBuffersARB(GLsizei count, const GLenum * buffers)
 	}
     }
     if (ctx->ExecuteFlag) {
-	CALL_DrawBuffersARB(ctx->Exec, (count, buffers));
+	CALL_DrawBuffersARB(ctx->Exec, (ctx, count, buffers));
     }
 }
 
 #if FEATURE_ATI_fragment_shader
 static void GLAPIENTRY
-save_BindFragmentShaderATI(GLuint id)
+save_BindFragmentShaderATI(GLcontext *ctx, GLuint id)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
 
     n = ALLOC_INSTRUCTION(ctx, OPCODE_BIND_FRAGMENT_SHADER_ATI, 1);
@@ -4808,14 +4652,13 @@ save_BindFragmentShaderATI(GLuint id)
 	n[1].ui = id;
     }
     if (ctx->ExecuteFlag) {
-	CALL_BindFragmentShaderATI(ctx->Exec, (id));
+	CALL_BindFragmentShaderATI(ctx->Exec, (ctx, id));
     }
 }
 
 static void GLAPIENTRY
-save_SetFragmentShaderConstantATI(GLuint dst, const GLfloat *value)
+save_SetFragmentShaderConstantATI(GLcontext *ctx, GLuint dst, const GLfloat *value)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
 
     n = ALLOC_INSTRUCTION(ctx, OPCODE_SET_FRAGMENT_SHADER_CONSTANTS_ATI, 5);
@@ -4827,15 +4670,14 @@ save_SetFragmentShaderConstantATI(GLuint dst, const GLfloat *value)
 	n[5].f = value[3];
     }
     if (ctx->ExecuteFlag) {
-	CALL_SetFragmentShaderConstantATI(ctx->Exec, (dst, value));
+	CALL_SetFragmentShaderConstantATI(ctx->Exec, (ctx, dst, value));
     }
 }
 #endif
 
 static void
-save_Attr1fNV(GLenum attr, GLfloat x)
+save_Attr1fNV(GLcontext *ctx, GLenum attr, GLfloat x)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ATTR_1F_NV, 2);
@@ -4849,14 +4691,13 @@ save_Attr1fNV(GLenum attr, GLfloat x)
     ASSIGN_4V(ctx->ListState.CurrentAttrib[attr], x, 0, 0, 1);
 
     if (ctx->ExecuteFlag) {
-	CALL_VertexAttrib1fNV(ctx->Exec, (attr, x));
+	CALL_VertexAttrib1fNV(ctx->Exec, (ctx, attr, x));
     }
 }
 
 static void
-save_Attr2fNV(GLenum attr, GLfloat x, GLfloat y)
+save_Attr2fNV(GLcontext *ctx, GLenum attr, GLfloat x, GLfloat y)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ATTR_2F_NV, 3);
@@ -4871,14 +4712,13 @@ save_Attr2fNV(GLenum attr, GLfloat x, GLfloat y)
     ASSIGN_4V(ctx->ListState.CurrentAttrib[attr], x, y, 0, 1);
 
     if (ctx->ExecuteFlag) {
-	CALL_VertexAttrib2fNV(ctx->Exec, (attr, x, y));
+	CALL_VertexAttrib2fNV(ctx->Exec, (ctx, attr, x, y));
     }
 }
 
 static void
-save_Attr3fNV(GLenum attr, GLfloat x, GLfloat y, GLfloat z)
+save_Attr3fNV(GLcontext *ctx, GLenum attr, GLfloat x, GLfloat y, GLfloat z)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ATTR_3F_NV, 4);
@@ -4894,14 +4734,13 @@ save_Attr3fNV(GLenum attr, GLfloat x, GLfloat y, GLfloat z)
     ASSIGN_4V(ctx->ListState.CurrentAttrib[attr], x, y, z, 1);
 
     if (ctx->ExecuteFlag) {
-	CALL_VertexAttrib3fNV(ctx->Exec, (attr, x, y, z));
+	CALL_VertexAttrib3fNV(ctx->Exec, (ctx, attr, x, y, z));
     }
 }
 
 static void
-save_Attr4fNV(GLenum attr, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+save_Attr4fNV(GLcontext *ctx, GLenum attr, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ATTR_4F_NV, 5);
@@ -4918,15 +4757,14 @@ save_Attr4fNV(GLenum attr, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
     ASSIGN_4V(ctx->ListState.CurrentAttrib[attr], x, y, z, w);
 
     if (ctx->ExecuteFlag) {
-	CALL_VertexAttrib4fNV(ctx->Exec, (attr, x, y, z, w));
+	CALL_VertexAttrib4fNV(ctx->Exec, (ctx, attr, x, y, z, w));
     }
 }
 
 
 static void
-save_Attr1fARB(GLenum attr, GLfloat x)
+save_Attr1fARB(GLcontext *ctx, GLenum attr, GLfloat x)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ATTR_1F_ARB, 2);
@@ -4940,14 +4778,13 @@ save_Attr1fARB(GLenum attr, GLfloat x)
     ASSIGN_4V(ctx->ListState.CurrentAttrib[attr], x, 0, 0, 1);
 
     if (ctx->ExecuteFlag) {
-	CALL_VertexAttrib1fARB(ctx->Exec, (attr, x));
+	CALL_VertexAttrib1fARB(ctx->Exec, (ctx, attr, x));
     }
 }
 
 static void
-save_Attr2fARB(GLenum attr, GLfloat x, GLfloat y)
+save_Attr2fARB(GLcontext *ctx, GLenum attr, GLfloat x, GLfloat y)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ATTR_2F_ARB, 3);
@@ -4962,14 +4799,13 @@ save_Attr2fARB(GLenum attr, GLfloat x, GLfloat y)
     ASSIGN_4V(ctx->ListState.CurrentAttrib[attr], x, y, 0, 1);
 
     if (ctx->ExecuteFlag) {
-	CALL_VertexAttrib2fARB(ctx->Exec, (attr, x, y));
+	CALL_VertexAttrib2fARB(ctx->Exec, (ctx, attr, x, y));
     }
 }
 
 static void
-save_Attr3fARB(GLenum attr, GLfloat x, GLfloat y, GLfloat z)
+save_Attr3fARB(GLcontext *ctx, GLenum attr, GLfloat x, GLfloat y, GLfloat z)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ATTR_3F_ARB, 4);
@@ -4985,14 +4821,13 @@ save_Attr3fARB(GLenum attr, GLfloat x, GLfloat y, GLfloat z)
     ASSIGN_4V(ctx->ListState.CurrentAttrib[attr], x, y, z, 1);
 
     if (ctx->ExecuteFlag) {
-	CALL_VertexAttrib3fARB(ctx->Exec, (attr, x, y, z));
+	CALL_VertexAttrib3fARB(ctx->Exec, (ctx, attr, x, y, z));
     }
 }
 
 static void
-save_Attr4fARB(GLenum attr, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+save_Attr4fARB(GLcontext *ctx, GLenum attr, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_ATTR_4F_ARB, 5);
@@ -5009,15 +4844,14 @@ save_Attr4fARB(GLenum attr, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
     ASSIGN_4V(ctx->ListState.CurrentAttrib[attr], x, y, z, w);
 
     if (ctx->ExecuteFlag) {
-	CALL_VertexAttrib4fARB(ctx->Exec, (attr, x, y, z, w));
+	CALL_VertexAttrib4fARB(ctx->Exec, (ctx, attr, x, y, z, w));
     }
 }
 
 
 static void GLAPIENTRY
-save_EvalCoord1f(GLfloat x)
+save_EvalCoord1f(GLcontext *ctx, GLfloat x)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_EVAL_C1, 1);
@@ -5025,7 +4859,7 @@ save_EvalCoord1f(GLfloat x)
 	n[1].f = x;
     }
     if (ctx->ExecuteFlag) {
-	CALL_EvalCoord1f(ctx->Exec, (x));
+	CALL_EvalCoord1f(ctx->Exec, (ctx, x));
     }
 }
 
@@ -5036,9 +4870,8 @@ save_EvalCoord1fv(const GLfloat * v)
 }
 
 static void GLAPIENTRY
-save_EvalCoord2f(GLfloat x, GLfloat y)
+save_EvalCoord2f(GLcontext *ctx, GLfloat x, GLfloat y)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_EVAL_C2, 2);
@@ -5047,7 +4880,7 @@ save_EvalCoord2f(GLfloat x, GLfloat y)
 	n[2].f = y;
     }
     if (ctx->ExecuteFlag) {
-	CALL_EvalCoord2f(ctx->Exec, (x, y));
+	CALL_EvalCoord2f(ctx->Exec, (ctx, x, y));
     }
 }
 
@@ -5059,9 +4892,8 @@ save_EvalCoord2fv(const GLfloat * v)
 
 
 static void GLAPIENTRY
-save_EvalPoint1(GLint x)
+save_EvalPoint1(GLcontext *ctx, GLint x)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_EVAL_P1, 1);
@@ -5069,14 +4901,13 @@ save_EvalPoint1(GLint x)
 	n[1].i = x;
     }
     if (ctx->ExecuteFlag) {
-	CALL_EvalPoint1(ctx->Exec, (x));
+	CALL_EvalPoint1(ctx->Exec, (ctx, x));
     }
 }
 
 static void GLAPIENTRY
-save_EvalPoint2(GLint x, GLint y)
+save_EvalPoint2(GLcontext *ctx, GLint x, GLint y)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_EVAL_P2, 2);
@@ -5085,7 +4916,7 @@ save_EvalPoint2(GLint x, GLint y)
 	n[2].i = y;
     }
     if (ctx->ExecuteFlag) {
-	CALL_EvalPoint2(ctx->Exec, (x, y));
+	CALL_EvalPoint2(ctx->Exec, (ctx, x, y));
     }
 }
 
@@ -5108,9 +4939,8 @@ save_EdgeFlag(GLboolean x)
 }
 
 static void GLAPIENTRY
-save_Materialfv(GLenum face, GLenum pname, const GLfloat * param)
+save_Materialfv(GLcontext *ctx, GLenum face, GLenum pname, const GLfloat * param)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     int args, i;
 
@@ -5163,14 +4993,13 @@ save_Materialfv(GLenum face, GLenum pname, const GLfloat * param)
     }
 
     if (ctx->ExecuteFlag) {
-	CALL_Materialfv(ctx->Exec, (face, pname, param));
+	CALL_Materialfv(ctx->Exec, (ctx, face, pname, param));
     }
 }
 
 static void GLAPIENTRY
-save_Begin(GLenum mode)
+save_Begin(GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     GLboolean error = GL_FALSE;
 
@@ -5205,26 +5034,24 @@ save_Begin(GLenum mode)
     }
 
     if (ctx->ExecuteFlag) {
-	CALL_Begin(ctx->Exec, (mode));
+	CALL_Begin(ctx->Exec, (ctx, mode));
     }
 }
 
 static void GLAPIENTRY
-save_End(void)
+save_End(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     SAVE_FLUSH_VERTICES(ctx);
     (void) ALLOC_INSTRUCTION(ctx, OPCODE_END, 0);
     ctx->Driver.CurrentSavePrimitive = PRIM_OUTSIDE_BEGIN_END;
     if (ctx->ExecuteFlag) {
-	CALL_End(ctx->Exec, ());
+	CALL_End(ctx->Exec, (ctx));
     }
 }
 
 static void GLAPIENTRY
-save_Rectf(GLfloat a, GLfloat b, GLfloat c, GLfloat d)
+save_Rectf(GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c, GLfloat d)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_RECTF, 4);
@@ -5235,7 +5062,7 @@ save_Rectf(GLfloat a, GLfloat b, GLfloat c, GLfloat d)
 	n[4].f = d;
     }
     if (ctx->ExecuteFlag) {
-	CALL_Rectf(ctx->Exec, (a, b, c, d));
+	CALL_Rectf(ctx->Exec, (ctx, a, b, c, d));
     }
 }
 
@@ -5450,9 +5277,8 @@ save_MultiTexCoord4fv(GLenum target, const GLfloat * v)
  * index is found.
  */
 static void
-index_error(void)
+index_error(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     _mesa_error(ctx, GL_INVALID_VALUE, "VertexAttribf(index)");
 }
 
@@ -5613,11 +5439,10 @@ save_VertexAttrib4fvARB(GLuint index, const GLfloat * v)
 
 #if FEATURE_EXT_framebuffer_blit
 static void GLAPIENTRY
-save_BlitFramebufferEXT(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
+save_BlitFramebufferEXT(GLcontext *ctx, GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
 			GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1,
 			GLbitfield mask, GLenum filter)
 {
-    GET_CURRENT_CONTEXT(ctx);
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
     n = ALLOC_INSTRUCTION(ctx, OPCODE_BLIT_FRAMEBUFFER, 10);
@@ -5634,7 +5459,7 @@ save_BlitFramebufferEXT(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
 	n[10].e = filter;
     }
     if (ctx->ExecuteFlag) {
-	CALL_BlitFramebufferEXT(ctx->Exec, (srcX0, srcY0, srcX1, srcY1,
+	CALL_BlitFramebufferEXT(ctx->Exec, (ctx, srcX0, srcY0, srcX1, srcY1,
 					    dstX0, dstY0, dstX1, dstY1,
 					    mask, filter));
     }
@@ -5664,7 +5489,7 @@ save_error(GLcontext *ctx, GLenum error, const char *s)
  * Compile an error into current display list.
  */
 void
-_mesa_compile_error(GLcontext *ctx, GLenum error, const char *s)
+_mesa_compile_error(ctx, GLcontext *ctx, GLenum error, const char *s)
 {
     if (ctx->CompileFlag)
 	save_error(ctx, error, s);
@@ -5740,35 +5565,34 @@ execute_list(GLcontext *ctx, GLuint list)
 		    _mesa_error(ctx, n[1].e, (const char *) n[2].data);
 		    break;
 		case OPCODE_ACCUM:
-		    CALL_Accum(ctx->Exec, (n[1].e, n[2].f));
+		    CALL_Accum(ctx->Exec, (ctx, n[1].e, n[2].f));
 		    break;
 		case OPCODE_ALPHA_FUNC:
-		    CALL_AlphaFunc(ctx->Exec, (n[1].e, n[2].f));
+		    CALL_AlphaFunc(ctx->Exec, (ctx, n[1].e, n[2].f));
 		    break;
 		case OPCODE_BIND_TEXTURE:
-		    CALL_BindTexture(ctx->Exec, (n[1].e, n[2].ui));
+		    CALL_BindTexture(ctx->Exec, (ctx, n[1].e, n[2].ui));
 		    break;
 		case OPCODE_BITMAP: {
 		    const struct gl_pixelstore_attrib save = ctx->Unpack;
 		    ctx->Unpack = ctx->DefaultPacking;
-		    CALL_Bitmap(ctx->Exec, ((GLsizei) n[1].i, (GLsizei) n[2].i,
+		    CALL_Bitmap(ctx->Exec, (ctx, (GLsizei) n[1].i, (GLsizei) n[2].i,
 					    n[3].f, n[4].f, n[5].f, n[6].f,
 					    (const GLubyte *) n[7].data));
 		    ctx->Unpack = save;      /* restore */
 		}
 		break;
 		case OPCODE_BLEND_COLOR:
-		    CALL_BlendColor(ctx->Exec, (n[1].f, n[2].f, n[3].f, n[4].f));
+		    CALL_BlendColor(ctx->Exec, (ctx, n[1].f, n[2].f, n[3].f, n[4].f));
 		    break;
 		case OPCODE_BLEND_EQUATION:
-		    CALL_BlendEquation(ctx->Exec, (n[1].e));
+		    CALL_BlendEquation(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_BLEND_EQUATION_SEPARATE:
-		    CALL_BlendEquationSeparateEXT(ctx->Exec, (n[1].e, n[2].e));
+		    CALL_BlendEquationSeparateEXT(ctx->Exec, (ctx, n[1].e, n[2].e));
 		    break;
 		case OPCODE_BLEND_FUNC_SEPARATE:
-		    CALL_BlendFuncSeparateEXT(ctx->Exec,
-					      (n[1].e, n[2].e, n[3].e, n[4].e));
+		    CALL_BlendFuncSeparateEXT(ctx->Exec, (ctx, n[1].e, n[2].e, n[3].e, n[4].e));
 		    break;
 		case OPCODE_CALL_LIST:
 		    /* Generated by glCallList(), don't add ListBase */
@@ -5786,22 +5610,22 @@ execute_list(GLcontext *ctx, GLuint list)
 		    }
 		    break;
 		case OPCODE_CLEAR:
-		    CALL_Clear(ctx->Exec, (n[1].bf));
+		    CALL_Clear(ctx->Exec, (ctx, n[1].bf));
 		    break;
 		case OPCODE_CLEAR_COLOR:
-		    CALL_ClearColor(ctx->Exec, (n[1].f, n[2].f, n[3].f, n[4].f));
+		    CALL_ClearColor(ctx->Exec, (ctx, n[1].f, n[2].f, n[3].f, n[4].f));
 		    break;
 		case OPCODE_CLEAR_ACCUM:
-		    CALL_ClearAccum(ctx->Exec, (n[1].f, n[2].f, n[3].f, n[4].f));
+		    CALL_ClearAccum(ctx->Exec, (ctx, n[1].f, n[2].f, n[3].f, n[4].f));
 		    break;
 		case OPCODE_CLEAR_DEPTH:
-		    CALL_ClearDepth(ctx->Exec, ((GLclampd) n[1].f));
+		    CALL_ClearDepth(ctx->Exec, (ctx, (GLclampd) n[1].f));
 		    break;
 		case OPCODE_CLEAR_INDEX:
-		    CALL_ClearIndex(ctx->Exec, ((GLfloat) n[1].ui));
+		    CALL_ClearIndex(ctx->Exec, (ctx, (GLfloat) n[1].ui));
 		    break;
 		case OPCODE_CLEAR_STENCIL:
-		    CALL_ClearStencil(ctx->Exec, (n[1].i));
+		    CALL_ClearStencil(ctx->Exec, (ctx, n[1].i));
 		    break;
 		case OPCODE_CLIP_PLANE: {
 		    GLdouble eq[4];
@@ -5809,19 +5633,19 @@ execute_list(GLcontext *ctx, GLuint list)
 		    eq[1] = n[3].f;
 		    eq[2] = n[4].f;
 		    eq[3] = n[5].f;
-		    CALL_ClipPlane(ctx->Exec, (n[1].e, eq));
+		    CALL_ClipPlane(ctx->Exec, (ctx, n[1].e, eq));
 		}
 		break;
 		case OPCODE_COLOR_MASK:
-		    CALL_ColorMask(ctx->Exec, (n[1].b, n[2].b, n[3].b, n[4].b));
+		    CALL_ColorMask(ctx->Exec, (ctx, n[1].b, n[2].b, n[3].b, n[4].b));
 		    break;
 		case OPCODE_COLOR_MATERIAL:
-		    CALL_ColorMaterial(ctx->Exec, (n[1].e, n[2].e));
+		    CALL_ColorMaterial(ctx->Exec, (ctx, n[1].e, n[2].e));
 		    break;
 		case OPCODE_COLOR_TABLE: {
 		    const struct gl_pixelstore_attrib save = ctx->Unpack;
 		    ctx->Unpack = ctx->DefaultPacking;
-		    CALL_ColorTable(ctx->Exec, (n[1].e, n[2].e, n[3].i, n[4].e,
+		    CALL_ColorTable(ctx->Exec, (ctx, n[1].e, n[2].e, n[3].i, n[4].e,
 						n[5].e, n[6].data));
 		    ctx->Unpack = save;      /* restore */
 		}
@@ -5832,8 +5656,7 @@ execute_list(GLcontext *ctx, GLuint list)
 		    params[1] = n[4].f;
 		    params[2] = n[5].f;
 		    params[3] = n[6].f;
-		    CALL_ColorTableParameterfv(ctx->Exec,
-					       (n[1].e, n[2].e, params));
+		    CALL_ColorTableParameterfv(ctx->Exec, (ctx, n[1].e, n[2].e, params));
 		}
 		break;
 		case OPCODE_COLOR_TABLE_PARAMETER_IV: {
@@ -5842,14 +5665,13 @@ execute_list(GLcontext *ctx, GLuint list)
 		    params[1] = n[4].i;
 		    params[2] = n[5].i;
 		    params[3] = n[6].i;
-		    CALL_ColorTableParameteriv(ctx->Exec,
-					       (n[1].e, n[2].e, params));
+		    CALL_ColorTableParameteriv(ctx->Exec, (ctx, n[1].e, n[2].e, params));
 		}
 		break;
 		case OPCODE_COLOR_SUB_TABLE: {
 		    const struct gl_pixelstore_attrib save = ctx->Unpack;
 		    ctx->Unpack = ctx->DefaultPacking;
-		    CALL_ColorSubTable(ctx->Exec, (n[1].e, n[2].i, n[3].i,
+		    CALL_ColorSubTable(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i,
 						   n[4].e, n[5].e, n[6].data));
 		    ctx->Unpack = save;      /* restore */
 		}
@@ -5857,7 +5679,7 @@ execute_list(GLcontext *ctx, GLuint list)
 		case OPCODE_CONVOLUTION_FILTER_1D: {
 		    const struct gl_pixelstore_attrib save = ctx->Unpack;
 		    ctx->Unpack = ctx->DefaultPacking;
-		    CALL_ConvolutionFilter1D(ctx->Exec, (n[1].e, n[2].i, n[3].i,
+		    CALL_ConvolutionFilter1D(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i,
 							 n[4].e, n[5].e,
 							 n[6].data));
 		    ctx->Unpack = save;      /* restore */
@@ -5866,14 +5688,14 @@ execute_list(GLcontext *ctx, GLuint list)
 		case OPCODE_CONVOLUTION_FILTER_2D: {
 		    const struct gl_pixelstore_attrib save = ctx->Unpack;
 		    ctx->Unpack = ctx->DefaultPacking;
-		    CALL_ConvolutionFilter2D(ctx->Exec, (n[1].e, n[2].i, n[3].i,
+		    CALL_ConvolutionFilter2D(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i,
 							 n[4].i, n[5].e, n[6].e,
 							 n[7].data));
 		    ctx->Unpack = save;      /* restore */
 		}
 		break;
 		case OPCODE_CONVOLUTION_PARAMETER_I:
-		    CALL_ConvolutionParameteri(ctx->Exec, (n[1].e, n[2].e, n[3].i));
+		    CALL_ConvolutionParameteri(ctx->Exec, (ctx, n[1].e, n[2].e, n[3].i));
 		    break;
 		case OPCODE_CONVOLUTION_PARAMETER_IV: {
 		    GLint params[4];
@@ -5881,12 +5703,11 @@ execute_list(GLcontext *ctx, GLuint list)
 		    params[1] = n[4].i;
 		    params[2] = n[5].i;
 		    params[3] = n[6].i;
-		    CALL_ConvolutionParameteriv(ctx->Exec,
-						(n[1].e, n[2].e, params));
+		    CALL_ConvolutionParameteriv(ctx->Exec, (ctx, n[1].e, n[2].e, params));
 		}
 		break;
 		case OPCODE_CONVOLUTION_PARAMETER_F:
-		    CALL_ConvolutionParameterf(ctx->Exec, (n[1].e, n[2].e, n[3].f));
+		    CALL_ConvolutionParameterf(ctx->Exec, (ctx, n[1].e, n[2].e, n[3].f));
 		    break;
 		case OPCODE_CONVOLUTION_PARAMETER_FV: {
 		    GLfloat params[4];
@@ -5894,81 +5715,78 @@ execute_list(GLcontext *ctx, GLuint list)
 		    params[1] = n[4].f;
 		    params[2] = n[5].f;
 		    params[3] = n[6].f;
-		    CALL_ConvolutionParameterfv(ctx->Exec,
-						(n[1].e, n[2].e, params));
+		    CALL_ConvolutionParameterfv(ctx->Exec, (ctx, n[1].e, n[2].e, params));
 		}
 		break;
 		case OPCODE_COPY_COLOR_SUB_TABLE:
-		    CALL_CopyColorSubTable(ctx->Exec, (n[1].e, n[2].i,
+		    CALL_CopyColorSubTable(ctx->Exec, (ctx, n[1].e, n[2].i,
 						       n[3].i, n[4].i, n[5].i));
 		    break;
 		case OPCODE_COPY_COLOR_TABLE:
-		    CALL_CopyColorSubTable(ctx->Exec, (n[1].e, n[2].i,
+		    CALL_CopyColorSubTable(ctx->Exec, (ctx, n[1].e, n[2].i,
 						       n[3].i, n[4].i, n[5].i));
 		    break;
 		case OPCODE_COPY_PIXELS:
-		    CALL_CopyPixels(ctx->Exec, (n[1].i, n[2].i,
+		    CALL_CopyPixels(ctx->Exec, (ctx, n[1].i, n[2].i,
 						(GLsizei) n[3].i, (GLsizei) n[4].i,
 						n[5].e));
 		    break;
 		case OPCODE_COPY_TEX_IMAGE1D:
-		    CALL_CopyTexImage1D(ctx->Exec, (n[1].e, n[2].i, n[3].e, n[4].i,
+		    CALL_CopyTexImage1D(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].e, n[4].i,
 						    n[5].i, n[6].i, n[7].i));
 		    break;
 		case OPCODE_COPY_TEX_IMAGE2D:
-		    CALL_CopyTexImage2D(ctx->Exec, (n[1].e, n[2].i, n[3].e, n[4].i,
+		    CALL_CopyTexImage2D(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].e, n[4].i,
 						    n[5].i, n[6].i, n[7].i, n[8].i));
 		    break;
 		case OPCODE_COPY_TEX_SUB_IMAGE1D:
-		    CALL_CopyTexSubImage1D(ctx->Exec, (n[1].e, n[2].i, n[3].i,
+		    CALL_CopyTexSubImage1D(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i,
 						       n[4].i, n[5].i, n[6].i));
 		    break;
 		case OPCODE_COPY_TEX_SUB_IMAGE2D:
-		    CALL_CopyTexSubImage2D(ctx->Exec, (n[1].e, n[2].i, n[3].i,
+		    CALL_CopyTexSubImage2D(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i,
 						       n[4].i, n[5].i, n[6].i, n[7].i,
 						       n[8].i));
 		    break;
 		case OPCODE_COPY_TEX_SUB_IMAGE3D:
-		    CALL_CopyTexSubImage3D(ctx->Exec, (n[1].e, n[2].i, n[3].i,
+		    CALL_CopyTexSubImage3D(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i,
 						       n[4].i, n[5].i, n[6].i, n[7].i,
 						       n[8].i, n[9].i));
 		    break;
 		case OPCODE_CULL_FACE:
-		    CALL_CullFace(ctx->Exec, (n[1].e));
+		    CALL_CullFace(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_DEPTH_FUNC:
-		    CALL_DepthFunc(ctx->Exec, (n[1].e));
+		    CALL_DepthFunc(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_DEPTH_MASK:
-		    CALL_DepthMask(ctx->Exec, (n[1].b));
+		    CALL_DepthMask(ctx->Exec, (ctx, n[1].b));
 		    break;
 		case OPCODE_DEPTH_RANGE:
-		    CALL_DepthRange(ctx->Exec,
-				    ((GLclampd) n[1].f, (GLclampd) n[2].f));
+		    CALL_DepthRange(ctx->Exec, (ctx, (GLclampd) n[1].f, (GLclampd) n[2].f));
 		    break;
 		case OPCODE_DISABLE:
-		    CALL_Disable(ctx->Exec, (n[1].e));
+		    CALL_Disable(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_DRAW_BUFFER:
-		    CALL_DrawBuffer(ctx->Exec, (n[1].e));
+		    CALL_DrawBuffer(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_DRAW_PIXELS: {
 		    const struct gl_pixelstore_attrib save = ctx->Unpack;
 		    ctx->Unpack = ctx->DefaultPacking;
-		    CALL_DrawPixels(ctx->Exec, (n[1].i, n[2].i, n[3].e, n[4].e,
+		    CALL_DrawPixels(ctx->Exec, (ctx, n[1].i, n[2].i, n[3].e, n[4].e,
 						n[5].data));
 		    ctx->Unpack = save;      /* restore */
 		}
 		break;
 		case OPCODE_ENABLE:
-		    CALL_Enable(ctx->Exec, (n[1].e));
+		    CALL_Enable(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_EVALMESH1:
-		    CALL_EvalMesh1(ctx->Exec, (n[1].e, n[2].i, n[3].i));
+		    CALL_EvalMesh1(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i));
 		    break;
 		case OPCODE_EVALMESH2:
-		    CALL_EvalMesh2(ctx->Exec,
-				   (n[1].e, n[2].i, n[3].i, n[4].i, n[5].i));
+		    CALL_EvalMesh2(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i, n[4].i, n[5].i));
 		    break;
 		case OPCODE_FOG: {
 		    GLfloat p[4];
@@ -5976,27 +5794,26 @@ execute_list(GLcontext *ctx, GLuint list)
 		    p[1] = n[3].f;
 		    p[2] = n[4].f;
 		    p[3] = n[5].f;
-		    CALL_Fogfv(ctx->Exec, (n[1].e, p));
+		    CALL_Fogfv(ctx->Exec, (ctx, n[1].e, p));
 		}
 		break;
 		case OPCODE_FRONT_FACE:
-		    CALL_FrontFace(ctx->Exec, (n[1].e));
+		    CALL_FrontFace(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_FRUSTUM:
-		    CALL_Frustum(ctx->Exec,
-				 (n[1].f, n[2].f, n[3].f, n[4].f, n[5].f, n[6].f));
+		    CALL_Frustum(ctx->Exec, (ctx, n[1].f, n[2].f, n[3].f, n[4].f, n[5].f, n[6].f));
 		    break;
 		case OPCODE_HINT:
-		    CALL_Hint(ctx->Exec, (n[1].e, n[2].e));
+		    CALL_Hint(ctx->Exec, (ctx, n[1].e, n[2].e));
 		    break;
 		case OPCODE_HISTOGRAM:
-		    CALL_Histogram(ctx->Exec, (n[1].e, n[2].i, n[3].e, n[4].b));
+		    CALL_Histogram(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].e, n[4].b));
 		    break;
 		case OPCODE_INDEX_MASK:
-		    CALL_IndexMask(ctx->Exec, (n[1].ui));
+		    CALL_IndexMask(ctx->Exec, (ctx, n[1].ui));
 		    break;
 		case OPCODE_INIT_NAMES:
-		    CALL_InitNames(ctx->Exec, ());
+		    CALL_InitNames(ctx->Exec, (ctx));
 		    break;
 		case OPCODE_LIGHT: {
 		    GLfloat p[4];
@@ -6004,7 +5821,7 @@ execute_list(GLcontext *ctx, GLuint list)
 		    p[1] = n[4].f;
 		    p[2] = n[5].f;
 		    p[3] = n[6].f;
-		    CALL_Lightfv(ctx->Exec, (n[1].e, n[2].e, p));
+		    CALL_Lightfv(ctx->Exec, (ctx, n[1].e, n[2].e, p));
 		}
 		break;
 		case OPCODE_LIGHT_MODEL: {
@@ -6013,38 +5830,38 @@ execute_list(GLcontext *ctx, GLuint list)
 		    p[1] = n[3].f;
 		    p[2] = n[4].f;
 		    p[3] = n[5].f;
-		    CALL_LightModelfv(ctx->Exec, (n[1].e, p));
+		    CALL_LightModelfv(ctx->Exec, (ctx, n[1].e, p));
 		}
 		break;
 		case OPCODE_LINE_STIPPLE:
-		    CALL_LineStipple(ctx->Exec, (n[1].i, n[2].us));
+		    CALL_LineStipple(ctx->Exec, (ctx, n[1].i, n[2].us));
 		    break;
 		case OPCODE_LINE_WIDTH:
-		    CALL_LineWidth(ctx->Exec, (n[1].f));
+		    CALL_LineWidth(ctx->Exec, (ctx, n[1].f));
 		    break;
 		case OPCODE_LIST_BASE:
-		    CALL_ListBase(ctx->Exec, (n[1].ui));
+		    CALL_ListBase(ctx->Exec, (ctx, n[1].ui));
 		    break;
 		case OPCODE_LOAD_IDENTITY:
-		    CALL_LoadIdentity(ctx->Exec, ());
+		    CALL_LoadIdentity(ctx->Exec, (ctx));
 		    break;
 		case OPCODE_LOAD_MATRIX:
 		    if (sizeof(Node) == sizeof(GLfloat)) {
-			CALL_LoadMatrixf(ctx->Exec, (&n[1].f));
+			CALL_LoadMatrixf(ctx->Exec, (ctx, &n[1].f));
 		    } else {
 			GLfloat m[16];
 			GLuint i;
 			for (i = 0; i < 16; i++) {
 			    m[i] = n[1 + i].f;
 			}
-			CALL_LoadMatrixf(ctx->Exec, (m));
+			CALL_LoadMatrixf(ctx->Exec, (ctx, m));
 		    }
 		    break;
 		case OPCODE_LOAD_NAME:
-		    CALL_LoadName(ctx->Exec, (n[1].ui));
+		    CALL_LoadName(ctx->Exec, (ctx, n[1].ui));
 		    break;
 		case OPCODE_LOGIC_OP:
-		    CALL_LogicOp(ctx->Exec, (n[1].e));
+		    CALL_LogicOp(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_MAP1: {
 		    GLenum target = n[1].e;
@@ -6052,7 +5869,7 @@ execute_list(GLcontext *ctx, GLuint list)
 		    GLint uorder = n[5].i;
 		    GLfloat u1 = n[2].f;
 		    GLfloat u2 = n[3].f;
-		    CALL_Map1f(ctx->Exec, (target, u1, u2, ustride, uorder,
+		    CALL_Map1f(ctx->Exec, (ctx, target, u1, u2, ustride, uorder,
 					   (GLfloat *) n[6].data));
 		}
 		break;
@@ -6066,141 +5883,136 @@ execute_list(GLcontext *ctx, GLuint list)
 		    GLint vstride = n[7].i;
 		    GLint uorder = n[8].i;
 		    GLint vorder = n[9].i;
-		    CALL_Map2f(ctx->Exec, (target, u1, u2, ustride, uorder,
+		    CALL_Map2f(ctx->Exec, (ctx, target, u1, u2, ustride, uorder,
 					   v1, v2, vstride, vorder,
 					   (GLfloat *) n[10].data));
 		}
 		break;
 		case OPCODE_MAPGRID1:
-		    CALL_MapGrid1f(ctx->Exec, (n[1].i, n[2].f, n[3].f));
+		    CALL_MapGrid1f(ctx->Exec, (ctx, n[1].i, n[2].f, n[3].f));
 		    break;
 		case OPCODE_MAPGRID2:
-		    CALL_MapGrid2f(ctx->Exec,
-				   (n[1].i, n[2].f, n[3].f, n[4].i, n[5].f, n[6].f));
+		    CALL_MapGrid2f(ctx->Exec, (ctx, n[1].i, n[2].f, n[3].f, n[4].i, n[5].f, n[6].f));
 		    break;
 		case OPCODE_MATRIX_MODE:
-		    CALL_MatrixMode(ctx->Exec, (n[1].e));
+		    CALL_MatrixMode(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_MIN_MAX:
-		    CALL_Minmax(ctx->Exec, (n[1].e, n[2].e, n[3].b));
+		    CALL_Minmax(ctx->Exec, (ctx, n[1].e, n[2].e, n[3].b));
 		    break;
 		case OPCODE_MULT_MATRIX:
 		    if (sizeof(Node) == sizeof(GLfloat)) {
-			CALL_MultMatrixf(ctx->Exec, (&n[1].f));
+			CALL_MultMatrixf(ctx->Exec, (ctx, &n[1].f));
 		    } else {
 			GLfloat m[16];
 			GLuint i;
 			for (i = 0; i < 16; i++) {
 			    m[i] = n[1 + i].f;
 			}
-			CALL_MultMatrixf(ctx->Exec, (m));
+			CALL_MultMatrixf(ctx->Exec, (ctx, m));
 		    }
 		    break;
 		case OPCODE_ORTHO:
-		    CALL_Ortho(ctx->Exec,
-			       (n[1].f, n[2].f, n[3].f, n[4].f, n[5].f, n[6].f));
+		    CALL_Ortho(ctx->Exec, (ctx, n[1].f, n[2].f, n[3].f, n[4].f, n[5].f, n[6].f));
 		    break;
 		case OPCODE_PASSTHROUGH:
-		    CALL_PassThrough(ctx->Exec, (n[1].f));
+		    CALL_PassThrough(ctx->Exec, (ctx, n[1].f));
 		    break;
 		case OPCODE_PIXEL_MAP:
-		    CALL_PixelMapfv(ctx->Exec,
-				    (n[1].e, n[2].i, (GLfloat *) n[3].data));
+		    CALL_PixelMapfv(ctx->Exec, (ctx, n[1].e, n[2].i, (GLfloat *) n[3].data));
 		    break;
 		case OPCODE_PIXEL_TRANSFER:
-		    CALL_PixelTransferf(ctx->Exec, (n[1].e, n[2].f));
+		    CALL_PixelTransferf(ctx->Exec, (ctx, n[1].e, n[2].f));
 		    break;
 		case OPCODE_PIXEL_ZOOM:
-		    CALL_PixelZoom(ctx->Exec, (n[1].f, n[2].f));
+		    CALL_PixelZoom(ctx->Exec, (ctx, n[1].f, n[2].f));
 		    break;
 		case OPCODE_POINT_SIZE:
-		    CALL_PointSize(ctx->Exec, (n[1].f));
+		    CALL_PointSize(ctx->Exec, (ctx, n[1].f));
 		    break;
 		case OPCODE_POINT_PARAMETERS: {
 		    GLfloat params[3];
 		    params[0] = n[2].f;
 		    params[1] = n[3].f;
 		    params[2] = n[4].f;
-		    CALL_PointParameterfvEXT(ctx->Exec, (n[1].e, params));
+		    CALL_PointParameterfvEXT(ctx->Exec, (ctx, n[1].e, params));
 		}
 		break;
 		case OPCODE_POLYGON_MODE:
-		    CALL_PolygonMode(ctx->Exec, (n[1].e, n[2].e));
+		    CALL_PolygonMode(ctx->Exec, (ctx, n[1].e, n[2].e));
 		    break;
 		case OPCODE_POLYGON_STIPPLE: {
 		    const struct gl_pixelstore_attrib save = ctx->Unpack;
 		    ctx->Unpack = ctx->DefaultPacking;
-		    CALL_PolygonStipple(ctx->Exec, ((GLubyte *) n[1].data));
+		    CALL_PolygonStipple(ctx->Exec, (ctx, (GLubyte *) n[1].data));
 		    ctx->Unpack = save;      /* restore */
 		}
 		break;
 		case OPCODE_POLYGON_OFFSET:
-		    CALL_PolygonOffset(ctx->Exec, (n[1].f, n[2].f));
+		    CALL_PolygonOffset(ctx->Exec, (ctx, n[1].f, n[2].f));
 		    break;
 		case OPCODE_POP_ATTRIB:
-		    CALL_PopAttrib(ctx->Exec, ());
+		    CALL_PopAttrib(ctx->Exec, (ctx));
 		    break;
 		case OPCODE_POP_MATRIX:
-		    CALL_PopMatrix(ctx->Exec, ());
+		    CALL_PopMatrix(ctx->Exec, (ctx));
 		    break;
 		case OPCODE_POP_NAME:
-		    CALL_PopName(ctx->Exec, ());
+		    CALL_PopName(ctx->Exec, (ctx));
 		    break;
 		case OPCODE_PRIORITIZE_TEXTURE:
-		    CALL_PrioritizeTextures(ctx->Exec, (1, &n[1].ui, &n[2].f));
+		    CALL_PrioritizeTextures(ctx->Exec, (ctx, 1, &n[1].ui, &n[2].f));
 		    break;
 		case OPCODE_PUSH_ATTRIB:
-		    CALL_PushAttrib(ctx->Exec, (n[1].bf));
+		    CALL_PushAttrib(ctx->Exec, (ctx, n[1].bf));
 		    break;
 		case OPCODE_PUSH_MATRIX:
-		    CALL_PushMatrix(ctx->Exec, ());
+		    CALL_PushMatrix(ctx->Exec, (ctx));
 		    break;
 		case OPCODE_PUSH_NAME:
-		    CALL_PushName(ctx->Exec, (n[1].ui));
+		    CALL_PushName(ctx->Exec, (ctx, n[1].ui));
 		    break;
 		case OPCODE_RASTER_POS:
-		    CALL_RasterPos4f(ctx->Exec, (n[1].f, n[2].f, n[3].f, n[4].f));
+		    CALL_RasterPos4f(ctx->Exec, (ctx, n[1].f, n[2].f, n[3].f, n[4].f));
 		    break;
 		case OPCODE_READ_BUFFER:
-		    CALL_ReadBuffer(ctx->Exec, (n[1].e));
+		    CALL_ReadBuffer(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_RESET_HISTOGRAM:
-		    CALL_ResetHistogram(ctx->Exec, (n[1].e));
+		    CALL_ResetHistogram(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_RESET_MIN_MAX:
-		    CALL_ResetMinmax(ctx->Exec, (n[1].e));
+		    CALL_ResetMinmax(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_ROTATE:
-		    CALL_Rotatef(ctx->Exec, (n[1].f, n[2].f, n[3].f, n[4].f));
+		    CALL_Rotatef(ctx->Exec, (ctx, n[1].f, n[2].f, n[3].f, n[4].f));
 		    break;
 		case OPCODE_SCALE:
-		    CALL_Scalef(ctx->Exec, (n[1].f, n[2].f, n[3].f));
+		    CALL_Scalef(ctx->Exec, (ctx, n[1].f, n[2].f, n[3].f));
 		    break;
 		case OPCODE_SCISSOR:
-		    CALL_Scissor(ctx->Exec, (n[1].i, n[2].i, n[3].i, n[4].i));
+		    CALL_Scissor(ctx->Exec, (ctx, n[1].i, n[2].i, n[3].i, n[4].i));
 		    break;
 		case OPCODE_SHADE_MODEL:
-		    CALL_ShadeModel(ctx->Exec, (n[1].e));
+		    CALL_ShadeModel(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_STENCIL_FUNC:
-		    CALL_StencilFunc(ctx->Exec, (n[1].e, n[2].i, n[3].ui));
+		    CALL_StencilFunc(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].ui));
 		    break;
 		case OPCODE_STENCIL_MASK:
-		    CALL_StencilMask(ctx->Exec, (n[1].ui));
+		    CALL_StencilMask(ctx->Exec, (ctx, n[1].ui));
 		    break;
 		case OPCODE_STENCIL_OP:
-		    CALL_StencilOp(ctx->Exec, (n[1].e, n[2].e, n[3].e));
+		    CALL_StencilOp(ctx->Exec, (ctx, n[1].e, n[2].e, n[3].e));
 		    break;
 		case OPCODE_STENCIL_FUNC_SEPARATE:
-		    CALL_StencilFuncSeparate(ctx->Exec,
-					     (n[1].e, n[2].e, n[3].i, n[4].ui));
+		    CALL_StencilFuncSeparate(ctx->Exec, (ctx, n[1].e, n[2].e, n[3].i, n[4].ui));
 		    break;
 		case OPCODE_STENCIL_MASK_SEPARATE:
-		    CALL_StencilMaskSeparate(ctx->Exec, (n[1].e, n[2].ui));
+		    CALL_StencilMaskSeparate(ctx->Exec, (ctx, n[1].e, n[2].ui));
 		    break;
 		case OPCODE_STENCIL_OP_SEPARATE:
-		    CALL_StencilOpSeparate(ctx->Exec,
-					   (n[1].e, n[2].e, n[3].e, n[4].e));
+		    CALL_StencilOpSeparate(ctx->Exec, (ctx, n[1].e, n[2].e, n[3].e, n[4].e));
 		    break;
 		case OPCODE_TEXENV: {
 		    GLfloat params[4];
@@ -6208,7 +6020,7 @@ execute_list(GLcontext *ctx, GLuint list)
 		    params[1] = n[4].f;
 		    params[2] = n[5].f;
 		    params[3] = n[6].f;
-		    CALL_TexEnvfv(ctx->Exec, (n[1].e, n[2].e, params));
+		    CALL_TexEnvfv(ctx->Exec, (ctx, n[1].e, n[2].e, params));
 		}
 		break;
 		case OPCODE_TEXGEN: {
@@ -6217,7 +6029,7 @@ execute_list(GLcontext *ctx, GLuint list)
 		    params[1] = n[4].f;
 		    params[2] = n[5].f;
 		    params[3] = n[6].f;
-		    CALL_TexGenfv(ctx->Exec, (n[1].e, n[2].e, params));
+		    CALL_TexGenfv(ctx->Exec, (ctx, n[1].e, n[2].e, params));
 		}
 		break;
 		case OPCODE_TEXPARAMETER: {
@@ -6226,13 +6038,13 @@ execute_list(GLcontext *ctx, GLuint list)
 		    params[1] = n[4].f;
 		    params[2] = n[5].f;
 		    params[3] = n[6].f;
-		    CALL_TexParameterfv(ctx->Exec, (n[1].e, n[2].e, params));
+		    CALL_TexParameterfv(ctx->Exec, (ctx, n[1].e, n[2].e, params));
 		}
 		break;
 		case OPCODE_TEX_IMAGE1D: {
 		    const struct gl_pixelstore_attrib save = ctx->Unpack;
 		    ctx->Unpack = ctx->DefaultPacking;
-		    CALL_TexImage1D(ctx->Exec, (n[1].e,      /* target */
+		    CALL_TexImage1D(ctx->Exec, (ctx, n[1].e,      /* target */
 						n[2].i,      /* level */
 						n[3].i,      /* components */
 						n[4].i,      /* width */
@@ -6246,7 +6058,7 @@ execute_list(GLcontext *ctx, GLuint list)
 		case OPCODE_TEX_IMAGE2D: {
 		    const struct gl_pixelstore_attrib save = ctx->Unpack;
 		    ctx->Unpack = ctx->DefaultPacking;
-		    CALL_TexImage2D(ctx->Exec, (n[1].e,      /* target */
+		    CALL_TexImage2D(ctx->Exec, (ctx, n[1].e,      /* target */
 						n[2].i,      /* level */
 						n[3].i,      /* components */
 						n[4].i,      /* width */
@@ -6261,7 +6073,7 @@ execute_list(GLcontext *ctx, GLuint list)
 		case OPCODE_TEX_IMAGE3D: {
 		    const struct gl_pixelstore_attrib save = ctx->Unpack;
 		    ctx->Unpack = ctx->DefaultPacking;
-		    CALL_TexImage3D(ctx->Exec, (n[1].e,      /* target */
+		    CALL_TexImage3D(ctx->Exec, (ctx, n[1].e,      /* target */
 						n[2].i,      /* level */
 						n[3].i,      /* components */
 						n[4].i,      /* width */
@@ -6277,7 +6089,7 @@ execute_list(GLcontext *ctx, GLuint list)
 		case OPCODE_TEX_SUB_IMAGE1D: {
 		    const struct gl_pixelstore_attrib save = ctx->Unpack;
 		    ctx->Unpack = ctx->DefaultPacking;
-		    CALL_TexSubImage1D(ctx->Exec, (n[1].e, n[2].i, n[3].i,
+		    CALL_TexSubImage1D(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i,
 						   n[4].i, n[5].e,
 						   n[6].e, n[7].data));
 		    ctx->Unpack = save;      /* restore */
@@ -6286,7 +6098,7 @@ execute_list(GLcontext *ctx, GLuint list)
 		case OPCODE_TEX_SUB_IMAGE2D: {
 		    const struct gl_pixelstore_attrib save = ctx->Unpack;
 		    ctx->Unpack = ctx->DefaultPacking;
-		    CALL_TexSubImage2D(ctx->Exec, (n[1].e, n[2].i, n[3].i,
+		    CALL_TexSubImage2D(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i,
 						   n[4].i, n[5].e,
 						   n[6].i, n[7].e, n[8].e,
 						   n[9].data));
@@ -6296,7 +6108,7 @@ execute_list(GLcontext *ctx, GLuint list)
 		case OPCODE_TEX_SUB_IMAGE3D: {
 		    const struct gl_pixelstore_attrib save = ctx->Unpack;
 		    ctx->Unpack = ctx->DefaultPacking;
-		    CALL_TexSubImage3D(ctx->Exec, (n[1].e, n[2].i, n[3].i,
+		    CALL_TexSubImage3D(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i,
 						   n[4].i, n[5].i, n[6].i, n[7].i,
 						   n[8].i, n[9].e, n[10].e,
 						   n[11].data));
@@ -6304,60 +6116,57 @@ execute_list(GLcontext *ctx, GLuint list)
 		}
 		break;
 		case OPCODE_TRANSLATE:
-		    CALL_Translatef(ctx->Exec, (n[1].f, n[2].f, n[3].f));
+		    CALL_Translatef(ctx->Exec, (ctx, n[1].f, n[2].f, n[3].f));
 		    break;
 		case OPCODE_VIEWPORT:
-		    CALL_Viewport(ctx->Exec, (n[1].i, n[2].i,
+		    CALL_Viewport(ctx->Exec, (ctx, n[1].i, n[2].i,
 					      (GLsizei) n[3].i, (GLsizei) n[4].i));
 		    break;
 		case OPCODE_WINDOW_POS:
-		    CALL_WindowPos4fMESA(ctx->Exec, (n[1].f, n[2].f, n[3].f, n[4].f));
+		    CALL_WindowPos4fMESA(ctx->Exec, (ctx, n[1].f, n[2].f, n[3].f, n[4].f));
 		    break;
 		case OPCODE_ACTIVE_TEXTURE:   /* GL_ARB_multitexture */
-		    CALL_ActiveTextureARB(ctx->Exec, (n[1].e));
+		    CALL_ActiveTextureARB(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_COMPRESSED_TEX_IMAGE_1D:  /* GL_ARB_texture_compression */
-		    CALL_CompressedTexImage1DARB(ctx->Exec, (n[1].e, n[2].i, n[3].e,
+		    CALL_CompressedTexImage1DARB(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].e,
 						 n[4].i, n[5].i, n[6].i,
 						 n[7].data));
 		    break;
 		case OPCODE_COMPRESSED_TEX_IMAGE_2D:  /* GL_ARB_texture_compression */
-		    CALL_CompressedTexImage2DARB(ctx->Exec, (n[1].e, n[2].i, n[3].e,
+		    CALL_CompressedTexImage2DARB(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].e,
 						 n[4].i, n[5].i, n[6].i,
 						 n[7].i, n[8].data));
 		    break;
 		case OPCODE_COMPRESSED_TEX_IMAGE_3D:  /* GL_ARB_texture_compression */
-		    CALL_CompressedTexImage3DARB(ctx->Exec, (n[1].e, n[2].i, n[3].e,
+		    CALL_CompressedTexImage3DARB(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].e,
 						 n[4].i, n[5].i, n[6].i,
 						 n[7].i, n[8].i,
 						 n[9].data));
 		    break;
 		case OPCODE_COMPRESSED_TEX_SUB_IMAGE_1D:      /* GL_ARB_texture_compress */
-		    CALL_CompressedTexSubImage1DARB(ctx->Exec,
-						    (n[1].e, n[2].i, n[3].i, n[4].i,
+		    CALL_CompressedTexSubImage1DARB(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i, n[4].i,
 						     n[5].e, n[6].i, n[7].data));
 		    break;
 		case OPCODE_COMPRESSED_TEX_SUB_IMAGE_2D:      /* GL_ARB_texture_compress */
-		    CALL_CompressedTexSubImage2DARB(ctx->Exec,
-						    (n[1].e, n[2].i, n[3].i, n[4].i,
+		    CALL_CompressedTexSubImage2DARB(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i, n[4].i,
 						     n[5].i, n[6].i, n[7].e, n[8].i,
 						     n[9].data));
 		    break;
 		case OPCODE_COMPRESSED_TEX_SUB_IMAGE_3D:      /* GL_ARB_texture_compress */
-		    CALL_CompressedTexSubImage3DARB(ctx->Exec,
-						    (n[1].e, n[2].i, n[3].i, n[4].i,
+		    CALL_CompressedTexSubImage3DARB(ctx->Exec, (ctx, n[1].e, n[2].i, n[3].i, n[4].i,
 						     n[5].i, n[6].i, n[7].i, n[8].i,
 						     n[9].e, n[10].i, n[11].data));
 		    break;
 		case OPCODE_SAMPLE_COVERAGE:  /* GL_ARB_multisample */
-		    CALL_SampleCoverageARB(ctx->Exec, (n[1].f, n[2].b));
+		    CALL_SampleCoverageARB(ctx->Exec, (ctx, n[1].f, n[2].b));
 		    break;
 		case OPCODE_WINDOW_POS_ARB:   /* GL_ARB_window_pos */
-		    CALL_WindowPos3fMESA(ctx->Exec, (n[1].f, n[2].f, n[3].f));
+		    CALL_WindowPos3fMESA(ctx->Exec, (ctx, n[1].f, n[2].f, n[3].f));
 		    break;
 #if FEATURE_NV_vertex_program || FEATURE_ARB_vertex_program || FEATURE_ARB_fragment_program
 		case OPCODE_BIND_PROGRAM_NV:  /* GL_NV_vertex_program */
-		    CALL_BindProgramNV(ctx->Exec, (n[1].e, n[2].ui));
+		    CALL_BindProgramNV(ctx->Exec, (ctx, n[1].e, n[2].ui));
 		    break;
 #endif
 #if FEATURE_NV_vertex_program
@@ -6367,34 +6176,33 @@ execute_list(GLcontext *ctx, GLuint list)
 		    v[1] = n[4].f;
 		    v[2] = n[5].f;
 		    v[3] = n[6].f;
-		    CALL_ExecuteProgramNV(ctx->Exec, (n[1].e, n[2].ui, v));
+		    CALL_ExecuteProgramNV(ctx->Exec, (ctx, n[1].e, n[2].ui, v));
 		}
 		break;
 		case OPCODE_REQUEST_RESIDENT_PROGRAMS_NV:
-		    CALL_RequestResidentProgramsNV(ctx->Exec, (n[1].ui,
+		    CALL_RequestResidentProgramsNV(ctx->Exec, (ctx, n[1].ui,
 						   (GLuint *) n[2].data));
 		    break;
 		case OPCODE_LOAD_PROGRAM_NV:
-		    CALL_LoadProgramNV(ctx->Exec, (n[1].e, n[2].ui, n[3].i,
+		    CALL_LoadProgramNV(ctx->Exec, (ctx, n[1].e, n[2].ui, n[3].i,
 						   (const GLubyte *) n[4].data));
 		    break;
 		case OPCODE_PROGRAM_PARAMETER4F_NV:
-		    CALL_ProgramParameter4fNV(ctx->Exec, (n[1].e, n[2].ui, n[3].f,
+		    CALL_ProgramParameter4fNV(ctx->Exec, (ctx, n[1].e, n[2].ui, n[3].f,
 							  n[4].f, n[5].f, n[6].f));
 		    break;
 		case OPCODE_TRACK_MATRIX_NV:
-		    CALL_TrackMatrixNV(ctx->Exec, (n[1].e, n[2].ui, n[3].e, n[4].e));
+		    CALL_TrackMatrixNV(ctx->Exec, (ctx, n[1].e, n[2].ui, n[3].e, n[4].e));
 		    break;
 #endif
 
 #if FEATURE_NV_fragment_program
 		case OPCODE_PROGRAM_LOCAL_PARAMETER_ARB:
-		    CALL_ProgramLocalParameter4fARB(ctx->Exec,
-						    (n[1].e, n[2].ui, n[3].f, n[4].f,
+		    CALL_ProgramLocalParameter4fARB(ctx->Exec, (ctx, n[1].e, n[2].ui, n[3].f, n[4].f,
 						     n[5].f, n[6].f));
 		    break;
 		case OPCODE_PROGRAM_NAMED_PARAMETER_NV:
-		    CALL_ProgramNamedParameter4fNV(ctx->Exec, (n[1].ui, n[2].i,
+		    CALL_ProgramNamedParameter4fNV(ctx->Exec, (ctx, n[1].ui, n[2].i,
 						   (const GLubyte *) n[3].
 						   data, n[4].f, n[5].f,
 						   n[6].f, n[7].f));
@@ -6402,28 +6210,27 @@ execute_list(GLcontext *ctx, GLuint list)
 #endif
 
 		case OPCODE_ACTIVE_STENCIL_FACE_EXT:
-		    CALL_ActiveStencilFaceEXT(ctx->Exec, (n[1].e));
+		    CALL_ActiveStencilFaceEXT(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_DEPTH_BOUNDS_EXT:
-		    CALL_DepthBoundsEXT(ctx->Exec, (n[1].f, n[2].f));
+		    CALL_DepthBoundsEXT(ctx->Exec, (ctx, n[1].f, n[2].f));
 		    break;
 #if FEATURE_ARB_vertex_program || FEATURE_ARB_fragment_program
 		case OPCODE_PROGRAM_STRING_ARB:
-		    CALL_ProgramStringARB(ctx->Exec,
-					  (n[1].e, n[2].e, n[3].i, n[4].data));
+		    CALL_ProgramStringARB(ctx->Exec, (ctx, n[1].e, n[2].e, n[3].i, n[4].data));
 		    break;
 		case OPCODE_PROGRAM_ENV_PARAMETER_ARB:
-		    CALL_ProgramEnvParameter4fARB(ctx->Exec, (n[1].e, n[2].ui, n[3].f,
+		    CALL_ProgramEnvParameter4fARB(ctx->Exec, (ctx, n[1].e, n[2].ui, n[3].f,
 						  n[4].f, n[5].f,
 						  n[6].f));
 		    break;
 #endif
 #if FEATURE_ARB_occlusion_query
 		case OPCODE_BEGIN_QUERY_ARB:
-		    CALL_BeginQueryARB(ctx->Exec, (n[1].e, n[2].ui));
+		    CALL_BeginQueryARB(ctx->Exec, (ctx, n[1].e, n[2].ui));
 		    break;
 		case OPCODE_END_QUERY_ARB:
-		    CALL_EndQueryARB(ctx->Exec, (n[1].e));
+		    CALL_EndQueryARB(ctx->Exec, (ctx, n[1].e));
 		    break;
 #endif
 		case OPCODE_DRAW_BUFFERS_ARB: {
@@ -6431,19 +6238,19 @@ execute_list(GLcontext *ctx, GLuint list)
 		    GLint i, count = MIN2(n[1].i, MAX_DRAW_BUFFERS);
 		    for (i = 0; i < count; i++)
 			buffers[i] = n[2 + i].e;
-		    CALL_DrawBuffersARB(ctx->Exec, (n[1].i, buffers));
+		    CALL_DrawBuffersARB(ctx->Exec, (ctx, n[1].i, buffers));
 		}
 		break;
 #if FEATURE_EXT_framebuffer_blit
 		case OPCODE_BLIT_FRAMEBUFFER:
-		    CALL_BlitFramebufferEXT(ctx->Exec, (n[1].i, n[2].i, n[3].i, n[4].i,
+		    CALL_BlitFramebufferEXT(ctx->Exec, (ctx, n[1].i, n[2].i, n[3].i, n[4].i,
 							n[5].i, n[6].i, n[7].i, n[8].i,
 							n[9].i, n[10].e));
 		    break;
 #endif
 #if FEATURE_ATI_fragment_shader
 		case OPCODE_BIND_FRAGMENT_SHADER_ATI:
-		    CALL_BindFragmentShaderATI(ctx->Exec, (n[1].i));
+		    CALL_BindFragmentShaderATI(ctx->Exec, (ctx, n[1].i));
 		    break;
 		case OPCODE_SET_FRAGMENT_SHADER_CONSTANTS_ATI: {
 		    GLfloat values[4];
@@ -6451,12 +6258,12 @@ execute_list(GLcontext *ctx, GLuint list)
 
 		    for (i = 0; i < 4; i++)
 			values[i] = n[1 + i].f;
-		    CALL_SetFragmentShaderConstantATI(ctx->Exec, (dst, values));
+		    CALL_SetFragmentShaderConstantATI(ctx->Exec, (ctx, dst, values));
 		}
 		break;
 #endif
 		case OPCODE_ATTR_1F_NV:
-		    CALL_VertexAttrib1fNV(ctx->Exec, (n[1].e, n[2].f));
+		    CALL_VertexAttrib1fNV(ctx->Exec, (ctx, n[1].e, n[2].f));
 		    break;
 		case OPCODE_ATTR_2F_NV:
 		    /* Really shouldn't have to do this - the Node structure
@@ -6466,26 +6273,26 @@ execute_list(GLcontext *ctx, GLuint list)
 		     * matter more.
 		     */
 		    if (sizeof(Node) == sizeof(GLfloat))
-			CALL_VertexAttrib2fvNV(ctx->Exec, (n[1].e, &n[2].f));
+			CALL_VertexAttrib2fvNV(ctx->Exec, (ctx, n[1].e, &n[2].f));
 		    else
-			CALL_VertexAttrib2fNV(ctx->Exec, (n[1].e, n[2].f, n[3].f));
+			CALL_VertexAttrib2fNV(ctx->Exec, (ctx, n[1].e, n[2].f, n[3].f));
 		    break;
 		case OPCODE_ATTR_3F_NV:
 		    if (sizeof(Node) == sizeof(GLfloat))
-			CALL_VertexAttrib3fvNV(ctx->Exec, (n[1].e, &n[2].f));
+			CALL_VertexAttrib3fvNV(ctx->Exec, (ctx, n[1].e, &n[2].f));
 		    else
-			CALL_VertexAttrib3fNV(ctx->Exec, (n[1].e, n[2].f, n[3].f,
+			CALL_VertexAttrib3fNV(ctx->Exec, (ctx, n[1].e, n[2].f, n[3].f,
 							  n[4].f));
 		    break;
 		case OPCODE_ATTR_4F_NV:
 		    if (sizeof(Node) == sizeof(GLfloat))
-			CALL_VertexAttrib4fvNV(ctx->Exec, (n[1].e, &n[2].f));
+			CALL_VertexAttrib4fvNV(ctx->Exec, (ctx, n[1].e, &n[2].f));
 		    else
-			CALL_VertexAttrib4fNV(ctx->Exec, (n[1].e, n[2].f, n[3].f,
+			CALL_VertexAttrib4fNV(ctx->Exec, (ctx, n[1].e, n[2].f, n[3].f,
 							  n[4].f, n[5].f));
 		    break;
 		case OPCODE_ATTR_1F_ARB:
-		    CALL_VertexAttrib1fARB(ctx->Exec, (n[1].e, n[2].f));
+		    CALL_VertexAttrib1fARB(ctx->Exec, (ctx, n[1].e, n[2].f));
 		    break;
 		case OPCODE_ATTR_2F_ARB:
 		    /* Really shouldn't have to do this - the Node structure
@@ -6495,56 +6302,56 @@ execute_list(GLcontext *ctx, GLuint list)
 		     * matter more.
 		     */
 		    if (sizeof(Node) == sizeof(GLfloat))
-			CALL_VertexAttrib2fvARB(ctx->Exec, (n[1].e, &n[2].f));
+			CALL_VertexAttrib2fvARB(ctx->Exec, (ctx, n[1].e, &n[2].f));
 		    else
-			CALL_VertexAttrib2fARB(ctx->Exec, (n[1].e, n[2].f, n[3].f));
+			CALL_VertexAttrib2fARB(ctx->Exec, (ctx, n[1].e, n[2].f, n[3].f));
 		    break;
 		case OPCODE_ATTR_3F_ARB:
 		    if (sizeof(Node) == sizeof(GLfloat))
-			CALL_VertexAttrib3fvARB(ctx->Exec, (n[1].e, &n[2].f));
+			CALL_VertexAttrib3fvARB(ctx->Exec, (ctx, n[1].e, &n[2].f));
 		    else
-			CALL_VertexAttrib3fARB(ctx->Exec, (n[1].e, n[2].f, n[3].f,
+			CALL_VertexAttrib3fARB(ctx->Exec, (ctx, n[1].e, n[2].f, n[3].f,
 							   n[4].f));
 		    break;
 		case OPCODE_ATTR_4F_ARB:
 		    if (sizeof(Node) == sizeof(GLfloat))
-			CALL_VertexAttrib4fvARB(ctx->Exec, (n[1].e, &n[2].f));
+			CALL_VertexAttrib4fvARB(ctx->Exec, (ctx, n[1].e, &n[2].f));
 		    else
-			CALL_VertexAttrib4fARB(ctx->Exec, (n[1].e, n[2].f, n[3].f,
+			CALL_VertexAttrib4fARB(ctx->Exec, (ctx, n[1].e, n[2].f, n[3].f,
 							   n[4].f, n[5].f));
 		    break;
 		case OPCODE_MATERIAL:
 		    if (sizeof(Node) == sizeof(GLfloat))
-			CALL_Materialfv(ctx->Exec, (n[1].e, n[2].e, &n[3].f));
+			CALL_Materialfv(ctx->Exec, (ctx, n[1].e, n[2].e, &n[3].f));
 		    else {
 			GLfloat f[4];
 			f[0] = n[3].f;
 			f[1] = n[4].f;
 			f[2] = n[5].f;
 			f[3] = n[6].f;
-			CALL_Materialfv(ctx->Exec, (n[1].e, n[2].e, f));
+			CALL_Materialfv(ctx->Exec, (ctx, n[1].e, n[2].e, f));
 		    }
 		    break;
 		case OPCODE_BEGIN:
-		    CALL_Begin(ctx->Exec, (n[1].e));
+		    CALL_Begin(ctx->Exec, (ctx, n[1].e));
 		    break;
 		case OPCODE_END:
-		    CALL_End(ctx->Exec, ());
+		    CALL_End(ctx->Exec, (ctx));
 		    break;
 		case OPCODE_RECTF:
-		    CALL_Rectf(ctx->Exec, (n[1].f, n[2].f, n[3].f, n[4].f));
+		    CALL_Rectf(ctx->Exec, (ctx, n[1].f, n[2].f, n[3].f, n[4].f));
 		    break;
 		case OPCODE_EVAL_C1:
-		    CALL_EvalCoord1f(ctx->Exec, (n[1].f));
+		    CALL_EvalCoord1f(ctx->Exec, (ctx, n[1].f));
 		    break;
 		case OPCODE_EVAL_C2:
-		    CALL_EvalCoord2f(ctx->Exec, (n[1].f, n[2].f));
+		    CALL_EvalCoord2f(ctx->Exec, (ctx, n[1].f, n[2].f));
 		    break;
 		case OPCODE_EVAL_P1:
-		    CALL_EvalPoint1(ctx->Exec, (n[1].i));
+		    CALL_EvalPoint1(ctx->Exec, (ctx, n[1].i));
 		    break;
 		case OPCODE_EVAL_P2:
-		    CALL_EvalPoint2(ctx->Exec, (n[1].i, n[2].i));
+		    CALL_EvalPoint2(ctx->Exec, (ctx, n[1].i, n[2].i));
 		    break;
 
 
@@ -6588,9 +6395,8 @@ execute_list(GLcontext *ctx, GLuint list)
  * Test if a display list number is valid.
  */
 GLboolean GLAPIENTRY
-_mesa_IsList(GLuint list)
+_mesa_IsList(ctx, GLcontext *ctx, GLuint list)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);      /* must be called before assert */
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, GL_FALSE);
     return islist(ctx, list);
@@ -6601,9 +6407,8 @@ _mesa_IsList(GLuint list)
  * Delete a sequence of consecutive display lists.
  */
 void GLAPIENTRY
-_mesa_DeleteLists(GLuint list, GLsizei range)
+_mesa_DeleteLists(ctx, GLcontext *ctx, GLuint list, GLsizei range)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLuint i;
     FLUSH_VERTICES(ctx, 0);      /* must be called before assert */
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -6623,9 +6428,8 @@ _mesa_DeleteLists(GLuint list, GLsizei range)
  * are free.
  */
 GLuint GLAPIENTRY
-_mesa_GenLists(GLsizei range)
+_mesa_GenLists(ctx, GLcontext *ctx, GLsizei range)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLuint base;
     FLUSH_VERTICES(ctx, 0);      /* must be called before assert */
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, 0);
@@ -6663,9 +6467,8 @@ _mesa_GenLists(GLsizei range)
  * Begin a new display list.
  */
 void GLAPIENTRY
-_mesa_NewList(GLuint list, GLenum mode)
+_mesa_NewList(ctx, GLcontext *ctx, GLuint list, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLint i;
 
     FLUSH_CURRENT(ctx, 0);       /* must be called before assert */
@@ -6721,9 +6524,8 @@ _mesa_NewList(GLuint list, GLenum mode)
  * End definition of current display list.
  */
 void GLAPIENTRY
-_mesa_EndList(void)
+_mesa_EndList(ctx, GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     SAVE_FLUSH_VERTICES(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -6762,10 +6564,9 @@ _mesa_EndList(void)
 
 
 void GLAPIENTRY
-_mesa_CallList(GLuint list)
+_mesa_CallList(ctx, GLcontext *ctx, GLuint list)
 {
     GLboolean save_compile_flag;
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_CURRENT(ctx, 0);
     /* VERY IMPORTANT:  Save the CompileFlag status, turn it off, */
     /* execute the display list, and restore the CompileFlag. */
@@ -6800,9 +6601,8 @@ _mesa_CallList(GLuint list)
  * Execute glCallLists:  call multiple display lists.
  */
 void GLAPIENTRY
-_mesa_CallLists(GLsizei n, GLenum type, const GLvoid * lists)
+_mesa_CallLists(ctx, GLcontext *ctx, GLsizei n, GLenum type, const GLvoid * lists)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLuint list;
     GLint i;
     GLboolean save_compile_flag;
@@ -6853,9 +6653,8 @@ _mesa_CallLists(GLsizei n, GLenum type, const GLvoid * lists)
  * Set the offset added to list numbers in glCallLists.
  */
 void GLAPIENTRY
-_mesa_ListBase(GLuint base)
+_mesa_ListBase(ctx, GLcontext *ctx, GLuint base)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);      /* must be called before assert */
     ASSERT_OUTSIDE_BEGIN_END(ctx);
     ctx->List.ListBase = base;
@@ -6865,726 +6664,634 @@ _mesa_ListBase(GLuint base)
 /* Can no longer assume ctx->Exec->Func is equal to _mesa_Func.
  */
 static void GLAPIENTRY
-exec_Finish(void)
+exec_Finish(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_Finish(ctx->Exec, ());
+    CALL_Finish(ctx->Exec, (ctx));
 }
 
 static void GLAPIENTRY
-exec_Flush(void)
+exec_Flush(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_Flush(ctx->Exec, ());
+    CALL_Flush(ctx->Exec, (ctx));
 }
 
 static void GLAPIENTRY
-exec_GetBooleanv(GLenum pname, GLboolean *params)
+exec_GetBooleanv(GLcontext *ctx, GLenum pname, GLboolean *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetBooleanv(ctx->Exec, (pname, params));
+    CALL_GetBooleanv(ctx->Exec, (ctx, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetClipPlane(GLenum plane, GLdouble * equation)
+exec_GetClipPlane(GLcontext *ctx, GLenum plane, GLdouble * equation)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetClipPlane(ctx->Exec, (plane, equation));
+    CALL_GetClipPlane(ctx->Exec, (ctx, plane, equation));
 }
 
 static void GLAPIENTRY
-exec_GetDoublev(GLenum pname, GLdouble *params)
+exec_GetDoublev(GLcontext *ctx, GLenum pname, GLdouble *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetDoublev(ctx->Exec, (pname, params));
+    CALL_GetDoublev(ctx->Exec, (ctx, pname, params));
 }
 
 static GLenum GLAPIENTRY
-exec_GetError(void)
+exec_GetError(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    return CALL_GetError(ctx->Exec, ());
+    return CALL_GetError(ctx->Exec, (ctx));
 }
 
 static void GLAPIENTRY
-exec_GetFloatv(GLenum pname, GLfloat *params)
+exec_GetFloatv(GLcontext *ctx, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetFloatv(ctx->Exec, (pname, params));
+    CALL_GetFloatv(ctx->Exec, (ctx, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetIntegerv(GLenum pname, GLint *params)
+exec_GetIntegerv(GLcontext *ctx, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetIntegerv(ctx->Exec, (pname, params));
+    CALL_GetIntegerv(ctx->Exec, (ctx, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetLightfv(GLenum light, GLenum pname, GLfloat *params)
+exec_GetLightfv(GLcontext *ctx, GLenum light, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetLightfv(ctx->Exec, (light, pname, params));
+    CALL_GetLightfv(ctx->Exec, (ctx, light, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetLightiv(GLenum light, GLenum pname, GLint *params)
+exec_GetLightiv(GLcontext *ctx, GLenum light, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetLightiv(ctx->Exec, (light, pname, params));
+    CALL_GetLightiv(ctx->Exec, (ctx, light, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetMapdv(GLenum target, GLenum query, GLdouble * v)
+exec_GetMapdv(GLcontext *ctx, GLenum target, GLenum query, GLdouble * v)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetMapdv(ctx->Exec, (target, query, v));
+    CALL_GetMapdv(ctx->Exec, (ctx, target, query, v));
 }
 
 static void GLAPIENTRY
-exec_GetMapfv(GLenum target, GLenum query, GLfloat * v)
+exec_GetMapfv(GLcontext *ctx, GLenum target, GLenum query, GLfloat * v)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetMapfv(ctx->Exec, (target, query, v));
+    CALL_GetMapfv(ctx->Exec, (ctx, target, query, v));
 }
 
 static void GLAPIENTRY
-exec_GetMapiv(GLenum target, GLenum query, GLint * v)
+exec_GetMapiv(GLcontext *ctx, GLenum target, GLenum query, GLint * v)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetMapiv(ctx->Exec, (target, query, v));
+    CALL_GetMapiv(ctx->Exec, (ctx, target, query, v));
 }
 
 static void GLAPIENTRY
-exec_GetMaterialfv(GLenum face, GLenum pname, GLfloat *params)
+exec_GetMaterialfv(GLcontext *ctx, GLenum face, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetMaterialfv(ctx->Exec, (face, pname, params));
+    CALL_GetMaterialfv(ctx->Exec, (ctx, face, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetMaterialiv(GLenum face, GLenum pname, GLint *params)
+exec_GetMaterialiv(GLcontext *ctx, GLenum face, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetMaterialiv(ctx->Exec, (face, pname, params));
+    CALL_GetMaterialiv(ctx->Exec, (ctx, face, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetPixelMapfv(GLenum map, GLfloat *values)
+exec_GetPixelMapfv(GLcontext *ctx, GLenum map, GLfloat *values)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetPixelMapfv(ctx->Exec, (map, values));
+    CALL_GetPixelMapfv(ctx->Exec, (ctx, map, values));
 }
 
 static void GLAPIENTRY
-exec_GetPixelMapuiv(GLenum map, GLuint *values)
+exec_GetPixelMapuiv(GLcontext *ctx, GLenum map, GLuint *values)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetPixelMapuiv(ctx->Exec, (map, values));
+    CALL_GetPixelMapuiv(ctx->Exec, (ctx, map, values));
 }
 
 static void GLAPIENTRY
-exec_GetPixelMapusv(GLenum map, GLushort *values)
+exec_GetPixelMapusv(GLcontext *ctx, GLenum map, GLushort *values)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetPixelMapusv(ctx->Exec, (map, values));
+    CALL_GetPixelMapusv(ctx->Exec, (ctx, map, values));
 }
 
 static void GLAPIENTRY
-exec_GetPolygonStipple(GLubyte * dest)
+exec_GetPolygonStipple(GLcontext *ctx, GLubyte * dest)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetPolygonStipple(ctx->Exec, (dest));
+    CALL_GetPolygonStipple(ctx->Exec, (ctx, dest));
 }
 
 static const GLubyte *GLAPIENTRY
-exec_GetString(GLenum name)
+exec_GetString(GLcontext *ctx, GLenum name)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    return CALL_GetString(ctx->Exec, (name));
+    return CALL_GetString(ctx->Exec, (ctx, name));
 }
 
 static void GLAPIENTRY
-exec_GetTexEnvfv(GLenum target, GLenum pname, GLfloat *params)
+exec_GetTexEnvfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetTexEnvfv(ctx->Exec, (target, pname, params));
+    CALL_GetTexEnvfv(ctx->Exec, (ctx, target, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetTexEnviv(GLenum target, GLenum pname, GLint *params)
+exec_GetTexEnviv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetTexEnviv(ctx->Exec, (target, pname, params));
+    CALL_GetTexEnviv(ctx->Exec, (ctx, target, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetTexGendv(GLenum coord, GLenum pname, GLdouble *params)
+exec_GetTexGendv(GLcontext *ctx, GLenum coord, GLenum pname, GLdouble *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetTexGendv(ctx->Exec, (coord, pname, params));
+    CALL_GetTexGendv(ctx->Exec, (ctx, coord, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetTexGenfv(GLenum coord, GLenum pname, GLfloat *params)
+exec_GetTexGenfv(GLcontext *ctx, GLenum coord, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetTexGenfv(ctx->Exec, (coord, pname, params));
+    CALL_GetTexGenfv(ctx->Exec, (ctx, coord, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetTexGeniv(GLenum coord, GLenum pname, GLint *params)
+exec_GetTexGeniv(GLcontext *ctx, GLenum coord, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetTexGeniv(ctx->Exec, (coord, pname, params));
+    CALL_GetTexGeniv(ctx->Exec, (ctx, coord, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetTexImage(GLenum target, GLint level, GLenum format,
+exec_GetTexImage(GLcontext *ctx, GLenum target, GLint level, GLenum format,
 		 GLenum type, GLvoid * pixels)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetTexImage(ctx->Exec, (target, level, format, type, pixels));
+    CALL_GetTexImage(ctx->Exec, (ctx, target, level, format, type, pixels));
 }
 
 static void GLAPIENTRY
-exec_GetTexLevelParameterfv(GLenum target, GLint level,
+exec_GetTexLevelParameterfv(GLcontext *ctx, GLenum target, GLint level,
 			    GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetTexLevelParameterfv(ctx->Exec, (target, level, pname, params));
+    CALL_GetTexLevelParameterfv(ctx->Exec, (ctx, target, level, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetTexLevelParameteriv(GLenum target, GLint level,
+exec_GetTexLevelParameteriv(GLcontext *ctx, GLenum target, GLint level,
 			    GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetTexLevelParameteriv(ctx->Exec, (target, level, pname, params));
+    CALL_GetTexLevelParameteriv(ctx->Exec, (ctx, target, level, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetTexParameterfv(GLenum target, GLenum pname, GLfloat *params)
+exec_GetTexParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetTexParameterfv(ctx->Exec, (target, pname, params));
+    CALL_GetTexParameterfv(ctx->Exec, (ctx, target, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetTexParameteriv(GLenum target, GLenum pname, GLint *params)
+exec_GetTexParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetTexParameteriv(ctx->Exec, (target, pname, params));
+    CALL_GetTexParameteriv(ctx->Exec, (ctx, target, pname, params));
 }
 
 static GLboolean GLAPIENTRY
-exec_IsEnabled(GLenum cap)
+exec_IsEnabled(GLcontext *ctx, GLenum cap)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    return CALL_IsEnabled(ctx->Exec, (cap));
+    return CALL_IsEnabled(ctx->Exec, (ctx, cap));
 }
 
 static void GLAPIENTRY
-exec_PixelStoref(GLenum pname, GLfloat param)
+exec_PixelStoref(GLcontext *ctx, GLenum pname, GLfloat param)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_PixelStoref(ctx->Exec, (pname, param));
+    CALL_PixelStoref(ctx->Exec, (ctx, pname, param));
 }
 
 static void GLAPIENTRY
-exec_PixelStorei(GLenum pname, GLint param)
+exec_PixelStorei(GLcontext *ctx, GLenum pname, GLint param)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_PixelStorei(ctx->Exec, (pname, param));
+    CALL_PixelStorei(ctx->Exec, (ctx, pname, param));
 }
 
 static void GLAPIENTRY
-exec_ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height,
+exec_ReadPixels(GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height,
 		GLenum format, GLenum type, GLvoid * pixels)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_ReadPixels(ctx->Exec, (x, y, width, height, format, type, pixels));
+    CALL_ReadPixels(ctx->Exec, (ctx, x, y, width, height, format, type, pixels));
 }
 
 static GLint GLAPIENTRY
-exec_RenderMode(GLenum mode)
+exec_RenderMode(GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    return CALL_RenderMode(ctx->Exec, (mode));
+    return CALL_RenderMode(ctx->Exec, (ctx, mode));
 }
 
 static void GLAPIENTRY
-exec_FeedbackBuffer(GLsizei size, GLenum type, GLfloat * buffer)
+exec_FeedbackBuffer(GLcontext *ctx, GLsizei size, GLenum type, GLfloat * buffer)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_FeedbackBuffer(ctx->Exec, (size, type, buffer));
+    CALL_FeedbackBuffer(ctx->Exec, (ctx, size, type, buffer));
 }
 
 static void GLAPIENTRY
-exec_SelectBuffer(GLsizei size, GLuint * buffer)
+exec_SelectBuffer(GLcontext *ctx, GLsizei size, GLuint * buffer)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_SelectBuffer(ctx->Exec, (size, buffer));
+    CALL_SelectBuffer(ctx->Exec, (ctx, size, buffer));
 }
 
 static GLboolean GLAPIENTRY
-exec_AreTexturesResident(GLsizei n, const GLuint * texName,
+exec_AreTexturesResident(GLcontext *ctx, GLsizei n, const GLuint * texName,
 			 GLboolean * residences)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    return CALL_AreTexturesResident(ctx->Exec, (n, texName, residences));
+    return CALL_AreTexturesResident(ctx->Exec, (ctx, n, texName, residences));
 }
 
 static void GLAPIENTRY
-exec_ColorPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr)
+exec_ColorPointer(GLcontext *ctx, GLint size, GLenum type, GLsizei stride, const GLvoid *ptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_ColorPointer(ctx->Exec, (size, type, stride, ptr));
+    CALL_ColorPointer(ctx->Exec, (ctx, size, type, stride, ptr));
 }
 
 static void GLAPIENTRY
-exec_DeleteTextures(GLsizei n, const GLuint * texName)
+exec_DeleteTextures(GLcontext *ctx, GLsizei n, const GLuint * texName)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_DeleteTextures(ctx->Exec, (n, texName));
+    CALL_DeleteTextures(ctx->Exec, (ctx, n, texName));
 }
 
 static void GLAPIENTRY
-exec_DisableClientState(GLenum cap)
+exec_DisableClientState(GLcontext *ctx, GLenum cap)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_DisableClientState(ctx->Exec, (cap));
+    CALL_DisableClientState(ctx->Exec, (ctx, cap));
 }
 
 static void GLAPIENTRY
-exec_EdgeFlagPointer(GLsizei stride, const GLvoid * vptr)
+exec_EdgeFlagPointer(GLcontext *ctx, GLsizei stride, const GLvoid * vptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_EdgeFlagPointer(ctx->Exec, (stride, vptr));
+    CALL_EdgeFlagPointer(ctx->Exec, (ctx, stride, vptr));
 }
 
 static void GLAPIENTRY
-exec_EnableClientState(GLenum cap)
+exec_EnableClientState(GLcontext *ctx, GLenum cap)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_EnableClientState(ctx->Exec, (cap));
+    CALL_EnableClientState(ctx->Exec, (ctx, cap));
 }
 
 static void GLAPIENTRY
-exec_GenTextures(GLsizei n, GLuint * texName)
+exec_GenTextures(GLcontext *ctx, GLsizei n, GLuint * texName)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GenTextures(ctx->Exec, (n, texName));
+    CALL_GenTextures(ctx->Exec, (ctx, n, texName));
 }
 
 static void GLAPIENTRY
-exec_GetPointerv(GLenum pname, GLvoid **params)
+exec_GetPointerv(GLcontext *ctx, GLenum pname, GLvoid **params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetPointerv(ctx->Exec, (pname, params));
+    CALL_GetPointerv(ctx->Exec, (ctx, pname, params));
 }
 
 static void GLAPIENTRY
-exec_IndexPointer(GLenum type, GLsizei stride, const GLvoid *ptr)
+exec_IndexPointer(GLcontext *ctx, GLenum type, GLsizei stride, const GLvoid *ptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_IndexPointer(ctx->Exec, (type, stride, ptr));
+    CALL_IndexPointer(ctx->Exec, (ctx, type, stride, ptr));
 }
 
 static void GLAPIENTRY
-exec_InterleavedArrays(GLenum format, GLsizei stride, const GLvoid * pointer)
+exec_InterleavedArrays(GLcontext *ctx, GLenum format, GLsizei stride, const GLvoid * pointer)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_InterleavedArrays(ctx->Exec, (format, stride, pointer));
+    CALL_InterleavedArrays(ctx->Exec, (ctx, format, stride, pointer));
 }
 
 static GLboolean GLAPIENTRY
-exec_IsTexture(GLuint texture)
+exec_IsTexture(GLcontext *ctx, GLuint texture)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    return CALL_IsTexture(ctx->Exec, (texture));
+    return CALL_IsTexture(ctx->Exec, (ctx, texture));
 }
 
 static void GLAPIENTRY
-exec_NormalPointer(GLenum type, GLsizei stride, const GLvoid *ptr)
+exec_NormalPointer(GLcontext *ctx, GLenum type, GLsizei stride, const GLvoid *ptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_NormalPointer(ctx->Exec, (type, stride, ptr));
+    CALL_NormalPointer(ctx->Exec, (ctx, type, stride, ptr));
 }
 
 static void GLAPIENTRY
-exec_PopClientAttrib(void)
+exec_PopClientAttrib(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_PopClientAttrib(ctx->Exec, ());
+    CALL_PopClientAttrib(ctx->Exec, (ctx));
 }
 
 static void GLAPIENTRY
-exec_PushClientAttrib(GLbitfield mask)
+exec_PushClientAttrib(GLcontext *ctx, GLbitfield mask)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_PushClientAttrib(ctx->Exec, (mask));
+    CALL_PushClientAttrib(ctx->Exec, (ctx, mask));
 }
 
 static void GLAPIENTRY
-exec_TexCoordPointer(GLint size, GLenum type, GLsizei stride,
+exec_TexCoordPointer(GLcontext *ctx, GLint size, GLenum type, GLsizei stride,
 		     const GLvoid *ptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_TexCoordPointer(ctx->Exec, (size, type, stride, ptr));
+    CALL_TexCoordPointer(ctx->Exec, (ctx, size, type, stride, ptr));
 }
 
 static void GLAPIENTRY
-exec_GetCompressedTexImageARB(GLenum target, GLint level, GLvoid * img)
+exec_GetCompressedTexImageARB(GLcontext *ctx, GLenum target, GLint level, GLvoid * img)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetCompressedTexImageARB(ctx->Exec, (target, level, img));
+    CALL_GetCompressedTexImageARB(ctx->Exec, (ctx, target, level, img));
 }
 
 static void GLAPIENTRY
-exec_VertexPointer(GLint size, GLenum type, GLsizei stride,
+exec_VertexPointer(GLcontext *ctx, GLint size, GLenum type, GLsizei stride,
 		   const GLvoid *ptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_VertexPointer(ctx->Exec, (size, type, stride, ptr));
+    CALL_VertexPointer(ctx->Exec, (ctx, size, type, stride, ptr));
 }
 
 static void GLAPIENTRY
-exec_CopyConvolutionFilter1D(GLenum target, GLenum internalFormat,
+exec_CopyConvolutionFilter1D(GLcontext *ctx, GLenum target, GLenum internalFormat,
 			     GLint x, GLint y, GLsizei width)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_CopyConvolutionFilter1D(ctx->Exec,
-				 (target, internalFormat, x, y, width));
+    CALL_CopyConvolutionFilter1D(ctx->Exec, (ctx, target, internalFormat, x, y, width));
 }
 
 static void GLAPIENTRY
-exec_CopyConvolutionFilter2D(GLenum target, GLenum internalFormat,
+exec_CopyConvolutionFilter2D(GLcontext *ctx, GLenum target, GLenum internalFormat,
 			     GLint x, GLint y, GLsizei width, GLsizei height)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_CopyConvolutionFilter2D(ctx->Exec,
-				 (target, internalFormat, x, y, width,
+    CALL_CopyConvolutionFilter2D(ctx->Exec, (ctx, target, internalFormat, x, y, width,
 				  height));
 }
 
 static void GLAPIENTRY
-exec_GetColorTable(GLenum target, GLenum format, GLenum type, GLvoid * data)
+exec_GetColorTable(GLcontext *ctx, GLenum target, GLenum format, GLenum type, GLvoid * data)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetColorTable(ctx->Exec, (target, format, type, data));
+    CALL_GetColorTable(ctx->Exec, (ctx, target, format, type, data));
 }
 
 static void GLAPIENTRY
-exec_GetColorTableParameterfv(GLenum target, GLenum pname, GLfloat *params)
+exec_GetColorTableParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetColorTableParameterfv(ctx->Exec, (target, pname, params));
+    CALL_GetColorTableParameterfv(ctx->Exec, (ctx, target, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetColorTableParameteriv(GLenum target, GLenum pname, GLint *params)
+exec_GetColorTableParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetColorTableParameteriv(ctx->Exec, (target, pname, params));
+    CALL_GetColorTableParameteriv(ctx->Exec, (ctx, target, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetConvolutionFilter(GLenum target, GLenum format, GLenum type,
+exec_GetConvolutionFilter(GLcontext *ctx, GLenum target, GLenum format, GLenum type,
 			  GLvoid * image)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetConvolutionFilter(ctx->Exec, (target, format, type, image));
+    CALL_GetConvolutionFilter(ctx->Exec, (ctx, target, format, type, image));
 }
 
 static void GLAPIENTRY
-exec_GetConvolutionParameterfv(GLenum target, GLenum pname, GLfloat *params)
+exec_GetConvolutionParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetConvolutionParameterfv(ctx->Exec, (target, pname, params));
+    CALL_GetConvolutionParameterfv(ctx->Exec, (ctx, target, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetConvolutionParameteriv(GLenum target, GLenum pname, GLint *params)
+exec_GetConvolutionParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetConvolutionParameteriv(ctx->Exec, (target, pname, params));
+    CALL_GetConvolutionParameteriv(ctx->Exec, (ctx, target, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetHistogram(GLenum target, GLboolean reset, GLenum format,
+exec_GetHistogram(GLcontext *ctx, GLenum target, GLboolean reset, GLenum format,
 		  GLenum type, GLvoid *values)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetHistogram(ctx->Exec, (target, reset, format, type, values));
+    CALL_GetHistogram(ctx->Exec, (ctx, target, reset, format, type, values));
 }
 
 static void GLAPIENTRY
-exec_GetHistogramParameterfv(GLenum target, GLenum pname, GLfloat *params)
+exec_GetHistogramParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetHistogramParameterfv(ctx->Exec, (target, pname, params));
+    CALL_GetHistogramParameterfv(ctx->Exec, (ctx, target, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetHistogramParameteriv(GLenum target, GLenum pname, GLint *params)
+exec_GetHistogramParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetHistogramParameteriv(ctx->Exec, (target, pname, params));
+    CALL_GetHistogramParameteriv(ctx->Exec, (ctx, target, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetMinmax(GLenum target, GLboolean reset, GLenum format,
+exec_GetMinmax(GLcontext *ctx, GLenum target, GLboolean reset, GLenum format,
 	       GLenum type, GLvoid *values)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetMinmax(ctx->Exec, (target, reset, format, type, values));
+    CALL_GetMinmax(ctx->Exec, (ctx, target, reset, format, type, values));
 }
 
 static void GLAPIENTRY
-exec_GetMinmaxParameterfv(GLenum target, GLenum pname, GLfloat *params)
+exec_GetMinmaxParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetMinmaxParameterfv(ctx->Exec, (target, pname, params));
+    CALL_GetMinmaxParameterfv(ctx->Exec, (ctx, target, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetMinmaxParameteriv(GLenum target, GLenum pname, GLint *params)
+exec_GetMinmaxParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetMinmaxParameteriv(ctx->Exec, (target, pname, params));
+    CALL_GetMinmaxParameteriv(ctx->Exec, (ctx, target, pname, params));
 }
 
 static void GLAPIENTRY
-exec_GetSeparableFilter(GLenum target, GLenum format, GLenum type,
+exec_GetSeparableFilter(GLcontext *ctx, GLenum target, GLenum format, GLenum type,
 			GLvoid *row, GLvoid *column, GLvoid *span)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_GetSeparableFilter(ctx->Exec,
-			    (target, format, type, row, column, span));
+    CALL_GetSeparableFilter(ctx->Exec, (ctx, target, format, type, row, column, span));
 }
 
 static void GLAPIENTRY
-exec_SeparableFilter2D(GLenum target, GLenum internalFormat,
+exec_SeparableFilter2D(GLcontext *ctx, GLenum target, GLenum internalFormat,
 		       GLsizei width, GLsizei height, GLenum format,
 		       GLenum type, const GLvoid *row, const GLvoid *column)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_SeparableFilter2D(ctx->Exec,
-			   (target, internalFormat, width, height, format,
+    CALL_SeparableFilter2D(ctx->Exec, (ctx, target, internalFormat, width, height, format,
 			    type, row, column));
 }
 
 static void GLAPIENTRY
-exec_ColorPointerEXT(GLint size, GLenum type, GLsizei stride,
+exec_ColorPointerEXT(GLcontext *ctx, GLint size, GLenum type, GLsizei stride,
 		     GLsizei count, const GLvoid *ptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_ColorPointerEXT(ctx->Exec, (size, type, stride, count, ptr));
+    CALL_ColorPointerEXT(ctx->Exec, (ctx, size, type, stride, count, ptr));
 }
 
 static void GLAPIENTRY
-exec_EdgeFlagPointerEXT(GLsizei stride, GLsizei count, const GLboolean *ptr)
+exec_EdgeFlagPointerEXT(GLcontext *ctx, GLsizei stride, GLsizei count, const GLboolean *ptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_EdgeFlagPointerEXT(ctx->Exec, (stride, count, ptr));
+    CALL_EdgeFlagPointerEXT(ctx->Exec, (ctx, stride, count, ptr));
 }
 
 static void GLAPIENTRY
-exec_IndexPointerEXT(GLenum type, GLsizei stride, GLsizei count,
+exec_IndexPointerEXT(GLcontext *ctx, GLenum type, GLsizei stride, GLsizei count,
 		     const GLvoid *ptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_IndexPointerEXT(ctx->Exec, (type, stride, count, ptr));
+    CALL_IndexPointerEXT(ctx->Exec, (ctx, type, stride, count, ptr));
 }
 
 static void GLAPIENTRY
-exec_NormalPointerEXT(GLenum type, GLsizei stride, GLsizei count,
+exec_NormalPointerEXT(GLcontext *ctx, GLenum type, GLsizei stride, GLsizei count,
 		      const GLvoid *ptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_NormalPointerEXT(ctx->Exec, (type, stride, count, ptr));
+    CALL_NormalPointerEXT(ctx->Exec, (ctx, type, stride, count, ptr));
 }
 
 static void GLAPIENTRY
-exec_TexCoordPointerEXT(GLint size, GLenum type, GLsizei stride,
+exec_TexCoordPointerEXT(GLcontext *ctx, GLint size, GLenum type, GLsizei stride,
 			GLsizei count, const GLvoid *ptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_TexCoordPointerEXT(ctx->Exec, (size, type, stride, count, ptr));
+    CALL_TexCoordPointerEXT(ctx->Exec, (ctx, size, type, stride, count, ptr));
 }
 
 static void GLAPIENTRY
-exec_VertexPointerEXT(GLint size, GLenum type, GLsizei stride,
+exec_VertexPointerEXT(GLcontext *ctx, GLint size, GLenum type, GLsizei stride,
 		      GLsizei count, const GLvoid *ptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_VertexPointerEXT(ctx->Exec, (size, type, stride, count, ptr));
+    CALL_VertexPointerEXT(ctx->Exec, (ctx, size, type, stride, count, ptr));
 }
 
 static void GLAPIENTRY
-exec_LockArraysEXT(GLint first, GLsizei count)
+exec_LockArraysEXT(GLcontext *ctx, GLint first, GLsizei count)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_LockArraysEXT(ctx->Exec, (first, count));
+    CALL_LockArraysEXT(ctx->Exec, (ctx, first, count));
 }
 
 static void GLAPIENTRY
-exec_UnlockArraysEXT(void)
+exec_UnlockArraysEXT(GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_UnlockArraysEXT(ctx->Exec, ());
+    CALL_UnlockArraysEXT(ctx->Exec, (ctx));
 }
 
 static void GLAPIENTRY
-exec_ClientActiveTextureARB(GLenum target)
+exec_ClientActiveTextureARB(GLcontext *ctx, GLenum target)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_ClientActiveTextureARB(ctx->Exec, (target));
+    CALL_ClientActiveTextureARB(ctx->Exec, (ctx, target));
 }
 
 static void GLAPIENTRY
-exec_SecondaryColorPointerEXT(GLint size, GLenum type,
+exec_SecondaryColorPointerEXT(GLcontext *ctx, GLint size, GLenum type,
 			      GLsizei stride, const GLvoid *ptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_SecondaryColorPointerEXT(ctx->Exec, (size, type, stride, ptr));
+    CALL_SecondaryColorPointerEXT(ctx->Exec, (ctx, size, type, stride, ptr));
 }
 
 static void GLAPIENTRY
-exec_FogCoordPointerEXT(GLenum type, GLsizei stride, const GLvoid *ptr)
+exec_FogCoordPointerEXT(GLcontext *ctx, GLenum type, GLsizei stride, const GLvoid *ptr)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_FogCoordPointerEXT(ctx->Exec, (type, stride, ptr));
+    CALL_FogCoordPointerEXT(ctx->Exec, (ctx, type, stride, ptr));
 }
 
 /* GL_EXT_multi_draw_arrays */
 static void GLAPIENTRY
-exec_MultiDrawArraysEXT(GLenum mode, GLint * first,
+exec_MultiDrawArraysEXT(GLcontext *ctx, GLenum mode, GLint * first,
 			GLsizei * count, GLsizei primcount)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_MultiDrawArraysEXT(ctx->Exec, (mode, first, count, primcount));
+    CALL_MultiDrawArraysEXT(ctx->Exec, (ctx, mode, first, count, primcount));
 }
 
 /* GL_EXT_multi_draw_arrays */
 static void GLAPIENTRY
-exec_MultiDrawElementsEXT(GLenum mode, const GLsizei * count,
+exec_MultiDrawElementsEXT(GLcontext *ctx, GLenum mode, const GLsizei * count,
 			  GLenum type, const GLvoid ** indices,
 			  GLsizei primcount)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_MultiDrawElementsEXT(ctx->Exec,
-			      (mode, count, type, indices, primcount));
+    CALL_MultiDrawElementsEXT(ctx->Exec, (ctx, mode, count, type, indices, primcount));
 }
 
 /* GL_IBM_multimode_draw_arrays */
 static void GLAPIENTRY
-exec_MultiModeDrawArraysIBM(const GLenum * mode, const GLint * first,
+exec_MultiModeDrawArraysIBM(GLcontext *ctx, const GLenum * mode, const GLint * first,
 			    const GLsizei * count, GLsizei primcount,
 			    GLint modestride)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_MultiModeDrawArraysIBM(ctx->Exec,
-				(mode, first, count, primcount, modestride));
+    CALL_MultiModeDrawArraysIBM(ctx->Exec, (ctx, mode, first, count, primcount, modestride));
 }
 
 /* GL_IBM_multimode_draw_arrays */
 static void GLAPIENTRY
-exec_MultiModeDrawElementsIBM(const GLenum * mode,
+exec_MultiModeDrawElementsIBM(GLcontext *ctx, const GLenum * mode,
 			      const GLsizei * count,
 			      GLenum type,
 			      const GLvoid * const *indices,
 			      GLsizei primcount, GLint modestride)
 {
-    GET_CURRENT_CONTEXT(ctx);
     FLUSH_VERTICES(ctx, 0);
-    CALL_MultiModeDrawElementsIBM(ctx->Exec,
-				  (mode, count, type, indices, primcount,
+    CALL_MultiModeDrawElementsIBM(ctx->Exec, (ctx, mode, count, type, indices, primcount,
 				   modestride));
 }
 
@@ -8403,9 +8110,8 @@ print_list(GLcontext *ctx, GLuint list)
  * changed, or break in the future without notice.
  */
 void
-mesa_print_display_list(GLuint list)
+mesa_print_display_list(GLcontext *ctx, GLuint list)
 {
-    GET_CURRENT_CONTEXT(ctx);
     print_list(ctx, list);
 }
 
@@ -8503,7 +8209,7 @@ _mesa_save_vtxfmt_init(GLvertexformat * vfmt)
  * Initialize display list state for given context.
  */
 void
-_mesa_init_display_list(GLcontext *ctx)
+_mesa_init_display_list(ctx, GLcontext *ctx)
 {
     static GLboolean tableInitialized = GL_FALSE;
 

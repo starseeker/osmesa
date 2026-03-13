@@ -177,7 +177,7 @@ static const struct {
  * This is a convenience function used by the XMesa, OSMesa, GGI drivers, etc.
  */
 void
-_mesa_enable_sw_extensions(GLcontext *ctx)
+_mesa_enable_sw_extensions(ctx, GLcontext *ctx)
 {
     ctx->Extensions.ARB_depth_texture = GL_TRUE;
     ctx->Extensions.ARB_draw_buffers = GL_TRUE;
@@ -301,7 +301,7 @@ _mesa_enable_sw_extensions(GLcontext *ctx)
  * Enable GL_ARB_imaging and all the EXT extensions that are subsets of it.
  */
 void
-_mesa_enable_imaging_extensions(GLcontext *ctx)
+_mesa_enable_imaging_extensions(ctx, GLcontext *ctx)
 {
     ctx->Extensions.ARB_imaging = GL_TRUE;
     ctx->Extensions.EXT_blend_color = GL_TRUE;
@@ -320,7 +320,7 @@ _mesa_enable_imaging_extensions(GLcontext *ctx)
  * A convenience function to be called by drivers.
  */
 void
-_mesa_enable_1_3_extensions(GLcontext *ctx)
+_mesa_enable_1_3_extensions(ctx, GLcontext *ctx)
 {
     ctx->Extensions.ARB_multisample = GL_TRUE;
     ctx->Extensions.ARB_multitexture = GL_TRUE;
@@ -340,7 +340,7 @@ _mesa_enable_1_3_extensions(GLcontext *ctx)
  * A convenience function to be called by drivers.
  */
 void
-_mesa_enable_1_4_extensions(GLcontext *ctx)
+_mesa_enable_1_4_extensions(ctx, GLcontext *ctx)
 {
     ctx->Extensions.ARB_depth_texture = GL_TRUE;
     ctx->Extensions.ARB_shadow = GL_TRUE;
@@ -367,7 +367,7 @@ _mesa_enable_1_4_extensions(GLcontext *ctx)
  * A convenience function to be called by drivers.
  */
 void
-_mesa_enable_1_5_extensions(GLcontext *ctx)
+_mesa_enable_1_5_extensions(ctx, GLcontext *ctx)
 {
     ctx->Extensions.ARB_occlusion_query = GL_TRUE;
     ctx->Extensions.ARB_vertex_buffer_object = GL_TRUE;
@@ -380,7 +380,7 @@ _mesa_enable_1_5_extensions(GLcontext *ctx)
  * A convenience function to be called by drivers.
  */
 void
-_mesa_enable_2_0_extensions(GLcontext *ctx)
+_mesa_enable_2_0_extensions(ctx, GLcontext *ctx)
 {
     ctx->Extensions.ARB_draw_buffers = GL_TRUE;
 #if FEATURE_ARB_fragment_shader
@@ -406,7 +406,7 @@ _mesa_enable_2_0_extensions(GLcontext *ctx)
  * A convenience function to be called by drivers.
  */
 void
-_mesa_enable_2_1_extensions(GLcontext *ctx)
+_mesa_enable_2_1_extensions(ctx, GLcontext *ctx)
 {
 #if FEATURE_EXT_pixel_buffer_object
     ctx->Extensions.EXT_pixel_buffer_object = GL_TRUE;
@@ -454,7 +454,7 @@ set_extension(GLcontext *ctx, const char *name, GLboolean state)
  * Typically called by drivers.
  */
 void
-_mesa_enable_extension(GLcontext *ctx, const char *name)
+_mesa_enable_extension(ctx, GLcontext *ctx, const char *name)
 {
     set_extension(ctx, name, GL_TRUE);
 }
@@ -465,7 +465,7 @@ _mesa_enable_extension(GLcontext *ctx, const char *name)
  * XXX is this really needed???
  */
 void
-_mesa_disable_extension(GLcontext *ctx, const char *name)
+_mesa_disable_extension(ctx, GLcontext *ctx, const char *name)
 {
     set_extension(ctx, name, GL_FALSE);
 }
@@ -475,7 +475,7 @@ _mesa_disable_extension(GLcontext *ctx, const char *name)
  * Test if the named extension is enabled in this context.
  */
 GLboolean
-_mesa_extension_is_enabled(GLcontext *ctx, const char *name)
+_mesa_extension_is_enabled(ctx, GLcontext *ctx, const char *name)
 {
     const GLboolean *base = (const GLboolean *) &ctx->Extensions;
     GLuint i;
@@ -497,7 +497,7 @@ _mesa_extension_is_enabled(GLcontext *ctx, const char *name)
  * To be called during context initialization.
  */
 void
-_mesa_init_extensions(GLcontext *ctx)
+_mesa_init_extensions(ctx, GLcontext *ctx)
 {
     GLboolean *base = (GLboolean *) &ctx->Extensions;
     GLuint i;

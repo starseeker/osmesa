@@ -177,7 +177,7 @@ record_error(struct parse_state *parseState, const char *msg, int lineNo)
 
     /* Check that no error was already recorded.  Only record the first one. */
     if (parseState->ctx->Program.ErrorString[0] == 0) {
-	_mesa_set_program_error(parseState->ctx,
+	_mesa_set_program_error(ctx, parseState->ctx,
 				parseState->pos - parseState->start,
 				msg);
     }
@@ -1421,7 +1421,7 @@ Parse_InstructionSequence(struct parse_state *parseState,
  * indicates the position of the error in 'str'.
  */
 void
-_mesa_parse_nv_fragment_program(GLcontext *ctx, GLenum dstTarget,
+_mesa_parse_nv_fragment_program(ctx, GLcontext *ctx, GLenum dstTarget,
 				const GLubyte *str, GLsizei len,
 				struct gl_fragment_program *program)
 {

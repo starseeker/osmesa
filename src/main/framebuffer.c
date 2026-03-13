@@ -265,7 +265,7 @@ _mesa_unreference_framebuffer(struct gl_framebuffer **fb)
  * without a currently bound rendering context.
  */
 void
-_mesa_resize_framebuffer(GLcontext *ctx, struct gl_framebuffer *fb,
+_mesa_resize_framebuffer(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
 			 GLuint width, GLuint height)
 {
     GLuint i;
@@ -371,7 +371,7 @@ update_framebuffer_size(struct gl_framebuffer *fb)
  * \param ctx  the GL context.
  */
 void
-_mesa_update_draw_buffer_bounds(GLcontext *ctx)
+_mesa_update_draw_buffer_bounds(ctx, GLcontext *ctx)
 {
     struct gl_framebuffer *buffer = ctx->DrawBuffer;
 
@@ -497,7 +497,7 @@ _mesa_update_framebuffer_visual(struct gl_framebuffer *fb)
  * \param attIndex  indicates the renderbuffer to possibly wrap
  */
 void
-_mesa_update_depth_buffer(GLcontext *ctx,
+_mesa_update_depth_buffer(ctx, GLcontext *ctx,
 			  struct gl_framebuffer *fb,
 			  GLuint attIndex)
 {
@@ -537,7 +537,7 @@ _mesa_update_depth_buffer(GLcontext *ctx,
  * \param attIndex  indicates the renderbuffer to possibly wrap
  */
 void
-_mesa_update_stencil_buffer(GLcontext *ctx,
+_mesa_update_stencil_buffer(ctx, GLcontext *ctx,
 			    struct gl_framebuffer *fb,
 			    GLuint attIndex)
 {
@@ -645,7 +645,7 @@ update_color_read_buffer(GLcontext *ctx, struct gl_framebuffer *fb)
  * glRenderbufferStorageEXT.
  */
 void
-_mesa_update_framebuffer(GLcontext *ctx)
+_mesa_update_framebuffer(ctx, GLcontext *ctx)
 {
     struct gl_framebuffer *fb = ctx->DrawBuffer;
 
@@ -672,7 +672,7 @@ _mesa_update_framebuffer(GLcontext *ctx)
  * \return GL_TRUE if buffer exists, GL_FALSE otherwise
  */
 GLboolean
-_mesa_source_buffer_exists(GLcontext *ctx, GLenum format)
+_mesa_source_buffer_exists(ctx, GLcontext *ctx, GLenum format)
 {
     const struct gl_renderbuffer_attachment *att
 	    = ctx->ReadBuffer->Attachment;
@@ -743,7 +743,7 @@ _mesa_source_buffer_exists(GLcontext *ctx, GLenum format)
  * XXX code do some code merging w/ above function.
  */
 GLboolean
-_mesa_dest_buffer_exists(GLcontext *ctx, GLenum format)
+_mesa_dest_buffer_exists(ctx, GLcontext *ctx, GLenum format)
 {
     const struct gl_renderbuffer_attachment *att
 	    = ctx->ReadBuffer->Attachment;

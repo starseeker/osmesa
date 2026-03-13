@@ -36,27 +36,27 @@
  */
 
 extern void
-_mesa_init_shader_state(GLcontext * ctx);
+_mesa_init_shader_state(ctx, GLcontext * ctx);
 
 extern void
-_mesa_free_shader_state(GLcontext *ctx);
+_mesa_free_shader_state(ctx, GLcontext *ctx);
 
 extern struct gl_shader_program *
 _mesa_new_shader_program(GLcontext *ctx, GLuint name);
 
 extern void
-_mesa_clear_shader_program_data(GLcontext *ctx,
+_mesa_clear_shader_program_data(ctx, GLcontext *ctx,
 				struct gl_shader_program *shProg);
 
 extern void
-_mesa_free_shader_program_data(GLcontext *ctx,
+_mesa_free_shader_program_data(ctx, GLcontext *ctx,
 			       struct gl_shader_program *shProg);
 
 extern void
-_mesa_free_shader_program(GLcontext *ctx, struct gl_shader_program *shProg);
+_mesa_free_shader_program(ctx, GLcontext *ctx, struct gl_shader_program *shProg);
 
 extern void
-_mesa_reference_shader_program(GLcontext *ctx,
+_mesa_reference_shader_program(ctx, GLcontext *ctx,
 			       struct gl_shader_program **ptr,
 			       struct gl_shader_program *shProg);
 
@@ -68,10 +68,10 @@ extern struct gl_shader *
 _mesa_new_shader(GLcontext *ctx, GLuint name, GLenum type);
 
 extern void
-_mesa_free_shader(GLcontext *ctx, struct gl_shader *sh);
+_mesa_free_shader(ctx, GLcontext *ctx, struct gl_shader *sh);
 
 extern void
-_mesa_reference_shader(GLcontext *ctx, struct gl_shader **ptr,
+_mesa_reference_shader(ctx, GLcontext *ctx, struct gl_shader **ptr,
 		       struct gl_shader *sh);
 
 extern struct gl_shader *
@@ -83,107 +83,107 @@ _mesa_lookup_shader(GLcontext *ctx, GLuint name);
  */
 
 extern void
-_mesa_attach_shader(GLcontext *ctx, GLuint program, GLuint shader);
+_mesa_attach_shader(ctx, GLcontext *ctx, GLuint program, GLuint shader);
 
 extern void
-_mesa_bind_attrib_location(GLcontext *ctx, GLuint program, GLuint index,
+_mesa_bind_attrib_location(ctx, GLcontext *ctx, GLuint program, GLuint index,
 			   const GLchar *name);
 
 extern void
-_mesa_compile_shader(GLcontext *ctx, GLuint shaderObj);
+_mesa_compile_shader(ctx, GLcontext *ctx, GLuint shaderObj);
 
 extern GLuint
-_mesa_create_shader(GLcontext *ctx, GLenum type);
+_mesa_create_shader(ctx, GLcontext *ctx, GLenum type);
 
 extern GLuint
-_mesa_create_program(GLcontext *ctx);
+_mesa_create_program(ctx, GLcontext *ctx);
 
 extern void
-_mesa_delete_program2(GLcontext *ctx, GLuint name);
+_mesa_delete_program2(ctx, GLcontext *ctx, GLuint name);
 
 extern void
-_mesa_delete_shader(GLcontext *ctx, GLuint shader);
+_mesa_delete_shader(ctx, GLcontext *ctx, GLuint shader);
 
 extern void
-_mesa_detach_shader(GLcontext *ctx, GLuint program, GLuint shader);
+_mesa_detach_shader(ctx, GLcontext *ctx, GLuint program, GLuint shader);
 
 extern void
-_mesa_get_active_attrib(GLcontext *ctx, GLuint program, GLuint index,
+_mesa_get_active_attrib(ctx, GLcontext *ctx, GLuint program, GLuint index,
 			GLsizei maxLength, GLsizei *length, GLint *size,
 			GLenum *type, GLchar *name);
 
 extern void
-_mesa_get_active_uniform(GLcontext *ctx, GLuint program, GLuint index,
+_mesa_get_active_uniform(ctx, GLcontext *ctx, GLuint program, GLuint index,
 			 GLsizei maxLength, GLsizei *length, GLint *size,
 			 GLenum *type, GLchar *name);
 
 extern void
-_mesa_get_attached_shaders(GLcontext *ctx, GLuint program, GLsizei maxCount,
+_mesa_get_attached_shaders(ctx, GLcontext *ctx, GLuint program, GLsizei maxCount,
 			   GLsizei *count, GLuint *obj);
 
 extern GLint
-_mesa_get_attrib_location(GLcontext *ctx, GLuint program,
+_mesa_get_attrib_location(ctx, GLcontext *ctx, GLuint program,
 			  const GLchar *name);
 
 extern GLuint
-_mesa_get_handle(GLcontext *ctx, GLenum pname);
+_mesa_get_handle(ctx, GLcontext *ctx, GLenum pname);
 
 extern void
-_mesa_get_programiv(GLcontext *ctx, GLuint program,
+_mesa_get_programiv(ctx, GLcontext *ctx, GLuint program,
 		    GLenum pname, GLint *params);
 
 extern void
-_mesa_get_program_info_log(GLcontext *ctx, GLuint program, GLsizei bufSize,
+_mesa_get_program_info_log(ctx, GLcontext *ctx, GLuint program, GLsizei bufSize,
 			   GLsizei *length, GLchar *infoLog);
 
 extern void
-_mesa_get_shaderiv(GLcontext *ctx, GLuint shader, GLenum pname, GLint *params);
+_mesa_get_shaderiv(ctx, GLcontext *ctx, GLuint shader, GLenum pname, GLint *params);
 
 extern void
-_mesa_get_shader_info_log(GLcontext *ctx, GLuint shader, GLsizei bufSize,
+_mesa_get_shader_info_log(ctx, GLcontext *ctx, GLuint shader, GLsizei bufSize,
 			  GLsizei *length, GLchar *infoLog);
 
 extern void
-_mesa_get_shader_source(GLcontext *ctx, GLuint shader, GLsizei maxLength,
+_mesa_get_shader_source(ctx, GLcontext *ctx, GLuint shader, GLsizei maxLength,
 			GLsizei *length, GLchar *sourceOut);
 
 extern void
-_mesa_get_uniformfv(GLcontext *ctx, GLuint program, GLint location,
+_mesa_get_uniformfv(ctx, GLcontext *ctx, GLuint program, GLint location,
 		    GLfloat *params);
 
 extern void
-_mesa_get_uniformiv(GLcontext *ctx, GLuint program, GLint location,
+_mesa_get_uniformiv(ctx, GLcontext *ctx, GLuint program, GLint location,
 		    GLint *params);
 
 extern GLint
-_mesa_get_uniform_location(GLcontext *ctx, GLuint program, const GLchar *name);
+_mesa_get_uniform_location(ctx, GLcontext *ctx, GLuint program, const GLchar *name);
 
 extern GLboolean
-_mesa_is_program(GLcontext *ctx, GLuint name);
+_mesa_is_program(ctx, GLcontext *ctx, GLuint name);
 
 extern GLboolean
-_mesa_is_shader(GLcontext *ctx, GLuint name);
+_mesa_is_shader(ctx, GLcontext *ctx, GLuint name);
 
 extern void
-_mesa_link_program(GLcontext *ctx, GLuint program);
+_mesa_link_program(ctx, GLcontext *ctx, GLuint program);
 
 extern void
-_mesa_shader_source(GLcontext *ctx, GLuint shader, const GLchar *source);
+_mesa_shader_source(ctx, GLcontext *ctx, GLuint shader, const GLchar *source);
 
 extern void
-_mesa_uniform(GLcontext *ctx, GLint location, GLsizei count,
+_mesa_uniform(ctx, GLcontext *ctx, GLint location, GLsizei count,
 	      const GLvoid *values, GLenum type);
 
 void
-_mesa_uniform_matrix(GLcontext *ctx, GLint cols, GLint rows,
+_mesa_uniform_matrix(ctx, GLcontext *ctx, GLint cols, GLint rows,
 		     GLenum matrixType, GLint location, GLsizei count,
 		     GLboolean transpose, const GLfloat *values);
 
 extern void
-_mesa_use_program(GLcontext *ctx, GLuint program);
+_mesa_use_program(ctx, GLcontext *ctx, GLuint program);
 
 extern void
-_mesa_validate_program(GLcontext *ctx, GLuint program);
+_mesa_validate_program(ctx, GLcontext *ctx, GLuint program);
 
 
 #endif /* SHADER_API_H */

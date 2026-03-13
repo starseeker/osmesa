@@ -114,7 +114,7 @@ typedef enum gl_state_index_ {
 
 
 extern void
-_mesa_load_state_parameters(GLcontext *ctx,
+_mesa_load_state_parameters(ctx, GLcontext *ctx,
 			    struct gl_program_parameter_list *paramList);
 
 
@@ -127,7 +127,7 @@ _mesa_program_state_string(const gl_state_index state[STATE_LENGTH]);
 
 
 extern void
-_mesa_load_tracked_matrices(GLcontext *ctx);
+_mesa_load_tracked_matrices(ctx, GLcontext *ctx);
 
 
 #endif /* PROG_STATEVARS_H */

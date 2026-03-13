@@ -984,7 +984,7 @@ update_program(GLcontext *ctx)
 	} else if (ctx->VertexProgram._MaintainTnlProgram) {
 	    /* Use vertex program generated from fixed-function state.
 	     * The _Current pointer will get set in
-	     * _tnl_UpdateFixedFunctionProgram() later if appropriate.
+	     * _tnl_UpdateFixedFunctionProgram(ctx) later if appropriate.
 	     */
 	    ctx->VertexProgram._Current = NULL;
 	} else {
@@ -997,7 +997,7 @@ update_program(GLcontext *ctx)
 	    ctx->FragmentProgram._Current = ctx->FragmentProgram.Current;
 	} else if (ctx->FragmentProgram._MaintainTexEnvProgram) {
 	    /* Use fragment program generated from fixed-function state.
-	     * The _Current pointer will get set in _mesa_UpdateTexEnvProgram()
+	     * The _Current pointer will get set in _mesa_UpdateTexEnvProgram(ctx)
 	     * later if appropriate.
 	     */
 	    ctx->FragmentProgram._Current = NULL;
@@ -1152,12 +1152,12 @@ update_tricaps(GLcontext *ctx, GLbitfield new_state)
  * Calls dd_function_table::UpdateState to perform any internal state
  * management necessary.
  *
- * \sa _mesa_update_modelview_project(), _mesa_update_texture(),
+ * \sa _mesa_update_modelview_project(ctx), _mesa_update_texture(ctx),
  * _mesa_update_buffer_bounds(),
- * _mesa_update_lighting() and _mesa_update_tnl_spaces().
+ * _mesa_update_lighting(ctx) and _mesa_update_tnl_spaces(ctx).
  */
 void
-_mesa_update_state_locked(GLcontext *ctx)
+_mesa_update_state_locked(ctx, GLcontext *ctx)
 {
     GLbitfield new_state = ctx->NewState;
 
@@ -1245,7 +1245,7 @@ _mesa_update_state_locked(GLcontext *ctx)
 /* This is the usual entrypoint for state updates:
  */
 void
-_mesa_update_state(GLcontext *ctx)
+_mesa_update_state(ctx, GLcontext *ctx)
 {
     _mesa_lock_context_textures(ctx);
     _mesa_update_state_locked(ctx);

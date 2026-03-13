@@ -33,7 +33,7 @@
 
 
 extern void
-_swrast_set_aa_triangle_function(GLcontext *ctx);
+_swrast_set_aa_triangle_function(ctx, GLcontext *ctx);
 
 
 #endif

@@ -71,7 +71,7 @@ _slang_lookup_constant(const char *name)
 	if (strcmp(info[i].Name, name) == 0) {
 	    /* found */
 	    GLint value[16] = {-1.0};
-	    _mesa_GetIntegerv(info[i].Token, value);
+	    _mesa_GetIntegerv(ctx, info[i].Token, value);
 	    ASSERT(value[0] >= 0);  /* sanity check that glGetFloatv worked */
 	    return value[0];
 	}

@@ -63,7 +63,7 @@ extern void GLAPIENTRY
 _mesa_RasterPos4d(GLdouble x, GLdouble y, GLdouble z, GLdouble w);
 
 extern void GLAPIENTRY
-_mesa_RasterPos4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+_mesa_RasterPos4f(ctx, GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 
 extern void GLAPIENTRY
 _mesa_RasterPos4i(GLint x, GLint y, GLint z, GLint w);
@@ -186,7 +186,7 @@ extern void GLAPIENTRY
 _mesa_WindowPos4svMESA(const GLshort *v);
 
 extern void
-_mesa_init_rastpos(GLcontext * ctx);
+_mesa_init_rastpos(ctx, GLcontext * ctx);
 
 /*@}*/
 

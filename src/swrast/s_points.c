@@ -155,7 +155,7 @@
 
 
 
-void _swrast_add_spec_terms_point(GLcontext *ctx,
+void _swrast_add_spec_terms_point(ctx, GLcontext *ctx,
 				  const SWvertex *v0)
 {
     SWvertex *ncv0 = (SWvertex *)v0;
@@ -192,7 +192,7 @@ do {                                   \
  * should be used.
  */
 void
-_swrast_choose_point(GLcontext *ctx)
+_swrast_choose_point(ctx, GLcontext *ctx)
 {
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
     GLboolean rgbMode = ctx->Visual.rgbMode;

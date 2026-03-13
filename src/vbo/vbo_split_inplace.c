@@ -226,7 +226,7 @@ static void split_prims(struct split_context *split)
 
 	    flush_vertex(split);
 
-	    vbo_split_copy(split->ctx,
+	    vbo_split_copy(ctx, split->ctx,
 			   split->array,
 			   &tmpprim, 1,
 			   &ib,
@@ -237,7 +237,7 @@ static void split_prims(struct split_context *split)
 	} else {
 	    flush_vertex(split);
 
-	    vbo_split_copy(split->ctx,
+	    vbo_split_copy(ctx, split->ctx,
 			   split->array,
 			   prim, 1,
 			   split->ib,
@@ -250,7 +250,7 @@ static void split_prims(struct split_context *split)
 }
 
 
-void vbo_split_inplace(GLcontext *ctx,
+void vbo_split_inplace(ctx, GLcontext *ctx,
 		       const struct gl_client_array *arrays[],
 		       const struct _mesa_prim *prim,
 		       GLuint nr_prims,

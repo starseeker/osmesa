@@ -33,9 +33,8 @@
 
 
 void GLAPIENTRY
-_mesa_Hint(GLenum target, GLenum mode)
+_mesa_Hint(ctx, GLcontext *ctx, GLenum target, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (MESA_VERBOSE & VERBOSE_API)
@@ -138,7 +137,7 @@ _mesa_Hint(GLenum target, GLenum mode)
 /*****                      Initialization                        *****/
 /**********************************************************************/
 
-void _mesa_init_hint(GLcontext * ctx)
+void _mesa_init_hint(ctx, GLcontext * ctx)
 {
     /* Hint group */
     ctx->Hint.PerspectiveCorrection = GL_DONT_CARE;

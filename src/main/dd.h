@@ -1018,86 +1018,86 @@ typedef struct {
      * \name Vertex
      */
     /*@{*/
-    void (GLAPIENTRYP ArrayElement)(GLint);   /* NOTE */
-    void (GLAPIENTRYP Color3f)(GLfloat, GLfloat, GLfloat);
-    void (GLAPIENTRYP Color3fv)(const GLfloat *);
-    void (GLAPIENTRYP Color4f)(GLfloat, GLfloat, GLfloat, GLfloat);
-    void (GLAPIENTRYP Color4fv)(const GLfloat *);
-    void (GLAPIENTRYP EdgeFlag)(GLboolean);
-    void (GLAPIENTRYP EvalCoord1f)(GLfloat);            /* NOTE */
-    void (GLAPIENTRYP EvalCoord1fv)(const GLfloat *);   /* NOTE */
-    void (GLAPIENTRYP EvalCoord2f)(GLfloat, GLfloat);   /* NOTE */
-    void (GLAPIENTRYP EvalCoord2fv)(const GLfloat *);   /* NOTE */
-    void (GLAPIENTRYP EvalPoint1)(GLint);               /* NOTE */
-    void (GLAPIENTRYP EvalPoint2)(GLint, GLint);        /* NOTE */
-    void (GLAPIENTRYP FogCoordfEXT)(GLfloat);
-    void (GLAPIENTRYP FogCoordfvEXT)(const GLfloat *);
-    void (GLAPIENTRYP Indexf)(GLfloat);
-    void (GLAPIENTRYP Indexfv)(const GLfloat *);
-    void (GLAPIENTRYP Materialfv)(GLenum face, GLenum pname, const GLfloat *);   /* NOTE */
-    void (GLAPIENTRYP MultiTexCoord1fARB)(GLenum, GLfloat);
-    void (GLAPIENTRYP MultiTexCoord1fvARB)(GLenum, const GLfloat *);
-    void (GLAPIENTRYP MultiTexCoord2fARB)(GLenum, GLfloat, GLfloat);
-    void (GLAPIENTRYP MultiTexCoord2fvARB)(GLenum, const GLfloat *);
-    void (GLAPIENTRYP MultiTexCoord3fARB)(GLenum, GLfloat, GLfloat, GLfloat);
-    void (GLAPIENTRYP MultiTexCoord3fvARB)(GLenum, const GLfloat *);
-    void (GLAPIENTRYP MultiTexCoord4fARB)(GLenum, GLfloat, GLfloat, GLfloat, GLfloat);
-    void (GLAPIENTRYP MultiTexCoord4fvARB)(GLenum, const GLfloat *);
-    void (GLAPIENTRYP Normal3f)(GLfloat, GLfloat, GLfloat);
-    void (GLAPIENTRYP Normal3fv)(const GLfloat *);
-    void (GLAPIENTRYP SecondaryColor3fEXT)(GLfloat, GLfloat, GLfloat);
-    void (GLAPIENTRYP SecondaryColor3fvEXT)(const GLfloat *);
-    void (GLAPIENTRYP TexCoord1f)(GLfloat);
-    void (GLAPIENTRYP TexCoord1fv)(const GLfloat *);
-    void (GLAPIENTRYP TexCoord2f)(GLfloat, GLfloat);
-    void (GLAPIENTRYP TexCoord2fv)(const GLfloat *);
-    void (GLAPIENTRYP TexCoord3f)(GLfloat, GLfloat, GLfloat);
-    void (GLAPIENTRYP TexCoord3fv)(const GLfloat *);
-    void (GLAPIENTRYP TexCoord4f)(GLfloat, GLfloat, GLfloat, GLfloat);
-    void (GLAPIENTRYP TexCoord4fv)(const GLfloat *);
-    void (GLAPIENTRYP Vertex2f)(GLfloat, GLfloat);
-    void (GLAPIENTRYP Vertex2fv)(const GLfloat *);
-    void (GLAPIENTRYP Vertex3f)(GLfloat, GLfloat, GLfloat);
-    void (GLAPIENTRYP Vertex3fv)(const GLfloat *);
-    void (GLAPIENTRYP Vertex4f)(GLfloat, GLfloat, GLfloat, GLfloat);
-    void (GLAPIENTRYP Vertex4fv)(const GLfloat *);
-    void (GLAPIENTRYP CallList)(GLuint);	/* NOTE */
-    void (GLAPIENTRYP CallLists)(GLsizei, GLenum, const GLvoid *);	/* NOTE */
-    void (GLAPIENTRYP Begin)(GLenum);
-    void (GLAPIENTRYP End)(void);
+    void (GLAPIENTRYP ArrayElement)(GLcontext *ctx, GLint);   /* NOTE */
+    void (GLAPIENTRYP Color3f)(GLcontext *ctx, GLfloat, GLfloat, GLfloat);
+    void (GLAPIENTRYP Color3fv)(GLcontext *ctx, const GLfloat *);
+    void (GLAPIENTRYP Color4f)(GLcontext *ctx, GLfloat, GLfloat, GLfloat, GLfloat);
+    void (GLAPIENTRYP Color4fv)(GLcontext *ctx, const GLfloat *);
+    void (GLAPIENTRYP EdgeFlag)(GLcontext *ctx, GLboolean);
+    void (GLAPIENTRYP EvalCoord1f)(GLcontext *ctx, GLfloat);            /* NOTE */
+    void (GLAPIENTRYP EvalCoord1fv)(GLcontext *ctx, const GLfloat *);   /* NOTE */
+    void (GLAPIENTRYP EvalCoord2f)(GLcontext *ctx, GLfloat, GLfloat);   /* NOTE */
+    void (GLAPIENTRYP EvalCoord2fv)(GLcontext *ctx, const GLfloat *);   /* NOTE */
+    void (GLAPIENTRYP EvalPoint1)(GLcontext *ctx, GLint);               /* NOTE */
+    void (GLAPIENTRYP EvalPoint2)(GLcontext *ctx, GLint, GLint);        /* NOTE */
+    void (GLAPIENTRYP FogCoordfEXT)(GLcontext *ctx, GLfloat);
+    void (GLAPIENTRYP FogCoordfvEXT)(GLcontext *ctx, const GLfloat *);
+    void (GLAPIENTRYP Indexf)(GLcontext *ctx, GLfloat);
+    void (GLAPIENTRYP Indexfv)(GLcontext *ctx, const GLfloat *);
+    void (GLAPIENTRYP Materialfv)(GLcontext *ctx, GLenum face, GLenum pname, const GLfloat *);   /* NOTE */
+    void (GLAPIENTRYP MultiTexCoord1fARB)(GLcontext *ctx, GLenum, GLfloat);
+    void (GLAPIENTRYP MultiTexCoord1fvARB)(GLcontext *ctx, GLenum, const GLfloat *);
+    void (GLAPIENTRYP MultiTexCoord2fARB)(GLcontext *ctx, GLenum, GLfloat, GLfloat);
+    void (GLAPIENTRYP MultiTexCoord2fvARB)(GLcontext *ctx, GLenum, const GLfloat *);
+    void (GLAPIENTRYP MultiTexCoord3fARB)(GLcontext *ctx, GLenum, GLfloat, GLfloat, GLfloat);
+    void (GLAPIENTRYP MultiTexCoord3fvARB)(GLcontext *ctx, GLenum, const GLfloat *);
+    void (GLAPIENTRYP MultiTexCoord4fARB)(GLcontext *ctx, GLenum, GLfloat, GLfloat, GLfloat, GLfloat);
+    void (GLAPIENTRYP MultiTexCoord4fvARB)(GLcontext *ctx, GLenum, const GLfloat *);
+    void (GLAPIENTRYP Normal3f)(GLcontext *ctx, GLfloat, GLfloat, GLfloat);
+    void (GLAPIENTRYP Normal3fv)(GLcontext *ctx, const GLfloat *);
+    void (GLAPIENTRYP SecondaryColor3fEXT)(GLcontext *ctx, GLfloat, GLfloat, GLfloat);
+    void (GLAPIENTRYP SecondaryColor3fvEXT)(GLcontext *ctx, const GLfloat *);
+    void (GLAPIENTRYP TexCoord1f)(GLcontext *ctx, GLfloat);
+    void (GLAPIENTRYP TexCoord1fv)(GLcontext *ctx, const GLfloat *);
+    void (GLAPIENTRYP TexCoord2f)(GLcontext *ctx, GLfloat, GLfloat);
+    void (GLAPIENTRYP TexCoord2fv)(GLcontext *ctx, const GLfloat *);
+    void (GLAPIENTRYP TexCoord3f)(GLcontext *ctx, GLfloat, GLfloat, GLfloat);
+    void (GLAPIENTRYP TexCoord3fv)(GLcontext *ctx, const GLfloat *);
+    void (GLAPIENTRYP TexCoord4f)(GLcontext *ctx, GLfloat, GLfloat, GLfloat, GLfloat);
+    void (GLAPIENTRYP TexCoord4fv)(GLcontext *ctx, const GLfloat *);
+    void (GLAPIENTRYP Vertex2f)(GLcontext *ctx, GLfloat, GLfloat);
+    void (GLAPIENTRYP Vertex2fv)(GLcontext *ctx, const GLfloat *);
+    void (GLAPIENTRYP Vertex3f)(GLcontext *ctx, GLfloat, GLfloat, GLfloat);
+    void (GLAPIENTRYP Vertex3fv)(GLcontext *ctx, const GLfloat *);
+    void (GLAPIENTRYP Vertex4f)(GLcontext *ctx, GLfloat, GLfloat, GLfloat, GLfloat);
+    void (GLAPIENTRYP Vertex4fv)(GLcontext *ctx, const GLfloat *);
+    void (GLAPIENTRYP CallList)(GLcontext *ctx, GLuint);	/* NOTE */
+    void (GLAPIENTRYP CallLists)(GLcontext *ctx, GLsizei, GLenum, const GLvoid *);	/* NOTE */
+    void (GLAPIENTRYP Begin)(GLcontext *ctx, GLenum);
+    void (GLAPIENTRYP End)(GLcontext *ctx);
     /* GL_NV_vertex_program */
-    void (GLAPIENTRYP VertexAttrib1fNV)(GLuint index, GLfloat x);
-    void (GLAPIENTRYP VertexAttrib1fvNV)(GLuint index, const GLfloat *v);
-    void (GLAPIENTRYP VertexAttrib2fNV)(GLuint index, GLfloat x, GLfloat y);
-    void (GLAPIENTRYP VertexAttrib2fvNV)(GLuint index, const GLfloat *v);
-    void (GLAPIENTRYP VertexAttrib3fNV)(GLuint index, GLfloat x, GLfloat y, GLfloat z);
-    void (GLAPIENTRYP VertexAttrib3fvNV)(GLuint index, const GLfloat *v);
-    void (GLAPIENTRYP VertexAttrib4fNV)(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-    void (GLAPIENTRYP VertexAttrib4fvNV)(GLuint index, const GLfloat *v);
+    void (GLAPIENTRYP VertexAttrib1fNV)(GLcontext *ctx, GLuint index, GLfloat x);
+    void (GLAPIENTRYP VertexAttrib1fvNV)(GLcontext *ctx, GLuint index, const GLfloat *v);
+    void (GLAPIENTRYP VertexAttrib2fNV)(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y);
+    void (GLAPIENTRYP VertexAttrib2fvNV)(GLcontext *ctx, GLuint index, const GLfloat *v);
+    void (GLAPIENTRYP VertexAttrib3fNV)(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y, GLfloat z);
+    void (GLAPIENTRYP VertexAttrib3fvNV)(GLcontext *ctx, GLuint index, const GLfloat *v);
+    void (GLAPIENTRYP VertexAttrib4fNV)(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+    void (GLAPIENTRYP VertexAttrib4fvNV)(GLcontext *ctx, GLuint index, const GLfloat *v);
 #if FEATURE_ARB_vertex_program
-    void (GLAPIENTRYP VertexAttrib1fARB)(GLuint index, GLfloat x);
-    void (GLAPIENTRYP VertexAttrib1fvARB)(GLuint index, const GLfloat *v);
-    void (GLAPIENTRYP VertexAttrib2fARB)(GLuint index, GLfloat x, GLfloat y);
-    void (GLAPIENTRYP VertexAttrib2fvARB)(GLuint index, const GLfloat *v);
-    void (GLAPIENTRYP VertexAttrib3fARB)(GLuint index, GLfloat x, GLfloat y, GLfloat z);
-    void (GLAPIENTRYP VertexAttrib3fvARB)(GLuint index, const GLfloat *v);
-    void (GLAPIENTRYP VertexAttrib4fARB)(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-    void (GLAPIENTRYP VertexAttrib4fvARB)(GLuint index, const GLfloat *v);
+    void (GLAPIENTRYP VertexAttrib1fARB)(GLcontext *ctx, GLuint index, GLfloat x);
+    void (GLAPIENTRYP VertexAttrib1fvARB)(GLcontext *ctx, GLuint index, const GLfloat *v);
+    void (GLAPIENTRYP VertexAttrib2fARB)(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y);
+    void (GLAPIENTRYP VertexAttrib2fvARB)(GLcontext *ctx, GLuint index, const GLfloat *v);
+    void (GLAPIENTRYP VertexAttrib3fARB)(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y, GLfloat z);
+    void (GLAPIENTRYP VertexAttrib3fvARB)(GLcontext *ctx, GLuint index, const GLfloat *v);
+    void (GLAPIENTRYP VertexAttrib4fARB)(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+    void (GLAPIENTRYP VertexAttrib4fvARB)(GLcontext *ctx, GLuint index, const GLfloat *v);
 #endif
     /*@}*/
 
     /*
      */
-    void (GLAPIENTRYP Rectf)(GLfloat, GLfloat, GLfloat, GLfloat);
+    void (GLAPIENTRYP Rectf)(GLcontext *ctx, GLfloat, GLfloat, GLfloat, GLfloat);
 
     /**
      * \name Array
      */
     /*@{*/
-    void (GLAPIENTRYP DrawArrays)(GLenum mode, GLint start, GLsizei count);
-    void (GLAPIENTRYP DrawElements)(GLenum mode, GLsizei count, GLenum type,
+    void (GLAPIENTRYP DrawArrays)(GLcontext *ctx, GLenum mode, GLint start, GLsizei count);
+    void (GLAPIENTRYP DrawElements)(GLcontext *ctx, GLenum mode, GLsizei count, GLenum type,
 				    const GLvoid *indices);
-    void (GLAPIENTRYP DrawRangeElements)(GLenum mode, GLuint start,
+    void (GLAPIENTRYP DrawRangeElements)(GLcontext *ctx, GLenum mode, GLuint start,
 					 GLuint end, GLsizei count,
 					 GLenum type, const GLvoid *indices);
     /*@}*/
@@ -1113,8 +1113,8 @@ typedef struct {
      * accelerated vertex formats, eventually...
      */
     /*@{*/
-    void (GLAPIENTRYP EvalMesh1)(GLenum mode, GLint i1, GLint i2);
-    void (GLAPIENTRYP EvalMesh2)(GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2);
+    void (GLAPIENTRYP EvalMesh1)(GLcontext *ctx, GLenum mode, GLint i1, GLint i2);
+    void (GLAPIENTRYP EvalMesh2)(GLcontext *ctx, GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2);
     /*@}*/
 
 } GLvertexformat;

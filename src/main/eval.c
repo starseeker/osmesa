@@ -371,10 +371,9 @@ GLfloat *_mesa_copy_map_points2d(GLenum target,
  * This does the work of glMap1[fd].
  */
 static void
-map1(GLenum target, GLfloat u1, GLfloat u2, GLint ustride,
+map1(GLcontext *ctx, GLenum target, GLfloat u1, GLfloat u2, GLint ustride,
      GLint uorder, const GLvoid *points, GLenum type)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLint k;
     GLfloat *pnts;
     struct gl_1d_map *map = NULL;
@@ -453,11 +452,10 @@ _mesa_Map1d(GLenum target, GLdouble u1, GLdouble u2, GLint stride,
 
 
 static void
-map2(GLenum target, GLfloat u1, GLfloat u2, GLint ustride, GLint uorder,
+map2(GLcontext *ctx, GLenum target, GLfloat u1, GLfloat u2, GLint ustride, GLint uorder,
      GLfloat v1, GLfloat v2, GLint vstride, GLint vorder,
      const GLvoid *points, GLenum type)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLint k;
     GLfloat *pnts;
     struct gl_2d_map *map = NULL;
@@ -559,9 +557,8 @@ _mesa_Map2d(GLenum target,
 
 
 void GLAPIENTRY
-_mesa_GetMapdv(GLenum target, GLenum query, GLdouble *v)
+_mesa_GetMapdv(ctx, GLcontext *ctx, GLenum target, GLenum query, GLdouble *v)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_1d_map *map1d;
     struct gl_2d_map *map2d;
     GLint i, n;
@@ -621,9 +618,8 @@ _mesa_GetMapdv(GLenum target, GLenum query, GLdouble *v)
 
 
 void GLAPIENTRY
-_mesa_GetMapfv(GLenum target, GLenum query, GLfloat *v)
+_mesa_GetMapfv(ctx, GLcontext *ctx, GLenum target, GLenum query, GLfloat *v)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_1d_map *map1d;
     struct gl_2d_map *map2d;
     GLint i, n;
@@ -683,9 +679,8 @@ _mesa_GetMapfv(GLenum target, GLenum query, GLfloat *v)
 
 
 void GLAPIENTRY
-_mesa_GetMapiv(GLenum target, GLenum query, GLint *v)
+_mesa_GetMapiv(ctx, GLcontext *ctx, GLenum target, GLenum query, GLint *v)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct gl_1d_map *map1d;
     struct gl_2d_map *map2d;
     GLuint i, n;
@@ -746,9 +741,8 @@ _mesa_GetMapiv(GLenum target, GLenum query, GLint *v)
 
 
 void GLAPIENTRY
-_mesa_MapGrid1f(GLint un, GLfloat u1, GLfloat u2)
+_mesa_MapGrid1f(ctx, GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (un<1) {
@@ -766,15 +760,14 @@ _mesa_MapGrid1f(GLint un, GLfloat u1, GLfloat u2)
 void GLAPIENTRY
 _mesa_MapGrid1d(GLint un, GLdouble u1, GLdouble u2)
 {
-    _mesa_MapGrid1f(un, (GLfloat) u1, (GLfloat) u2);
+    _mesa_MapGrid1f(ctx, un, (GLfloat) u1, (GLfloat) u2);
 }
 
 
 void GLAPIENTRY
-_mesa_MapGrid2f(GLint un, GLfloat u1, GLfloat u2,
+_mesa_MapGrid2f(ctx, GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2,
 		GLint vn, GLfloat v1, GLfloat v2)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (un<1) {
@@ -802,7 +795,7 @@ void GLAPIENTRY
 _mesa_MapGrid2d(GLint un, GLdouble u1, GLdouble u2,
 		GLint vn, GLdouble v1, GLdouble v2)
 {
-    _mesa_MapGrid2f(un, (GLfloat) u1, (GLfloat) u2,
+    _mesa_MapGrid2f(ctx, un, (GLfloat) u1, (GLfloat) u2,
 		    vn, (GLfloat) v1, (GLfloat) v2);
 }
 
@@ -851,7 +844,7 @@ init_2d_map(struct gl_2d_map *map, int n, const float *initial)
 }
 
 
-void _mesa_init_eval(GLcontext *ctx)
+void _mesa_init_eval(ctx, GLcontext *ctx)
 {
     int i;
 
@@ -923,7 +916,7 @@ void _mesa_init_eval(GLcontext *ctx)
 }
 
 
-void _mesa_free_eval_data(GLcontext *ctx)
+void _mesa_free_eval_data(ctx, GLcontext *ctx)
 {
     int i;
 

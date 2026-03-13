@@ -52,10 +52,8 @@
  * for the display list code to save and restore this function.
  */
 void GLAPIENTRY
-_mesa_BlendFunc(GLenum sfactor, GLenum dfactor)
+_mesa_BlendFunc(ctx, GLcontext *ctx, GLenum sfactor, GLenum dfactor)
 {
-    GET_CURRENT_CONTEXT(ctx);
-
     (*ctx->CurrentDispatch->BlendFuncSeparateEXT)(sfactor, dfactor,
 	    sfactor, dfactor);
 }
@@ -74,10 +72,9 @@ _mesa_BlendFunc(GLenum sfactor, GLenum dfactor)
  * dd_function_table::BlendFuncSeparate.
  */
 void GLAPIENTRY
-_mesa_BlendFuncSeparateEXT(GLenum sfactorRGB, GLenum dfactorRGB,
+_mesa_BlendFuncSeparateEXT(ctx, GLcontext *ctx, GLenum sfactorRGB, GLenum dfactorRGB,
 			   GLenum sfactorA, GLenum dfactorA)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (MESA_VERBOSE & (VERBOSE_API|VERBOSE_TEXTURE))
@@ -216,7 +213,7 @@ _mesa_BlendFuncSeparateEXT(GLenum sfactorRGB, GLenum dfactorRGB,
 #if _HAVE_FULL_GL
 
 static GLboolean
-_mesa_validate_blend_equation(GLcontext *ctx,
+_mesa_validate_blend_equation(ctx, GLcontext *ctx,
 			      GLenum mode, GLboolean is_separate)
 {
     switch (mode) {
@@ -253,9 +250,8 @@ _mesa_validate_blend_equation(GLcontext *ctx,
 
 /* This is really an extension function! */
 void GLAPIENTRY
-_mesa_BlendEquation(GLenum mode)
+_mesa_BlendEquation(ctx, GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (MESA_VERBOSE & (VERBOSE_API|VERBOSE_TEXTURE))
@@ -281,9 +277,8 @@ _mesa_BlendEquation(GLenum mode)
 
 
 void GLAPIENTRY
-_mesa_BlendEquationSeparateEXT(GLenum modeRGB, GLenum modeA)
+_mesa_BlendEquationSeparateEXT(ctx, GLcontext *ctx, GLenum modeRGB, GLenum modeA)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (MESA_VERBOSE & (VERBOSE_API|VERBOSE_TEXTURE))
@@ -337,10 +332,9 @@ _mesa_BlendEquationSeparateEXT(GLenum modeRGB, GLenum modeA)
  * dd_function_table::BlendColor callback.
  */
 void GLAPIENTRY
-_mesa_BlendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
+_mesa_BlendColor(ctx, GLcontext *ctx, GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
     GLfloat tmp[4];
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     tmp[0] = CLAMP(red,   0.0F, 1.0F);
@@ -370,9 +364,8 @@ _mesa_BlendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
  * dd_function_table::AlphaFunc callback.
  */
 void GLAPIENTRY
-_mesa_AlphaFunc(GLenum func, GLclampf ref)
+_mesa_AlphaFunc(ctx, GLcontext *ctx, GLenum func, GLclampf ref)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     switch (func) {
@@ -415,9 +408,8 @@ gl_colorbuffer_attrib::LogicOp.
  * dd_function_table::LogicOpcode callback.
  */
 void GLAPIENTRY
-_mesa_LogicOp(GLenum opcode)
+_mesa_LogicOp(ctx, GLcontext *ctx, GLenum opcode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     switch (opcode) {
@@ -455,9 +447,8 @@ _mesa_LogicOp(GLenum opcode)
 
 #if _HAVE_FULL_GL
 void GLAPIENTRY
-_mesa_IndexMask(GLuint mask)
+_mesa_IndexMask(ctx, GLcontext *ctx, GLuint mask)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (ctx->Color.IndexMask == mask)
@@ -487,10 +478,9 @@ _mesa_IndexMask(GLuint mask)
  * dd_function_table::ColorMask callback.
  */
 void GLAPIENTRY
-_mesa_ColorMask(GLboolean red, GLboolean green,
+_mesa_ColorMask(ctx, GLcontext *ctx, GLboolean red, GLboolean green,
 		GLboolean blue, GLboolean alpha)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLubyte tmp[4];
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -517,10 +507,8 @@ _mesa_ColorMask(GLboolean red, GLboolean green,
 
 
 extern void GLAPIENTRY
-_mesa_ClampColorARB(GLenum target, GLenum clamp)
+_mesa_ClampColorARB(ctx, GLcontext *ctx, GLenum target, GLenum clamp)
 {
-    GET_CURRENT_CONTEXT(ctx);
-
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (clamp != GL_TRUE && clamp != GL_FALSE && clamp != GL_FIXED_ONLY_ARB) {
@@ -559,7 +547,7 @@ _mesa_ClampColorARB(GLenum target, GLenum clamp)
  * Initializes the related fields in the context color attribute group,
  * __GLcontextRec::Color.
  */
-void _mesa_init_color(GLcontext * ctx)
+void _mesa_init_color(ctx, GLcontext * ctx)
 {
     /* Color buffer group */
     ctx->Color.IndexMask = ~0u;

@@ -563,7 +563,7 @@ init_machine(GLcontext * ctx, struct atifs_machine *machine,
  * Execute the current ATI shader program, operating on the given span.
  */
 void
-_swrast_exec_fragment_shader(GLcontext * ctx, SWspan *span)
+_swrast_exec_fragment_shader(ctx, GLcontext * ctx, SWspan *span)
 {
     const struct ati_fragment_shader *shader = ctx->ATIFragmentShader.Current;
     struct atifs_machine machine;

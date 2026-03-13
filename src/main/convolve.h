@@ -33,54 +33,45 @@
 
 #if _HAVE_FULL_GL
 extern void GLAPIENTRY
-_mesa_ConvolutionFilter1D(GLenum target, GLenum internalformat, GLsizei width,
-			  GLenum format, GLenum type, const GLvoid *image);
+_mesa_ConvolutionFilter1D(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLsizei width, GLenum format, GLenum type, const GLvoid *image);
 
 extern void GLAPIENTRY
-_mesa_ConvolutionFilter2D(GLenum target, GLenum internalformat, GLsizei width,
-			  GLsizei height, GLenum format, GLenum type,
-			  const GLvoid *image);
+_mesa_ConvolutionFilter2D(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *image);
 
 extern void GLAPIENTRY
-_mesa_ConvolutionParameterf(GLenum target, GLenum pname, GLfloat params);
+_mesa_ConvolutionParameterf(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat param);
 
 extern void GLAPIENTRY
-_mesa_ConvolutionParameterfv(GLenum target, GLenum pname,
-			     const GLfloat *params);
+_mesa_ConvolutionParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_ConvolutionParameteri(GLenum target, GLenum pname, GLint params);
+_mesa_ConvolutionParameteri(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint param);
 
 extern void GLAPIENTRY
-_mesa_ConvolutionParameteriv(GLenum target, GLenum pname, const GLint *params);
+_mesa_ConvolutionParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, const GLint *params);
 
 extern void GLAPIENTRY
-_mesa_CopyConvolutionFilter1D(GLenum target, GLenum internalformat,
-			      GLint x, GLint y, GLsizei width);
+_mesa_CopyConvolutionFilter1D(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLint x, GLint y, GLsizei width);
 
 extern void GLAPIENTRY
-_mesa_CopyConvolutionFilter2D(GLenum target, GLenum internalformat,
-			      GLint x, GLint y, GLsizei width, GLsizei height);
+_mesa_CopyConvolutionFilter2D(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLint x, GLint y, GLsizei width, GLsizei height);
 
 extern void GLAPIENTRY
-_mesa_GetConvolutionFilter(GLenum target, GLenum format, GLenum type,
+_mesa_GetConvolutionFilter(ctx, GLcontext *ctx, GLenum target, GLenum format, GLenum type,
 			   GLvoid *image);
 
 extern void GLAPIENTRY
-_mesa_GetConvolutionParameterfv(GLenum target, GLenum pname, GLfloat *params);
+_mesa_GetConvolutionParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_GetConvolutionParameteriv(GLenum target, GLenum pname, GLint *params);
+_mesa_GetConvolutionParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetSeparableFilter(GLenum target, GLenum format, GLenum type,
+_mesa_GetSeparableFilter(ctx, GLcontext *ctx, GLenum target, GLenum format, GLenum type,
 			 GLvoid *row, GLvoid *column, GLvoid *span);
 
 extern void GLAPIENTRY
-_mesa_SeparableFilter2D(GLenum target, GLenum internalformat,
-			GLsizei width, GLsizei height,
-			GLenum format, GLenum type,
-			const GLvoid *row, const GLvoid *column);
+_mesa_SeparableFilter2D(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *row, const GLvoid *column);
 
 
 

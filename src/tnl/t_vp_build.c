@@ -1530,7 +1530,7 @@ static GLuint hash_key(struct state_key *key)
     return hash;
 }
 
-void _tnl_UpdateFixedFunctionProgram(GLcontext *ctx)
+void _tnl_UpdateFixedFunctionProgram(ctx, GLcontext *ctx)
 {
     TNLcontext *tnl = TNL_CONTEXT(ctx);
     struct state_key *key;
@@ -1583,7 +1583,7 @@ void _tnl_UpdateFixedFunctionProgram(GLcontext *ctx)
     }
 }
 
-void _tnl_ProgramCacheInit(GLcontext *ctx)
+void _tnl_ProgramCacheInit(ctx, GLcontext *ctx)
 {
     TNLcontext *tnl = TNL_CONTEXT(ctx);
 
@@ -1594,7 +1594,7 @@ void _tnl_ProgramCacheInit(GLcontext *ctx)
 			   calloc(1,tnl->vp_cache->size * sizeof(*tnl->vp_cache->items));
 }
 
-void _tnl_ProgramCacheDestroy(GLcontext *ctx)
+void _tnl_ProgramCacheDestroy(ctx, GLcontext *ctx)
 {
     TNLcontext *tnl = TNL_CONTEXT(ctx);
     struct tnl_cache_item *c, *next;

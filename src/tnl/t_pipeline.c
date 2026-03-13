@@ -36,7 +36,7 @@
 #include "t_vp_build.h"
 #include "t_vertex.h"
 
-void _tnl_install_pipeline(GLcontext *ctx,
+void _tnl_install_pipeline(ctx, GLcontext *ctx,
 			   const struct tnl_pipeline_stage **stages)
 {
     TNLcontext *tnl = TNL_CONTEXT(ctx);
@@ -56,7 +56,7 @@ void _tnl_install_pipeline(GLcontext *ctx,
     tnl->pipeline.nr_stages = i;
 }
 
-void _tnl_destroy_pipeline(GLcontext *ctx)
+void _tnl_destroy_pipeline(ctx, GLcontext *ctx)
 {
     TNLcontext *tnl = TNL_CONTEXT(ctx);
     GLuint i;
@@ -118,7 +118,7 @@ static GLuint check_output_changes(GLcontext *ctx)
 }
 
 
-void _tnl_run_pipeline(GLcontext *ctx)
+void _tnl_run_pipeline(ctx, GLcontext *ctx)
 {
     TNLcontext *tnl = TNL_CONTEXT(ctx);
     unsigned short __tmp;

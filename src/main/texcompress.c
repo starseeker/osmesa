@@ -53,7 +53,7 @@
  * \return number of formats.
  */
 GLuint
-_mesa_get_compressed_formats(GLcontext *ctx, GLint *formats, GLboolean all)
+_mesa_get_compressed_formats(ctx, GLcontext *ctx, GLint *formats, GLboolean all)
 {
     GLuint n = 0;
     if (ctx->Extensions.ARB_texture_compression) {
@@ -125,7 +125,7 @@ _mesa_get_compressed_formats(GLcontext *ctx, GLint *formats, GLboolean all)
  * \return size in bytes, or zero if bad format
  */
 GLuint
-_mesa_compressed_texture_size(GLcontext *ctx,
+_mesa_compressed_texture_size(ctx, GLcontext *ctx,
 			      GLsizei width, GLsizei height, GLsizei depth,
 			      GLuint mesaFormat)
 {
@@ -191,7 +191,7 @@ _mesa_compressed_texture_size(GLcontext *ctx,
  * of glCompressedTex[Sub]Image1/2/3D(), which must be an exact match.
  */
 GLuint
-_mesa_compressed_texture_size_glenum(GLcontext *ctx,
+_mesa_compressed_texture_size_glenum(ctx, GLcontext *ctx,
 				     GLsizei width, GLsizei height,
 				     GLsizei depth, GLenum glformat)
 {

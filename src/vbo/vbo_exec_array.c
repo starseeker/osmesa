@@ -229,9 +229,8 @@ static void bind_arrays(GLcontext *ctx)
  */
 
 static void GLAPIENTRY
-vbo_exec_DrawArrays(GLenum mode, GLint start, GLsizei count)
+vbo_exec_DrawArrays(ctx, GLcontext *ctx, GLenum mode, GLint start, GLsizei count)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct vbo_context *vbo = vbo_context(ctx);
     struct vbo_exec_context *exec = &vbo->exec;
     struct _mesa_prim prim[1];
@@ -266,11 +265,10 @@ vbo_exec_DrawArrays(GLenum mode, GLint start, GLsizei count)
 
 
 static void GLAPIENTRY
-vbo_exec_DrawRangeElements(GLenum mode,
+vbo_exec_DrawRangeElements(ctx, GLcontext *ctx, GLenum mode,
 			   GLuint start, GLuint end,
 			   GLsizei count, GLenum type, const GLvoid *indices)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct vbo_context *vbo = vbo_context(ctx);
     struct vbo_exec_context *exec = &vbo->exec;
     struct _mesa_index_buffer ib;
@@ -340,9 +338,8 @@ vbo_exec_DrawRangeElements(GLenum mode,
 }
 
 static void GLAPIENTRY
-vbo_exec_DrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices)
+vbo_exec_DrawElements(ctx, GLcontext *ctx, GLenum mode, GLsizei count, GLenum type, const GLvoid *indices)
 {
-    GET_CURRENT_CONTEXT(ctx);
     GLuint min_index = 0;
     GLuint max_index = 0;
 
@@ -369,7 +366,7 @@ vbo_exec_DrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *ind
 	get_minmax_index(count, type, indices, &min_index, &max_index);
     }
 
-    vbo_exec_DrawRangeElements(mode, min_index, max_index, count, type, indices);
+    vbo_exec_DrawRangeElements(ctx, mode, min_index, max_index, count, type, indices);
 }
 
 

@@ -240,7 +240,7 @@ is_depth_stencil_format(GLenum format)
  * Fallback for Driver.CopyTexImage1D().
  */
 void
-_swrast_copy_teximage1d(GLcontext *ctx, GLenum target, GLint level,
+_swrast_copy_teximage1d(ctx, GLcontext *ctx, GLenum target, GLint level,
 			GLenum internalFormat,
 			GLint x, GLint y, GLsizei width, GLint border)
 {
@@ -314,7 +314,7 @@ _swrast_copy_teximage1d(GLcontext *ctx, GLenum target, GLint level,
  * Device drivers should try to implement direct framebuffer->texture copies.
  */
 void
-_swrast_copy_teximage2d(GLcontext *ctx, GLenum target, GLint level,
+_swrast_copy_teximage2d(ctx, GLcontext *ctx, GLenum target, GLint level,
 			GLenum internalFormat,
 			GLint x, GLint y, GLsizei width, GLsizei height,
 			GLint border)
@@ -383,7 +383,7 @@ _swrast_copy_teximage2d(GLcontext *ctx, GLenum target, GLint level,
  * Fallback for Driver.CopyTexSubImage1D().
  */
 void
-_swrast_copy_texsubimage1d(GLcontext *ctx, GLenum target, GLint level,
+_swrast_copy_texsubimage1d(ctx, GLcontext *ctx, GLenum target, GLint level,
 			   GLint xoffset, GLint x, GLint y, GLsizei width)
 {
     struct gl_texture_unit *texUnit;
@@ -453,7 +453,7 @@ _swrast_copy_texsubimage1d(GLcontext *ctx, GLenum target, GLint level,
  * off to ctx->Driver.TexSubImage2D().
  */
 void
-_swrast_copy_texsubimage2d(GLcontext *ctx,
+_swrast_copy_texsubimage2d(ctx, GLcontext *ctx,
 			   GLenum target, GLint level,
 			   GLint xoffset, GLint yoffset,
 			   GLint x, GLint y, GLsizei width, GLsizei height)
@@ -524,7 +524,7 @@ _swrast_copy_texsubimage2d(GLcontext *ctx,
  * Fallback for Driver.CopyTexSubImage3D().
  */
 void
-_swrast_copy_texsubimage3d(GLcontext *ctx,
+_swrast_copy_texsubimage3d(ctx, GLcontext *ctx,
 			   GLenum target, GLint level,
 			   GLint xoffset, GLint yoffset, GLint zoffset,
 			   GLint x, GLint y, GLsizei width, GLsizei height)

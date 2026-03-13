@@ -48,7 +48,7 @@
  * The program parser will produce the state[] values.
  */
 static void
-_mesa_fetch_state(GLcontext *ctx, const gl_state_index state[],
+_mesa_fetch_state(ctx, GLcontext *ctx, const gl_state_index state[],
 		  GLfloat *value)
 {
     switch (state[0]) {
@@ -298,7 +298,7 @@ _mesa_fetch_state(GLcontext *ctx, const gl_state_index state[],
 	    } else if (mat == STATE_PROGRAM_MATRIX) {
 		matrix = ctx->ProgramMatrixStack[index].Top;
 	    } else {
-		_mesa_problem(ctx, "Bad matrix name in _mesa_fetch_state()");
+		_mesa_problem(ctx, "Bad matrix name in _mesa_fetch_state(ctx)");
 		return;
 	    }
 	    if (modifier == STATE_MATRIX_INVERSE ||
@@ -347,7 +347,7 @@ _mesa_fetch_state(GLcontext *ctx, const gl_state_index state[],
 		    COPY_4V(value, ctx->FragmentProgram.Current->Base.LocalParams[idx]);
 		    break;
 		default:
-		    _mesa_problem(ctx, "Bad state switch in _mesa_fetch_state()");
+		    _mesa_problem(ctx, "Bad state switch in _mesa_fetch_state(ctx)");
 		    return;
 	    }
 	}
@@ -365,7 +365,7 @@ _mesa_fetch_state(GLcontext *ctx, const gl_state_index state[],
 		    COPY_4V(value, ctx->VertexProgram.Current->Base.LocalParams[idx]);
 		    break;
 		default:
-		    _mesa_problem(ctx, "Bad state switch in _mesa_fetch_state()");
+		    _mesa_problem(ctx, "Bad state switch in _mesa_fetch_state(ctx)");
 		    return;
 	    }
 	}
@@ -786,7 +786,7 @@ _mesa_program_state_string(const gl_state_index state[STATE_LENGTH])
  * This would be called at glBegin time when using a fragment program.
  */
 void
-_mesa_load_state_parameters(GLcontext *ctx,
+_mesa_load_state_parameters(ctx, GLcontext *ctx,
 			    struct gl_program_parameter_list *paramList)
 {
     GLuint i;
@@ -838,7 +838,7 @@ load_transpose_matrix(GLfloat registers[][4], GLuint pos,
  * glBegin/glEnd, not per-vertex.
  */
 void
-_mesa_load_tracked_matrices(GLcontext *ctx)
+_mesa_load_tracked_matrices(ctx, GLcontext *ctx)
 {
     GLuint i;
 

@@ -71,7 +71,7 @@ struct gl_program_machine {
 };
 
 extern GLboolean
-_mesa_execute_program(GLcontext *ctx,
+_mesa_execute_program(ctx, GLcontext *ctx,
 		      const struct gl_program *program,
 		      struct gl_program_machine *machine);
 

@@ -32,7 +32,7 @@
 
 
 extern void
-_mesa_parse_nv_fragment_program(GLcontext *ctx, GLenum target,
+_mesa_parse_nv_fragment_program(ctx, GLcontext *ctx, GLenum target,
 				const GLubyte *str, GLsizei len,
 				struct gl_fragment_program *program);
 

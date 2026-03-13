@@ -187,7 +187,7 @@ logicop_uint4(GLcontext *ctx, GLuint n, GLuint src[], const GLuint dest[],
  * used if the device driver can't do logic ops.
  */
 void
-_swrast_logicop_ci_span(GLcontext *ctx, struct gl_renderbuffer *rb,
+_swrast_logicop_ci_span(ctx, GLcontext *ctx, struct gl_renderbuffer *rb,
 			SWspan *span)
 {
     GLuint dest[MAX_WIDTH];
@@ -214,7 +214,7 @@ _swrast_logicop_ci_span(GLcontext *ctx, struct gl_renderbuffer *rb,
  * pixel coordinates.
  */
 void
-_swrast_logicop_rgba_span(GLcontext *ctx, struct gl_renderbuffer *rb,
+_swrast_logicop_rgba_span(ctx, GLcontext *ctx, struct gl_renderbuffer *rb,
 			  SWspan *span)
 {
     void *rbPixels;

@@ -51,9 +51,8 @@
  * the dd_function_table::CullFace callback.
  */
 void GLAPIENTRY
-_mesa_CullFace(GLenum mode)
+_mesa_CullFace(ctx, GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (MESA_VERBOSE&VERBOSE_API)
@@ -87,9 +86,8 @@ _mesa_CullFace(GLenum mode)
  * the dd_function_table::FrontFace callback.
  */
 void GLAPIENTRY
-_mesa_FrontFace(GLenum mode)
+_mesa_FrontFace(ctx, GLcontext *ctx, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (MESA_VERBOSE&VERBOSE_API)
@@ -126,9 +124,8 @@ _mesa_FrontFace(GLenum mode)
  * driver via the dd_function_table::PolygonMode callback.
  */
 void GLAPIENTRY
-_mesa_PolygonMode(GLenum face, GLenum mode)
+_mesa_PolygonMode(ctx, GLcontext *ctx, GLenum face, GLenum mode)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (MESA_VERBOSE&VERBOSE_API)
@@ -191,7 +188,7 @@ _mesa_PolygonMode(GLenum face, GLenum mode)
  * too.
  */
 void
-_mesa_polygon_stipple(GLcontext *ctx, const GLubyte *pattern)
+_mesa_polygon_stipple(ctx, GLcontext *ctx, const GLubyte *pattern)
 {
     if (ctx->Unpack.BufferObj->Name) {
 	/* Get/unpack the stipple pattern from a PBO */
@@ -225,9 +222,8 @@ _mesa_polygon_stipple(GLcontext *ctx, const GLubyte *pattern)
  * Called by glPolygonStipple.
  */
 void GLAPIENTRY
-_mesa_PolygonStipple(const GLubyte *pattern)
+_mesa_PolygonStipple(ctx, GLcontext *ctx, const GLubyte *pattern)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (MESA_VERBOSE&VERBOSE_API)
@@ -246,9 +242,8 @@ _mesa_PolygonStipple(const GLubyte *pattern)
  * Called by glPolygonStipple.
  */
 void GLAPIENTRY
-_mesa_GetPolygonStipple(GLubyte *dest)
+_mesa_GetPolygonStipple(ctx, GLcontext *ctx, GLubyte *dest)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (MESA_VERBOSE&VERBOSE_API)
@@ -286,9 +281,8 @@ _mesa_GetPolygonStipple(GLubyte *dest)
 
 
 void GLAPIENTRY
-_mesa_PolygonOffset(GLfloat factor, GLfloat units)
+_mesa_PolygonOffset(ctx, GLcontext *ctx, GLfloat factor, GLfloat units)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (MESA_VERBOSE&VERBOSE_API)
@@ -308,11 +302,10 @@ _mesa_PolygonOffset(GLfloat factor, GLfloat units)
 
 
 void GLAPIENTRY
-_mesa_PolygonOffsetEXT(GLfloat factor, GLfloat bias)
+_mesa_PolygonOffsetEXT(ctx, GLcontext *ctx, GLfloat factor, GLfloat bias)
 {
-    GET_CURRENT_CONTEXT(ctx);
     /* XXX mult by DepthMaxF here??? */
-    _mesa_PolygonOffset(factor, bias * ctx->DrawBuffer->_DepthMaxF);
+    _mesa_PolygonOffset(ctx, factor, bias * ctx->DrawBuffer->_DepthMaxF);
 }
 
 #endif
@@ -330,7 +323,7 @@ _mesa_PolygonOffsetEXT(GLfloat factor, GLfloat bias)
  * Initializes __GLcontextRec::Polygon and __GLcontextRec::PolygonStipple
  * attribute groups.
  */
-void _mesa_init_polygon(GLcontext * ctx)
+void _mesa_init_polygon(ctx, GLcontext * ctx)
 {
     /* Polygon group */
     ctx->Polygon.CullFlag = GL_FALSE;

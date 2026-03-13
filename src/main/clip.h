@@ -34,13 +34,13 @@
 #include "mtypes.h"
 
 extern void GLAPIENTRY
-_mesa_ClipPlane(GLenum plane, const GLdouble *equation);
+_mesa_ClipPlane(ctx, GLcontext *ctx, GLenum plane, const GLdouble *eq);
 
 extern void GLAPIENTRY
-_mesa_GetClipPlane(GLenum plane, GLdouble *equation);
+_mesa_GetClipPlane(ctx, GLcontext *ctx, GLenum plane, GLdouble *equation);
 
 extern void GLAPIENTRY
-_mesa_CullParameterfvEXT(GLenum cap, GLfloat *v);
+_mesa_CullParameterfvEXT(ctx, GLcontext *ctx, GLenum cap, GLfloat *v);
 
 extern void GLAPIENTRY
 _mesa_CullParameterdvEXT(GLenum cap, GLdouble *v);

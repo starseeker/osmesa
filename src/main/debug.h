@@ -42,7 +42,7 @@ extern void _mesa_print_tri_caps(const char *name, GLuint flags);
 extern void _mesa_print_enable_flags(const char *msg, GLuint flags);
 extern void _mesa_print_state(const char *msg, GLuint state);
 extern void _mesa_print_info(void);
-extern void _mesa_init_debug(GLcontext *ctx);
+extern void _mesa_init_debug(ctx, GLcontext *ctx);
 
 #else
 
@@ -53,7 +53,7 @@ extern void _mesa_init_debug(GLcontext *ctx);
 #define _mesa_print_info() ((void)0)
 
 /** No-op */
-#define _mesa_init_debug( c ) ((void)0)
+#define _mesa_init_debug(ctx, c) ((void)0)
 
 #endif
 

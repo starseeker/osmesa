@@ -40,9 +40,8 @@
 
 
 void GLAPIENTRY
-_mesa_ClearDepth(GLclampd depth)
+_mesa_ClearDepth(ctx, GLcontext *ctx, GLclampd depth)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     depth = CLAMP(depth, 0.0, 1.0);
@@ -59,9 +58,8 @@ _mesa_ClearDepth(GLclampd depth)
 
 
 void GLAPIENTRY
-_mesa_DepthFunc(GLenum func)
+_mesa_DepthFunc(ctx, GLcontext *ctx, GLenum func)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (MESA_VERBOSE & (VERBOSE_API|VERBOSE_TEXTURE))
@@ -95,9 +93,8 @@ _mesa_DepthFunc(GLenum func)
 
 
 void GLAPIENTRY
-_mesa_DepthMask(GLboolean flag)
+_mesa_DepthMask(ctx, GLcontext *ctx, GLboolean flag)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (MESA_VERBOSE & (VERBOSE_API|VERBOSE_TEXTURE))
@@ -123,9 +120,8 @@ _mesa_DepthMask(GLboolean flag)
  * Specified by the GL_EXT_depth_bounds_test extension.
  */
 void GLAPIENTRY
-_mesa_DepthBoundsEXT(GLclampd zmin, GLclampd zmax)
+_mesa_DepthBoundsEXT(ctx, GLcontext *ctx, GLclampd zmin, GLclampd zmax)
 {
-    GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (zmin > zmax) {
@@ -153,7 +149,7 @@ _mesa_DepthBoundsEXT(GLclampd zmin, GLclampd zmax)
 /**
  * Initialize the depth buffer attribute group in the given context.
  */
-void _mesa_init_depth(GLcontext * ctx)
+void _mesa_init_depth(ctx, GLcontext * ctx)
 {
     /* Depth buffer group */
     ctx->Depth.Test = GL_FALSE;

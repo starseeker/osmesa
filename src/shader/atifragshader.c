@@ -55,7 +55,7 @@ _mesa_new_ati_fragment_shader(GLcontext *ctx, GLuint id)
  * Delete the given ati fragment shader
  */
 void
-_mesa_delete_ati_fragment_shader(GLcontext *ctx, struct ati_fragment_shader *s)
+_mesa_delete_ati_fragment_shader(ctx, GLcontext *ctx, struct ati_fragment_shader *s)
 {
     GLuint i;
     for (i = 0; i < MAX_NUM_PASSES_ATI; i++) {
@@ -155,11 +155,9 @@ static void debug_op(GLint optype, GLuint arg_count, GLenum op, GLuint dst,
 }
 #endif
 
-static int check_arith_arg(struct ati_fragment_shader *curProg,
+static int check_arith_arg(GLcontext *ctx, struct ati_fragment_shader *curProg,
 			   GLuint optype, GLuint arg, GLuint argRep)
 {
-    GET_CURRENT_CONTEXT(ctx);
-
     if (((arg < GL_CON_0_ATI) || (arg > GL_CON_7_ATI)) &&
 	((arg < GL_REG_0_ATI) || (arg > GL_REG_5_ATI)) &&
 	(arg != GL_ZERO) && (arg != GL_ONE) &&
@@ -180,12 +178,10 @@ static int check_arith_arg(struct ati_fragment_shader *curProg,
 }
 
 GLuint GLAPIENTRY
-_mesa_GenFragmentShadersATI(GLuint range)
+_mesa_GenFragmentShadersATI(ctx, GLcontext *ctx, GLuint range)
 {
     GLuint first;
     GLuint i;
-    GET_CURRENT_CONTEXT(ctx);
-
     if (range == 0) {
 	_mesa_error(ctx, GL_INVALID_VALUE, "glGenFragmentShadersATI(range)");
 	return 0;
@@ -205,9 +201,8 @@ _mesa_GenFragmentShadersATI(GLuint range)
 }
 
 void GLAPIENTRY
-_mesa_BindFragmentShaderATI(GLuint id)
+_mesa_BindFragmentShaderATI(ctx, GLcontext *ctx, GLuint id)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct ati_fragment_shader *curProg = ctx->ATIFragmentShader.Current;
     struct ati_fragment_shader *newProg;
 
@@ -260,10 +255,8 @@ _mesa_BindFragmentShaderATI(GLuint id)
 }
 
 void GLAPIENTRY
-_mesa_DeleteFragmentShaderATI(GLuint id)
+_mesa_DeleteFragmentShaderATI(ctx, GLcontext *ctx, GLuint id)
 {
-    GET_CURRENT_CONTEXT(ctx);
-
     if (ctx->ATIFragmentShader.Compiling) {
 	_mesa_error(ctx, GL_INVALID_OPERATION, "glDeleteFragmentShaderATI(insideShader)");
 	return;
@@ -278,7 +271,7 @@ _mesa_DeleteFragmentShaderATI(GLuint id)
 	    if (ctx->ATIFragmentShader.Current &&
 		ctx->ATIFragmentShader.Current->Id == id) {
 		FLUSH_VERTICES(ctx, _NEW_PROGRAM);
-		_mesa_BindFragmentShaderATI(0);
+		_mesa_BindFragmentShaderATI(ctx, 0);
 	    }
 	}
 
@@ -295,11 +288,9 @@ _mesa_DeleteFragmentShaderATI(GLuint id)
 
 
 void GLAPIENTRY
-_mesa_BeginFragmentShaderATI(void)
+_mesa_BeginFragmentShaderATI(ctx, GLcontext *ctx)
 {
     GLint i;
-    GET_CURRENT_CONTEXT(ctx);
-
     if (ctx->ATIFragmentShader.Compiling) {
 	_mesa_error(ctx, GL_INVALID_OPERATION, "glBeginFragmentShaderATI(insideShader)");
 	return;
@@ -346,9 +337,8 @@ _mesa_BeginFragmentShaderATI(void)
 }
 
 void GLAPIENTRY
-_mesa_EndFragmentShaderATI(void)
+_mesa_EndFragmentShaderATI(ctx, GLcontext *ctx)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct ati_fragment_shader *curProg = ctx->ATIFragmentShader.Current;
 #if MESA_DEBUG_ATI_FS
     GLint i, j;
@@ -401,9 +391,8 @@ _mesa_EndFragmentShaderATI(void)
 }
 
 void GLAPIENTRY
-_mesa_PassTexCoordATI(GLuint dst, GLuint coord, GLenum swizzle)
+_mesa_PassTexCoordATI(ctx, GLcontext *ctx, GLuint dst, GLuint coord, GLenum swizzle)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct ati_fragment_shader *curProg = ctx->ATIFragmentShader.Current;
     struct atifs_setupinst *curI;
 
@@ -473,9 +462,8 @@ _mesa_PassTexCoordATI(GLuint dst, GLuint coord, GLenum swizzle)
 }
 
 void GLAPIENTRY
-_mesa_SampleMapATI(GLuint dst, GLuint interp, GLenum swizzle)
+_mesa_SampleMapATI(ctx, GLcontext *ctx, GLuint dst, GLuint interp, GLenum swizzle)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct ati_fragment_shader *curProg = ctx->ATIFragmentShader.Current;
     struct atifs_setupinst *curI;
 
@@ -546,13 +534,12 @@ _mesa_SampleMapATI(GLuint dst, GLuint interp, GLenum swizzle)
 }
 
 static void
-_mesa_FragmentOpXATI(GLint optype, GLuint arg_count, GLenum op, GLuint dst,
+_mesa_FragmentOpXATI(ctx, GLcontext *ctx, GLint optype, GLuint arg_count, GLenum op, GLuint dst,
 		     GLuint dstMask, GLuint dstMod, GLuint arg1,
 		     GLuint arg1Rep, GLuint arg1Mod, GLuint arg2,
 		     GLuint arg2Rep, GLuint arg2Mod, GLuint arg3,
 		     GLuint arg3Rep, GLuint arg3Mod)
 {
-    GET_CURRENT_CONTEXT(ctx);
     struct ati_fragment_shader *curProg = ctx->ATIFragmentShader.Current;
     GLint ci;
     struct atifs_instruction *curI;
@@ -674,7 +661,7 @@ _mesa_ColorFragmentOp1ATI(GLenum op, GLuint dst, GLuint dstMask,
 			  GLuint dstMod, GLuint arg1, GLuint arg1Rep,
 			  GLuint arg1Mod)
 {
-    _mesa_FragmentOpXATI(ATI_FRAGMENT_SHADER_COLOR_OP, 1, op, dst, dstMask,
+    _mesa_FragmentOpXATI(ctx, ATI_FRAGMENT_SHADER_COLOR_OP, 1, op, dst, dstMask,
 			 dstMod, arg1, arg1Rep, arg1Mod, 0, 0, 0, 0, 0, 0);
 }
 
@@ -684,7 +671,7 @@ _mesa_ColorFragmentOp2ATI(GLenum op, GLuint dst, GLuint dstMask,
 			  GLuint arg1Mod, GLuint arg2, GLuint arg2Rep,
 			  GLuint arg2Mod)
 {
-    _mesa_FragmentOpXATI(ATI_FRAGMENT_SHADER_COLOR_OP, 2, op, dst, dstMask,
+    _mesa_FragmentOpXATI(ctx, ATI_FRAGMENT_SHADER_COLOR_OP, 2, op, dst, dstMask,
 			 dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep,
 			 arg2Mod, 0, 0, 0);
 }
@@ -696,7 +683,7 @@ _mesa_ColorFragmentOp3ATI(GLenum op, GLuint dst, GLuint dstMask,
 			  GLuint arg2Mod, GLuint arg3, GLuint arg3Rep,
 			  GLuint arg3Mod)
 {
-    _mesa_FragmentOpXATI(ATI_FRAGMENT_SHADER_COLOR_OP, 3, op, dst, dstMask,
+    _mesa_FragmentOpXATI(ctx, ATI_FRAGMENT_SHADER_COLOR_OP, 3, op, dst, dstMask,
 			 dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep,
 			 arg2Mod, arg3, arg3Rep, arg3Mod);
 }
@@ -705,7 +692,7 @@ void GLAPIENTRY
 _mesa_AlphaFragmentOp1ATI(GLenum op, GLuint dst, GLuint dstMod, GLuint arg1,
 			  GLuint arg1Rep, GLuint arg1Mod)
 {
-    _mesa_FragmentOpXATI(ATI_FRAGMENT_SHADER_ALPHA_OP, 1, op, dst, 0, dstMod,
+    _mesa_FragmentOpXATI(ctx, ATI_FRAGMENT_SHADER_ALPHA_OP, 1, op, dst, 0, dstMod,
 			 arg1, arg1Rep, arg1Mod, 0, 0, 0, 0, 0, 0);
 }
 
@@ -714,7 +701,7 @@ _mesa_AlphaFragmentOp2ATI(GLenum op, GLuint dst, GLuint dstMod, GLuint arg1,
 			  GLuint arg1Rep, GLuint arg1Mod, GLuint arg2,
 			  GLuint arg2Rep, GLuint arg2Mod)
 {
-    _mesa_FragmentOpXATI(ATI_FRAGMENT_SHADER_ALPHA_OP, 2, op, dst, 0, dstMod,
+    _mesa_FragmentOpXATI(ctx, ATI_FRAGMENT_SHADER_ALPHA_OP, 2, op, dst, 0, dstMod,
 			 arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod, 0, 0,
 			 0);
 }
@@ -725,17 +712,15 @@ _mesa_AlphaFragmentOp3ATI(GLenum op, GLuint dst, GLuint dstMod, GLuint arg1,
 			  GLuint arg2Rep, GLuint arg2Mod, GLuint arg3,
 			  GLuint arg3Rep, GLuint arg3Mod)
 {
-    _mesa_FragmentOpXATI(ATI_FRAGMENT_SHADER_ALPHA_OP, 3, op, dst, 0, dstMod,
+    _mesa_FragmentOpXATI(ctx, ATI_FRAGMENT_SHADER_ALPHA_OP, 3, op, dst, 0, dstMod,
 			 arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod, arg3,
 			 arg3Rep, arg3Mod);
 }
 
 void GLAPIENTRY
-_mesa_SetFragmentShaderConstantATI(GLuint dst, const GLfloat * value)
+_mesa_SetFragmentShaderConstantATI(ctx, GLcontext *ctx, GLuint dst, const GLfloat * value)
 {
     GLuint dstindex;
-    GET_CURRENT_CONTEXT(ctx);
-
     if ((dst < GL_CON_0_ATI) || (dst > GL_CON_7_ATI)) {
 	/* spec says nothing about what should happen here but we can't just segfault...*/
 	_mesa_error(ctx, GL_INVALID_ENUM, "glSetFragmentShaderConstantATI(dst)");

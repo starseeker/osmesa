@@ -154,7 +154,7 @@ struct arb_program {
 - removed grammar specific code part (it resides now in grammar.c)
 - added GL_ARB_fragment_program_shadow tokens
 - modified #include "arbparse_syn.h"
-- major changes inside _mesa_parse_arb_program()
+- major changes inside _mesa_parse_arb_program(ctx)
 - check the program string for '\0' characters
 - copy the program string to a one-byte-longer location to have
   it null-terminated
@@ -1020,7 +1020,7 @@ parse_face_type(const GLubyte ** inst)
 
 /**
  * Given a matrix and a modifier token on the binary array, return tokens
- * that _mesa_fetch_state() [program.c] can understand.
+ * that _mesa_fetch_state(ctx) [program.c] can understand.
  *
  * \param matrix - the matrix we are talking about
  * \param matrix_idx - the index of the matrix we have (for texture & program matricies)
@@ -1104,7 +1104,7 @@ parse_matrix(GLcontext * ctx, const GLubyte ** inst, struct arb_program *Program
 
 /**
  * This parses a state string (rather, the binary version of it) into
- * a 6-token sequence as described in _mesa_fetch_state() [program.c]
+ * a 6-token sequence as described in _mesa_fetch_state(ctx) [program.c]
  *
  * \param inst         - the start in the binary arry to start working from
  * \param state_tokens - the storage for the 6-token state description
@@ -3629,7 +3629,7 @@ enable_parser_extensions(GLcontext *ctx, grammar id)
  * \return GL_TRUE on sucess, GL_FALSE on error
  */
 static GLboolean
-_mesa_parse_arb_program(GLcontext *ctx, GLenum target,
+_mesa_parse_arb_program(ctx, GLcontext *ctx, GLenum target,
 			const GLubyte *str, GLsizei len,
 			struct arb_program *program)
 {
@@ -3944,4 +3944,4 @@ _mesa_parse_arb_vertex_program(GLcontext *ctx, GLenum target,
  * c-file-style: "stroustrup"
  * End:
  * ex: shiftwidth=4 tabstop=8
- */
+ */)
