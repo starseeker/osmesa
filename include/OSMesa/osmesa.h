@@ -288,6 +288,28 @@ OSMesaColorClamp(GLboolean enable);
 GLAPI void GLAPIENTRY
 OSMesaFXAAEnable(GLboolean enable);
 
+
+/**
+ * Lightweight context switch: make ctx the current OSMesa context for this
+ * thread without altering the framebuffer binding.
+ *
+ * The context must already have been bound to a framebuffer at least once via
+ * OSMesaMakeCurrent() before calling this function.  It is the caller's
+ * responsibility to restore the previous context when finished (see the
+ * returned value).
+ *
+ * This function is the low-level primitive used by glctx.h to implement the
+ * explicit-context API.  Application code should normally use the glctx.h
+ * wrapper functions rather than calling this function directly.
+ *
+ * Input:  ctx - context to make current, or NULL to unbind any context
+ * Return: the previously current OSMesa context (may be NULL)
+ *
+ * New in Mesa 6.5.4+
+ */
+GLAPI OSMesaContext GLAPIENTRY
+OSMesaSetCurrentContext(OSMesaContext ctx);
+
 #ifdef __cplusplus
 }
 #endif

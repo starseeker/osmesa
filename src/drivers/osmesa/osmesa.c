@@ -1635,6 +1635,7 @@ static struct name_function functions[] = {
     { "OSMesaGetProcAddress", (OSMESAproc) OSMesaGetProcAddress },
     { "OSMesaColorClamp", (OSMESAproc) OSMesaColorClamp },
     { "OSMesaFXAAEnable", (OSMESAproc) OSMesaFXAAEnable },
+    { "OSMesaSetCurrentContext", (OSMESAproc) OSMesaSetCurrentContext },
     { NULL, NULL }
 };
 #if defined(__GNUC__)
@@ -1677,6 +1678,21 @@ OSMesaFXAAEnable(GLboolean enable)
     }
     
     osmesa->enable_fxaa = enable;
+}
+
+
+GLAPI OSMesaContext GLAPIENTRY
+OSMesaSetCurrentContext(OSMesaContext ctx)
+{
+    OSMesaContext prev = OSMesaGetCurrentContext();
+    if (ctx) {
+	_glapi_set_context((void *) &ctx->mesa);
+	_glapi_set_dispatch(ctx->mesa.CurrentDispatch);
+    } else {
+	_glapi_set_context(NULL);
+	_glapi_set_dispatch(NULL);
+    }
+    return prev;
 }
 
 
