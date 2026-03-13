@@ -52,7 +52,7 @@
  * for the display list code to save and restore this function.
  */
 void GLAPIENTRY
-_mesa_BlendFunc(ctx, GLcontext *ctx, GLenum sfactor, GLenum dfactor)
+_mesa_BlendFunc(GLcontext *ctx, GLenum sfactor, GLenum dfactor)
 {
     (*ctx->CurrentDispatch->BlendFuncSeparateEXT)(sfactor, dfactor,
 	    sfactor, dfactor);
@@ -72,7 +72,7 @@ _mesa_BlendFunc(ctx, GLcontext *ctx, GLenum sfactor, GLenum dfactor)
  * dd_function_table::BlendFuncSeparate.
  */
 void GLAPIENTRY
-_mesa_BlendFuncSeparateEXT(ctx, GLcontext *ctx, GLenum sfactorRGB, GLenum dfactorRGB,
+_mesa_BlendFuncSeparateEXT(GLcontext *ctx, GLenum sfactorRGB, GLenum dfactorRGB,
 			   GLenum sfactorA, GLenum dfactorA)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -213,7 +213,7 @@ _mesa_BlendFuncSeparateEXT(ctx, GLcontext *ctx, GLenum sfactorRGB, GLenum dfacto
 #if _HAVE_FULL_GL
 
 static GLboolean
-_mesa_validate_blend_equation(ctx, GLcontext *ctx,
+_mesa_validate_blend_equation(GLcontext *ctx,
 			      GLenum mode, GLboolean is_separate)
 {
     switch (mode) {
@@ -250,7 +250,7 @@ _mesa_validate_blend_equation(ctx, GLcontext *ctx,
 
 /* This is really an extension function! */
 void GLAPIENTRY
-_mesa_BlendEquation(ctx, GLcontext *ctx, GLenum mode)
+_mesa_BlendEquation(GLcontext *ctx, GLenum mode)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -277,7 +277,7 @@ _mesa_BlendEquation(ctx, GLcontext *ctx, GLenum mode)
 
 
 void GLAPIENTRY
-_mesa_BlendEquationSeparateEXT(ctx, GLcontext *ctx, GLenum modeRGB, GLenum modeA)
+_mesa_BlendEquationSeparateEXT(GLcontext *ctx, GLenum modeRGB, GLenum modeA)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -332,7 +332,7 @@ _mesa_BlendEquationSeparateEXT(ctx, GLcontext *ctx, GLenum modeRGB, GLenum modeA
  * dd_function_table::BlendColor callback.
  */
 void GLAPIENTRY
-_mesa_BlendColor(ctx, GLcontext *ctx, GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
+_mesa_BlendColor(GLcontext *ctx, GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
     GLfloat tmp[4];
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -364,7 +364,7 @@ _mesa_BlendColor(ctx, GLcontext *ctx, GLclampf red, GLclampf green, GLclampf blu
  * dd_function_table::AlphaFunc callback.
  */
 void GLAPIENTRY
-_mesa_AlphaFunc(ctx, GLcontext *ctx, GLenum func, GLclampf ref)
+_mesa_AlphaFunc(GLcontext *ctx, GLenum func, GLclampf ref)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -408,7 +408,7 @@ gl_colorbuffer_attrib::LogicOp.
  * dd_function_table::LogicOpcode callback.
  */
 void GLAPIENTRY
-_mesa_LogicOp(ctx, GLcontext *ctx, GLenum opcode)
+_mesa_LogicOp(GLcontext *ctx, GLenum opcode)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -447,7 +447,7 @@ _mesa_LogicOp(ctx, GLcontext *ctx, GLenum opcode)
 
 #if _HAVE_FULL_GL
 void GLAPIENTRY
-_mesa_IndexMask(ctx, GLcontext *ctx, GLuint mask)
+_mesa_IndexMask(GLcontext *ctx, GLuint mask)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -478,7 +478,7 @@ _mesa_IndexMask(ctx, GLcontext *ctx, GLuint mask)
  * dd_function_table::ColorMask callback.
  */
 void GLAPIENTRY
-_mesa_ColorMask(ctx, GLcontext *ctx, GLboolean red, GLboolean green,
+_mesa_ColorMask(GLcontext *ctx, GLboolean red, GLboolean green,
 		GLboolean blue, GLboolean alpha)
 {
     GLubyte tmp[4];
@@ -507,7 +507,7 @@ _mesa_ColorMask(ctx, GLcontext *ctx, GLboolean red, GLboolean green,
 
 
 extern void GLAPIENTRY
-_mesa_ClampColorARB(ctx, GLcontext *ctx, GLenum target, GLenum clamp)
+_mesa_ClampColorARB(GLcontext *ctx, GLenum target, GLenum clamp)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -547,7 +547,7 @@ _mesa_ClampColorARB(ctx, GLcontext *ctx, GLenum target, GLenum clamp)
  * Initializes the related fields in the context color attribute group,
  * __GLcontextRec::Color.
  */
-void _mesa_init_color(ctx, GLcontext * ctx)
+void _mesa_init_color(GLcontext *ctx)
 {
     /* Color buffer group */
     ctx->Color.IndexMask = ~0u;

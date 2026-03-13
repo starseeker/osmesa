@@ -51,7 +51,7 @@
  * evaluator.  Return 0 if bad target.
  * See table 5.1 in the OpenGL 1.2 spec.
  */
-GLuint _mesa_evaluator_components(GLenum target)
+GLuint _mesa_evaluator_components(GLcontext *ctx, GLenum target)
 {
     switch (target) {
 	case GL_MAP1_VERTEX_3:
@@ -557,7 +557,7 @@ _mesa_Map2d(GLenum target,
 
 
 void GLAPIENTRY
-_mesa_GetMapdv(ctx, GLcontext *ctx, GLenum target, GLenum query, GLdouble *v)
+_mesa_GetMapdv(GLcontext *ctx, GLenum target, GLenum query, GLdouble *v)
 {
     struct gl_1d_map *map1d;
     struct gl_2d_map *map2d;
@@ -618,7 +618,7 @@ _mesa_GetMapdv(ctx, GLcontext *ctx, GLenum target, GLenum query, GLdouble *v)
 
 
 void GLAPIENTRY
-_mesa_GetMapfv(ctx, GLcontext *ctx, GLenum target, GLenum query, GLfloat *v)
+_mesa_GetMapfv(GLcontext *ctx, GLenum target, GLenum query, GLfloat *v)
 {
     struct gl_1d_map *map1d;
     struct gl_2d_map *map2d;
@@ -679,7 +679,7 @@ _mesa_GetMapfv(ctx, GLcontext *ctx, GLenum target, GLenum query, GLfloat *v)
 
 
 void GLAPIENTRY
-_mesa_GetMapiv(ctx, GLcontext *ctx, GLenum target, GLenum query, GLint *v)
+_mesa_GetMapiv(GLcontext *ctx, GLenum target, GLenum query, GLint *v)
 {
     struct gl_1d_map *map1d;
     struct gl_2d_map *map2d;
@@ -741,7 +741,7 @@ _mesa_GetMapiv(ctx, GLcontext *ctx, GLenum target, GLenum query, GLint *v)
 
 
 void GLAPIENTRY
-_mesa_MapGrid1f(ctx, GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2)
+_mesa_MapGrid1f(GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -758,14 +758,14 @@ _mesa_MapGrid1f(ctx, GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2)
 
 
 void GLAPIENTRY
-_mesa_MapGrid1d(GLint un, GLdouble u1, GLdouble u2)
+_mesa_MapGrid1d(GLcontext *ctx, GLint un, GLdouble u1, GLdouble u2)
 {
     _mesa_MapGrid1f(ctx, un, (GLfloat) u1, (GLfloat) u2);
 }
 
 
 void GLAPIENTRY
-_mesa_MapGrid2f(ctx, GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2,
+_mesa_MapGrid2f(GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2,
 		GLint vn, GLfloat v1, GLfloat v2)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -792,7 +792,7 @@ _mesa_MapGrid2f(ctx, GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2,
 
 
 void GLAPIENTRY
-_mesa_MapGrid2d(GLint un, GLdouble u1, GLdouble u2,
+_mesa_MapGrid2d(GLcontext *ctx, GLint un, GLdouble u1, GLdouble u2,
 		GLint vn, GLdouble v1, GLdouble v2)
 {
     _mesa_MapGrid2f(ctx, un, (GLfloat) u1, (GLfloat) u2,
@@ -844,7 +844,7 @@ init_2d_map(struct gl_2d_map *map, int n, const float *initial)
 }
 
 
-void _mesa_init_eval(ctx, GLcontext *ctx)
+void _mesa_init_eval(GLcontext *ctx)
 {
     int i;
 
@@ -916,7 +916,7 @@ void _mesa_init_eval(ctx, GLcontext *ctx)
 }
 
 
-void _mesa_free_eval_data(ctx, GLcontext *ctx)
+void _mesa_free_eval_data(GLcontext *ctx)
 {
     int i;
 

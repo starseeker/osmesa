@@ -55,7 +55,7 @@ static dxtCompressTexFuncExt ext_tx_compress_dxtn = NULL;
 typedef void (*GenericFunc)(void);
 
 void
-_mesa_init_texture_s3tc(ctx, GLcontext *ctx)
+_mesa_init_texture_s3tc(GLcontext *ctx)
 {
     /* called during context initialization */
     ctx->Mesa_DXTn = GL_FALSE;

@@ -125,7 +125,7 @@ rescale_accum(GLcontext *ctx)
  * Clear the accumulation Buffer.
  */
 void
-_swrast_clear_accum_buffer(ctx, GLcontext *ctx, struct gl_renderbuffer *rb)
+_swrast_clear_accum_buffer(GLcontext *ctx, struct gl_renderbuffer *rb)
 {
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
     GLuint x, y, width, height;
@@ -527,7 +527,7 @@ accum_return(GLcontext *ctx, GLfloat value,
  * Software fallback for glAccum.
  */
 void
-_swrast_Accum(ctx, GLcontext *ctx, GLenum op, GLfloat value)
+_swrast_Accum(GLcontext *ctx, GLenum op, GLfloat value)
 {
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
     GLint xpos, ypos, width, height;

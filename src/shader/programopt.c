@@ -45,7 +45,7 @@
  * May be used to implement the position_invariant option.
  */
 void
-_mesa_insert_mvp_code(ctx, GLcontext *ctx, struct gl_vertex_program *vprog)
+_mesa_insert_mvp_code(GLcontext *ctx, struct gl_vertex_program *vprog)
 {
     struct prog_instruction *newInst;
     const GLuint origLen = vprog->Base.NumInstructions;
@@ -122,7 +122,7 @@ _mesa_insert_mvp_code(ctx, GLcontext *ctx, struct gl_vertex_program *vprog)
  * to vertex programs too.
  */
 void
-_mesa_append_fog_code(ctx, GLcontext *ctx, struct gl_fragment_program *fprog)
+_mesa_append_fog_code(GLcontext *ctx, struct gl_fragment_program *fprog)
 {
     static const gl_state_index fogPStateOpt[STATE_LENGTH]
 	= { STATE_INTERNAL, STATE_FOG_PARAMS_OPTIMIZED, (gl_state_index)0, (gl_state_index)0, (gl_state_index)0 };

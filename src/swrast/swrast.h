@@ -82,10 +82,10 @@ struct swrast_device_driver;
  */
 
 extern GLboolean
-_swrast_CreateContext(ctx, GLcontext *ctx);
+_swrast_CreateContext(GLcontext *ctx);
 
 extern void
-_swrast_DestroyContext(ctx, GLcontext *ctx);
+_swrast_DestroyContext(GLcontext *ctx);
 
 /* Get a (non-const) reference to the device driver struct for swrast.
  */
@@ -93,21 +93,21 @@ extern struct swrast_device_driver *
 _swrast_GetDeviceDriverReference(GLcontext *ctx);
 
 extern void
-_swrast_Bitmap(ctx, GLcontext *ctx,
+_swrast_Bitmap(GLcontext *ctx,
 	       GLint px, GLint py,
 	       GLsizei width, GLsizei height,
 	       const struct gl_pixelstore_attrib *unpack,
 	       const GLubyte *bitmap);
 
 extern void
-_swrast_CopyPixels(ctx, GLcontext *ctx,
+_swrast_CopyPixels(GLcontext *ctx,
 		   GLint srcx, GLint srcy,
 		   GLint destx, GLint desty,
 		   GLsizei width, GLsizei height,
 		   GLenum type);
 
 extern void
-_swrast_DrawPixels(ctx, GLcontext *ctx,
+_swrast_DrawPixels(GLcontext *ctx,
 		   GLint x, GLint y,
 		   GLsizei width, GLsizei height,
 		   GLenum format, GLenum type,
@@ -115,37 +115,37 @@ _swrast_DrawPixels(ctx, GLcontext *ctx,
 		   const GLvoid *pixels);
 
 extern void
-_swrast_ReadPixels(ctx, GLcontext *ctx,
+_swrast_ReadPixels(GLcontext *ctx,
 		   GLint x, GLint y, GLsizei width, GLsizei height,
 		   GLenum format, GLenum type,
 		   const struct gl_pixelstore_attrib *unpack,
 		   GLvoid *pixels);
 
 extern void
-_swrast_BlitFramebuffer(ctx, GLcontext *ctx,
+_swrast_BlitFramebuffer(GLcontext *ctx,
 			GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
 			GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1,
 			GLbitfield mask, GLenum filter);
 
 extern void
-_swrast_Clear(ctx, GLcontext *ctx, GLbitfield buffers);
+_swrast_Clear(GLcontext *ctx, GLbitfield buffers);
 
 extern void
-_swrast_Accum(ctx, GLcontext *ctx, GLenum op, GLfloat value);
+_swrast_Accum(GLcontext *ctx, GLenum op, GLfloat value);
 
 
 
 /* Reset the stipple counter
  */
 extern void
-_swrast_ResetLineStipple(ctx, GLcontext *ctx);
+_swrast_ResetLineStipple(GLcontext *ctx);
 
 /**
  * Indicates front/back facing for subsequent points/lines when drawing
  * unfilled polygons.  Needed for two-side stencil.
  */
 extern void
-_swrast_SetFacing(ctx, GLcontext *ctx, GLuint facing);
+_swrast_SetFacing(GLcontext *ctx, GLuint facing);
 
 /* These will always render the correct point/line/triangle for the
  * current state.
@@ -153,49 +153,49 @@ _swrast_SetFacing(ctx, GLcontext *ctx, GLuint facing);
  * For flatshaded primitives, the provoking vertex is the final one.
  */
 extern void
-_swrast_Point(ctx, GLcontext *ctx, const SWvertex *v);
+_swrast_Point(GLcontext *ctx, const SWvertex *v);
 
 extern void
-_swrast_Line(ctx, GLcontext *ctx, const SWvertex *v0, const SWvertex *v1);
+_swrast_Line(GLcontext *ctx, const SWvertex *v0, const SWvertex *v1);
 
 extern void
-_swrast_Triangle(ctx, GLcontext *ctx, const SWvertex *v0,
+_swrast_Triangle(GLcontext *ctx, const SWvertex *v0,
 		 const SWvertex *v1, const SWvertex *v2);
 
 extern void
-_swrast_Quad(ctx, GLcontext *ctx,
+_swrast_Quad(GLcontext *ctx,
 	     const SWvertex *v0, const SWvertex *v1,
 	     const SWvertex *v2,  const SWvertex *v3);
 
 extern void
-_swrast_flush(ctx, GLcontext *ctx);
+_swrast_flush(GLcontext *ctx);
 
 extern void
-_swrast_render_primitive(ctx, GLcontext *ctx, GLenum mode);
+_swrast_render_primitive(GLcontext *ctx, GLenum mode);
 
 extern void
-_swrast_render_start(ctx, GLcontext *ctx);
+_swrast_render_start(GLcontext *ctx);
 
 extern void
-_swrast_render_finish(ctx, GLcontext *ctx);
+_swrast_render_finish(GLcontext *ctx);
 
 /* Tell the software rasterizer about core state changes.
  */
 extern void
-_swrast_InvalidateState(ctx, GLcontext *ctx, GLbitfield new_state);
+_swrast_InvalidateState(GLcontext *ctx, GLbitfield new_state);
 
 /* Configure software rasterizer to match hardware rasterizer characteristics:
  */
 extern void
-_swrast_allow_vertex_fog(ctx, GLcontext *ctx, GLboolean value);
+_swrast_allow_vertex_fog(GLcontext *ctx, GLboolean value);
 
 extern void
-_swrast_allow_pixel_fog(ctx, GLcontext *ctx, GLboolean value);
+_swrast_allow_pixel_fog(GLcontext *ctx, GLboolean value);
 
 /* Debug:
  */
 extern void
-_swrast_print_vertex(ctx, GLcontext *ctx, const SWvertex *v);
+_swrast_print_vertex(GLcontext *ctx, const SWvertex *v);
 
 
 /*
@@ -203,19 +203,19 @@ _swrast_print_vertex(ctx, GLcontext *ctx, const SWvertex *v);
  * moving all the imaging fallback code to a new module)
  */
 extern void
-_swrast_CopyConvolutionFilter2D(ctx, GLcontext *ctx, GLenum target,
+_swrast_CopyConvolutionFilter2D(GLcontext *ctx, GLenum target,
 				GLenum internalFormat,
 				GLint x, GLint y, GLsizei width,
 				GLsizei height);
 extern void
-_swrast_CopyConvolutionFilter1D(ctx, GLcontext *ctx, GLenum target,
+_swrast_CopyConvolutionFilter1D(GLcontext *ctx, GLenum target,
 				GLenum internalFormat,
 				GLint x, GLint y, GLsizei width);
 extern void
-_swrast_CopyColorSubTable(ctx, GLcontext *ctx,GLenum target, GLsizei start,
+_swrast_CopyColorSubTable(GLcontext *ctx,GLenum target, GLsizei start,
 			  GLint x, GLint y, GLsizei width);
 extern void
-_swrast_CopyColorTable(ctx, GLcontext *ctx,
+_swrast_CopyColorTable(GLcontext *ctx,
 		       GLenum target, GLenum internalformat,
 		       GLint x, GLint y, GLsizei width);
 
@@ -225,36 +225,36 @@ _swrast_CopyColorTable(ctx, GLcontext *ctx,
  * with the rest of the texture store fallbacks?
  */
 extern void
-_swrast_copy_teximage1d(ctx, GLcontext *ctx, GLenum target, GLint level,
+_swrast_copy_teximage1d(GLcontext *ctx, GLenum target, GLint level,
 			GLenum internalFormat,
 			GLint x, GLint y, GLsizei width, GLint border);
 
 extern void
-_swrast_copy_teximage2d(ctx, GLcontext *ctx, GLenum target, GLint level,
+_swrast_copy_teximage2d(GLcontext *ctx, GLenum target, GLint level,
 			GLenum internalFormat,
 			GLint x, GLint y, GLsizei width, GLsizei height,
 			GLint border);
 
 
 extern void
-_swrast_copy_texsubimage1d(ctx, GLcontext *ctx, GLenum target, GLint level,
+_swrast_copy_texsubimage1d(GLcontext *ctx, GLenum target, GLint level,
 			   GLint xoffset, GLint x, GLint y, GLsizei width);
 
 extern void
-_swrast_copy_texsubimage2d(ctx, GLcontext *ctx,
+_swrast_copy_texsubimage2d(GLcontext *ctx,
 			   GLenum target, GLint level,
 			   GLint xoffset, GLint yoffset,
 			   GLint x, GLint y, GLsizei width, GLsizei height);
 
 extern void
-_swrast_copy_texsubimage3d(ctx, GLcontext *ctx,
+_swrast_copy_texsubimage3d(GLcontext *ctx,
 			   GLenum target, GLint level,
 			   GLint xoffset, GLint yoffset, GLint zoffset,
 			   GLint x, GLint y, GLsizei width, GLsizei height);
 
 
 extern void
-_swrast_eject_texture_images(ctx, GLcontext *ctx);
+_swrast_eject_texture_images(GLcontext *ctx);
 
 
 #if FEATURE_MESA_program_debug

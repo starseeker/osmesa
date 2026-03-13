@@ -517,147 +517,147 @@ raster_pos4f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos2d(GLdouble x, GLdouble y)
+_mesa_RasterPos2d(GLcontext *ctx, GLdouble x, GLdouble y)
 {
     _mesa_RasterPos4f(ctx, (GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos2f(GLfloat x, GLfloat y)
+_mesa_RasterPos2f(GLcontext *ctx, GLfloat x, GLfloat y)
 {
     _mesa_RasterPos4f(ctx, x, y, 0.0F, 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos2i(GLint x, GLint y)
+_mesa_RasterPos2i(GLcontext *ctx, GLint x, GLint y)
 {
     _mesa_RasterPos4f(ctx, (GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos2s(GLshort x, GLshort y)
+_mesa_RasterPos2s(GLcontext *ctx, GLshort x, GLshort y)
 {
     _mesa_RasterPos4f(ctx, x, y, 0.0F, 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos3d(GLdouble x, GLdouble y, GLdouble z)
+_mesa_RasterPos3d(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z)
 {
     _mesa_RasterPos4f(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos3f(GLfloat x, GLfloat y, GLfloat z)
+_mesa_RasterPos3f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
     _mesa_RasterPos4f(ctx, x, y, z, 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos3i(GLint x, GLint y, GLint z)
+_mesa_RasterPos3i(GLcontext *ctx, GLint x, GLint y, GLint z)
 {
     _mesa_RasterPos4f(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos3s(GLshort x, GLshort y, GLshort z)
+_mesa_RasterPos3s(GLcontext *ctx, GLshort x, GLshort y, GLshort z)
 {
     _mesa_RasterPos4f(ctx, x, y, z, 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos4d(GLdouble x, GLdouble y, GLdouble z, GLdouble w)
+_mesa_RasterPos4d(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
     _mesa_RasterPos4f(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
 }
 
 /** Calls raster_pos4f() */
 void GLAPIENTRY
-_mesa_RasterPos4f(ctx, GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+_mesa_RasterPos4f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
     raster_pos4f(ctx, x, y, z, w);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos4i(GLint x, GLint y, GLint z, GLint w)
+_mesa_RasterPos4i(GLcontext *ctx, GLint x, GLint y, GLint z, GLint w)
 {
     _mesa_RasterPos4f(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos4s(GLshort x, GLshort y, GLshort z, GLshort w)
+_mesa_RasterPos4s(GLcontext *ctx, GLshort x, GLshort y, GLshort z, GLshort w)
 {
     _mesa_RasterPos4f(ctx, x, y, z, w);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos2dv(const GLdouble *v)
+_mesa_RasterPos2dv(GLcontext *ctx, const GLdouble *v)
 {
     _mesa_RasterPos4f(ctx, (GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos2fv(const GLfloat *v)
+_mesa_RasterPos2fv(GLcontext *ctx, const GLfloat *v)
 {
     _mesa_RasterPos4f(ctx, v[0], v[1], 0.0F, 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos2iv(const GLint *v)
+_mesa_RasterPos2iv(GLcontext *ctx, const GLint *v)
 {
     _mesa_RasterPos4f(ctx, (GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos2sv(const GLshort *v)
+_mesa_RasterPos2sv(GLcontext *ctx, const GLshort *v)
 {
     _mesa_RasterPos4f(ctx, v[0], v[1], 0.0F, 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos3dv(const GLdouble *v)
+_mesa_RasterPos3dv(GLcontext *ctx, const GLdouble *v)
 {
     _mesa_RasterPos4f(ctx, (GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos3fv(const GLfloat *v)
+_mesa_RasterPos3fv(GLcontext *ctx, const GLfloat *v)
 {
     _mesa_RasterPos4f(ctx, v[0], v[1], v[2], 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos3iv(const GLint *v)
+_mesa_RasterPos3iv(GLcontext *ctx, const GLint *v)
 {
     _mesa_RasterPos4f(ctx, (GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos3sv(const GLshort *v)
+_mesa_RasterPos3sv(GLcontext *ctx, const GLshort *v)
 {
     _mesa_RasterPos4f(ctx, v[0], v[1], v[2], 1.0F);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos4dv(const GLdouble *v)
+_mesa_RasterPos4dv(GLcontext *ctx, const GLdouble *v)
 {
     _mesa_RasterPos4f(ctx, (GLfloat) v[0], (GLfloat) v[1],
 		      (GLfloat) v[2], (GLfloat) v[3]);
@@ -665,14 +665,14 @@ _mesa_RasterPos4dv(const GLdouble *v)
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos4fv(const GLfloat *v)
+_mesa_RasterPos4fv(GLcontext *ctx, const GLfloat *v)
 {
     _mesa_RasterPos4f(ctx, v[0], v[1], v[2], v[3]);
 }
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos4iv(const GLint *v)
+_mesa_RasterPos4iv(GLcontext *ctx, const GLint *v)
 {
     _mesa_RasterPos4f(ctx, (GLfloat) v[0], (GLfloat) v[1],
 		      (GLfloat) v[2], (GLfloat) v[3]);
@@ -680,7 +680,7 @@ _mesa_RasterPos4iv(const GLint *v)
 
 /** Calls _mesa_RasterPos4f(ctx) */
 void GLAPIENTRY
-_mesa_RasterPos4sv(const GLshort *v)
+_mesa_RasterPos4sv(GLcontext *ctx, const GLshort *v)
 {
     _mesa_RasterPos4f(ctx, v[0], v[1], v[2], v[3]);
 }
@@ -967,7 +967,7 @@ void glWindowPos4fMESA(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
  * __GLcontextRec::Current, and adds the extension entry points to the
  * dispatcher.
  */
-void _mesa_init_rastpos(ctx, GLcontext * ctx)
+void _mesa_init_rastpos(GLcontext *ctx)
 {
     int i;
 

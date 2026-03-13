@@ -33,7 +33,7 @@
 
 
 extern void
-_swrast_choose_aa_line_function(ctx, GLcontext *ctx);
+_swrast_choose_aa_line_function(GLcontext *ctx);
 
 
 #endif

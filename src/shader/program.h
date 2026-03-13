@@ -51,13 +51,13 @@ extern struct gl_program _mesa_DummyProgram;
  */
 
 extern void
-_mesa_init_program(ctx, GLcontext *ctx);
+_mesa_init_program(GLcontext *ctx);
 
 extern void
-_mesa_free_program_data(ctx, GLcontext *ctx);
+_mesa_free_program_data(GLcontext *ctx);
 
 extern void
-_mesa_set_program_error(ctx, GLcontext *ctx, GLint pos, const char *string);
+_mesa_set_program_error(GLcontext *ctx, GLint pos, const char *string);
 
 extern const GLubyte *
 _mesa_find_line_column(const GLubyte *string, const GLubyte *pos,
@@ -78,7 +78,7 @@ extern struct gl_program *
 _mesa_new_program(GLcontext *ctx, GLenum target, GLuint id);
 
 extern void
-_mesa_delete_program(ctx, GLcontext *ctx, struct gl_program *prog);
+_mesa_delete_program(GLcontext *ctx, struct gl_program *prog);
 
 extern struct gl_program *
 _mesa_lookup_program(GLcontext *ctx, GLuint id);
@@ -93,13 +93,13 @@ _mesa_clone_program(GLcontext *ctx, const struct gl_program *prog);
  */
 
 extern void GLAPIENTRY
-_mesa_BindProgram(ctx, GLcontext *ctx, GLenum target, GLuint id);
+_mesa_BindProgram(GLcontext *ctx, GLenum target, GLuint id);
 
 extern void GLAPIENTRY
-_mesa_DeletePrograms(ctx, GLcontext *ctx, GLsizei n, const GLuint *ids);
+_mesa_DeletePrograms(GLcontext *ctx, GLsizei n, const GLuint *ids);
 
 extern void GLAPIENTRY
-_mesa_GenPrograms(ctx, GLcontext *ctx, GLsizei n, GLuint *ids);
+_mesa_GenPrograms(GLcontext *ctx, GLsizei n, GLuint *ids);
 
 
 

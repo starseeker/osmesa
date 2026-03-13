@@ -32,39 +32,38 @@
 #if _HAVE_FULL_GL
 
 extern void GLAPIENTRY
-_mesa_ColorTable(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat,
+_mesa_ColorTable(GLcontext *ctx, GLenum target, GLenum internalFormat,
 		 GLsizei width, GLenum format, GLenum type,
 		 const GLvoid *data);
 
 extern void GLAPIENTRY
-_mesa_ColorSubTable(ctx, GLcontext *ctx, GLenum target, GLsizei start,
+_mesa_ColorSubTable(GLcontext *ctx, GLenum target, GLsizei start,
 		    GLsizei count, GLenum format, GLenum type,
 		    const GLvoid *data);
 
 extern void GLAPIENTRY
-_mesa_CopyColorSubTable(ctx, GLcontext *ctx, GLenum target, GLsizei start,
+_mesa_CopyColorSubTable(GLcontext *ctx, GLenum target, GLsizei start,
 			GLint x, GLint y, GLsizei width);
 
 extern void GLAPIENTRY
-_mesa_CopyColorTable(ctx, GLcontext *ctx, GLenum target, GLenum internalformat,
+_mesa_CopyColorTable(GLcontext *ctx, GLenum target, GLenum internalformat,
 		     GLint x, GLint y, GLsizei width);
 
 extern void GLAPIENTRY
-_mesa_GetColorTable(ctx, GLcontext *ctx, GLenum target, GLenum format,
+_mesa_GetColorTable(GLcontext *ctx, GLenum target, GLenum format,
 		    GLenum type, GLvoid *data);
 
 extern void GLAPIENTRY
-_mesa_ColorTableParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params);
+_mesa_ColorTableParameterfv(GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_ColorTableParameteriv(GLenum target, GLenum pname,
-			    const GLint *params);
+_mesa_ColorTableParameteriv(GLcontext *ctx, GLenum target, GLenum pname, const GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetColorTableParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params);
+_mesa_GetColorTableParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_GetColorTableParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
+_mesa_GetColorTableParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
 
 
 
@@ -75,10 +74,10 @@ extern void
 _mesa_free_colortable_data(struct gl_color_table *table);
 
 extern void
-_mesa_init_colortables(ctx, GLcontext *ctx);
+_mesa_init_colortables(GLcontext *ctx);
 
 extern void
-_mesa_free_colortables_data(ctx, GLcontext *ctx);
+_mesa_free_colortables_data(GLcontext *ctx);
 
 #else
 

@@ -308,7 +308,7 @@ static void vbo_exec_wrap_upgrade_vertex(struct vbo_exec_context *exec,
 }
 
 
-static void vbo_exec_fixup_vertex(ctx, GLcontext *ctx,
+static void vbo_exec_fixup_vertex(GLcontext *ctx,
 				  GLuint attr, GLuint sz)
 {
     struct vbo_exec_context *exec = &vbo_context(ctx)->exec;
@@ -387,7 +387,7 @@ do {								\
 
 /* Eval
  */
-static void GLAPIENTRY vbo_exec_EvalCoord1f(ctx, GLcontext *ctx, GLfloat u)
+static void GLAPIENTRY vbo_exec_EvalCoord1f(GLcontext *ctx, GLfloat u)
 {
     struct vbo_exec_context *exec = &vbo_context(ctx)->exec;
 
@@ -413,7 +413,7 @@ static void GLAPIENTRY vbo_exec_EvalCoord1f(ctx, GLcontext *ctx, GLfloat u)
 		 exec->vtx.vertex_size * sizeof(GLfloat));
 }
 
-static void GLAPIENTRY vbo_exec_EvalCoord2f(ctx, GLcontext *ctx, GLfloat u, GLfloat v)
+static void GLAPIENTRY vbo_exec_EvalCoord2f(GLcontext *ctx, GLfloat u, GLfloat v)
 {
     struct vbo_exec_context *exec = &vbo_context(ctx)->exec;
 
@@ -452,7 +452,7 @@ static void GLAPIENTRY vbo_exec_EvalCoord2fv(const GLfloat *u)
     vbo_exec_EvalCoord2f(ctx, u[0], u[1]);
 }
 
-static void GLAPIENTRY vbo_exec_EvalPoint1(ctx, GLcontext *ctx, GLint i)
+static void GLAPIENTRY vbo_exec_EvalPoint1(GLcontext *ctx, GLint i)
 {
     GLfloat du = ((ctx->Eval.MapGrid1u2 - ctx->Eval.MapGrid1u1) /
 		  (GLfloat) ctx->Eval.MapGrid1un);
@@ -462,7 +462,7 @@ static void GLAPIENTRY vbo_exec_EvalPoint1(ctx, GLcontext *ctx, GLint i)
 }
 
 
-static void GLAPIENTRY vbo_exec_EvalPoint2(ctx, GLcontext *ctx, GLint i, GLint j)
+static void GLAPIENTRY vbo_exec_EvalPoint2(GLcontext *ctx, GLint i, GLint j)
 {
     GLfloat du = ((ctx->Eval.MapGrid2u2 - ctx->Eval.MapGrid2u1) /
 		  (GLfloat) ctx->Eval.MapGrid2un);
@@ -479,7 +479,7 @@ static void GLAPIENTRY vbo_exec_EvalPoint2(ctx, GLcontext *ctx, GLint i, GLint j
  * Check if programs/shaders are enabled and valid at glBegin time.
  */
 GLboolean
-vbo_validate_shaders(ctx, GLcontext *ctx)
+vbo_validate_shaders(GLcontext *ctx)
 {
     if ((ctx->VertexProgram.Enabled && !ctx->VertexProgram._Enabled) ||
 	(ctx->FragmentProgram.Enabled && !ctx->FragmentProgram._Enabled)) {
@@ -495,7 +495,7 @@ vbo_validate_shaders(ctx, GLcontext *ctx)
 /* Build a list of primitives on the fly.  Keep
  * ctx->Driver.CurrentExecPrimitive uptodate as well.
  */
-static void GLAPIENTRY vbo_exec_Begin(ctx, GLcontext *ctx, GLenum mode)
+static void GLAPIENTRY vbo_exec_Begin(GLcontext *ctx, GLenum mode)
 {
     if (ctx->Driver.CurrentExecPrimitive == GL_POLYGON+1) {
 	struct vbo_exec_context *exec = &vbo_context(ctx)->exec;
@@ -536,7 +536,7 @@ static void GLAPIENTRY vbo_exec_Begin(ctx, GLcontext *ctx, GLenum mode)
 
 }
 
-static void GLAPIENTRY vbo_exec_End(ctx, GLcontext *ctx)
+static void GLAPIENTRY vbo_exec_End(GLcontext *ctx)
 {
     if (ctx->Driver.CurrentExecPrimitive != GL_POLYGON+1) {
 	struct vbo_exec_context *exec = &vbo_context(ctx)->exec;
@@ -681,7 +681,7 @@ void vbo_exec_vtx_destroy(struct vbo_exec_context *exec)
 }
 
 
-void vbo_exec_FlushVertices(ctx, GLcontext *ctx, GLuint flags)
+void vbo_exec_FlushVertices(GLcontext *ctx, GLuint flags)
 {
     struct vbo_exec_context *exec = &vbo_context(ctx)->exec;
 

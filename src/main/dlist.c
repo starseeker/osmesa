@@ -471,7 +471,7 @@ lookup_list(GLcontext *ctx, GLuint list)
  * \param dlist - display list pointer
  */
 void
-_mesa_delete_list(ctx, GLcontext *ctx, struct mesa_display_list *dlist)
+_mesa_delete_list(GLcontext *ctx, struct mesa_display_list *dlist)
 {
     Node *n, *block;
     GLboolean done;
@@ -786,7 +786,7 @@ _mesa_alloc_instruction(GLcontext *ctx, GLuint opcode, GLuint bytes)
  * \return  the new opcode number or -1 if error
  */
 GLint
-_mesa_alloc_opcode(ctx, GLcontext *ctx,
+_mesa_alloc_opcode(GLcontext *ctx,
 		   GLuint size,
 		   void (*execute)(GLcontext *, void *),
 		   void (*destroy)(GLcontext *, void *),
@@ -961,7 +961,7 @@ save_BlendColor(GLcontext *ctx, GLfloat red, GLfloat green, GLfloat blue, GLfloa
 
 
 void GLAPIENTRY
-_mesa_save_CallList(ctx, GLcontext *ctx, GLuint list)
+_mesa_save_CallList(GLcontext *ctx, GLuint list)
 {
     Node *n;
     SAVE_FLUSH_VERTICES(ctx);
@@ -982,7 +982,7 @@ _mesa_save_CallList(ctx, GLcontext *ctx, GLuint list)
 
 
 void GLAPIENTRY
-_mesa_save_CallLists(ctx, GLcontext *ctx, GLsizei n, GLenum type, const GLvoid * lists)
+_mesa_save_CallLists(GLcontext *ctx, GLsizei n, GLenum type, const GLvoid * lists)
 {
     GLint i;
     GLboolean typeErrorFlag;
@@ -1733,7 +1733,7 @@ save_Enable(GLcontext *ctx, GLenum cap)
 
 
 static void GLAPIENTRY
-_mesa_save_EvalMesh1(ctx, GLcontext *ctx, GLenum mode, GLint i1, GLint i2)
+_mesa_save_EvalMesh1(GLcontext *ctx, GLenum mode, GLint i1, GLint i2)
 {
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
@@ -1750,7 +1750,7 @@ _mesa_save_EvalMesh1(ctx, GLcontext *ctx, GLenum mode, GLint i1, GLint i2)
 
 
 static void GLAPIENTRY
-_mesa_save_EvalMesh2(ctx, GLcontext *ctx, GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2)
+_mesa_save_EvalMesh2(GLcontext *ctx, GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2)
 {
     Node *n;
     ASSERT_OUTSIDE_SAVE_BEGIN_END_AND_FLUSH(ctx);
@@ -5489,7 +5489,7 @@ save_error(GLcontext *ctx, GLenum error, const char *s)
  * Compile an error into current display list.
  */
 void
-_mesa_compile_error(ctx, GLcontext *ctx, GLenum error, const char *s)
+_mesa_compile_error(GLcontext *ctx, GLenum error, const char *s)
 {
     if (ctx->CompileFlag)
 	save_error(ctx, error, s);
@@ -6395,7 +6395,7 @@ execute_list(GLcontext *ctx, GLuint list)
  * Test if a display list number is valid.
  */
 GLboolean GLAPIENTRY
-_mesa_IsList(ctx, GLcontext *ctx, GLuint list)
+_mesa_IsList(GLcontext *ctx, GLuint list)
 {
     FLUSH_VERTICES(ctx, 0);      /* must be called before assert */
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, GL_FALSE);
@@ -6407,7 +6407,7 @@ _mesa_IsList(ctx, GLcontext *ctx, GLuint list)
  * Delete a sequence of consecutive display lists.
  */
 void GLAPIENTRY
-_mesa_DeleteLists(ctx, GLcontext *ctx, GLuint list, GLsizei range)
+_mesa_DeleteLists(GLcontext *ctx, GLuint list, GLsizei range)
 {
     GLuint i;
     FLUSH_VERTICES(ctx, 0);      /* must be called before assert */
@@ -6428,7 +6428,7 @@ _mesa_DeleteLists(ctx, GLcontext *ctx, GLuint list, GLsizei range)
  * are free.
  */
 GLuint GLAPIENTRY
-_mesa_GenLists(ctx, GLcontext *ctx, GLsizei range)
+_mesa_GenLists(GLcontext *ctx, GLsizei range)
 {
     GLuint base;
     FLUSH_VERTICES(ctx, 0);      /* must be called before assert */
@@ -6467,7 +6467,7 @@ _mesa_GenLists(ctx, GLcontext *ctx, GLsizei range)
  * Begin a new display list.
  */
 void GLAPIENTRY
-_mesa_NewList(ctx, GLcontext *ctx, GLuint list, GLenum mode)
+_mesa_NewList(GLcontext *ctx, GLuint list, GLenum mode)
 {
     GLint i;
 
@@ -6524,7 +6524,7 @@ _mesa_NewList(ctx, GLcontext *ctx, GLuint list, GLenum mode)
  * End definition of current display list.
  */
 void GLAPIENTRY
-_mesa_EndList(ctx, GLcontext *ctx)
+_mesa_EndList(GLcontext *ctx)
 {
     SAVE_FLUSH_VERTICES(ctx);
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -6564,7 +6564,7 @@ _mesa_EndList(ctx, GLcontext *ctx)
 
 
 void GLAPIENTRY
-_mesa_CallList(ctx, GLcontext *ctx, GLuint list)
+_mesa_CallList(GLcontext *ctx, GLuint list)
 {
     GLboolean save_compile_flag;
     FLUSH_CURRENT(ctx, 0);
@@ -6601,7 +6601,7 @@ _mesa_CallList(ctx, GLcontext *ctx, GLuint list)
  * Execute glCallLists:  call multiple display lists.
  */
 void GLAPIENTRY
-_mesa_CallLists(ctx, GLcontext *ctx, GLsizei n, GLenum type, const GLvoid * lists)
+_mesa_CallLists(GLcontext *ctx, GLsizei n, GLenum type, const GLvoid * lists)
 {
     GLuint list;
     GLint i;
@@ -6653,7 +6653,7 @@ _mesa_CallLists(ctx, GLcontext *ctx, GLsizei n, GLenum type, const GLvoid * list
  * Set the offset added to list numbers in glCallLists.
  */
 void GLAPIENTRY
-_mesa_ListBase(ctx, GLcontext *ctx, GLuint base)
+_mesa_ListBase(GLcontext *ctx, GLuint base)
 {
     FLUSH_VERTICES(ctx, 0);      /* must be called before assert */
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -8209,7 +8209,7 @@ _mesa_save_vtxfmt_init(GLvertexformat * vfmt)
  * Initialize display list state for given context.
  */
 void
-_mesa_init_display_list(ctx, GLcontext *ctx)
+_mesa_init_display_list(GLcontext *ctx)
 {
     static GLboolean tableInitialized = GL_FALSE;
 

@@ -150,7 +150,7 @@ client_state(GLcontext *ctx, GLenum cap, GLboolean state)
  * calls client_state().
  */
 void GLAPIENTRY
-_mesa_EnableClientState(ctx, GLcontext *ctx, GLenum cap)
+_mesa_EnableClientState(GLcontext *ctx, GLenum cap)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
     client_state(ctx, cap, GL_TRUE);
@@ -165,7 +165,7 @@ _mesa_EnableClientState(ctx, GLcontext *ctx, GLenum cap)
  * calls client_state().
  */
 void GLAPIENTRY
-_mesa_DisableClientState(ctx, GLcontext *ctx, GLenum cap)
+_mesa_DisableClientState(GLcontext *ctx, GLenum cap)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
     client_state(ctx, cap, GL_FALSE);
@@ -221,7 +221,7 @@ enable_texture(GLcontext *ctx, GLboolean state, GLbitfield bit)
  * dd_function_table::Enable.
  */
 void
-_mesa_set_enable(ctx, GLcontext *ctx, GLenum cap, GLboolean state)
+_mesa_set_enable(GLcontext *ctx, GLenum cap, GLboolean state)
 {
     if (MESA_VERBOSE & VERBOSE_API)
 	_mesa_debug(ctx, "%s %s (newstate is %x)\n",
@@ -947,7 +947,7 @@ _mesa_set_enable(ctx, GLcontext *ctx, GLenum cap, GLboolean state)
  * \param cap  state to enable.
  */
 void GLAPIENTRY
-_mesa_Enable(ctx, GLcontext *ctx, GLenum cap)
+_mesa_Enable(GLcontext *ctx, GLenum cap)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -960,7 +960,7 @@ _mesa_Enable(ctx, GLcontext *ctx, GLenum cap)
  * \param cap  state to disable.
  */
 void GLAPIENTRY
-_mesa_Disable(ctx, GLcontext *ctx, GLenum cap)
+_mesa_Disable(GLcontext *ctx, GLenum cap)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -1005,7 +1005,7 @@ is_texture_enabled(GLcontext *ctx, GLbitfield bit)
  * extensions are effectively present before reporting.
  */
 GLboolean GLAPIENTRY
-_mesa_IsEnabled(ctx, GLcontext *ctx, GLenum cap)
+_mesa_IsEnabled(GLcontext *ctx, GLenum cap)
 {
     switch (cap) {
 	case GL_ALPHA_TEST:

@@ -220,7 +220,7 @@ run_program(GLcontext *ctx, SWspan *span, GLuint start, GLuint end)
  * in the given span.
  */
 void
-_swrast_exec_fragment_program(ctx, GLcontext *ctx, SWspan *span)
+_swrast_exec_fragment_program(GLcontext *ctx, SWspan *span)
 {
     const struct gl_fragment_program *program = ctx->FragmentProgram._Current;
 

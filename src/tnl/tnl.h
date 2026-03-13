@@ -37,43 +37,43 @@
  * itself.)
  */
 extern GLboolean
-_tnl_CreateContext(ctx, GLcontext *ctx);
+_tnl_CreateContext(GLcontext *ctx);
 
 extern void
-_tnl_DestroyContext(ctx, GLcontext *ctx);
+_tnl_DestroyContext(GLcontext *ctx);
 
 extern void
-_tnl_InvalidateState(ctx, GLcontext *ctx, GLuint new_state);
+_tnl_InvalidateState(GLcontext *ctx, GLuint new_state);
 
 /* Functions to revive the tnl module after being unhooked from
  * dispatch and/or driver callbacks.
  */
 
 extern void
-_tnl_wakeup(ctx, GLcontext *ctx);
+_tnl_wakeup(GLcontext *ctx);
 
 /* Driver configuration options:
  */
 extern void
-_tnl_need_projected_coords(ctx, GLcontext *ctx, GLboolean flag);
+_tnl_need_projected_coords(GLcontext *ctx, GLboolean flag);
 
 
 /* Control whether T&L does per-vertex fog
  */
 extern void
-_tnl_allow_vertex_fog(ctx, GLcontext *ctx, GLboolean value);
+_tnl_allow_vertex_fog(GLcontext *ctx, GLboolean value);
 
 extern void
-_tnl_allow_pixel_fog(ctx, GLcontext *ctx, GLboolean value);
+_tnl_allow_pixel_fog(GLcontext *ctx, GLboolean value);
 
 extern void
-_tnl_program_string(ctx, GLcontext *ctx, GLenum target, struct gl_program *program);
+_tnl_program_string(GLcontext *ctx, GLenum target, struct gl_program *program);
 
 struct _mesa_prim;
 struct _mesa_index_buffer;
 
 void
-_tnl_draw_prims(ctx, GLcontext *ctx,
+_tnl_draw_prims(GLcontext *ctx,
 		const struct gl_client_array *arrays[],
 		const struct _mesa_prim *prim,
 		GLuint nr_prims,

@@ -32,217 +32,218 @@
 
 
 extern void GLAPIENTRY
-_mesa_DeleteObjectARB(GLhandleARB obj);
+_mesa_DeleteObjectARB(GLcontext *ctx, GLhandleARB obj);
 
 extern GLhandleARB GLAPIENTRY
-_mesa_GetHandleARB(ctx, GLcontext *ctx, GLenum pname);
+_mesa_GetHandleARB(GLcontext *ctx, GLenum pname);
 
 extern void GLAPIENTRY
-_mesa_DetachObjectARB(ctx, GLcontext *ctx, GLhandleARB program, GLhandleARB shader);
+_mesa_DetachObjectARB(GLcontext *ctx, GLhandleARB program, GLhandleARB shader);
 
 extern GLhandleARB GLAPIENTRY
-_mesa_CreateShaderObjectARB(ctx, GLcontext *ctx, GLenum type);
+_mesa_CreateShaderObjectARB(GLcontext *ctx, GLenum type);
 
 extern void GLAPIENTRY
-_mesa_ShaderSourceARB(ctx, GLcontext *ctx, GLhandleARB shaderObj, GLsizei count,
+_mesa_ShaderSourceARB(GLcontext *ctx, GLhandleARB shaderObj, GLsizei count,
 		      const GLcharARB ** string, const GLint * length);
 
 extern void  GLAPIENTRY
-_mesa_CompileShaderARB(ctx, GLcontext *ctx, GLhandleARB shaderObj);
+_mesa_CompileShaderARB(GLcontext *ctx, GLhandleARB shaderObj);
 
 extern GLhandleARB GLAPIENTRY
-_mesa_CreateProgramObjectARB(ctx, GLcontext *ctx);
+_mesa_CreateProgramObjectARB(GLcontext *ctx);
 
 extern void GLAPIENTRY
-_mesa_AttachObjectARB(ctx, GLcontext *ctx, GLhandleARB program, GLhandleARB shader);
+_mesa_AttachObjectARB(GLcontext *ctx, GLhandleARB program, GLhandleARB shader);
 
 extern void GLAPIENTRY
-_mesa_LinkProgramARB(ctx, GLcontext *ctx, GLhandleARB programObj);
+_mesa_LinkProgramARB(GLcontext *ctx, GLhandleARB programObj);
 
 extern void GLAPIENTRY
-_mesa_UseProgramObjectARB(ctx, GLcontext *ctx, GLhandleARB program);
+_mesa_UseProgramObjectARB(GLcontext *ctx, GLhandleARB program);
 
 extern void GLAPIENTRY
-_mesa_ValidateProgramARB(ctx, GLcontext *ctx, GLhandleARB program);
+_mesa_ValidateProgramARB(GLcontext *ctx, GLhandleARB program);
 
 extern void GLAPIENTRY
-_mesa_Uniform1fARB(ctx, GLcontext *ctx, GLint location, GLfloat v0);
+_mesa_Uniform1fARB(GLcontext *ctx, GLint location, GLfloat v0);
 
 extern void GLAPIENTRY
-_mesa_Uniform2fARB(ctx, GLcontext *ctx, GLint location, GLfloat v0, GLfloat v1);
+_mesa_Uniform2fARB(GLcontext *ctx, GLint location, GLfloat v0, GLfloat v1);
 
 extern void GLAPIENTRY
-_mesa_Uniform3fARB(ctx, GLcontext *ctx, GLint location, GLfloat v0, GLfloat v1, GLfloat v2);
+_mesa_Uniform3fARB(GLcontext *ctx, GLint location, GLfloat v0, GLfloat v1, GLfloat v2);
 
 extern void GLAPIENTRY
-_mesa_Uniform4fARB(ctx, GLcontext *ctx, GLint location, GLfloat v0, GLfloat v1, GLfloat v2,
+_mesa_Uniform4fARB(GLcontext *ctx, GLint location, GLfloat v0, GLfloat v1, GLfloat v2,
 		   GLfloat v3);
 
 extern void GLAPIENTRY
-_mesa_Uniform1iARB(ctx, GLcontext *ctx, GLint location, GLint v0);
+_mesa_Uniform1iARB(GLcontext *ctx, GLint location, GLint v0);
 
 extern void GLAPIENTRY
-_mesa_Uniform2iARB(ctx, GLcontext *ctx, GLint location, GLint v0, GLint v1);
+_mesa_Uniform2iARB(GLcontext *ctx, GLint location, GLint v0, GLint v1);
 
 extern void GLAPIENTRY
-_mesa_Uniform3iARB(ctx, GLcontext *ctx, GLint location, GLint v0, GLint v1, GLint v2);
+_mesa_Uniform3iARB(GLcontext *ctx, GLint location, GLint v0, GLint v1, GLint v2);
 
 extern void GLAPIENTRY
-_mesa_Uniform4iARB(ctx, GLcontext *ctx, GLint location, GLint v0, GLint v1, GLint v2, GLint v3);
+_mesa_Uniform4iARB(GLcontext *ctx, GLint location, GLint v0, GLint v1, GLint v2, GLint v3);
 
 extern void GLAPIENTRY
-_mesa_Uniform1fvARB(ctx, GLcontext *ctx, GLint location, GLsizei count, const GLfloat * value);
+_mesa_Uniform1fvARB(GLcontext *ctx, GLint location, GLsizei count, const GLfloat * value);
 
 extern void GLAPIENTRY
-_mesa_Uniform2fvARB(ctx, GLcontext *ctx, GLint location, GLsizei count, const GLfloat * value);
+_mesa_Uniform2fvARB(GLcontext *ctx, GLint location, GLsizei count, const GLfloat * value);
 
 extern void GLAPIENTRY
-_mesa_Uniform3fvARB(ctx, GLcontext *ctx, GLint location, GLsizei count, const GLfloat * value);
+_mesa_Uniform3fvARB(GLcontext *ctx, GLint location, GLsizei count, const GLfloat * value);
 
 extern void GLAPIENTRY
-_mesa_Uniform4fvARB(ctx, GLcontext *ctx, GLint location, GLsizei count, const GLfloat * value);
+_mesa_Uniform4fvARB(GLcontext *ctx, GLint location, GLsizei count, const GLfloat * value);
 
 extern void GLAPIENTRY
-_mesa_Uniform1ivARB(ctx, GLcontext *ctx, GLint location, GLsizei count, const GLint * value);
+_mesa_Uniform1ivARB(GLcontext *ctx, GLint location, GLsizei count, const GLint * value);
 
 extern void GLAPIENTRY
-_mesa_Uniform2ivARB(ctx, GLcontext *ctx, GLint location, GLsizei count, const GLint * value);
+_mesa_Uniform2ivARB(GLcontext *ctx, GLint location, GLsizei count, const GLint * value);
 
 extern void GLAPIENTRY
-_mesa_Uniform3ivARB(ctx, GLcontext *ctx, GLint location, GLsizei count, const GLint * value);
+_mesa_Uniform3ivARB(GLcontext *ctx, GLint location, GLsizei count, const GLint * value);
 
 extern void GLAPIENTRY
-_mesa_Uniform4ivARB(ctx, GLcontext *ctx, GLint location, GLsizei count, const GLint * value);
+_mesa_Uniform4ivARB(GLcontext *ctx, GLint location, GLsizei count, const GLint * value);
 
 extern void GLAPIENTRY
-_mesa_UniformMatrix2fvARB(ctx, GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
+_mesa_UniformMatrix2fvARB(GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
 			  const GLfloat * value);
 
 extern void GLAPIENTRY
-_mesa_UniformMatrix3fvARB(ctx, GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
+_mesa_UniformMatrix3fvARB(GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
 			  const GLfloat * value);
 
 extern void GLAPIENTRY
-_mesa_UniformMatrix4fvARB(ctx, GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
+_mesa_UniformMatrix4fvARB(GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
 			  const GLfloat * value);
 
 extern void GLAPIENTRY
-_mesa_GetObjectParameterfvARB(GLhandleARB, GLenum, GLfloat *);
+_mesa_GetObjectParameterfvARB(GLcontext *ctx, GLhandleARB object, GLenum pname,
+			      GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_GetObjectParameterivARB(ctx, GLcontext *ctx, GLhandleARB object, GLenum pname, GLint *params);
+_mesa_GetObjectParameterivARB(GLcontext *ctx, GLhandleARB object, GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetInfoLogARB(ctx, GLcontext *ctx, GLhandleARB object, GLsizei maxLength, GLsizei * length,
+_mesa_GetInfoLogARB(GLcontext *ctx, GLhandleARB object, GLsizei maxLength, GLsizei * length,
 		    GLcharARB * infoLog);
 
 extern void GLAPIENTRY
-_mesa_GetAttachedObjectsARB(ctx, GLcontext *ctx, GLhandleARB container, GLsizei maxCount,
+_mesa_GetAttachedObjectsARB(GLcontext *ctx, GLhandleARB container, GLsizei maxCount,
 			    GLsizei * count, GLhandleARB * obj);
 
 extern GLint GLAPIENTRY
-_mesa_GetUniformLocationARB(ctx, GLcontext *ctx, GLhandleARB programObj, const GLcharARB *name);
+_mesa_GetUniformLocationARB(GLcontext *ctx, GLhandleARB programObj, const GLcharARB *name);
 
 extern void GLAPIENTRY
-_mesa_GetActiveUniformARB(ctx, GLcontext *ctx, GLhandleARB program, GLuint index,
+_mesa_GetActiveUniformARB(GLcontext *ctx, GLhandleARB program, GLuint index,
 			  GLsizei maxLength, GLsizei * length, GLint * size,
 			  GLenum * type, GLcharARB * name);
 
 extern void GLAPIENTRY
-_mesa_GetUniformfvARB(ctx, GLcontext *ctx, GLhandleARB program, GLint location, GLfloat * params);
+_mesa_GetUniformfvARB(GLcontext *ctx, GLhandleARB program, GLint location, GLfloat * params);
 
 extern void GLAPIENTRY
-_mesa_GetUniformivARB(ctx, GLcontext *ctx, GLhandleARB program, GLint location, GLint * params);
+_mesa_GetUniformivARB(GLcontext *ctx, GLhandleARB program, GLint location, GLint * params);
 
 extern void GLAPIENTRY
-_mesa_GetShaderSourceARB(ctx, GLcontext *ctx, GLhandleARB shader, GLsizei maxLength,
+_mesa_GetShaderSourceARB(GLcontext *ctx, GLhandleARB shader, GLsizei maxLength,
 			 GLsizei *length, GLcharARB *sourceOut);
 
 #if FEATURE_ARB_vertex_shader
 
 extern void GLAPIENTRY
-_mesa_BindAttribLocationARB(ctx, GLcontext *ctx, GLhandleARB program, GLuint index,
+_mesa_BindAttribLocationARB(GLcontext *ctx, GLhandleARB program, GLuint index,
 			    const GLcharARB *name);
 
 extern void GLAPIENTRY
-_mesa_GetActiveAttribARB(ctx, GLcontext *ctx, GLhandleARB program, GLuint index,
+_mesa_GetActiveAttribARB(GLcontext *ctx, GLhandleARB program, GLuint index,
 			 GLsizei maxLength, GLsizei * length, GLint * size,
 			 GLenum * type, GLcharARB * name);
 
 extern GLint GLAPIENTRY
-_mesa_GetAttribLocationARB(ctx, GLcontext *ctx, GLhandleARB program, const GLcharARB * name);
+_mesa_GetAttribLocationARB(GLcontext *ctx, GLhandleARB program, const GLcharARB * name);
 
 #endif /* FEATURE_ARB_vertex_shader */
 
 
 /* 2.0 */
 extern void GLAPIENTRY
-_mesa_AttachShader(ctx, GLcontext *ctx, GLuint program, GLuint shader);
+_mesa_AttachShader(GLcontext *ctx, GLuint program, GLuint shader);
 
 extern GLuint GLAPIENTRY
-_mesa_CreateShader(ctx, GLcontext *ctx, GLenum type);
+_mesa_CreateShader(GLcontext *ctx, GLenum type);
 
 extern GLuint GLAPIENTRY
-_mesa_CreateProgram(ctx, GLcontext *ctx);
+_mesa_CreateProgram(GLcontext *ctx);
 
 extern void GLAPIENTRY
-_mesa_DeleteProgram(GLuint program);
+_mesa_DeleteProgram(GLcontext *ctx, GLuint name);
 
 extern void GLAPIENTRY
-_mesa_DeleteShader(GLuint shader);
+_mesa_DeleteShader(GLcontext *ctx, GLuint name);
 
 extern void GLAPIENTRY
-_mesa_DetachShader(ctx, GLcontext *ctx, GLuint program, GLuint shader);
+_mesa_DetachShader(GLcontext *ctx, GLuint program, GLuint shader);
 
 extern void GLAPIENTRY
-_mesa_GetAttachedShaders(ctx, GLcontext *ctx, GLuint program, GLsizei maxCount,
+_mesa_GetAttachedShaders(GLcontext *ctx, GLuint program, GLsizei maxCount,
 			 GLsizei *count, GLuint *obj);
 
 extern void GLAPIENTRY
-_mesa_GetProgramiv(ctx, GLcontext *ctx, GLuint program, GLenum pname, GLint *params);
+_mesa_GetProgramiv(GLcontext *ctx, GLuint program, GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetProgramInfoLog(ctx, GLcontext *ctx, GLuint program, GLsizei bufSize,
+_mesa_GetProgramInfoLog(GLcontext *ctx, GLuint program, GLsizei bufSize,
 			GLsizei *length, GLchar *infoLog);
 
 extern void GLAPIENTRY
-_mesa_GetShaderiv(ctx, GLcontext *ctx, GLuint shader, GLenum pname, GLint *params);
+_mesa_GetShaderiv(GLcontext *ctx, GLuint shader, GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetShaderInfoLog(ctx, GLcontext *ctx, GLuint shader, GLsizei bufSize,
+_mesa_GetShaderInfoLog(GLcontext *ctx, GLuint shader, GLsizei bufSize,
 		       GLsizei *length, GLchar *infoLog);
 
 extern GLboolean GLAPIENTRY
-_mesa_IsProgram(ctx, GLcontext *ctx, GLuint name);
+_mesa_IsProgram(GLcontext *ctx, GLuint name);
 
 extern GLboolean GLAPIENTRY
-_mesa_IsShader(ctx, GLcontext *ctx, GLuint name);
+_mesa_IsShader(GLcontext *ctx, GLuint name);
 
 
 
 /* 2.1 */
 extern void GLAPIENTRY
-_mesa_UniformMatrix2x3fv(ctx, GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
+_mesa_UniformMatrix2x3fv(GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
 			 const GLfloat *value);
 
 extern void GLAPIENTRY
-_mesa_UniformMatrix3x2fv(ctx, GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
+_mesa_UniformMatrix3x2fv(GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
 			 const GLfloat *value);
 
 extern void GLAPIENTRY
-_mesa_UniformMatrix2x4fv(ctx, GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
+_mesa_UniformMatrix2x4fv(GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
 			 const GLfloat *value);
 
 extern void GLAPIENTRY
-_mesa_UniformMatrix4x2fv(ctx, GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
+_mesa_UniformMatrix4x2fv(GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
 			 const GLfloat *value);
 
 extern void GLAPIENTRY
-_mesa_UniformMatrix3x4fv(ctx, GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
+_mesa_UniformMatrix3x4fv(GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
 			 const GLfloat *value);
 
 extern void GLAPIENTRY
-_mesa_UniformMatrix4x3fv(ctx, GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
+_mesa_UniformMatrix4x3fv(GLcontext *ctx, GLint location, GLsizei count, GLboolean transpose,
 			 const GLfloat *value);
 
 

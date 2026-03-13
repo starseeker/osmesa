@@ -42,42 +42,42 @@
 #if _HAVE_FULL_GL
 
 extern void GLAPIENTRY
-_mesa_GetMinmax(ctx, GLcontext *ctx, GLenum target, GLboolean reset, GLenum format, GLenum type, GLvoid *values);
+_mesa_GetMinmax(GLcontext *ctx, GLenum target, GLboolean reset, GLenum format, GLenum type, GLvoid *values);
 
 extern void GLAPIENTRY
-_mesa_GetHistogram(ctx, GLcontext *ctx, GLenum target, GLboolean reset, GLenum format, GLenum type, GLvoid *values);
+_mesa_GetHistogram(GLcontext *ctx, GLenum target, GLboolean reset, GLenum format, GLenum type, GLvoid *values);
 
 extern void GLAPIENTRY
-_mesa_GetHistogramParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params);
+_mesa_GetHistogramParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_GetHistogramParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
+_mesa_GetHistogramParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetMinmaxParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params);
+_mesa_GetMinmaxParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_GetMinmaxParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
+_mesa_GetMinmaxParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_Histogram(ctx, GLcontext *ctx, GLenum target, GLsizei width, GLenum internalFormat, GLboolean sink);
+_mesa_Histogram(GLcontext *ctx, GLenum target, GLsizei width, GLenum internalFormat, GLboolean sink);
 
 extern void GLAPIENTRY
-_mesa_Minmax(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLboolean sink);
+_mesa_Minmax(GLcontext *ctx, GLenum target, GLenum internalFormat, GLboolean sink);
 
 extern void GLAPIENTRY
-_mesa_ResetHistogram(ctx, GLcontext *ctx, GLenum target);
+_mesa_ResetHistogram(GLcontext *ctx, GLenum target);
 
 extern void GLAPIENTRY
-_mesa_ResetMinmax(ctx, GLcontext *ctx, GLenum target);
+_mesa_ResetMinmax(GLcontext *ctx, GLenum target);
 
 extern void
-_mesa_update_minmax(ctx, GLcontext *ctx, GLuint n, const GLfloat rgba[][4]);
+_mesa_update_minmax(GLcontext *ctx, GLuint n, const GLfloat rgba[][4]);
 
 extern void
-_mesa_update_histogram(ctx, GLcontext *ctx, GLuint n, const GLfloat rgba[][4]);
+_mesa_update_histogram(GLcontext *ctx, GLuint n, const GLfloat rgba[][4]);
 
-extern void _mesa_init_histogram(ctx, GLcontext * ctx);
+extern void _mesa_init_histogram(GLcontext *ctx);
 
 #else
 

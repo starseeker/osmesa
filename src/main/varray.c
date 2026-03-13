@@ -88,7 +88,7 @@ update_array(GLcontext *ctx, struct gl_client_array *array,
 
 
 void GLAPIENTRY
-_mesa_VertexPointer(ctx, GLcontext *ctx, GLint size, GLenum type, GLsizei stride, const GLvoid *ptr)
+_mesa_VertexPointer(GLcontext *ctx, GLint size, GLenum type, GLsizei stride, const GLvoid *ptr)
 {
     GLsizei elementSize;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -134,7 +134,7 @@ _mesa_VertexPointer(ctx, GLcontext *ctx, GLint size, GLenum type, GLsizei stride
 
 
 void GLAPIENTRY
-_mesa_NormalPointer(ctx, GLcontext *ctx, GLenum type, GLsizei stride, const GLvoid *ptr)
+_mesa_NormalPointer(GLcontext *ctx, GLenum type, GLsizei stride, const GLvoid *ptr)
 {
     GLsizei elementSize;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -178,7 +178,7 @@ _mesa_NormalPointer(ctx, GLcontext *ctx, GLenum type, GLsizei stride, const GLvo
 
 
 void GLAPIENTRY
-_mesa_ColorPointer(ctx, GLcontext *ctx, GLint size, GLenum type, GLsizei stride, const GLvoid *ptr)
+_mesa_ColorPointer(GLcontext *ctx, GLint size, GLenum type, GLsizei stride, const GLvoid *ptr)
 {
     GLsizei elementSize;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -235,7 +235,7 @@ _mesa_ColorPointer(ctx, GLcontext *ctx, GLint size, GLenum type, GLsizei stride,
 
 
 void GLAPIENTRY
-_mesa_FogCoordPointerEXT(ctx, GLcontext *ctx, GLenum type, GLsizei stride, const GLvoid *ptr)
+_mesa_FogCoordPointerEXT(GLcontext *ctx, GLenum type, GLsizei stride, const GLvoid *ptr)
 {
     GLint elementSize;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -266,7 +266,7 @@ _mesa_FogCoordPointerEXT(ctx, GLcontext *ctx, GLenum type, GLsizei stride, const
 
 
 void GLAPIENTRY
-_mesa_IndexPointer(ctx, GLcontext *ctx, GLenum type, GLsizei stride, const GLvoid *ptr)
+_mesa_IndexPointer(GLcontext *ctx, GLenum type, GLsizei stride, const GLvoid *ptr)
 {
     GLsizei elementSize;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -306,7 +306,7 @@ _mesa_IndexPointer(ctx, GLcontext *ctx, GLenum type, GLsizei stride, const GLvoi
 
 
 void GLAPIENTRY
-_mesa_SecondaryColorPointerEXT(ctx, GLcontext *ctx, GLint size, GLenum type,
+_mesa_SecondaryColorPointerEXT(GLcontext *ctx, GLint size, GLenum type,
 			       GLsizei stride, const GLvoid *ptr)
 {
     GLsizei elementSize;
@@ -364,7 +364,7 @@ _mesa_SecondaryColorPointerEXT(ctx, GLcontext *ctx, GLint size, GLenum type,
 
 
 void GLAPIENTRY
-_mesa_TexCoordPointer(ctx, GLcontext *ctx, GLint size, GLenum type, GLsizei stride,
+_mesa_TexCoordPointer(GLcontext *ctx, GLint size, GLenum type, GLsizei stride,
 		      const GLvoid *ptr)
 {
     GLint elementSize;
@@ -413,7 +413,7 @@ _mesa_TexCoordPointer(ctx, GLcontext *ctx, GLint size, GLenum type, GLsizei stri
 
 
 void GLAPIENTRY
-_mesa_EdgeFlagPointer(ctx, GLcontext *ctx, GLsizei stride, const GLvoid *ptr)
+_mesa_EdgeFlagPointer(GLcontext *ctx, GLsizei stride, const GLvoid *ptr)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -432,7 +432,7 @@ _mesa_EdgeFlagPointer(ctx, GLcontext *ctx, GLsizei stride, const GLvoid *ptr)
 
 #if FEATURE_NV_vertex_program
 void GLAPIENTRY
-_mesa_VertexAttribPointerNV(ctx, GLcontext *ctx, GLuint index, GLint size, GLenum type,
+_mesa_VertexAttribPointerNV(GLcontext *ctx, GLuint index, GLint size, GLenum type,
 			    GLsizei stride, const GLvoid *ptr)
 {
     GLboolean normalized = GL_FALSE;
@@ -491,7 +491,7 @@ _mesa_VertexAttribPointerNV(ctx, GLcontext *ctx, GLuint index, GLint size, GLenu
 
 #if FEATURE_ARB_vertex_program
 void GLAPIENTRY
-_mesa_VertexAttribPointerARB(ctx, GLcontext *ctx, GLuint index, GLint size, GLenum type,
+_mesa_VertexAttribPointerARB(GLcontext *ctx, GLuint index, GLint size, GLenum type,
 			     GLboolean normalized,
 			     GLsizei stride, const GLvoid *ptr)
 {
@@ -561,7 +561,7 @@ _mesa_VertexAttribPointerARB(ctx, GLcontext *ctx, GLuint index, GLint size, GLen
 
 
 void GLAPIENTRY
-_mesa_VertexPointerEXT(GLint size, GLenum type, GLsizei stride,
+_mesa_VertexPointerEXT(GLcontext *ctx, GLint size, GLenum type, GLsizei stride,
 		       GLsizei count, const GLvoid *ptr)
 {
     (void) count;
@@ -570,7 +570,7 @@ _mesa_VertexPointerEXT(GLint size, GLenum type, GLsizei stride,
 
 
 void GLAPIENTRY
-_mesa_NormalPointerEXT(GLenum type, GLsizei stride, GLsizei count,
+_mesa_NormalPointerEXT(GLcontext *ctx, GLenum type, GLsizei stride, GLsizei count,
 		       const GLvoid *ptr)
 {
     (void) count;
@@ -579,7 +579,7 @@ _mesa_NormalPointerEXT(GLenum type, GLsizei stride, GLsizei count,
 
 
 void GLAPIENTRY
-_mesa_ColorPointerEXT(GLint size, GLenum type, GLsizei stride, GLsizei count,
+_mesa_ColorPointerEXT(GLcontext *ctx, GLint size, GLenum type, GLsizei stride, GLsizei count,
 		      const GLvoid *ptr)
 {
     (void) count;
@@ -588,7 +588,7 @@ _mesa_ColorPointerEXT(GLint size, GLenum type, GLsizei stride, GLsizei count,
 
 
 void GLAPIENTRY
-_mesa_IndexPointerEXT(GLenum type, GLsizei stride, GLsizei count,
+_mesa_IndexPointerEXT(GLcontext *ctx, GLenum type, GLsizei stride, GLsizei count,
 		      const GLvoid *ptr)
 {
     (void) count;
@@ -597,7 +597,7 @@ _mesa_IndexPointerEXT(GLenum type, GLsizei stride, GLsizei count,
 
 
 void GLAPIENTRY
-_mesa_TexCoordPointerEXT(GLint size, GLenum type, GLsizei stride,
+_mesa_TexCoordPointerEXT(GLcontext *ctx, GLint size, GLenum type, GLsizei stride,
 			 GLsizei count, const GLvoid *ptr)
 {
     (void) count;
@@ -606,7 +606,7 @@ _mesa_TexCoordPointerEXT(GLint size, GLenum type, GLsizei stride,
 
 
 void GLAPIENTRY
-_mesa_EdgeFlagPointerEXT(GLsizei stride, GLsizei count, const GLboolean *ptr)
+_mesa_EdgeFlagPointerEXT(GLcontext *ctx, GLsizei stride, GLsizei count, const GLboolean *ptr)
 {
     (void) count;
     _mesa_EdgeFlagPointer(ctx, stride, ptr);
@@ -614,7 +614,7 @@ _mesa_EdgeFlagPointerEXT(GLsizei stride, GLsizei count, const GLboolean *ptr)
 
 
 void GLAPIENTRY
-_mesa_InterleavedArrays(ctx, GLcontext *ctx, GLenum format, GLsizei stride, const GLvoid *pointer)
+_mesa_InterleavedArrays(GLcontext *ctx, GLenum format, GLsizei stride, const GLvoid *pointer)
 {
     GLboolean tflag, cflag, nflag;  /* enable/disable flags */
     GLint tcomps, ccomps, vcomps;   /* components per texcoord, color, vertex */
@@ -844,7 +844,7 @@ _mesa_InterleavedArrays(ctx, GLcontext *ctx, GLenum format, GLsizei stride, cons
 
 
 void GLAPIENTRY
-_mesa_LockArraysEXT(ctx, GLcontext *ctx, GLint first, GLsizei count)
+_mesa_LockArraysEXT(GLcontext *ctx, GLint first, GLsizei count)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -869,7 +869,7 @@ _mesa_LockArraysEXT(ctx, GLcontext *ctx, GLint first, GLsizei count)
 
 
 void GLAPIENTRY
-_mesa_UnlockArraysEXT(ctx, GLcontext *ctx)
+_mesa_UnlockArraysEXT(GLcontext *ctx)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -889,7 +889,7 @@ _mesa_UnlockArraysEXT(ctx, GLcontext *ctx)
 /* GL_EXT_multi_draw_arrays */
 /* Somebody forgot to spec the first and count parameters as const! <sigh> */
 void GLAPIENTRY
-_mesa_MultiDrawArraysEXT(ctx, GLcontext *ctx, GLenum mode, GLint *first,
+_mesa_MultiDrawArraysEXT(GLcontext *ctx, GLenum mode, GLint *first,
 			 GLsizei *count, GLsizei primcount)
 {
     GLint i;
@@ -906,7 +906,7 @@ _mesa_MultiDrawArraysEXT(ctx, GLcontext *ctx, GLenum mode, GLint *first,
 
 /* GL_EXT_multi_draw_arrays */
 void GLAPIENTRY
-_mesa_MultiDrawElementsEXT(ctx, GLcontext *ctx, GLenum mode, const GLsizei *count, GLenum type,
+_mesa_MultiDrawElementsEXT(GLcontext *ctx, GLenum mode, const GLsizei *count, GLenum type,
 			   const GLvoid **indices, GLsizei primcount)
 {
     GLint i;
@@ -923,7 +923,7 @@ _mesa_MultiDrawElementsEXT(ctx, GLcontext *ctx, GLenum mode, const GLsizei *coun
 
 /* GL_IBM_multimode_draw_arrays */
 void GLAPIENTRY
-_mesa_MultiModeDrawArraysIBM(ctx, GLcontext *ctx, const GLenum * mode, const GLint * first,
+_mesa_MultiModeDrawArraysIBM(GLcontext *ctx, const GLenum * mode, const GLint * first,
 			     const GLsizei * count,
 			     GLsizei primcount, GLint modestride)
 {
@@ -942,7 +942,7 @@ _mesa_MultiModeDrawArraysIBM(ctx, GLcontext *ctx, const GLenum * mode, const GLi
 
 /* GL_IBM_multimode_draw_arrays */
 void GLAPIENTRY
-_mesa_MultiModeDrawElementsIBM(ctx, GLcontext *ctx, const GLenum * mode, const GLsizei * count,
+_mesa_MultiModeDrawElementsIBM(GLcontext *ctx, const GLenum * mode, const GLsizei * count,
 			       GLenum type, const GLvoid * const * indices,
 			       GLsizei primcount, GLint modestride)
 {
@@ -965,7 +965,7 @@ _mesa_MultiModeDrawElementsIBM(ctx, GLcontext *ctx, const GLenum * mode, const G
  * Initialize vertex array state for given context.
  */
 void
-_mesa_init_varray(ctx, GLcontext *ctx)
+_mesa_init_varray(GLcontext *ctx)
 {
     ctx->Array.DefaultArrayObj = _mesa_new_array_object(ctx, 0);
     ctx->Array.ArrayObj = ctx->Array.DefaultArrayObj;

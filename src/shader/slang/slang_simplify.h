@@ -4,13 +4,14 @@
 
 
 extern GLint
-_slang_lookup_constant(const char *name);
+_slang_lookup_constant(GLcontext *ctx, const char *name);
 
 
 extern void
 _slang_simplify(slang_operation *oper,
 		const slang_name_space * space,
-		slang_atom_pool * atoms);
+		slang_atom_pool * atoms,
+		GLcontext *ctx);
 
 
 extern GLboolean

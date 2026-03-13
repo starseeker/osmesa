@@ -40,9 +40,9 @@
 
 extern void _mesa_print_tri_caps(const char *name, GLuint flags);
 extern void _mesa_print_enable_flags(const char *msg, GLuint flags);
-extern void _mesa_print_state(const char *msg, GLuint state);
-extern void _mesa_print_info(void);
-extern void _mesa_init_debug(ctx, GLcontext *ctx);
+extern void _mesa_print_state(GLcontext *ctx, const char *msg, GLuint state);
+extern void _mesa_print_info(GLcontext *ctx);
+extern void _mesa_init_debug(GLcontext *ctx);
 
 #else
 

@@ -44,7 +44,7 @@
  * \return value of constant, or -1 if unknown
  */
 GLint
-_slang_lookup_constant(const char *name)
+_slang_lookup_constant(GLcontext *ctx, const char *name)
 {
     struct constant_info {
 	const char *Name;
@@ -67,12 +67,15 @@ _slang_lookup_constant(const char *name)
     };
     GLuint i;
 
+    if (!ctx)
+	return -1;  /* no context to query implementation limits */
+
     for (i = 0; info[i].Name; i++) {
 	if (strcmp(info[i].Name, name) == 0) {
 	    /* found */
-	    GLint value[16] = {-1.0};
+	    GLint value[16] = {-1};
 	    _mesa_GetIntegerv(ctx, info[i].Token, value);
-	    ASSERT(value[0] >= 0);  /* sanity check that glGetFloatv worked */
+	    ASSERT(value[0] >= 0);  /* sanity check that glGetIntegerv worked */
 	    return value[0];
 	}
     }
@@ -91,7 +94,8 @@ _slang_lookup_constant(const char *name)
 void
 _slang_simplify(slang_operation *oper,
 		const slang_name_space * space,
-		slang_atom_pool * atoms)
+		slang_atom_pool * atoms,
+		GLcontext *ctx)
 {
     GLboolean isFloat[4];
     GLboolean isBool[4];
@@ -99,7 +103,7 @@ _slang_simplify(slang_operation *oper,
 
     if (oper->type == SLANG_OPER_IDENTIFIER) {
 	/* see if it's a named constant */
-	GLint value = _slang_lookup_constant((char *) oper->a_id);
+	GLint value = _slang_lookup_constant(ctx, (char *) oper->a_id);
 	if (value >= 0) {
 	    oper->literal[0] =
 		oper->literal[1] =
@@ -112,7 +116,7 @@ _slang_simplify(slang_operation *oper,
 
     /* first, simplify children */
     for (i = 0; i < oper->num_children; i++) {
-	_slang_simplify(&oper->children[i], space, atoms);
+	_slang_simplify(&oper->children[i], space, atoms, ctx);
     }
 
     /* examine children */

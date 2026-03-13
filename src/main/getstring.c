@@ -45,7 +45,7 @@
  * the hardcoded strings.
  */
 const GLubyte * GLAPIENTRY
-_mesa_GetString(ctx, GLcontext *ctx, GLenum name)
+_mesa_GetString(GLcontext *ctx, GLenum name)
 {
     static const char *vendor = "Brian Paul";
     static const char *renderer = "Mesa";
@@ -178,7 +178,7 @@ _mesa_GetString(ctx, GLcontext *ctx, GLenum name)
  * otherwise gets the specified pointer from the current context.
  */
 void GLAPIENTRY
-_mesa_GetPointerv(ctx, GLcontext *ctx, GLenum pname, GLvoid **params)
+_mesa_GetPointerv(GLcontext *ctx, GLenum pname, GLvoid **params)
 {
     const GLuint clientUnit = ctx->Array.ActiveTexture;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -268,7 +268,7 @@ _mesa_GetPointerv(ctx, GLcontext *ctx, GLenum pname, GLvoid **params)
  * Returns __GLcontextRec::ErrorValue.
  */
 GLenum GLAPIENTRY
-_mesa_GetError(ctx, GLcontext *ctx)
+_mesa_GetError(GLcontext *ctx)
 {
     GLenum e = ctx->ErrorValue;
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, 0);

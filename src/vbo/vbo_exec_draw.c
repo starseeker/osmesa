@@ -145,7 +145,7 @@ static GLuint vbo_copy_vertices(struct vbo_exec_context *exec)
 
 /* TODO: populate these as the vertex is defined:
  */
-static void vbo_exec_bind_arrays(ctx, GLcontext *ctx)
+static void vbo_exec_bind_arrays(GLcontext *ctx)
 {
     struct vbo_context *vbo = vbo_context(ctx);
     struct vbo_exec_context *exec = &vbo->exec;

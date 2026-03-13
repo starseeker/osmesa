@@ -108,17 +108,17 @@ _mesa_create_context(const GLvisual *visual,
 		     void *driverContext);
 
 extern GLboolean
-_mesa_initialize_context(ctx, GLcontext *ctx,
+_mesa_initialize_context(GLcontext *ctx,
 			 const GLvisual *visual,
 			 GLcontext *share_list,
 			 const struct dd_function_table *driverFunctions,
 			 void *driverContext);
 
 extern void
-_mesa_free_context_data(ctx, GLcontext *ctx);
+_mesa_free_context_data(GLcontext *ctx);
 
 extern void
-_mesa_destroy_context(ctx, GLcontext *ctx);
+_mesa_destroy_context(GLcontext *ctx);
 
 
 extern void
@@ -126,11 +126,11 @@ _mesa_copy_context(const GLcontext *src, GLcontext *dst, GLuint mask);
 
 
 extern void
-_mesa_make_current(ctx, GLcontext *ctx, GLframebuffer *drawBuffer,
+_mesa_make_current(GLcontext *ctx, GLframebuffer *drawBuffer,
 		   GLframebuffer *readBuffer);
 
 extern GLboolean
-_mesa_share_state(ctx, GLcontext *ctx, GLcontext *ctxToShare);
+_mesa_share_state(GLcontext *ctx, GLcontext *ctxToShare);
 
 extern GLcontext *
 _mesa_get_current_context(void);
@@ -151,13 +151,13 @@ _mesa_get_dispatch(GLcontext *ctx);
 /*@{*/
 
 extern void
-_mesa_record_error(ctx, GLcontext *ctx, GLenum error);
+_mesa_record_error(GLcontext *ctx, GLenum error);
 
 extern void GLAPIENTRY
-_mesa_Finish(ctx, GLcontext *ctx);
+_mesa_Finish(GLcontext *ctx);
 
 extern void GLAPIENTRY
-_mesa_Flush(ctx, GLcontext *ctx);
+_mesa_Flush(GLcontext *ctx);
 
 /*@}*/
 

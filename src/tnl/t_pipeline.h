@@ -33,11 +33,11 @@
 #include "mtypes.h"
 #include "t_context.h"
 
-extern void _tnl_run_pipeline(ctx, GLcontext *ctx);
+extern void _tnl_run_pipeline(GLcontext *ctx);
 
-extern void _tnl_destroy_pipeline(ctx, GLcontext *ctx);
+extern void _tnl_destroy_pipeline(GLcontext *ctx);
 
-extern void _tnl_install_pipeline(ctx, GLcontext *ctx,
+extern void _tnl_install_pipeline(GLcontext *ctx,
 				  const struct tnl_pipeline_stage **stages);
 
 
@@ -65,10 +65,10 @@ extern const struct tnl_pipeline_stage *_tnl_vp_pipeline[];
 extern tnl_render_func _tnl_render_tab_elts[];
 extern tnl_render_func _tnl_render_tab_verts[];
 
-extern void _tnl_RenderClippedPolygon(ctx, GLcontext *ctx,
+extern void _tnl_RenderClippedPolygon(GLcontext *ctx,
 				      const GLuint *elts, GLuint n);
 
-extern void _tnl_RenderClippedLine(ctx, GLcontext *ctx, GLuint ii, GLuint jj);
+extern void _tnl_RenderClippedLine(GLcontext *ctx, GLuint ii, GLuint jj);
 
 
 #endif

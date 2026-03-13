@@ -100,7 +100,7 @@ static void _playback_copy_to_current(GLcontext *ctx,
 /* Treat the vertex storage as a VBO, define vertex arrays pointing
  * into it:
  */
-static void vbo_bind_vertex_list(ctx, GLcontext *ctx,
+static void vbo_bind_vertex_list(GLcontext *ctx,
 				 const struct vbo_save_vertex_list *node)
 {
     struct vbo_context *vbo = vbo_context(ctx);
@@ -151,7 +151,7 @@ static void vbo_bind_vertex_list(ctx, GLcontext *ctx,
     }
 }
 
-static void vbo_save_loopback_vertex_list(ctx, GLcontext *ctx,
+static void vbo_save_loopback_vertex_list(GLcontext *ctx,
 	const struct vbo_save_vertex_list *list)
 {
     const char *buffer = (const char *)ctx->Driver.MapBuffer(ctx,
@@ -175,7 +175,7 @@ static void vbo_save_loopback_vertex_list(ctx, GLcontext *ctx,
 /**
  * Execute the buffer and save copied verts.
  */
-void vbo_save_playback_vertex_list(ctx, GLcontext *ctx, void *data)
+void vbo_save_playback_vertex_list(GLcontext *ctx, void *data)
 {
     const struct vbo_save_vertex_list *node = (const struct vbo_save_vertex_list *) data;
     struct vbo_save_context *save = &vbo_context(ctx)->save;

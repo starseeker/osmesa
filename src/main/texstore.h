@@ -38,29 +38,29 @@
 #include "mtypes.h"
 
 
-extern GLboolean _mesa_texstore_rgba(TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_rgba(GLcontext *ctx, TEXSTORE_PARAMS);
 extern GLboolean _mesa_texstore_color_index(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_rgba8888(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_argb8888(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_rgb888(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_bgr888(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_rgb565(TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_rgba8888(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_argb8888(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_rgb888(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_bgr888(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_rgb565(GLcontext *ctx, TEXSTORE_PARAMS);
 extern GLboolean _mesa_texstore_rgb565_rev(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_argb4444(TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_argb4444(GLcontext *ctx, TEXSTORE_PARAMS);
 extern GLboolean _mesa_texstore_argb4444_rev(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_argb1555(TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_argb1555(GLcontext *ctx, TEXSTORE_PARAMS);
 extern GLboolean _mesa_texstore_argb1555_rev(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_al88(TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_al88(GLcontext *ctx, TEXSTORE_PARAMS);
 extern GLboolean _mesa_texstore_al88_rev(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_rgb332(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_a8(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_ci8(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_ycbcr(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_z24_s8(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_z16(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_z32(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_rgba_float32(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_rgba_float16(TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_rgb332(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_a8(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_ci8(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_ycbcr(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_z24_s8(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_z16(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_z32(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_rgba_float32(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_rgba_float16(GLcontext *ctx, TEXSTORE_PARAMS);
 extern GLboolean _mesa_texstore_rgb_fxt1(TEXSTORE_PARAMS);
 extern GLboolean _mesa_texstore_rgba_fxt1(TEXSTORE_PARAMS);
 extern GLboolean _mesa_texstore_rgb_dxt1(TEXSTORE_PARAMS);
@@ -68,10 +68,10 @@ extern GLboolean _mesa_texstore_rgba_dxt1(TEXSTORE_PARAMS);
 extern GLboolean _mesa_texstore_rgba_dxt3(TEXSTORE_PARAMS);
 extern GLboolean _mesa_texstore_rgba_dxt5(TEXSTORE_PARAMS);
 #if FEATURE_EXT_texture_sRGB
-extern GLboolean _mesa_texstore_srgb8(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_srgba8(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_sl8(TEXSTORE_PARAMS);
-extern GLboolean _mesa_texstore_sla8(TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_srgb8(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_srgba8(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_sl8(GLcontext *ctx, TEXSTORE_PARAMS);
+extern GLboolean _mesa_texstore_sla8(GLcontext *ctx, TEXSTORE_PARAMS);
 #endif
 
 
@@ -90,7 +90,7 @@ _mesa_set_fetch_functions(struct gl_texture_image *texImage, GLuint dims);
 
 
 extern void
-_mesa_store_teximage1d(ctx, GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_teximage1d(GLcontext *ctx, GLenum target, GLint level,
 		       GLint internalFormat,
 		       GLint width, GLint border,
 		       GLenum format, GLenum type, const GLvoid *pixels,
@@ -100,7 +100,7 @@ _mesa_store_teximage1d(ctx, GLcontext *ctx, GLenum target, GLint level,
 
 
 extern void
-_mesa_store_teximage2d(ctx, GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_teximage2d(GLcontext *ctx, GLenum target, GLint level,
 		       GLint internalFormat,
 		       GLint width, GLint height, GLint border,
 		       GLenum format, GLenum type, const GLvoid *pixels,
@@ -110,7 +110,7 @@ _mesa_store_teximage2d(ctx, GLcontext *ctx, GLenum target, GLint level,
 
 
 extern void
-_mesa_store_teximage3d(ctx, GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_teximage3d(GLcontext *ctx, GLenum target, GLint level,
 		       GLint internalFormat,
 		       GLint width, GLint height, GLint depth, GLint border,
 		       GLenum format, GLenum type, const GLvoid *pixels,
@@ -120,7 +120,7 @@ _mesa_store_teximage3d(ctx, GLcontext *ctx, GLenum target, GLint level,
 
 
 extern void
-_mesa_store_texsubimage1d(ctx, GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_texsubimage1d(GLcontext *ctx, GLenum target, GLint level,
 			  GLint xoffset, GLint width,
 			  GLenum format, GLenum type, const GLvoid *pixels,
 			  const struct gl_pixelstore_attrib *packing,
@@ -129,7 +129,7 @@ _mesa_store_texsubimage1d(ctx, GLcontext *ctx, GLenum target, GLint level,
 
 
 extern void
-_mesa_store_texsubimage2d(ctx, GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_texsubimage2d(GLcontext *ctx, GLenum target, GLint level,
 			  GLint xoffset, GLint yoffset,
 			  GLint width, GLint height,
 			  GLenum format, GLenum type, const GLvoid *pixels,
@@ -139,7 +139,7 @@ _mesa_store_texsubimage2d(ctx, GLcontext *ctx, GLenum target, GLint level,
 
 
 extern void
-_mesa_store_texsubimage3d(ctx, GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_texsubimage3d(GLcontext *ctx, GLenum target, GLint level,
 			  GLint xoffset, GLint yoffset, GLint zoffset,
 			  GLint width, GLint height, GLint depth,
 			  GLenum format, GLenum type, const GLvoid *pixels,
@@ -149,7 +149,7 @@ _mesa_store_texsubimage3d(ctx, GLcontext *ctx, GLenum target, GLint level,
 
 
 extern void
-_mesa_store_compressed_teximage1d(ctx, GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_compressed_teximage1d(GLcontext *ctx, GLenum target, GLint level,
 				  GLint internalFormat,
 				  GLint width, GLint border,
 				  GLsizei imageSize, const GLvoid *data,
@@ -157,7 +157,7 @@ _mesa_store_compressed_teximage1d(ctx, GLcontext *ctx, GLenum target, GLint leve
 				  struct gl_texture_image *texImage);
 
 extern void
-_mesa_store_compressed_teximage2d(ctx, GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_compressed_teximage2d(GLcontext *ctx, GLenum target, GLint level,
 				  GLint internalFormat,
 				  GLint width, GLint height, GLint border,
 				  GLsizei imageSize, const GLvoid *data,
@@ -165,7 +165,7 @@ _mesa_store_compressed_teximage2d(ctx, GLcontext *ctx, GLenum target, GLint leve
 				  struct gl_texture_image *texImage);
 
 extern void
-_mesa_store_compressed_teximage3d(ctx, GLcontext *ctx, GLenum target, GLint level,
+_mesa_store_compressed_teximage3d(GLcontext *ctx, GLenum target, GLint level,
 				  GLint internalFormat,
 				  GLint width, GLint height, GLint depth,
 				  GLint border,
@@ -175,7 +175,7 @@ _mesa_store_compressed_teximage3d(ctx, GLcontext *ctx, GLenum target, GLint leve
 
 
 extern void
-_mesa_store_compressed_texsubimage1d(ctx, GLcontext *ctx, GLenum target,
+_mesa_store_compressed_texsubimage1d(GLcontext *ctx, GLenum target,
 				     GLint level,
 				     GLint xoffset, GLsizei width,
 				     GLenum format,
@@ -184,7 +184,7 @@ _mesa_store_compressed_texsubimage1d(ctx, GLcontext *ctx, GLenum target,
 				     struct gl_texture_image *texImage);
 
 extern void
-_mesa_store_compressed_texsubimage2d(ctx, GLcontext *ctx, GLenum target,
+_mesa_store_compressed_texsubimage2d(GLcontext *ctx, GLenum target,
 				     GLint level,
 				     GLint xoffset, GLint yoffset,
 				     GLsizei width, GLsizei height,
@@ -194,7 +194,7 @@ _mesa_store_compressed_texsubimage2d(ctx, GLcontext *ctx, GLenum target,
 				     struct gl_texture_image *texImage);
 
 extern void
-_mesa_store_compressed_texsubimage3d(ctx, GLcontext *ctx, GLenum target,
+_mesa_store_compressed_texsubimage3d(GLcontext *ctx, GLenum target,
 				     GLint level,
 				     GLint xoffset, GLint yoffset, GLint zoffset,
 				     GLsizei width, GLsizei height, GLsizei depth,
@@ -205,33 +205,33 @@ _mesa_store_compressed_texsubimage3d(ctx, GLcontext *ctx, GLenum target,
 
 
 extern void
-_mesa_get_teximage(ctx, GLcontext *ctx, GLenum target, GLint level,
+_mesa_get_teximage(GLcontext *ctx, GLenum target, GLint level,
 		   GLenum format, GLenum type, GLvoid *pixels,
 		   struct gl_texture_object *texObj,
 		   struct gl_texture_image *texImage);
 
 
 extern void
-_mesa_get_compressed_teximage(ctx, GLcontext *ctx, GLenum target, GLint level,
+_mesa_get_compressed_teximage(GLcontext *ctx, GLenum target, GLint level,
 			      GLvoid *img,
 			      const struct gl_texture_object *texObj,
 			      const struct gl_texture_image *texImage);
 
 extern const GLvoid *
-_mesa_validate_pbo_teximage(ctx, GLcontext *ctx, GLuint dimensions,
+_mesa_validate_pbo_teximage(GLcontext *ctx, GLuint dimensions,
 			    GLsizei width, GLsizei height, GLsizei depth,
 			    GLenum format, GLenum type, const GLvoid *pixels,
 			    const struct gl_pixelstore_attrib *unpack,
 			    const char *funcName);
 
 extern const GLvoid *
-_mesa_validate_pbo_compressed_teximage(ctx, GLcontext *ctx,
+_mesa_validate_pbo_compressed_teximage(GLcontext *ctx,
 				       GLsizei imageSize, const GLvoid *pixels,
 				       const struct gl_pixelstore_attrib *packing,
 				       const char *funcName);
 
 extern void
-_mesa_unmap_teximage_pbo(ctx, GLcontext *ctx,
+_mesa_unmap_teximage_pbo(GLcontext *ctx,
 			 const struct gl_pixelstore_attrib *unpack);
 
 

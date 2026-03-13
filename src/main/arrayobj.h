@@ -44,14 +44,14 @@
 struct gl_array_object * _mesa_new_array_object(GLcontext *ctx,
 	GLuint name);
 
-void _mesa_delete_array_object(ctx, GLcontext *ctx, struct gl_array_object *obj);
+void _mesa_delete_array_object(GLcontext *ctx, struct gl_array_object *obj);
 
-void _mesa_initialize_array_object(ctx, GLcontext *ctx,
+void _mesa_initialize_array_object(GLcontext *ctx,
 				   struct gl_array_object *obj, GLuint name);
 
-void _mesa_save_array_object(ctx, GLcontext *ctx, struct gl_array_object *obj);
+void _mesa_save_array_object(GLcontext *ctx, struct gl_array_object *obj);
 
-void _mesa_remove_array_object(ctx, GLcontext *ctx, struct gl_array_object *obj);
+void _mesa_remove_array_object(GLcontext *ctx, struct gl_array_object *obj);
 
 
 
@@ -59,13 +59,13 @@ void _mesa_remove_array_object(ctx, GLcontext *ctx, struct gl_array_object *obj)
  * API functions
  */
 
-void GLAPIENTRY _mesa_BindVertexArrayAPPLE(ctx, GLcontext *ctx, GLuint id);
+void GLAPIENTRY _mesa_BindVertexArrayAPPLE(GLcontext *ctx, GLuint id);
 
-void GLAPIENTRY _mesa_DeleteVertexArraysAPPLE(ctx, GLcontext *ctx, GLsizei n, const GLuint *ids);
+void GLAPIENTRY _mesa_DeleteVertexArraysAPPLE(GLcontext *ctx, GLsizei n, const GLuint *ids);
 
-void GLAPIENTRY _mesa_GenVertexArraysAPPLE(ctx, GLcontext *ctx, GLsizei n, GLuint *arrays);
+void GLAPIENTRY _mesa_GenVertexArraysAPPLE(GLcontext *ctx, GLsizei n, GLuint *arrays);
 
-GLboolean GLAPIENTRY _mesa_IsVertexArrayAPPLE(ctx, GLcontext *ctx, GLuint id);
+GLboolean GLAPIENTRY _mesa_IsVertexArrayAPPLE(GLcontext *ctx, GLuint id);
 
 #endif /* ARRAYOBJ_H */
 

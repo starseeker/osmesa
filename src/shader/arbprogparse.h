@@ -29,12 +29,12 @@
 #include "mtypes.h"
 
 extern void
-_mesa_parse_arb_vertex_program(ctx, GLcontext *ctx, GLenum target,
+_mesa_parse_arb_vertex_program(GLcontext *ctx, GLenum target,
 			       const GLvoid *str, GLsizei len,
 			       struct gl_vertex_program *program);
 
 extern void
-_mesa_parse_arb_fragment_program(ctx, GLcontext *ctx, GLenum target,
+_mesa_parse_arb_fragment_program(GLcontext *ctx, GLenum target,
 				 const GLvoid *str, GLsizei len,
 				 struct gl_fragment_program *program);
 

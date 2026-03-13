@@ -952,7 +952,7 @@ EMIT4(insert_4f_4, insert_4ub_4f_rgba_4, insert_2f_2, insert_2f_2, emit_xyzw4_rg
 /* Use the codegen paths to select one of a number of hardwired
  * fastpaths.
  */
-void _tnl_generate_hardwired_emit(ctx, GLcontext *ctx)
+void _tnl_generate_hardwired_emit(GLcontext *ctx)
 {
     struct tnl_clipspace *vtx = GET_VERTEX_STATE(ctx);
     tnl_emit_func func = NULL;
@@ -1007,7 +1007,7 @@ void _tnl_generate_hardwired_emit(ctx, GLcontext *ctx)
  * vertices
  */
 
-void _tnl_generic_emit(ctx, GLcontext *ctx,
+void _tnl_generic_emit(GLcontext *ctx,
 		       GLuint count,
 		       GLubyte *v)
 {
@@ -1027,7 +1027,7 @@ void _tnl_generic_emit(ctx, GLcontext *ctx,
 }
 
 
-void _tnl_generic_interp(ctx, GLcontext *ctx,
+void _tnl_generic_interp(GLcontext *ctx,
 			 GLfloat t,
 			 GLuint edst, GLuint eout, GLuint ein,
 			 GLboolean force_boundary)
@@ -1080,7 +1080,7 @@ void _tnl_generic_interp(ctx, GLcontext *ctx,
 /* Extract color attributes from one vertex and insert them into
  * another.  (Shortcircuit extract/insert with memcpy).
  */
-void _tnl_generic_copy_pv(ctx, GLcontext *ctx, GLuint edst, GLuint esrc)
+void _tnl_generic_copy_pv(GLcontext *ctx, GLuint edst, GLuint esrc)
 {
     struct tnl_clipspace *vtx = GET_VERTEX_STATE(ctx);
     GLubyte *vsrc = vtx->vertex_buf + esrc * vtx->vertex_size;
@@ -1104,7 +1104,7 @@ void _tnl_generic_copy_pv(ctx, GLcontext *ctx, GLuint edst, GLuint esrc)
 /* Helper functions for hardware which doesn't put back colors and/or
  * edgeflags into vertices.
  */
-void _tnl_generic_interp_extras(ctx, GLcontext *ctx,
+void _tnl_generic_interp_extras(GLcontext *ctx,
 				GLfloat t,
 				GLuint dst, GLuint out, GLuint in,
 				GLboolean force_boundary)
@@ -1147,7 +1147,7 @@ void _tnl_generic_interp_extras(ctx, GLcontext *ctx,
     _tnl_generic_interp(ctx, t, dst, out, in, force_boundary);
 }
 
-void _tnl_generic_copy_pv_extras(ctx, GLcontext *ctx,
+void _tnl_generic_copy_pv_extras(GLcontext *ctx,
 				 GLuint dst, GLuint src)
 {
     struct vertex_buffer *VB = &TNL_CONTEXT(ctx)->vb;

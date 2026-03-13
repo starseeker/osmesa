@@ -75,7 +75,7 @@ lookup_query_object(GLcontext *ctx, GLuint id)
 
 
 void GLAPIENTRY
-_mesa_GenQueriesARB(ctx, GLcontext *ctx, GLsizei n, GLuint *ids)
+_mesa_GenQueriesARB(GLcontext *ctx, GLsizei n, GLuint *ids)
 {
     GLuint first;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -110,7 +110,7 @@ _mesa_GenQueriesARB(ctx, GLcontext *ctx, GLsizei n, GLuint *ids)
 
 
 void GLAPIENTRY
-_mesa_DeleteQueriesARB(ctx, GLcontext *ctx, GLsizei n, const GLuint *ids)
+_mesa_DeleteQueriesARB(GLcontext *ctx, GLsizei n, const GLuint *ids)
 {
     GLint i;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -141,7 +141,7 @@ _mesa_DeleteQueriesARB(ctx, GLcontext *ctx, GLsizei n, const GLuint *ids)
 
 
 GLboolean GLAPIENTRY
-_mesa_IsQueryARB(ctx, GLcontext *ctx, GLuint id)
+_mesa_IsQueryARB(GLcontext *ctx, GLuint id)
 {
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, GL_FALSE);
 
@@ -153,7 +153,7 @@ _mesa_IsQueryARB(ctx, GLcontext *ctx, GLuint id)
 
 
 void GLAPIENTRY
-_mesa_BeginQueryARB(ctx, GLcontext *ctx, GLenum target, GLuint id)
+_mesa_BeginQueryARB(GLcontext *ctx, GLenum target, GLuint id)
 {
     struct gl_query_object *q;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -231,7 +231,7 @@ _mesa_BeginQueryARB(ctx, GLcontext *ctx, GLenum target, GLuint id)
 
 
 void GLAPIENTRY
-_mesa_EndQueryARB(ctx, GLcontext *ctx, GLenum target)
+_mesa_EndQueryARB(GLcontext *ctx, GLenum target)
 {
     struct gl_query_object *q;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -279,7 +279,7 @@ _mesa_EndQueryARB(ctx, GLcontext *ctx, GLenum target)
 
 
 void GLAPIENTRY
-_mesa_GetQueryivARB(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
+_mesa_GetQueryivARB(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
     struct gl_query_object *q;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -321,7 +321,7 @@ _mesa_GetQueryivARB(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *par
 
 
 void GLAPIENTRY
-_mesa_GetQueryObjectivARB(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLint *params)
+_mesa_GetQueryObjectivARB(GLcontext *ctx, GLuint id, GLenum pname, GLint *params)
 {
     struct gl_query_object *q = NULL;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -363,7 +363,7 @@ _mesa_GetQueryObjectivARB(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLint *p
 
 
 void GLAPIENTRY
-_mesa_GetQueryObjectuivARB(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLuint *params)
+_mesa_GetQueryObjectuivARB(GLcontext *ctx, GLuint id, GLenum pname, GLuint *params)
 {
     struct gl_query_object *q = NULL;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -410,7 +410,7 @@ _mesa_GetQueryObjectuivARB(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLuint 
  * New with GL_EXT_timer_query
  */
 void GLAPIENTRY
-_mesa_GetQueryObjecti64vEXT(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLint64EXT *params)
+_mesa_GetQueryObjecti64vEXT(GLcontext *ctx, GLuint id, GLenum pname, GLint64EXT *params)
 {
     struct gl_query_object *q = NULL;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -450,7 +450,7 @@ _mesa_GetQueryObjecti64vEXT(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLint6
  * New with GL_EXT_timer_query
  */
 void GLAPIENTRY
-_mesa_GetQueryObjectui64vEXT(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLuint64EXT *params)
+_mesa_GetQueryObjectui64vEXT(GLcontext *ctx, GLuint id, GLenum pname, GLuint64EXT *params)
 {
     struct gl_query_object *q = NULL;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -492,7 +492,7 @@ _mesa_GetQueryObjectui64vEXT(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLuin
  * Allocate/init the context state related to query objects.
  */
 void
-_mesa_init_query(ctx, GLcontext *ctx)
+_mesa_init_query(GLcontext *ctx)
 {
 #if FEATURE_ARB_occlusion_query
     ctx->Query.QueryObjects = _mesa_NewHashTable();
@@ -517,7 +517,7 @@ delete_queryobj_cb(GLuint id, void *data, void *userData)
  * Free the context state related to query objects.
  */
 void
-_mesa_free_query_data(ctx, GLcontext *ctx)
+_mesa_free_query_data(GLcontext *ctx)
 {
     _mesa_HashDeleteAll(ctx->Query.QueryObjects, delete_queryobj_cb, NULL);
     _mesa_DeleteHashTable(ctx->Query.QueryObjects);

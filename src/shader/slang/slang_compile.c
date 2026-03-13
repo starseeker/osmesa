@@ -126,6 +126,7 @@ typedef struct slang_parse_ctx_ {
     GLboolean global_scope;   /**< Is object being declared a global? */
     slang_atom_pool *atoms;
     slang_unit_type type;     /**< Vertex vs. Fragment */
+    GLcontext *gl_ctx;        /**< Mesa GL context, for implementation-dependent limits */
 } slang_parse_ctx;
 
 /* slang_output_ctx */
@@ -253,7 +254,7 @@ parse_array_len(slang_parse_ctx * C, slang_output_ctx * O, GLuint * len)
     space.vars = O->vars;
 
     /* evaluate compile-time expression which is array size */
-    _slang_simplify(&array_size, &space, C->atoms);
+    _slang_simplify(&array_size, &space, C->atoms, C->gl_ctx);
     result = (array_size.type == SLANG_OPER_LITERAL_INT);
 
     *len = (GLint) array_size.literal[0];
@@ -1613,6 +1614,7 @@ parse_init_declarator(slang_parse_ctx * C, slang_output_ctx * O,
 	A.program = O->program;
 	A.vartable = O->vartable;
 	A.curFuncEndLabel = NULL;
+	A.gl_ctx = C->gl_ctx;
 	if (!_slang_codegen_global_variable(&A, var, C->type))
 	    return 0;
     }
@@ -1635,6 +1637,7 @@ parse_init_declarator(slang_parse_ctx * C, slang_output_ctx * O,
 	    A.space.funcs = O->funs;
 	    A.space.structs = O->structs;
 	    A.space.vars = O->vars;
+	    A.gl_ctx = C->gl_ctx;
 	    if (!initialize_global(&A, var))
 		return 0;
 	}
@@ -1764,6 +1767,7 @@ parse_function(slang_parse_ctx * C, slang_output_ctx * O, int definition,
 	A.program = O->program;
 	A.vartable = O->vartable;
 	A.log = C->L;
+	A.gl_ctx = C->gl_ctx;
 
 	_slang_codegen_function(&A, *parsed_func_ret);
     }
@@ -1856,7 +1860,7 @@ parse_code_unit(GLcontext *ctx, slang_parse_ctx * C, slang_code_unit * unit,
 }
 
 static GLboolean
-compile_binary(const byte * prod, slang_code_unit * unit,
+compile_binary(GLcontext *ctx, const byte * prod, slang_code_unit * unit,
 	       slang_unit_type type, slang_info_log * infolog,
 	       slang_code_unit * builtin, slang_code_unit * downlink,
 	       struct gl_program *program)
@@ -1872,6 +1876,7 @@ compile_binary(const byte * prod, slang_code_unit * unit,
     C.global_scope = GL_TRUE;
     C.atoms = &unit->object->atompool;
     C.type = type;
+    C.gl_ctx = ctx;
 
     if (!check_revision(&C))
 	return GL_FALSE;
@@ -1883,11 +1888,11 @@ compile_binary(const byte * prod, slang_code_unit * unit,
     }
 
     /* parse translation unit */
-    return parse_code_unit(&C, unit, program);
+    return parse_code_unit(ctx, &C, unit, program);
 }
 
 static GLboolean
-compile_with_grammar(grammar id, const char *source, slang_code_unit * unit,
+compile_with_grammar(GLcontext *ctx, grammar id, const char *source, slang_code_unit * unit,
 		     slang_unit_type type, slang_info_log * infolog,
 		     slang_code_unit * builtin,
 		     struct gl_program *program)
@@ -1948,7 +1953,7 @@ compile_with_grammar(grammar id, const char *source, slang_code_unit * unit,
     slang_string_free(&preprocessed);
 
     /* Syntax is okay - translate it to internal representation. */
-    if (!compile_binary(prod, unit, type, infolog, builtin,
+    if (!compile_binary(ctx, prod, unit, type, infolog, builtin,
 			&builtin[SLANG_BUILTIN_TOTAL - 1],
 			program)) {
 	grammar_alloc_free(prod);
@@ -2013,14 +2018,14 @@ compile_object(grammar * id, const char *source, slang_code_object * object,
     /* if parsing user-specified shader, load built-in library */
     if (type == SLANG_UNIT_FRAGMENT_SHADER || type == SLANG_UNIT_VERTEX_SHADER) {
 	/* compile core functionality first */
-	if (!compile_binary(slang_core_gc,
+	if (!compile_binary(NULL, slang_core_gc,
 			    &object->builtin[SLANG_BUILTIN_CORE],
 			    SLANG_UNIT_FRAGMENT_BUILTIN, infolog,
 			    NULL, NULL, NULL))
 	    return GL_FALSE;
 
 #if FEATURE_ARB_shading_language_120
-	if (!compile_binary(slang_120_core_gc,
+	if (!compile_binary(NULL, slang_120_core_gc,
 			    &object->builtin[SLANG_BUILTIN_120_CORE],
 			    SLANG_UNIT_FRAGMENT_BUILTIN, infolog,
 			    NULL, &object->builtin[SLANG_BUILTIN_CORE], NULL))
@@ -2028,7 +2033,7 @@ compile_object(grammar * id, const char *source, slang_code_object * object,
 #endif
 
 	/* compile common functions and variables, link to core */
-	if (!compile_binary(slang_common_builtin_gc,
+	if (!compile_binary(NULL, slang_common_builtin_gc,
 			    &object->builtin[SLANG_BUILTIN_COMMON],
 			    SLANG_UNIT_FRAGMENT_BUILTIN, infolog, NULL,
 #if FEATURE_ARB_shading_language_120
@@ -2041,13 +2046,13 @@ compile_object(grammar * id, const char *source, slang_code_object * object,
 
 	/* compile target-specific functions and variables, link to common */
 	if (type == SLANG_UNIT_FRAGMENT_SHADER) {
-	    if (!compile_binary(slang_fragment_builtin_gc,
+	    if (!compile_binary(NULL, slang_fragment_builtin_gc,
 				&object->builtin[SLANG_BUILTIN_TARGET],
 				SLANG_UNIT_FRAGMENT_BUILTIN, infolog, NULL,
 				&object->builtin[SLANG_BUILTIN_COMMON], NULL))
 		return GL_FALSE;
 	} else if (type == SLANG_UNIT_VERTEX_SHADER) {
-	    if (!compile_binary(slang_vertex_builtin_gc,
+	    if (!compile_binary(NULL, slang_vertex_builtin_gc,
 				&object->builtin[SLANG_BUILTIN_TARGET],
 				SLANG_UNIT_VERTEX_BUILTIN, infolog, NULL,
 				&object->builtin[SLANG_BUILTIN_COMMON], NULL))
@@ -2064,7 +2069,7 @@ compile_object(grammar * id, const char *source, slang_code_object * object,
     }
 
     /* compile the actual shader - pass-in built-in library for external shader */
-    return compile_with_grammar(*id, source, &object->unit, type, infolog,
+    return compile_with_grammar(NULL, *id, source, &object->unit, type, infolog,
 				builtins, program);
 }
 

@@ -42,10 +42,10 @@
 #if _HAVE_FULL_GL
 
 extern void GLAPIENTRY
-_mesa_Hint(ctx, GLcontext *ctx, GLenum target, GLenum mode);
+_mesa_Hint(GLcontext *ctx, GLenum target, GLenum mode);
 
 extern void
-_mesa_init_hint(ctx, GLcontext * ctx);
+_mesa_init_hint(GLcontext *ctx);
 
 #else
 

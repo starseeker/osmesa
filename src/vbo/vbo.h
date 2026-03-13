@@ -89,7 +89,7 @@ struct split_limits {
 };
 
 
-void vbo_split_prims(ctx, GLcontext *ctx,
+void vbo_split_prims(GLcontext *ctx,
 		     const struct gl_client_array *arrays[],
 		     const struct _mesa_prim *prim,
 		     GLuint nr_prims,
@@ -102,7 +102,7 @@ void vbo_split_prims(ctx, GLcontext *ctx,
 
 /* Helpers for dealing translating away non-zero min_index.
  */
-void vbo_rebase_prims(ctx, GLcontext *ctx,
+void vbo_rebase_prims(GLcontext *ctx,
 		      const struct gl_client_array *arrays[],
 		      const struct _mesa_prim *prim,
 		      GLuint nr_prims,

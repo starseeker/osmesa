@@ -36,32 +36,32 @@
 
 
 extern void
-_mesa_polygon_stipple(ctx, GLcontext *ctx, const GLubyte *pattern);
+_mesa_polygon_stipple(GLcontext *ctx, const GLubyte *pattern);
 
 
 extern void GLAPIENTRY
-_mesa_CullFace(ctx, GLcontext *ctx, GLenum mode);
+_mesa_CullFace(GLcontext *ctx, GLenum mode);
 
 extern void GLAPIENTRY
-_mesa_FrontFace(ctx, GLcontext *ctx, GLenum mode);
+_mesa_FrontFace(GLcontext *ctx, GLenum mode);
 
 extern void GLAPIENTRY
-_mesa_PolygonMode(ctx, GLcontext *ctx, GLenum face, GLenum mode);
+_mesa_PolygonMode(GLcontext *ctx, GLenum face, GLenum mode);
 
 extern void GLAPIENTRY
-_mesa_PolygonOffset(ctx, GLcontext *ctx, GLfloat factor, GLfloat units);
+_mesa_PolygonOffset(GLcontext *ctx, GLfloat factor, GLfloat units);
 
 extern void GLAPIENTRY
-_mesa_PolygonOffsetEXT(ctx, GLcontext *ctx, GLfloat factor, GLfloat bias);
+_mesa_PolygonOffsetEXT(GLcontext *ctx, GLfloat factor, GLfloat bias);
 
 extern void GLAPIENTRY
-_mesa_PolygonStipple(ctx, GLcontext *ctx, const GLubyte *pattern);
+_mesa_PolygonStipple(GLcontext *ctx, const GLubyte *pattern);
 
 extern void GLAPIENTRY
-_mesa_GetPolygonStipple(ctx, GLcontext *ctx, GLubyte *dest);
+_mesa_GetPolygonStipple(GLcontext *ctx, GLubyte *dest);
 
 extern void
-_mesa_init_polygon(ctx, GLcontext * ctx);
+_mesa_init_polygon(GLcontext *ctx);
 
 #endif
 

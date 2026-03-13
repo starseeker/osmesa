@@ -229,7 +229,7 @@ static void bind_arrays(GLcontext *ctx)
  */
 
 static void GLAPIENTRY
-vbo_exec_DrawArrays(ctx, GLcontext *ctx, GLenum mode, GLint start, GLsizei count)
+vbo_exec_DrawArrays(GLcontext *ctx, GLenum mode, GLint start, GLsizei count)
 {
     struct vbo_context *vbo = vbo_context(ctx);
     struct vbo_exec_context *exec = &vbo->exec;
@@ -265,7 +265,7 @@ vbo_exec_DrawArrays(ctx, GLcontext *ctx, GLenum mode, GLint start, GLsizei count
 
 
 static void GLAPIENTRY
-vbo_exec_DrawRangeElements(ctx, GLcontext *ctx, GLenum mode,
+vbo_exec_DrawRangeElements(GLcontext *ctx, GLenum mode,
 			   GLuint start, GLuint end,
 			   GLsizei count, GLenum type, const GLvoid *indices)
 {
@@ -338,7 +338,7 @@ vbo_exec_DrawRangeElements(ctx, GLcontext *ctx, GLenum mode,
 }
 
 static void GLAPIENTRY
-vbo_exec_DrawElements(ctx, GLcontext *ctx, GLenum mode, GLsizei count, GLenum type, const GLvoid *indices)
+vbo_exec_DrawElements(GLcontext *ctx, GLenum mode, GLsizei count, GLenum type, const GLvoid *indices)
 {
     GLuint min_index = 0;
     GLuint max_index = 0;

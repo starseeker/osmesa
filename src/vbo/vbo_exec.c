@@ -37,7 +37,7 @@
 
 #include "vbo_context.h"
 
-void vbo_exec_init(ctx, GLcontext *ctx)
+void vbo_exec_init(GLcontext *ctx)
 {
     struct vbo_exec_context *exec = &vbo_context(ctx)->exec;
 
@@ -64,7 +64,7 @@ void vbo_exec_init(ctx, GLcontext *ctx)
 }
 
 
-void vbo_exec_destroy(ctx, GLcontext *ctx)
+void vbo_exec_destroy(GLcontext *ctx)
 {
     struct vbo_exec_context *exec = &vbo_context(ctx)->exec;
 
@@ -81,7 +81,7 @@ void vbo_exec_destroy(ctx, GLcontext *ctx)
  * invoked according to the state flags.  That will have to wait for a
  * mesa rework:
  */
-void vbo_exec_invalidate_state(ctx, GLcontext *ctx, GLuint new_state)
+void vbo_exec_invalidate_state(GLcontext *ctx, GLuint new_state)
 {
     struct vbo_exec_context *exec = &vbo_context(ctx)->exec;
 

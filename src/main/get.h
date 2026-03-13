@@ -36,25 +36,25 @@
 
 
 extern void GLAPIENTRY
-_mesa_GetBooleanv(ctx, GLcontext *ctx, GLenum pname, GLboolean *params);
+_mesa_GetBooleanv(GLcontext *ctx, GLenum pname, GLboolean *params);
 
 extern void GLAPIENTRY
-_mesa_GetDoublev(GLenum pname, GLdouble *params);
+_mesa_GetDoublev(GLcontext *ctx, GLenum pname, GLdouble *params);
 
 extern void GLAPIENTRY
-_mesa_GetFloatv(ctx, GLcontext *ctx, GLenum pname, GLfloat *params);
+_mesa_GetFloatv(GLcontext *ctx, GLenum pname, GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_GetIntegerv(ctx, GLcontext *ctx, GLenum pname, GLint *params);
+_mesa_GetIntegerv(GLcontext *ctx, GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetPointerv(ctx, GLcontext *ctx, GLenum pname, GLvoid **params);
+_mesa_GetPointerv(GLcontext *ctx, GLenum pname, GLvoid **params);
 
 extern const GLubyte * GLAPIENTRY
-_mesa_GetString(ctx, GLcontext *ctx, GLenum name);
+_mesa_GetString(GLcontext *ctx, GLenum name);
 
 extern GLenum GLAPIENTRY
-_mesa_GetError(ctx, GLcontext *ctx);
+_mesa_GetError(GLcontext *ctx);
 
 #endif
 

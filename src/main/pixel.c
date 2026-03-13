@@ -39,7 +39,7 @@
 
 
 void GLAPIENTRY
-_mesa_PixelZoom(ctx, GLcontext *ctx, GLfloat xfactor, GLfloat yfactor)
+_mesa_PixelZoom(GLcontext *ctx, GLfloat xfactor, GLfloat yfactor)
 {
     if (ctx->Pixel.ZoomX == xfactor &&
 	ctx->Pixel.ZoomY == yfactor)
@@ -58,7 +58,7 @@ _mesa_PixelZoom(ctx, GLcontext *ctx, GLfloat xfactor, GLfloat yfactor)
 
 
 void GLAPIENTRY
-_mesa_PixelStorei(ctx, GLcontext *ctx, GLenum pname, GLint param)
+_mesa_PixelStorei(GLcontext *ctx, GLenum pname, GLint param)
 {
     /* NOTE: this call can't be compiled into the display list */
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -238,7 +238,7 @@ _mesa_PixelStorei(ctx, GLcontext *ctx, GLenum pname, GLint param)
 
 
 void GLAPIENTRY
-_mesa_PixelStoref(GLenum pname, GLfloat param)
+_mesa_PixelStoref(GLcontext *ctx, GLenum pname, GLfloat param)
 {
     _mesa_PixelStorei(ctx, pname, (GLint) param);
 }
@@ -324,7 +324,7 @@ store_pixelmap(GLcontext *ctx, GLenum map, GLsizei mapsize,
 
 
 void GLAPIENTRY
-_mesa_PixelMapfv(ctx, GLcontext *ctx, GLenum map, GLsizei mapsize, const GLfloat *values)
+_mesa_PixelMapfv(GLcontext *ctx, GLenum map, GLsizei mapsize, const GLfloat *values)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -381,7 +381,7 @@ _mesa_PixelMapfv(ctx, GLcontext *ctx, GLenum map, GLsizei mapsize, const GLfloat
 
 
 void GLAPIENTRY
-_mesa_PixelMapuiv(ctx, GLcontext *ctx, GLenum map, GLsizei mapsize, const GLuint *values)
+_mesa_PixelMapuiv(GLcontext *ctx, GLenum map, GLsizei mapsize, const GLuint *values)
 {
     GLfloat fvalues[MAX_PIXEL_MAP_TABLE];
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -451,7 +451,7 @@ _mesa_PixelMapuiv(ctx, GLcontext *ctx, GLenum map, GLsizei mapsize, const GLuint
 
 
 void GLAPIENTRY
-_mesa_PixelMapusv(ctx, GLcontext *ctx, GLenum map, GLsizei mapsize, const GLushort *values)
+_mesa_PixelMapusv(GLcontext *ctx, GLenum map, GLsizei mapsize, const GLushort *values)
 {
     GLfloat fvalues[MAX_PIXEL_MAP_TABLE];
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -522,7 +522,7 @@ _mesa_PixelMapusv(ctx, GLcontext *ctx, GLenum map, GLsizei mapsize, const GLusho
 
 
 void GLAPIENTRY
-_mesa_GetPixelMapfv(ctx, GLcontext *ctx, GLenum map, GLfloat *values)
+_mesa_GetPixelMapfv(GLcontext *ctx, GLenum map, GLfloat *values)
 {
     GLuint mapsize, i;
     const struct gl_pixelmap *pm;
@@ -581,7 +581,7 @@ _mesa_GetPixelMapfv(ctx, GLcontext *ctx, GLenum map, GLfloat *values)
 
 
 void GLAPIENTRY
-_mesa_GetPixelMapuiv(ctx, GLcontext *ctx, GLenum map, GLuint *values)
+_mesa_GetPixelMapuiv(GLcontext *ctx, GLenum map, GLuint *values)
 {
     GLint mapsize, i;
     const struct gl_pixelmap *pm;
@@ -639,7 +639,7 @@ _mesa_GetPixelMapuiv(ctx, GLcontext *ctx, GLenum map, GLuint *values)
 
 
 void GLAPIENTRY
-_mesa_GetPixelMapusv(ctx, GLcontext *ctx, GLenum map, GLushort *values)
+_mesa_GetPixelMapusv(GLcontext *ctx, GLenum map, GLushort *values)
 {
     GLint mapsize, i;
     const struct gl_pixelmap *pm;
@@ -717,7 +717,7 @@ _mesa_GetPixelMapusv(ctx, GLcontext *ctx, GLenum map, GLushort *values)
  * display list.
  */
 void GLAPIENTRY
-_mesa_PixelTransferf(ctx, GLcontext *ctx, GLenum pname, GLfloat param)
+_mesa_PixelTransferf(GLcontext *ctx, GLenum pname, GLfloat param)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -910,7 +910,7 @@ _mesa_PixelTransferf(ctx, GLcontext *ctx, GLenum pname, GLfloat param)
 
 
 void GLAPIENTRY
-_mesa_PixelTransferi(GLenum pname, GLint param)
+_mesa_PixelTransferi(GLcontext *ctx, GLenum pname, GLint param)
 {
     _mesa_PixelTransferf(ctx, pname, (GLfloat) param);
 }
@@ -1387,7 +1387,7 @@ update_image_transfer_state(GLcontext *ctx)
 }
 
 
-void _mesa_update_pixel(ctx, GLcontext *ctx, GLuint new_state)
+void _mesa_update_pixel(GLcontext *ctx, GLuint new_state)
 {
     if (new_state & _NEW_COLOR_MATRIX)
 	_math_matrix_analyse(ctx->ColorMatrixStack.Top);
@@ -1416,7 +1416,7 @@ init_pixelmap(struct gl_pixelmap *map)
  * Initialize the context's PIXEL attribute group.
  */
 void
-_mesa_init_pixel(ctx, GLcontext *ctx)
+_mesa_init_pixel(GLcontext *ctx)
 {
     int i;
 

@@ -32,22 +32,22 @@
 
 
 extern void GLAPIENTRY
-_mesa_DrawPixels(ctx, GLcontext *ctx, GLsizei width, GLsizei height,
+_mesa_DrawPixels(GLcontext *ctx, GLsizei width, GLsizei height,
 		 GLenum format, GLenum type, const GLvoid *pixels);
 
 
 extern void GLAPIENTRY
-_mesa_ReadPixels(ctx, GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height,
+_mesa_ReadPixels(GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height,
 		 GLenum format, GLenum type, GLvoid *pixels);
 
 
 extern void GLAPIENTRY
-_mesa_CopyPixels(ctx, GLcontext *ctx, GLint srcx, GLint srcy, GLsizei width, GLsizei height,
+_mesa_CopyPixels(GLcontext *ctx, GLint srcx, GLint srcy, GLsizei width, GLsizei height,
 		 GLenum type);
 
 
 extern void GLAPIENTRY
-_mesa_Bitmap(ctx, GLcontext *ctx, GLsizei width, GLsizei height,
+_mesa_Bitmap(GLcontext *ctx, GLsizei width, GLsizei height,
 	     GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove,
 	     const GLubyte *bitmap);
 

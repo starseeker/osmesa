@@ -791,7 +791,7 @@ make_3d_mipmap(const struct gl_texture_format *format, GLint border,
  * Stop at texObj's MaxLevel or when we get to the 1x1 texture.
  */
 void
-_mesa_generate_mipmap(ctx, GLcontext *ctx, GLenum target,
+_mesa_generate_mipmap(GLcontext *ctx, GLenum target,
 		      const struct gl_texture_unit *texUnit,
 		      struct gl_texture_object *texObj)
 {

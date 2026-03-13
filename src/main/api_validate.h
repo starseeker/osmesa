@@ -31,16 +31,16 @@
 #include "mtypes.h"
 
 extern GLboolean
-_mesa_validate_DrawArrays(ctx, GLcontext *ctx,
+_mesa_validate_DrawArrays(GLcontext *ctx,
 			  GLenum mode, GLint start, GLsizei count);
 
 extern GLboolean
-_mesa_validate_DrawElements(ctx, GLcontext *ctx,
+_mesa_validate_DrawElements(GLcontext *ctx,
 			    GLenum mode, GLsizei count, GLenum type,
 			    const GLvoid *indices);
 
 extern GLboolean
-_mesa_validate_DrawRangeElements(ctx, GLcontext *ctx, GLenum mode,
+_mesa_validate_DrawRangeElements(GLcontext *ctx, GLenum mode,
 				 GLuint start, GLuint end,
 				 GLsizei count, GLenum type,
 				 const GLvoid *indices);

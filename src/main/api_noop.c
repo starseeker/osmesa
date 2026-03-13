@@ -42,22 +42,22 @@
  */
 
 
-static void GLAPIENTRY _mesa_noop_EdgeFlag(ctx, GLcontext *ctx, GLboolean b)
+static void GLAPIENTRY _mesa_noop_EdgeFlag(GLcontext *ctx, GLboolean b)
 {
     ctx->Current.Attrib[VERT_ATTRIB_EDGEFLAG][0] = (GLfloat)b;
 }
 
-static void GLAPIENTRY _mesa_noop_Indexf(ctx, GLcontext *ctx, GLfloat f)
+static void GLAPIENTRY _mesa_noop_Indexf(GLcontext *ctx, GLfloat f)
 {
     ctx->Current.Attrib[VERT_ATTRIB_COLOR_INDEX][0] = f;
 }
 
-static void GLAPIENTRY _mesa_noop_Indexfv(ctx, GLcontext *ctx, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_Indexfv(GLcontext *ctx, const GLfloat *v)
 {
     ctx->Current.Attrib[VERT_ATTRIB_COLOR_INDEX][0] = *v;
 }
 
-static void GLAPIENTRY _mesa_noop_FogCoordfEXT(ctx, GLcontext *ctx, GLfloat a)
+static void GLAPIENTRY _mesa_noop_FogCoordfEXT(GLcontext *ctx, GLfloat a)
 {
     GLfloat *dest = ctx->Current.Attrib[VERT_ATTRIB_FOG];
     dest[0] = a;
@@ -66,7 +66,7 @@ static void GLAPIENTRY _mesa_noop_FogCoordfEXT(ctx, GLcontext *ctx, GLfloat a)
     dest[3] = 1.0;
 }
 
-static void GLAPIENTRY _mesa_noop_FogCoordfvEXT(ctx, GLcontext *ctx, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_FogCoordfvEXT(GLcontext *ctx, const GLfloat *v)
 {
     GLfloat *dest = ctx->Current.Attrib[VERT_ATTRIB_FOG];
     dest[0] = v[0];
@@ -75,7 +75,7 @@ static void GLAPIENTRY _mesa_noop_FogCoordfvEXT(ctx, GLcontext *ctx, const GLflo
     dest[3] = 1.0;
 }
 
-static void GLAPIENTRY _mesa_noop_Normal3f(ctx, GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c)
+static void GLAPIENTRY _mesa_noop_Normal3f(GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c)
 {
     GLfloat *dest = ctx->Current.Attrib[VERT_ATTRIB_NORMAL];
     dest[0] = a;
@@ -84,7 +84,7 @@ static void GLAPIENTRY _mesa_noop_Normal3f(ctx, GLcontext *ctx, GLfloat a, GLflo
     dest[3] = 1.0;
 }
 
-static void GLAPIENTRY _mesa_noop_Normal3fv(ctx, GLcontext *ctx, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_Normal3fv(GLcontext *ctx, const GLfloat *v)
 {
     GLfloat *dest = ctx->Current.Attrib[VERT_ATTRIB_NORMAL];
     dest[0] = v[0];
@@ -93,7 +93,7 @@ static void GLAPIENTRY _mesa_noop_Normal3fv(ctx, GLcontext *ctx, const GLfloat *
     dest[3] = 1.0;
 }
 
-static void GLAPIENTRY _mesa_noop_Color4f(ctx, GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c, GLfloat d)
+static void GLAPIENTRY _mesa_noop_Color4f(GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c, GLfloat d)
 {
     GLfloat *color = ctx->Current.Attrib[VERT_ATTRIB_COLOR0];
     color[0] = a;
@@ -102,7 +102,7 @@ static void GLAPIENTRY _mesa_noop_Color4f(ctx, GLcontext *ctx, GLfloat a, GLfloa
     color[3] = d;
 }
 
-static void GLAPIENTRY _mesa_noop_Color4fv(ctx, GLcontext *ctx, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_Color4fv(GLcontext *ctx, const GLfloat *v)
 {
     GLfloat *color = ctx->Current.Attrib[VERT_ATTRIB_COLOR0];
     color[0] = v[0];
@@ -111,7 +111,7 @@ static void GLAPIENTRY _mesa_noop_Color4fv(ctx, GLcontext *ctx, const GLfloat *v
     color[3] = v[3];
 }
 
-static void GLAPIENTRY _mesa_noop_Color3f(ctx, GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c)
+static void GLAPIENTRY _mesa_noop_Color3f(GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c)
 {
     GLfloat *color = ctx->Current.Attrib[VERT_ATTRIB_COLOR0];
     color[0] = a;
@@ -120,7 +120,7 @@ static void GLAPIENTRY _mesa_noop_Color3f(ctx, GLcontext *ctx, GLfloat a, GLfloa
     color[3] = 1.0;
 }
 
-static void GLAPIENTRY _mesa_noop_Color3fv(ctx, GLcontext *ctx, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_Color3fv(GLcontext *ctx, const GLfloat *v)
 {
     GLfloat *color = ctx->Current.Attrib[VERT_ATTRIB_COLOR0];
     color[0] = v[0];
@@ -129,7 +129,7 @@ static void GLAPIENTRY _mesa_noop_Color3fv(ctx, GLcontext *ctx, const GLfloat *v
     color[3] = 1.0;
 }
 
-static void GLAPIENTRY _mesa_noop_MultiTexCoord1fARB(ctx, GLcontext *ctx, GLenum target, GLfloat a)
+static void GLAPIENTRY _mesa_noop_MultiTexCoord1fARB(GLcontext *ctx, GLenum target, GLfloat a)
 {
     GLuint unit = target - GL_TEXTURE0_ARB;
 
@@ -144,7 +144,7 @@ static void GLAPIENTRY _mesa_noop_MultiTexCoord1fARB(ctx, GLcontext *ctx, GLenum
     }
 }
 
-static void GLAPIENTRY _mesa_noop_MultiTexCoord1fvARB(ctx, GLcontext *ctx, GLenum target, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_MultiTexCoord1fvARB(GLcontext *ctx, GLenum target, const GLfloat *v)
 {
     GLuint unit = target - GL_TEXTURE0_ARB;
 
@@ -159,7 +159,7 @@ static void GLAPIENTRY _mesa_noop_MultiTexCoord1fvARB(ctx, GLcontext *ctx, GLenu
     }
 }
 
-static void GLAPIENTRY _mesa_noop_MultiTexCoord2fARB(ctx, GLcontext *ctx, GLenum target, GLfloat a, GLfloat b)
+static void GLAPIENTRY _mesa_noop_MultiTexCoord2fARB(GLcontext *ctx, GLenum target, GLfloat a, GLfloat b)
 {
     GLuint unit = target - GL_TEXTURE0_ARB;
 
@@ -174,7 +174,7 @@ static void GLAPIENTRY _mesa_noop_MultiTexCoord2fARB(ctx, GLcontext *ctx, GLenum
     }
 }
 
-static void GLAPIENTRY _mesa_noop_MultiTexCoord2fvARB(ctx, GLcontext *ctx, GLenum target, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_MultiTexCoord2fvARB(GLcontext *ctx, GLenum target, const GLfloat *v)
 {
     GLuint unit = target - GL_TEXTURE0_ARB;
 
@@ -189,7 +189,7 @@ static void GLAPIENTRY _mesa_noop_MultiTexCoord2fvARB(ctx, GLcontext *ctx, GLenu
     }
 }
 
-static void GLAPIENTRY _mesa_noop_MultiTexCoord3fARB(ctx, GLcontext *ctx, GLenum target, GLfloat a, GLfloat b, GLfloat c)
+static void GLAPIENTRY _mesa_noop_MultiTexCoord3fARB(GLcontext *ctx, GLenum target, GLfloat a, GLfloat b, GLfloat c)
 {
     GLuint unit = target - GL_TEXTURE0_ARB;
 
@@ -204,7 +204,7 @@ static void GLAPIENTRY _mesa_noop_MultiTexCoord3fARB(ctx, GLcontext *ctx, GLenum
     }
 }
 
-static void GLAPIENTRY _mesa_noop_MultiTexCoord3fvARB(ctx, GLcontext *ctx, GLenum target, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_MultiTexCoord3fvARB(GLcontext *ctx, GLenum target, const GLfloat *v)
 {
     GLuint unit = target - GL_TEXTURE0_ARB;
 
@@ -219,7 +219,7 @@ static void GLAPIENTRY _mesa_noop_MultiTexCoord3fvARB(ctx, GLcontext *ctx, GLenu
     }
 }
 
-static void GLAPIENTRY _mesa_noop_MultiTexCoord4fARB(ctx, GLcontext *ctx, GLenum target, GLfloat a, GLfloat b,
+static void GLAPIENTRY _mesa_noop_MultiTexCoord4fARB(GLcontext *ctx, GLenum target, GLfloat a, GLfloat b,
 	GLfloat c, GLfloat d)
 {
     GLuint unit = target - GL_TEXTURE0_ARB;
@@ -235,7 +235,7 @@ static void GLAPIENTRY _mesa_noop_MultiTexCoord4fARB(ctx, GLcontext *ctx, GLenum
     }
 }
 
-static void GLAPIENTRY _mesa_noop_MultiTexCoord4fvARB(ctx, GLcontext *ctx, GLenum target, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_MultiTexCoord4fvARB(GLcontext *ctx, GLenum target, const GLfloat *v)
 {
     GLuint unit = target - GL_TEXTURE0_ARB;
 
@@ -250,7 +250,7 @@ static void GLAPIENTRY _mesa_noop_MultiTexCoord4fvARB(ctx, GLcontext *ctx, GLenu
     }
 }
 
-static void GLAPIENTRY _mesa_noop_SecondaryColor3fEXT(ctx, GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c)
+static void GLAPIENTRY _mesa_noop_SecondaryColor3fEXT(GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c)
 {
     GLfloat *color = ctx->Current.Attrib[VERT_ATTRIB_COLOR1];
     color[0] = a;
@@ -259,7 +259,7 @@ static void GLAPIENTRY _mesa_noop_SecondaryColor3fEXT(ctx, GLcontext *ctx, GLflo
     color[3] = 1.0;
 }
 
-static void GLAPIENTRY _mesa_noop_SecondaryColor3fvEXT(ctx, GLcontext *ctx, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_SecondaryColor3fvEXT(GLcontext *ctx, const GLfloat *v)
 {
     GLfloat *color = ctx->Current.Attrib[VERT_ATTRIB_COLOR1];
     color[0] = v[0];
@@ -268,7 +268,7 @@ static void GLAPIENTRY _mesa_noop_SecondaryColor3fvEXT(ctx, GLcontext *ctx, cons
     color[3] = 1.0;
 }
 
-static void GLAPIENTRY _mesa_noop_TexCoord1f(ctx, GLcontext *ctx, GLfloat a)
+static void GLAPIENTRY _mesa_noop_TexCoord1f(GLcontext *ctx, GLfloat a)
 {
     GLfloat *dest = ctx->Current.Attrib[VERT_ATTRIB_TEX0];
     dest[0] = a;
@@ -277,7 +277,7 @@ static void GLAPIENTRY _mesa_noop_TexCoord1f(ctx, GLcontext *ctx, GLfloat a)
     dest[3] = 1;
 }
 
-static void GLAPIENTRY _mesa_noop_TexCoord1fv(ctx, GLcontext *ctx, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_TexCoord1fv(GLcontext *ctx, const GLfloat *v)
 {
     GLfloat *dest = ctx->Current.Attrib[VERT_ATTRIB_TEX0];
     dest[0] = v[0];
@@ -286,7 +286,7 @@ static void GLAPIENTRY _mesa_noop_TexCoord1fv(ctx, GLcontext *ctx, const GLfloat
     dest[3] = 1;
 }
 
-static void GLAPIENTRY _mesa_noop_TexCoord2f(ctx, GLcontext *ctx, GLfloat a, GLfloat b)
+static void GLAPIENTRY _mesa_noop_TexCoord2f(GLcontext *ctx, GLfloat a, GLfloat b)
 {
     GLfloat *dest = ctx->Current.Attrib[VERT_ATTRIB_TEX0];
     dest[0] = a;
@@ -295,7 +295,7 @@ static void GLAPIENTRY _mesa_noop_TexCoord2f(ctx, GLcontext *ctx, GLfloat a, GLf
     dest[3] = 1;
 }
 
-static void GLAPIENTRY _mesa_noop_TexCoord2fv(ctx, GLcontext *ctx, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_TexCoord2fv(GLcontext *ctx, const GLfloat *v)
 {
     GLfloat *dest = ctx->Current.Attrib[VERT_ATTRIB_TEX0];
     dest[0] = v[0];
@@ -304,7 +304,7 @@ static void GLAPIENTRY _mesa_noop_TexCoord2fv(ctx, GLcontext *ctx, const GLfloat
     dest[3] = 1;
 }
 
-static void GLAPIENTRY _mesa_noop_TexCoord3f(ctx, GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c)
+static void GLAPIENTRY _mesa_noop_TexCoord3f(GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c)
 {
     GLfloat *dest = ctx->Current.Attrib[VERT_ATTRIB_TEX0];
     dest[0] = a;
@@ -313,7 +313,7 @@ static void GLAPIENTRY _mesa_noop_TexCoord3f(ctx, GLcontext *ctx, GLfloat a, GLf
     dest[3] = 1;
 }
 
-static void GLAPIENTRY _mesa_noop_TexCoord3fv(ctx, GLcontext *ctx, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_TexCoord3fv(GLcontext *ctx, const GLfloat *v)
 {
     GLfloat *dest = ctx->Current.Attrib[VERT_ATTRIB_TEX0];
     dest[0] = v[0];
@@ -322,7 +322,7 @@ static void GLAPIENTRY _mesa_noop_TexCoord3fv(ctx, GLcontext *ctx, const GLfloat
     dest[3] = 1;
 }
 
-static void GLAPIENTRY _mesa_noop_TexCoord4f(ctx, GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c, GLfloat d)
+static void GLAPIENTRY _mesa_noop_TexCoord4f(GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c, GLfloat d)
 {
     GLfloat *dest = ctx->Current.Attrib[VERT_ATTRIB_TEX0];
     dest[0] = a;
@@ -331,7 +331,7 @@ static void GLAPIENTRY _mesa_noop_TexCoord4f(ctx, GLcontext *ctx, GLfloat a, GLf
     dest[3] = d;
 }
 
-static void GLAPIENTRY _mesa_noop_TexCoord4fv(ctx, GLcontext *ctx, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_TexCoord4fv(GLcontext *ctx, const GLfloat *v)
 {
     GLfloat *dest = ctx->Current.Attrib[VERT_ATTRIB_TEX0];
     dest[0] = v[0];
@@ -346,7 +346,7 @@ static void GLAPIENTRY _mesa_noop_TexCoord4fv(ctx, GLcontext *ctx, const GLfloat
  * Note that these attributes alias the conventional vertex attributes.
  */
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib1fNV(ctx, GLcontext *ctx, GLuint index, GLfloat x)
+static void GLAPIENTRY _mesa_noop_VertexAttrib1fNV(GLcontext *ctx, GLuint index, GLfloat x)
 {
     if (index < MAX_NV_VERTEX_PROGRAM_INPUTS) {
 	ASSIGN_4V(ctx->Current.Attrib[index], x, 0, 0, 1);
@@ -354,7 +354,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib1fNV(ctx, GLcontext *ctx, GLuint i
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib1fNV(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib1fvNV(ctx, GLcontext *ctx, GLuint index, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_VertexAttrib1fvNV(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     if (index < MAX_NV_VERTEX_PROGRAM_INPUTS) {
 	ASSIGN_4V(ctx->Current.Attrib[index], v[0], 0, 0, 1);
@@ -362,7 +362,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib1fvNV(ctx, GLcontext *ctx, GLuint 
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib1fvNV(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib2fNV(ctx, GLcontext *ctx, GLuint index, GLfloat x, GLfloat y)
+static void GLAPIENTRY _mesa_noop_VertexAttrib2fNV(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y)
 {
     if (index < MAX_NV_VERTEX_PROGRAM_INPUTS) {
 	ASSIGN_4V(ctx->Current.Attrib[index], x, y, 0, 1);
@@ -370,7 +370,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib2fNV(ctx, GLcontext *ctx, GLuint i
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib2fNV(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib2fvNV(ctx, GLcontext *ctx, GLuint index, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_VertexAttrib2fvNV(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     if (index < MAX_NV_VERTEX_PROGRAM_INPUTS) {
 	ASSIGN_4V(ctx->Current.Attrib[index], v[0], v[1], 0, 1);
@@ -378,7 +378,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib2fvNV(ctx, GLcontext *ctx, GLuint 
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib2fvNV(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib3fNV(ctx, GLcontext *ctx, GLuint index, GLfloat x,
+static void GLAPIENTRY _mesa_noop_VertexAttrib3fNV(GLcontext *ctx, GLuint index, GLfloat x,
 	GLfloat y, GLfloat z)
 {
     if (index < MAX_NV_VERTEX_PROGRAM_INPUTS) {
@@ -387,7 +387,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib3fNV(ctx, GLcontext *ctx, GLuint i
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib3fNV(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib3fvNV(ctx, GLcontext *ctx, GLuint index, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_VertexAttrib3fvNV(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     if (index < MAX_NV_VERTEX_PROGRAM_INPUTS) {
 	ASSIGN_4V(ctx->Current.Attrib[index], v[0], v[1], v[2], 1);
@@ -395,7 +395,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib3fvNV(ctx, GLcontext *ctx, GLuint 
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib3fvNV(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib4fNV(ctx, GLcontext *ctx, GLuint index, GLfloat x,
+static void GLAPIENTRY _mesa_noop_VertexAttrib4fNV(GLcontext *ctx, GLuint index, GLfloat x,
 	GLfloat y, GLfloat z, GLfloat w)
 {
     if (index < MAX_NV_VERTEX_PROGRAM_INPUTS) {
@@ -404,7 +404,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib4fNV(ctx, GLcontext *ctx, GLuint i
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib4fNV(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib4fvNV(ctx, GLcontext *ctx, GLuint index, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_VertexAttrib4fvNV(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     if (index < MAX_NV_VERTEX_PROGRAM_INPUTS) {
 	ASSIGN_4V(ctx->Current.Attrib[index], v[0], v[1], v[2], v[3]);
@@ -419,7 +419,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib4fvNV(ctx, GLcontext *ctx, GLuint 
  * Note that these attributes DO NOT alias the conventional vertex attributes.
  */
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib1fARB(ctx, GLcontext *ctx, GLuint index, GLfloat x)
+static void GLAPIENTRY _mesa_noop_VertexAttrib1fARB(GLcontext *ctx, GLuint index, GLfloat x)
 {
     if (index < MAX_VERTEX_ATTRIBS) {
 	ASSIGN_4V(ctx->Current.Attrib[VERT_ATTRIB_GENERIC0 + index], x, 0, 0, 1);
@@ -427,7 +427,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib1fARB(ctx, GLcontext *ctx, GLuint 
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib1fARB(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib1fvARB(ctx, GLcontext *ctx, GLuint index, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_VertexAttrib1fvARB(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     if (index < MAX_VERTEX_ATTRIBS) {
 	ASSIGN_4V(ctx->Current.Attrib[VERT_ATTRIB_GENERIC0 + index], v[0], 0, 0, 1);
@@ -435,7 +435,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib1fvARB(ctx, GLcontext *ctx, GLuint
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib1fvARB(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib2fARB(ctx, GLcontext *ctx, GLuint index, GLfloat x, GLfloat y)
+static void GLAPIENTRY _mesa_noop_VertexAttrib2fARB(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y)
 {
     if (index < MAX_VERTEX_ATTRIBS) {
 	ASSIGN_4V(ctx->Current.Attrib[VERT_ATTRIB_GENERIC0 + index], x, y, 0, 1);
@@ -443,7 +443,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib2fARB(ctx, GLcontext *ctx, GLuint 
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib2fARB(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib2fvARB(ctx, GLcontext *ctx, GLuint index, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_VertexAttrib2fvARB(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     if (index < MAX_VERTEX_ATTRIBS) {
 	ASSIGN_4V(ctx->Current.Attrib[VERT_ATTRIB_GENERIC0 + index], v[0], v[1], 0, 1);
@@ -451,7 +451,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib2fvARB(ctx, GLcontext *ctx, GLuint
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib2fvARB(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib3fARB(ctx, GLcontext *ctx, GLuint index, GLfloat x,
+static void GLAPIENTRY _mesa_noop_VertexAttrib3fARB(GLcontext *ctx, GLuint index, GLfloat x,
 	GLfloat y, GLfloat z)
 {
     if (index < MAX_VERTEX_ATTRIBS) {
@@ -460,7 +460,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib3fARB(ctx, GLcontext *ctx, GLuint 
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib3fARB(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib3fvARB(ctx, GLcontext *ctx, GLuint index, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_VertexAttrib3fvARB(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     if (index < MAX_VERTEX_ATTRIBS) {
 	ASSIGN_4V(ctx->Current.Attrib[VERT_ATTRIB_GENERIC0 + index], v[0], v[1], v[2], 1);
@@ -468,7 +468,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib3fvARB(ctx, GLcontext *ctx, GLuint
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib3fvARB(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib4fARB(ctx, GLcontext *ctx, GLuint index, GLfloat x,
+static void GLAPIENTRY _mesa_noop_VertexAttrib4fARB(GLcontext *ctx, GLuint index, GLfloat x,
 	GLfloat y, GLfloat z, GLfloat w)
 {
     if (index < MAX_VERTEX_ATTRIBS) {
@@ -477,7 +477,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib4fARB(ctx, GLcontext *ctx, GLuint 
 	_mesa_error(ctx, GL_INVALID_VALUE, "glVertexAttrib4fARB(index)");
 }
 
-static void GLAPIENTRY _mesa_noop_VertexAttrib4fvARB(ctx, GLcontext *ctx, GLuint index, const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_VertexAttrib4fvARB(GLcontext *ctx, GLuint index, const GLfloat *v)
 {
     if (index < MAX_VERTEX_ATTRIBS) {
 	ASSIGN_4V(ctx->Current.Attrib[VERT_ATTRIB_GENERIC0 + index], v[0], v[1], v[2], v[3]);
@@ -491,7 +491,7 @@ static void GLAPIENTRY _mesa_noop_VertexAttrib4fvARB(ctx, GLcontext *ctx, GLuint
  * Called by glMaterial*()
  */
 void GLAPIENTRY
-_mesa_noop_Materialfv(ctx, GLcontext *ctx, GLenum face, GLenum pname, const GLfloat *params)
+_mesa_noop_Materialfv(GLcontext *ctx, GLenum face, GLenum pname, const GLfloat *params)
 {
     GLint i, nr;
     struct gl_material *mat = &ctx->Light.Material;
@@ -609,7 +609,7 @@ static void GLAPIENTRY _mesa_noop_Begin(GLenum mode)
 
 /* End -- just raise an error
  */
-static void GLAPIENTRY _mesa_noop_End(ctx, GLcontext *ctx)
+static void GLAPIENTRY _mesa_noop_End(GLcontext *ctx)
 {
     _mesa_error(ctx, GL_INVALID_OPERATION, "glEnd(no glBegin)");
 }
@@ -625,7 +625,7 @@ static void GLAPIENTRY _mesa_noop_End(ctx, GLcontext *ctx)
  * modes).
  */
 void GLAPIENTRY
-_mesa_noop_Rectf(ctx, GLcontext *ctx, GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
+_mesa_noop_Rectf(GLcontext *ctx, GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
 {
     {
 	ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -646,7 +646,7 @@ _mesa_noop_Rectf(ctx, GLcontext *ctx, GLfloat x1, GLfloat y1, GLfloat x2, GLfloa
  * implementation.
  */
 static void GLAPIENTRY
-_mesa_noop_DrawArrays(ctx, GLcontext *ctx, GLenum mode, GLint start, GLsizei count)
+_mesa_noop_DrawArrays(GLcontext *ctx, GLenum mode, GLint start, GLsizei count)
 {
     GLint i;
 
@@ -661,7 +661,7 @@ _mesa_noop_DrawArrays(ctx, GLcontext *ctx, GLenum mode, GLint start, GLsizei cou
 
 
 static void GLAPIENTRY
-_mesa_noop_DrawElements(ctx, GLcontext *ctx, GLenum mode, GLsizei count, GLenum type,
+_mesa_noop_DrawElements(GLcontext *ctx, GLenum mode, GLsizei count, GLenum type,
 			const GLvoid *indices)
 {
     GLint i;
@@ -694,7 +694,7 @@ _mesa_noop_DrawElements(ctx, GLcontext *ctx, GLenum mode, GLsizei count, GLenum 
 
 
 static void GLAPIENTRY
-_mesa_noop_DrawRangeElements(ctx, GLcontext *ctx, GLenum mode,
+_mesa_noop_DrawRangeElements(GLcontext *ctx, GLenum mode,
 			     GLuint start, GLuint end,
 			     GLsizei count, GLenum type,
 			     const GLvoid *indices)
@@ -720,7 +720,7 @@ _mesa_noop_DrawRangeElements(ctx, GLcontext *ctx, GLenum mode,
  * disabled, and to purge those vertices from the vb.
  */
 void GLAPIENTRY
-_mesa_noop_EvalMesh1(ctx, GLcontext *ctx, GLenum mode, GLint i1, GLint i2)
+_mesa_noop_EvalMesh1(GLcontext *ctx, GLenum mode, GLint i1, GLint i2)
 {
     GLint i;
     GLfloat u, du;
@@ -758,7 +758,7 @@ _mesa_noop_EvalMesh1(ctx, GLcontext *ctx, GLenum mode, GLint i1, GLint i2)
 
 
 void GLAPIENTRY
-_mesa_noop_EvalMesh2(ctx, GLcontext *ctx, GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2)
+_mesa_noop_EvalMesh2(GLcontext *ctx, GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2)
 {
     GLfloat u, du, v, dv, v1, u1;
     GLint i, j;

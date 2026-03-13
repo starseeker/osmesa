@@ -31,40 +31,40 @@ extern struct gl_query_object *
 _mesa_new_query_object(GLcontext *ctx, GLuint id);
 
 extern void
-_mesa_init_query(ctx, GLcontext *ctx);
+_mesa_init_query(GLcontext *ctx);
 
 extern void
-_mesa_free_query_data(ctx, GLcontext *ctx);
+_mesa_free_query_data(GLcontext *ctx);
 
 extern void GLAPIENTRY
-_mesa_GenQueriesARB(ctx, GLcontext *ctx, GLsizei n, GLuint *ids);
+_mesa_GenQueriesARB(GLcontext *ctx, GLsizei n, GLuint *ids);
 
 extern void GLAPIENTRY
-_mesa_DeleteQueriesARB(ctx, GLcontext *ctx, GLsizei n, const GLuint *ids);
+_mesa_DeleteQueriesARB(GLcontext *ctx, GLsizei n, const GLuint *ids);
 
 extern GLboolean GLAPIENTRY
-_mesa_IsQueryARB(ctx, GLcontext *ctx, GLuint id);
+_mesa_IsQueryARB(GLcontext *ctx, GLuint id);
 
 extern void GLAPIENTRY
-_mesa_BeginQueryARB(ctx, GLcontext *ctx, GLenum target, GLuint id);
+_mesa_BeginQueryARB(GLcontext *ctx, GLenum target, GLuint id);
 
 extern void GLAPIENTRY
-_mesa_EndQueryARB(ctx, GLcontext *ctx, GLenum target);
+_mesa_EndQueryARB(GLcontext *ctx, GLenum target);
 
 extern void GLAPIENTRY
-_mesa_GetQueryivARB(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
+_mesa_GetQueryivARB(GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetQueryObjectivARB(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLint *params);
+_mesa_GetQueryObjectivARB(GLcontext *ctx, GLuint id, GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetQueryObjectuivARB(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLuint *params);
+_mesa_GetQueryObjectuivARB(GLcontext *ctx, GLuint id, GLenum pname, GLuint *params);
 
 extern void GLAPIENTRY
-_mesa_GetQueryObjecti64vEXT(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLint64EXT *params);
+_mesa_GetQueryObjecti64vEXT(GLcontext *ctx, GLuint id, GLenum pname, GLint64EXT *params);
 
 extern void GLAPIENTRY
-_mesa_GetQueryObjectui64vEXT(ctx, GLcontext *ctx, GLuint id, GLenum pname, GLuint64EXT *params);
+_mesa_GetQueryObjectui64vEXT(GLcontext *ctx, GLuint id, GLenum pname, GLuint64EXT *params);
 
 
 #endif /* OCCLUDE_H */

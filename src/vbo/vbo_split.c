@@ -97,7 +97,7 @@ GLboolean split_prim_inplace(GLenum mode, GLuint *first, GLuint *incr)
 
 
 
-void vbo_split_prims(ctx, GLcontext *ctx,
+void vbo_split_prims(GLcontext *ctx,
 		     const struct gl_client_array *arrays[],
 		     const struct _mesa_prim *prim,
 		     GLuint nr_prims,

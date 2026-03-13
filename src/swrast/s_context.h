@@ -236,10 +236,10 @@ typedef struct {
 
 
 extern void
-_swrast_validate_derived(ctx, GLcontext *ctx);
+_swrast_validate_derived(GLcontext *ctx);
 
 extern void
-_swrast_update_texture_samplers(ctx, GLcontext *ctx);
+_swrast_update_texture_samplers(GLcontext *ctx);
 
 
 #define SWRAST_CONTEXT(ctx) ((SWcontext *)ctx->swrast_context)

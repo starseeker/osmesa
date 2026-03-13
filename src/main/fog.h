@@ -43,18 +43,18 @@
 #if _HAVE_FULL_GL
 
 extern void GLAPIENTRY
-_mesa_Fogf(GLenum pname, GLfloat param);
+_mesa_Fogf(GLcontext *ctx, GLenum pname, GLfloat param);
 
 extern void GLAPIENTRY
 _mesa_Fogi(GLenum pname, GLint param);
 
 extern void GLAPIENTRY
-_mesa_Fogfv(ctx, GLcontext *ctx, GLenum pname, const GLfloat *params);
+_mesa_Fogfv(GLcontext *ctx, GLenum pname, const GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_Fogiv(GLenum pname, const GLint *params);
+_mesa_Fogiv(GLcontext *ctx, GLenum pname, const GLint *params);
 
-extern void _mesa_init_fog(ctx, GLcontext * ctx);
+extern void _mesa_init_fog(GLcontext *ctx);
 
 #else
 

@@ -28,10 +28,10 @@
 
 
 extern void
-_mesa_insert_mvp_code(ctx, GLcontext *ctx, struct gl_vertex_program *vprog);
+_mesa_insert_mvp_code(GLcontext *ctx, struct gl_vertex_program *vprog);
 
 extern void
-_mesa_append_fog_code(ctx, GLcontext *ctx, struct gl_fragment_program *fprog);
+_mesa_append_fog_code(GLcontext *ctx, struct gl_fragment_program *fprog);
 
 extern void
 _mesa_count_texture_indirections(struct gl_program *prog);

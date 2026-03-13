@@ -156,7 +156,7 @@ static void loopback_weak_prim(GLcontext *ctx,
 }
 
 
-void vbo_loopback_vertex_list(ctx, GLcontext *ctx,
+void vbo_loopback_vertex_list(GLcontext *ctx,
 			      const GLfloat *buffer,
 			      const GLubyte *attrsz,
 			      const struct _mesa_prim *prim,

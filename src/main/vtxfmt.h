@@ -33,12 +33,12 @@
 #ifndef _VTXFMT_H_
 #define _VTXFMT_H_
 
-extern void _mesa_init_exec_vtxfmt(ctx, GLcontext *ctx);
+extern void _mesa_init_exec_vtxfmt(GLcontext *ctx);
 
-extern void _mesa_install_exec_vtxfmt(ctx, GLcontext *ctx, const GLvertexformat *vfmt);
-extern void _mesa_install_save_vtxfmt(ctx, GLcontext *ctx, const GLvertexformat *vfmt);
+extern void _mesa_install_exec_vtxfmt(GLcontext *ctx, const GLvertexformat *vfmt);
+extern void _mesa_install_save_vtxfmt(GLcontext *ctx, const GLvertexformat *vfmt);
 
-extern void _mesa_restore_exec_vtxfmt(ctx, GLcontext *ctx);
+extern void _mesa_restore_exec_vtxfmt(GLcontext *ctx);
 
 #endif
 

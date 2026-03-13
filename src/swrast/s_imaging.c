@@ -34,7 +34,7 @@
 
 
 void
-_swrast_CopyColorTable(ctx, GLcontext *ctx,
+_swrast_CopyColorTable(GLcontext *ctx,
 		       GLenum target, GLenum internalformat,
 		       GLint x, GLint y, GLsizei width)
 {
@@ -70,7 +70,7 @@ _swrast_CopyColorTable(ctx, GLcontext *ctx,
 
 
 void
-_swrast_CopyColorSubTable(ctx, GLcontext *ctx,GLenum target, GLsizei start,
+_swrast_CopyColorSubTable(GLcontext *ctx,GLenum target, GLsizei start,
 			  GLint x, GLint y, GLsizei width)
 {
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
@@ -105,7 +105,7 @@ _swrast_CopyColorSubTable(ctx, GLcontext *ctx,GLenum target, GLsizei start,
 
 
 void
-_swrast_CopyConvolutionFilter1D(ctx, GLcontext *ctx, GLenum target,
+_swrast_CopyConvolutionFilter1D(GLcontext *ctx, GLenum target,
 				GLenum internalFormat,
 				GLint x, GLint y, GLsizei width)
 {
@@ -140,7 +140,7 @@ _swrast_CopyConvolutionFilter1D(ctx, GLcontext *ctx, GLenum target,
 
 
 void
-_swrast_CopyConvolutionFilter2D(ctx, GLcontext *ctx, GLenum target,
+_swrast_CopyConvolutionFilter2D(GLcontext *ctx, GLenum target,
 				GLenum internalFormat,
 				GLint x, GLint y, GLsizei width, GLsizei height)
 {

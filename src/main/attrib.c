@@ -92,7 +92,7 @@ new_attrib_node(GLbitfield kind)
 
 
 void GLAPIENTRY
-_mesa_PushAttrib(ctx, GLcontext *ctx, GLbitfield mask)
+_mesa_PushAttrib(GLcontext *ctx, GLbitfield mask)
 {
     struct gl_attrib_node *newnode;
     struct gl_attrib_node *head;
@@ -850,7 +850,7 @@ pop_texture_group(GLcontext *ctx, struct texture_state *texstate)
  * and then skip the Mesa call.
  */
 void GLAPIENTRY
-_mesa_PopAttrib(ctx, GLcontext *ctx)
+_mesa_PopAttrib(GLcontext *ctx)
 {
     struct gl_attrib_node *attr, *next;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -1266,7 +1266,7 @@ adjust_buffer_object_ref_counts(struct gl_array_attrib *array, GLint step)
 
 
 void GLAPIENTRY
-_mesa_PushClientAttrib(ctx, GLcontext *ctx, GLbitfield mask)
+_mesa_PushClientAttrib(GLcontext *ctx, GLbitfield mask)
 {
     struct gl_attrib_node *newnode;
     struct gl_attrib_node *head;
@@ -1337,7 +1337,7 @@ _mesa_PushClientAttrib(ctx, GLcontext *ctx, GLbitfield mask)
 
 
 void GLAPIENTRY
-_mesa_PopClientAttrib(ctx, GLcontext *ctx)
+_mesa_PopClientAttrib(GLcontext *ctx)
 {
     struct gl_attrib_node *attr, *next;
 
@@ -1423,7 +1423,7 @@ _mesa_PopClientAttrib(ctx, GLcontext *ctx)
 
 
 void
-_mesa_free_attrib_data(ctx, GLcontext *ctx)
+_mesa_free_attrib_data(GLcontext *ctx)
 {
     while (ctx->AttribStackDepth > 0) {
 	struct gl_attrib_node *attr, *next;
@@ -1456,7 +1456,7 @@ _mesa_free_attrib_data(ctx, GLcontext *ctx)
 }
 
 
-void _mesa_init_attrib(ctx, GLcontext *ctx)
+void _mesa_init_attrib(GLcontext *ctx)
 {
     /* Renderer and client attribute stacks */
     ctx->AttribStackDepth = 0;

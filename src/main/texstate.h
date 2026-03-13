@@ -39,7 +39,7 @@ extern void
 _mesa_copy_texture_state(const GLcontext *src, GLcontext *dst);
 
 extern void
-_mesa_print_texunit_state(ctx, GLcontext *ctx, GLuint unit);
+_mesa_print_texunit_state(GLcontext *ctx, GLuint unit);
 
 
 /**
@@ -48,89 +48,89 @@ _mesa_print_texunit_state(ctx, GLcontext *ctx, GLuint unit);
 /*@{*/
 
 extern void GLAPIENTRY
-_mesa_GetTexEnvfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params);
+_mesa_GetTexEnvfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_GetTexEnviv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
+_mesa_GetTexEnviv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetTexGendv(ctx, GLcontext *ctx, GLenum coord, GLenum pname, GLdouble *params);
+_mesa_GetTexGendv(GLcontext *ctx, GLenum coord, GLenum pname, GLdouble *params);
 
 extern void GLAPIENTRY
-_mesa_GetTexGenfv(ctx, GLcontext *ctx, GLenum coord, GLenum pname, GLfloat *params);
+_mesa_GetTexGenfv(GLcontext *ctx, GLenum coord, GLenum pname, GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_GetTexGeniv(ctx, GLcontext *ctx, GLenum coord, GLenum pname, GLint *params);
+_mesa_GetTexGeniv(GLcontext *ctx, GLenum coord, GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetTexLevelParameterfv(GLenum target, GLint level,
+_mesa_GetTexLevelParameterfv(GLcontext *ctx, GLenum target, GLint level,
 			     GLenum pname, GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_GetTexLevelParameteriv(ctx, GLcontext *ctx, GLenum target, GLint level,
+_mesa_GetTexLevelParameteriv(GLcontext *ctx, GLenum target, GLint level,
 			     GLenum pname, GLint *params);
 
 extern void GLAPIENTRY
-_mesa_GetTexParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params);
+_mesa_GetTexParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_GetTexParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
-
-
-extern void GLAPIENTRY
-_mesa_TexEnvf(GLenum target, GLenum pname, GLfloat param);
-
-extern void GLAPIENTRY
-_mesa_TexEnvfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *param);
-
-extern void GLAPIENTRY
-_mesa_TexEnvi(GLenum target, GLenum pname, GLint param);
-
-extern void GLAPIENTRY
-_mesa_TexEnviv(GLenum target, GLenum pname, const GLint *param);
+_mesa_GetTexParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params);
 
 
 extern void GLAPIENTRY
-_mesa_TexParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params);
+_mesa_TexEnvf(GLcontext *ctx, GLenum target, GLenum pname, GLfloat param);
 
 extern void GLAPIENTRY
-_mesa_TexParameterf(GLenum target, GLenum pname, GLfloat param);
+_mesa_TexEnvfv(GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *param);
+
+extern void GLAPIENTRY
+_mesa_TexEnvi(GLcontext *ctx, GLenum target, GLenum pname, GLint param);
+
+extern void GLAPIENTRY
+_mesa_TexEnviv(GLcontext *ctx, GLenum target, GLenum pname, const GLint *param);
 
 
 extern void GLAPIENTRY
-_mesa_TexParameteri(GLenum target, GLenum pname, GLint param);
+_mesa_TexParameterfv(GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_TexParameteriv(GLenum target, GLenum pname, const GLint *params);
+_mesa_TexParameterf(GLcontext *ctx, GLenum target, GLenum pname, GLfloat param);
+
+
+extern void GLAPIENTRY
+_mesa_TexParameteri(GLcontext *ctx, GLenum target, GLenum pname, GLint param);
+
+extern void GLAPIENTRY
+_mesa_TexParameteriv(GLcontext *ctx, GLenum target, GLenum pname, const GLint *params);
 
 
 extern void GLAPIENTRY
 _mesa_TexGend(GLenum coord, GLenum pname, GLdouble param);
 
 extern void GLAPIENTRY
-_mesa_TexGendv(GLenum coord, GLenum pname, const GLdouble *params);
+_mesa_TexGendv(GLcontext *ctx, GLenum coord, GLenum pname, const GLdouble *params);
 
 extern void GLAPIENTRY
-_mesa_TexGenf(GLenum coord, GLenum pname, GLfloat param);
+_mesa_TexGenf(GLcontext *ctx, GLenum coord, GLenum pname, GLfloat param);
 
 extern void GLAPIENTRY
-_mesa_TexGenfv(ctx, GLcontext *ctx, GLenum coord, GLenum pname, const GLfloat *params);
+_mesa_TexGenfv(GLcontext *ctx, GLenum coord, GLenum pname, const GLfloat *params);
 
 extern void GLAPIENTRY
 _mesa_TexGeni(GLenum coord, GLenum pname, GLint param);
 
 extern void GLAPIENTRY
-_mesa_TexGeniv(GLenum coord, GLenum pname, const GLint *params);
+_mesa_TexGeniv(GLcontext *ctx, GLenum coord, GLenum pname, const GLint *params);
 
 
 /*
  * GL_ARB_multitexture
  */
 extern void GLAPIENTRY
-_mesa_ActiveTextureARB(ctx, GLcontext *ctx, GLenum texture);
+_mesa_ActiveTextureARB(GLcontext *ctx, GLenum texture);
 
 extern void GLAPIENTRY
-_mesa_ClientActiveTextureARB(ctx, GLcontext *ctx, GLenum texture);
+_mesa_ClientActiveTextureARB(GLcontext *ctx, GLenum texture);
 
 
 /**
@@ -139,13 +139,13 @@ _mesa_ClientActiveTextureARB(ctx, GLcontext *ctx, GLenum texture);
 /*@{*/
 
 extern void
-_mesa_update_texture(ctx, GLcontext *ctx, GLuint new_state);
+_mesa_update_texture(GLcontext *ctx, GLuint new_state);
 
 extern GLboolean
-_mesa_init_texture(ctx, GLcontext *ctx);
+_mesa_init_texture(GLcontext *ctx);
 
 extern void
-_mesa_free_texture_data(ctx, GLcontext *ctx);
+_mesa_free_texture_data(GLcontext *ctx);
 
 /*@}*/
 

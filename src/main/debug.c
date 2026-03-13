@@ -48,7 +48,7 @@ const char *_mesa_prim_name[GL_POLYGON+4] = {
 };
 
 void
-_mesa_print_state(const char *msg, GLuint state)
+_mesa_print_state(GLcontext *ctx, const char *msg, GLuint state)
 {
     _mesa_debug(NULL,
 		"%s: (0x%x) %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n",
@@ -111,7 +111,7 @@ _mesa_print_tri_caps(const char *name, GLuint flags)
 /**
  * Print information about this Mesa version and build options.
  */
-void _mesa_print_info(void)
+void _mesa_print_info(GLcontext *ctx)
 {
     _mesa_debug(NULL, "Mesa GL_VERSION = %s\n",
 		(char *) _mesa_GetString(ctx, GL_VERSION));
@@ -184,7 +184,7 @@ static void add_debug_flags(const char *debug)
 
 
 void
-_mesa_init_debug(ctx, GLcontext *ctx)
+_mesa_init_debug(GLcontext *ctx)
 {
     char *c;
 

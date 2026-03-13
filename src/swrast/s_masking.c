@@ -40,7 +40,7 @@
  * Apply the color mask to a span of rgba values.
  */
 void
-_swrast_mask_rgba_span(ctx, GLcontext *ctx, struct gl_renderbuffer *rb,
+_swrast_mask_rgba_span(GLcontext *ctx, struct gl_renderbuffer *rb,
 		       SWspan *span)
 {
     const GLuint n = span->end;
@@ -105,7 +105,7 @@ _swrast_mask_rgba_span(ctx, GLcontext *ctx, struct gl_renderbuffer *rb,
  * Apply the index mask to a span of color index values.
  */
 void
-_swrast_mask_ci_span(ctx, GLcontext *ctx, struct gl_renderbuffer *rb,
+_swrast_mask_ci_span(GLcontext *ctx, struct gl_renderbuffer *rb,
 		     SWspan *span)
 {
     const GLuint srcMask = ctx->Color.IndexMask;

@@ -78,39 +78,39 @@ extern const struct tnl_format_info _tnl_format_info[EMIT_MAX];
 
 /* Interpolate between two vertices to produce a third:
  */
-extern void _tnl_interp(ctx, GLcontext *ctx,
+extern void _tnl_interp(GLcontext *ctx,
 			GLfloat t,
 			GLuint edst, GLuint eout, GLuint ein,
 			GLboolean force_boundary);
 
 /* Copy colors from one vertex to another:
  */
-extern void _tnl_copy_pv(ctx, GLcontext *ctx, GLuint edst, GLuint esrc);
+extern void _tnl_copy_pv(GLcontext *ctx, GLuint edst, GLuint esrc);
 
 
 /* Extract a named attribute from a hardware vertex.  Will have to
  * reverse any viewport transformation, swizzling or other conversions
  * which may have been applied:
  */
-extern void _tnl_get_attr(ctx, GLcontext *ctx, const void *vertex, GLenum attrib,
+extern void _tnl_get_attr(GLcontext *ctx, const void *vertex, GLenum attrib,
 			  GLfloat *dest);
 
 /* Complementary to the above.
  */
-extern void _tnl_set_attr(ctx, GLcontext *ctx, void *vout, GLenum attrib,
+extern void _tnl_set_attr(GLcontext *ctx, void *vout, GLenum attrib,
 			  const GLfloat *src);
 
 
 extern void *_tnl_get_vertex(GLcontext *ctx, GLuint nr);
 
-extern GLuint _tnl_install_attrs(ctx, GLcontext *ctx,
+extern GLuint _tnl_install_attrs(GLcontext *ctx,
 				 const struct tnl_attr_map *map,
 				 GLuint nr, const GLfloat *vp,
 				 GLuint unpacked_size);
 
-extern void _tnl_free_vertices(ctx, GLcontext *ctx);
+extern void _tnl_free_vertices(GLcontext *ctx);
 
-extern void _tnl_init_vertices(ctx, GLcontext *ctx,
+extern void _tnl_init_vertices(GLcontext *ctx,
 			       GLuint vb_size,
 			       GLuint max_vertex_size);
 
@@ -119,46 +119,46 @@ extern void *_tnl_emit_vertices_to_buffer(GLcontext *ctx,
 	GLuint end,
 	void *dest);
 
-extern void _tnl_build_vertices(ctx, GLcontext *ctx,
+extern void _tnl_build_vertices(GLcontext *ctx,
 				GLuint start,
 				GLuint end,
 				GLuint newinputs);
 
-extern void _tnl_invalidate_vertices(ctx, GLcontext *ctx, GLuint newinputs);
+extern void _tnl_invalidate_vertices(GLcontext *ctx, GLuint newinputs);
 
-extern void _tnl_invalidate_vertex_state(ctx, GLcontext *ctx, GLuint new_state);
+extern void _tnl_invalidate_vertex_state(GLcontext *ctx, GLuint new_state);
 
-extern void _tnl_notify_pipeline_output_change(ctx, GLcontext *ctx);
+extern void _tnl_notify_pipeline_output_change(GLcontext *ctx);
 
 
 #define GET_VERTEX_STATE(ctx)  &(TNL_CONTEXT(ctx)->clipspace)
 
 /* t_vertex_generic.c -- Internal functions for t_vertex.c
  */
-void _tnl_generic_copy_pv_extras(ctx, GLcontext *ctx,
+void _tnl_generic_copy_pv_extras(GLcontext *ctx,
 				 GLuint dst, GLuint src);
 
-void _tnl_generic_interp_extras(ctx, GLcontext *ctx,
+void _tnl_generic_interp_extras(GLcontext *ctx,
 				GLfloat t,
 				GLuint dst, GLuint out, GLuint in,
 				GLboolean force_boundary);
 
-void _tnl_generic_copy_pv(ctx, GLcontext *ctx, GLuint edst, GLuint esrc);
+void _tnl_generic_copy_pv(GLcontext *ctx, GLuint edst, GLuint esrc);
 
-void _tnl_generic_interp(ctx, GLcontext *ctx,
+void _tnl_generic_interp(GLcontext *ctx,
 			 GLfloat t,
 			 GLuint edst, GLuint eout, GLuint ein,
 			 GLboolean force_boundary);
 
-void _tnl_generic_emit(ctx, GLcontext *ctx,
+void _tnl_generic_emit(GLcontext *ctx,
 		       GLuint count,
 		       GLubyte *v);
 
-void _tnl_generate_hardwired_emit(ctx, GLcontext *ctx);
+void _tnl_generate_hardwired_emit(GLcontext *ctx);
 
 /* t_vertex_sse.c -- Internal functions for t_vertex.c
  */
-void _tnl_generate_sse_emit(ctx, GLcontext *ctx);
+void _tnl_generate_sse_emit(GLcontext *ctx);
 
 #endif
 

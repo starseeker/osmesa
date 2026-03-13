@@ -43,14 +43,14 @@
 #if _HAVE_FULL_GL
 
 extern void GLAPIENTRY
-_mesa_Accum(ctx, GLcontext *ctx, GLenum op, GLfloat value);
+_mesa_Accum(GLcontext *ctx, GLenum op, GLfloat value);
 
 
 extern void GLAPIENTRY
-_mesa_ClearAccum(ctx, GLcontext *ctx, GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+_mesa_ClearAccum(GLcontext *ctx, GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 
 extern void
-_mesa_init_accum(ctx, GLcontext *ctx);
+_mesa_init_accum(GLcontext *ctx);
 
 #else
 

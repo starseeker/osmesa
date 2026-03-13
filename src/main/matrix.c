@@ -62,7 +62,7 @@
  * __GLcontextRec::NewState.
  */
 void GLAPIENTRY
-_mesa_Frustum(ctx, GLcontext *ctx, GLdouble left, GLdouble right,
+_mesa_Frustum(GLcontext *ctx, GLdouble left, GLdouble right,
 	      GLdouble bottom, GLdouble top,
 	      GLdouble nearval, GLdouble farval)
 {
@@ -102,7 +102,7 @@ _mesa_Frustum(ctx, GLcontext *ctx, GLdouble left, GLdouble right,
  * __GLcontextRec::NewState.
  */
 void GLAPIENTRY
-_mesa_Ortho(ctx, GLcontext *ctx, GLdouble left, GLdouble right,
+_mesa_Ortho(GLcontext *ctx, GLdouble left, GLdouble right,
 	    GLdouble bottom, GLdouble top,
 	    GLdouble nearval, GLdouble farval)
 {
@@ -139,7 +139,7 @@ _mesa_Ortho(ctx, GLcontext *ctx, GLdouble left, GLdouble right,
  * specified matrix stack.
  */
 void GLAPIENTRY
-_mesa_MatrixMode(ctx, GLcontext *ctx, GLenum mode)
+_mesa_MatrixMode(GLcontext *ctx, GLenum mode)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -220,7 +220,7 @@ _mesa_MatrixMode(ctx, GLcontext *ctx, GLenum mode)
  * flag.
  */
 void GLAPIENTRY
-_mesa_PushMatrix(ctx, GLcontext *ctx)
+_mesa_PushMatrix(GLcontext *ctx)
 {
     struct gl_matrix_stack *stack = ctx->CurrentStack;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -258,7 +258,7 @@ _mesa_PushMatrix(ctx, GLcontext *ctx)
  * stack flag.
  */
 void GLAPIENTRY
-_mesa_PopMatrix(ctx, GLcontext *ctx)
+_mesa_PopMatrix(GLcontext *ctx)
 {
     struct gl_matrix_stack *stack = ctx->CurrentStack;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -294,7 +294,7 @@ _mesa_PopMatrix(ctx, GLcontext *ctx)
  * dirty flag.
  */
 void GLAPIENTRY
-_mesa_LoadIdentity(ctx, GLcontext *ctx)
+_mesa_LoadIdentity(GLcontext *ctx)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -318,7 +318,7 @@ _mesa_LoadIdentity(ctx, GLcontext *ctx)
  * with the dirty stack flag.
  */
 void GLAPIENTRY
-_mesa_LoadMatrixf(ctx, GLcontext *ctx, const GLfloat *m)
+_mesa_LoadMatrixf(GLcontext *ctx, const GLfloat *m)
 {
     if (!m) return;
     if (MESA_VERBOSE & VERBOSE_API)
@@ -347,7 +347,7 @@ _mesa_LoadMatrixf(ctx, GLcontext *ctx, const GLfloat *m)
  * __GLcontextRec::NewState with the dirty stack flag.
  */
 void GLAPIENTRY
-_mesa_MultMatrixf(ctx, GLcontext *ctx, const GLfloat *m)
+_mesa_MultMatrixf(GLcontext *ctx, const GLfloat *m)
 {
     if (!m) return;
     if (MESA_VERBOSE & VERBOSE_API)
@@ -378,7 +378,7 @@ _mesa_MultMatrixf(ctx, GLcontext *ctx, const GLfloat *m)
  * __GLcontextRec::NewState with the dirty stack flag.
  */
 void GLAPIENTRY
-_mesa_Rotatef(ctx, GLcontext *ctx, GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
+_mesa_Rotatef(GLcontext *ctx, GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
     if (angle != 0.0F) {
@@ -402,7 +402,7 @@ _mesa_Rotatef(ctx, GLcontext *ctx, GLfloat angle, GLfloat x, GLfloat y, GLfloat 
  * __GLcontextRec::NewState with the dirty stack flag.
  */
 void GLAPIENTRY
-_mesa_Scalef(ctx, GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
+_mesa_Scalef(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
     _math_matrix_scale(ctx->CurrentStack->Top, x, y, z);
@@ -424,7 +424,7 @@ _mesa_Scalef(ctx, GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
  * __GLcontextRec::NewState with the dirty stack flag.
  */
 void GLAPIENTRY
-_mesa_Translatef(ctx, GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
+_mesa_Translatef(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
     _math_matrix_translate(ctx->CurrentStack->Top, x, y, z);
@@ -434,7 +434,7 @@ _mesa_Translatef(ctx, GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 
 #if _HAVE_FULL_GL
 void GLAPIENTRY
-_mesa_LoadMatrixd(const GLdouble *m)
+_mesa_LoadMatrixd(GLcontext *ctx, const GLdouble *m)
 {
     GLint i;
     GLfloat f[16];
@@ -445,7 +445,7 @@ _mesa_LoadMatrixd(const GLdouble *m)
 }
 
 void GLAPIENTRY
-_mesa_MultMatrixd(const GLdouble *m)
+_mesa_MultMatrixd(GLcontext *ctx, const GLdouble *m)
 {
     GLint i;
     GLfloat f[16];
@@ -457,21 +457,21 @@ _mesa_MultMatrixd(const GLdouble *m)
 
 
 void GLAPIENTRY
-_mesa_Rotated(GLdouble angle, GLdouble x, GLdouble y, GLdouble z)
+_mesa_Rotated(GLcontext *ctx, GLdouble angle, GLdouble x, GLdouble y, GLdouble z)
 {
     _mesa_Rotatef(ctx, (GLfloat) angle, (GLfloat) x, (GLfloat) y, (GLfloat) z);
 }
 
 
 void GLAPIENTRY
-_mesa_Scaled(GLdouble x, GLdouble y, GLdouble z)
+_mesa_Scaled(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z)
 {
     _mesa_Scalef(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z);
 }
 
 
 void GLAPIENTRY
-_mesa_Translated(GLdouble x, GLdouble y, GLdouble z)
+_mesa_Translated(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z)
 {
     _mesa_Translatef(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z);
 }
@@ -480,7 +480,7 @@ _mesa_Translated(GLdouble x, GLdouble y, GLdouble z)
 
 #if _HAVE_FULL_GL
 void GLAPIENTRY
-_mesa_LoadTransposeMatrixfARB(const GLfloat *m)
+_mesa_LoadTransposeMatrixfARB(GLcontext *ctx, const GLfloat *m)
 {
     GLfloat tm[16];
     if (!m) return;
@@ -490,7 +490,7 @@ _mesa_LoadTransposeMatrixfARB(const GLfloat *m)
 
 
 void GLAPIENTRY
-_mesa_LoadTransposeMatrixdARB(const GLdouble *m)
+_mesa_LoadTransposeMatrixdARB(GLcontext *ctx, const GLdouble *m)
 {
     GLfloat tm[16];
     if (!m) return;
@@ -500,7 +500,7 @@ _mesa_LoadTransposeMatrixdARB(const GLdouble *m)
 
 
 void GLAPIENTRY
-_mesa_MultTransposeMatrixfARB(const GLfloat *m)
+_mesa_MultTransposeMatrixfARB(GLcontext *ctx, const GLfloat *m)
 {
     GLfloat tm[16];
     if (!m) return;
@@ -510,7 +510,7 @@ _mesa_MultTransposeMatrixfARB(const GLfloat *m)
 
 
 void GLAPIENTRY
-_mesa_MultTransposeMatrixdARB(const GLdouble *m)
+_mesa_MultTransposeMatrixdARB(GLcontext *ctx, const GLdouble *m)
 {
     GLfloat tm[16];
     if (!m) return;
@@ -532,7 +532,7 @@ _mesa_MultTransposeMatrixdARB(const GLdouble *m)
  * parameters.
  */
 void GLAPIENTRY
-_mesa_Viewport(ctx, GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height)
+_mesa_Viewport(GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei height)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
     _mesa_set_viewport(ctx, x, y, width, height);
@@ -549,7 +549,7 @@ _mesa_Viewport(ctx, GLcontext *ctx, GLint x, GLint y, GLsizei width, GLsizei hei
  * \param height height of the viewport rectangle.
  */
 void
-_mesa_set_viewport(ctx, GLcontext *ctx, GLint x, GLint y,
+_mesa_set_viewport(GLcontext *ctx, GLint x, GLint y,
 		   GLsizei width, GLsizei height)
 {
     if (MESA_VERBOSE & VERBOSE_API)
@@ -602,7 +602,7 @@ _mesa_set_viewport(ctx, GLcontext *ctx, GLint x, GLint y,
  *                the far clip plane
  */
 void GLAPIENTRY
-_mesa_DepthRange(ctx, GLcontext *ctx, GLclampd nearval, GLclampd farval)
+_mesa_DepthRange(GLcontext *ctx, GLclampd nearval, GLclampd farval)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -705,7 +705,7 @@ calculate_model_project_matrix(GLcontext *ctx)
  * calculate_model_project_matrix() to recalculate the modelview-projection
  * matrix.
  */
-void _mesa_update_modelview_project(ctx, GLcontext *ctx, GLuint new_state)
+void _mesa_update_modelview_project(GLcontext *ctx, GLuint new_state)
 {
     if (new_state & _NEW_MODELVIEW) {
 	_math_matrix_analyse(ctx->ModelviewMatrixStack.Top);
@@ -799,7 +799,7 @@ free_matrix_stack(struct gl_matrix_stack *stack)
  * Initializes each of the matrix stacks and the combined modelview-projection
  * matrix.
  */
-void _mesa_init_matrix(ctx, GLcontext * ctx)
+void _mesa_init_matrix(GLcontext *ctx)
 {
     GLint i;
 
@@ -831,7 +831,7 @@ void _mesa_init_matrix(ctx, GLcontext * ctx)
  * Frees each of the matrix stacks and the combined modelview-projection
  * matrix.
  */
-void _mesa_free_matrix_data(ctx, GLcontext *ctx)
+void _mesa_free_matrix_data(GLcontext *ctx)
 {
     GLint i;
 
@@ -855,7 +855,7 @@ void _mesa_free_matrix_data(ctx, GLcontext *ctx)
  *
  * \todo Move this to a new file with other 'transform' routines.
  */
-void _mesa_init_transform(ctx, GLcontext *ctx)
+void _mesa_init_transform(GLcontext *ctx)
 {
     GLint i;
 
@@ -881,7 +881,7 @@ void _mesa_init_transform(ctx, GLcontext *ctx)
  *
  * \todo Move this to a new file with other 'viewport' routines.
  */
-void _mesa_init_viewport(ctx, GLcontext *ctx)
+void _mesa_init_viewport(GLcontext *ctx)
 {
     GLfloat depthMax = 65535.0F; /* sorf of arbitrary */
 
@@ -906,7 +906,7 @@ void _mesa_init_viewport(ctx, GLcontext *ctx)
  *
  * \todo Move this to a new file with other 'viewport' routines.
  */
-void _mesa_free_viewport_data(ctx, GLcontext *ctx)
+void _mesa_free_viewport_data(GLcontext *ctx)
 {
     _math_matrix_dtr(&ctx->Viewport._WindowMap);
 }

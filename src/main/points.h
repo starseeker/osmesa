@@ -36,22 +36,22 @@
 
 
 extern void GLAPIENTRY
-_mesa_PointSize(ctx, GLcontext *ctx, GLfloat size);
+_mesa_PointSize(GLcontext *ctx, GLfloat size);
 
 extern void GLAPIENTRY
-_mesa_PointParameteriNV(GLenum pname, GLint param);
+_mesa_PointParameteriNV(GLcontext *ctx, GLenum pname, GLint param);
 
 extern void GLAPIENTRY
-_mesa_PointParameterivNV(GLenum pname, const GLint *params);
+_mesa_PointParameterivNV(GLcontext *ctx, GLenum pname, const GLint *params);
 
 extern void GLAPIENTRY
-_mesa_PointParameterfEXT(GLenum pname, GLfloat param);
+_mesa_PointParameterfEXT(GLcontext *ctx, GLenum pname, GLfloat param);
 
 extern void GLAPIENTRY
-_mesa_PointParameterfvEXT(ctx, GLcontext *ctx, GLenum pname, const GLfloat *params);
+_mesa_PointParameterfvEXT(GLcontext *ctx, GLenum pname, const GLfloat *params);
 
 extern void
-_mesa_init_point(ctx, GLcontext *ctx);
+_mesa_init_point(GLcontext *ctx);
 
 
 #endif

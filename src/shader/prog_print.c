@@ -730,7 +730,7 @@ _mesa_print_program_opt(const struct gl_program *prog,
  * Print all of a program's parameters.
  */
 void
-_mesa_print_program_parameters(ctx, GLcontext *ctx, const struct gl_program *prog)
+_mesa_print_program_parameters(GLcontext *ctx, const struct gl_program *prog)
 {
     _mesa_printf("InputsRead: 0x%x\n", prog->InputsRead);
     _mesa_printf("OutputsWritten: 0x%x\n", prog->OutputsWritten);

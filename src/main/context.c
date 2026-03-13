@@ -753,7 +753,7 @@ free_shared_state(GLcontext *ctx, struct gl_shared_state *ss)
  * Initialize fields of gl_current_attrib (aka ctx->Current.*)
  */
 static void
-_mesa_init_current(ctx, GLcontext *ctx)
+_mesa_init_current(GLcontext *ctx)
 {
     GLuint i;
 
@@ -795,7 +795,7 @@ init_natives(struct gl_program_constants *prog)
  * some of these values (such as number of texture units).
  */
 static void
-_mesa_init_constants(ctx, GLcontext *ctx)
+_mesa_init_constants(GLcontext *ctx)
 {
     assert(ctx);
 
@@ -1055,7 +1055,7 @@ alloc_dispatch_table(void)
  * \param driverContext pointer to driver-specific context data
  */
 GLboolean
-_mesa_initialize_context(ctx, GLcontext *ctx,
+_mesa_initialize_context(GLcontext *ctx,
 			 const GLvisual *visual,
 			 GLcontext *share_list,
 			 const struct dd_function_table *driverFunctions,
@@ -1185,7 +1185,7 @@ _mesa_create_context(const GLvisual *visual,
  * \sa _mesa_initialize_context(ctx) and init_attrib_groups().
  */
 void
-_mesa_free_context_data(ctx, GLcontext *ctx)
+_mesa_free_context_data(GLcontext *ctx)
 {
     if (!_mesa_get_current_context()) {
 	/* No current context, but we may need one in order to delete
@@ -1248,7 +1248,7 @@ _mesa_free_context_data(ctx, GLcontext *ctx)
  * Calls _mesa_free_context_data(ctx) and frees the GLcontext structure itself.
  */
 void
-_mesa_destroy_context(ctx, GLcontext *ctx)
+_mesa_destroy_context(GLcontext *ctx)
 {
     if (ctx) {
 	_mesa_free_context_data(ctx);
@@ -1465,7 +1465,7 @@ initialize_framebuffer_size(GLcontext *ctx, GLframebuffer *fb)
  * \param readBuffer  the reading framebuffer
  */
 void
-_mesa_make_current(ctx, GLcontext *newCtx, GLframebuffer *drawBuffer,
+_mesa_make_current(GLcontext *ctx, ctx, GLcontext *newCtx, GLframebuffer *drawBuffer,
 		   GLframebuffer *readBuffer)
 {
     if (MESA_VERBOSE & VERBOSE_API)
@@ -1580,7 +1580,7 @@ _mesa_make_current(ctx, GLcontext *newCtx, GLframebuffer *drawBuffer,
  * be deleted if nobody else is sharing them.
  */
 GLboolean
-_mesa_share_state(ctx, GLcontext *ctx, GLcontext *ctxToShare)
+_mesa_share_state(GLcontext *ctx, GLcontext *ctxToShare)
 {
     if (ctx && ctxToShare && ctx->Shared && ctxToShare->Shared) {
 	_glthread_LOCK_MUTEX(ctx->Shared->Mutex);
@@ -1654,7 +1654,7 @@ _mesa_get_dispatch(GLcontext *ctx)
  * This is called via _mesa_error(ctx).
  */
 void
-_mesa_record_error(ctx, GLcontext *ctx, GLenum error)
+_mesa_record_error(GLcontext *ctx, GLenum error)
 {
     if (!ctx)
 	return;
@@ -1677,7 +1677,7 @@ _mesa_record_error(ctx, GLcontext *ctx, GLenum error)
  * dd_function_table::Finish driver callback, if not NULL.
  */
 void GLAPIENTRY
-_mesa_Finish(ctx, GLcontext *ctx)
+_mesa_Finish(GLcontext *ctx)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
     if (ctx->Driver.Finish) {
@@ -1693,7 +1693,7 @@ _mesa_Finish(ctx, GLcontext *ctx)
  * dd_function_table::Flush driver callback, if not NULL.
  */
 void GLAPIENTRY
-_mesa_Flush(ctx, GLcontext *ctx)
+_mesa_Flush(GLcontext *ctx)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
     if (ctx->Driver.Flush) {

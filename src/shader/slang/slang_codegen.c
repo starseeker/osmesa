@@ -2037,11 +2037,11 @@ _slang_gen_declaration(slang_assemble_ctx *A, slang_operation *oper)
 	    slang_operation dup;
 	    slang_operation_construct(&dup);
 	    slang_operation_copy(&dup, v->initializer);
-	    _slang_simplify(&dup, &A->space, A->atoms);
+	    _slang_simplify(&dup, &A->space, A->atoms, A->gl_ctx);
 	    rhs = _slang_gen_operation(A, &dup);
 	}
 #else
-	_slang_simplify(v->initializer, &A->space, A->atoms);
+	_slang_simplify(v->initializer, &A->space, A->atoms, A->gl_ctx);
 	rhs = _slang_gen_operation(A, v->initializer);
 #endif
 	if (!rhs)
@@ -2965,7 +2965,7 @@ _slang_codegen_global_variable(slang_assemble_ctx *A, slang_variable *var,
 	    lhs->Store = n->Store;
 
 	    /* constant folding, etc */
-	    _slang_simplify(var->initializer, &A->space, A->atoms);
+	    _slang_simplify(var->initializer, &A->space, A->atoms, A->gl_ctx);
 
 	    rhs = _slang_gen_operation(A, var->initializer);
 	    assert(rhs);
@@ -2973,7 +2973,7 @@ _slang_codegen_global_variable(slang_assemble_ctx *A, slang_variable *var,
 	    n = new_seq(n, init);
 	}
 
-	success = _slang_emit_code(n, A->vartable, A->program, GL_FALSE, A->log);
+	success = _slang_emit_code(A->gl_ctx, n, A->vartable, A->program, GL_FALSE, A->log);
 
 	_slang_free_ir_tree(n);
     }
@@ -3037,7 +3037,7 @@ _slang_codegen_function(slang_assemble_ctx * A, slang_function * fun)
     A->CurFunction = fun;
 
     /* fold constant expressions, etc. */
-    _slang_simplify(fun->body, &A->space, A->atoms);
+    _slang_simplify(fun->body, &A->space, A->atoms, A->gl_ctx);
 
 #if 0
     printf("\n*********** simplified %s\n", (char *) fun->header.a_name);
@@ -3082,7 +3082,7 @@ _slang_codegen_function(slang_assemble_ctx * A, slang_function * fun)
 #endif
 
     /* Emit program instructions */
-    success = _slang_emit_code(n, A->vartable, A->program, GL_TRUE, A->log);
+    success = _slang_emit_code(A->gl_ctx, n, A->vartable, A->program, GL_TRUE, A->log);
     _slang_free_ir_tree(n);
 
     /* free codegen context */

@@ -107,7 +107,7 @@ validate_stencil_func(GLcontext *ctx, GLenum func)
  * the dd_function_table::ClearStencil callback.
  */
 void GLAPIENTRY
-_mesa_ClearStencil(ctx, GLcontext *ctx, GLint s)
+_mesa_ClearStencil(GLcontext *ctx, GLint s)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -138,7 +138,7 @@ _mesa_ClearStencil(ctx, GLcontext *ctx, GLint s)
  * driver via the dd_function_table::StencilFunc callback.
  */
 void GLAPIENTRY
-_mesa_StencilFuncSeparateATI(ctx, GLcontext *ctx, GLenum frontfunc, GLenum backfunc, GLint ref, GLuint mask)
+_mesa_StencilFuncSeparateATI(GLcontext *ctx, GLenum frontfunc, GLenum backfunc, GLint ref, GLuint mask)
 {
     const GLint stencilMax = (1 << ctx->DrawBuffer->Visual.stencilBits) - 1;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -192,7 +192,7 @@ _mesa_StencilFuncSeparateATI(ctx, GLcontext *ctx, GLenum frontfunc, GLenum backf
  * driver via the dd_function_table::StencilFunc callback.
  */
 void GLAPIENTRY
-_mesa_StencilFunc(ctx, GLcontext *ctx, GLenum func, GLint ref, GLuint mask)
+_mesa_StencilFunc(GLcontext *ctx, GLenum func, GLint ref, GLuint mask)
 {
     const GLint stencilMax = (1 << ctx->DrawBuffer->Visual.stencilBits) - 1;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -252,7 +252,7 @@ _mesa_StencilFunc(ctx, GLcontext *ctx, GLenum func, GLint ref, GLuint mask)
  * notifies the driver via the dd_function_table::StencilMask callback.
  */
 void GLAPIENTRY
-_mesa_StencilMask(ctx, GLcontext *ctx, GLuint mask)
+_mesa_StencilMask(GLcontext *ctx, GLuint mask)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -295,7 +295,7 @@ _mesa_StencilMask(ctx, GLcontext *ctx, GLuint mask)
  * driver via the dd_function_table::StencilOp callback.
  */
 void GLAPIENTRY
-_mesa_StencilOp(ctx, GLcontext *ctx, GLenum fail, GLenum zfail, GLenum zpass)
+_mesa_StencilOp(GLcontext *ctx, GLenum fail, GLenum zfail, GLenum zpass)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -352,7 +352,7 @@ _mesa_StencilOp(ctx, GLcontext *ctx, GLenum fail, GLenum zfail, GLenum zpass)
 #if _HAVE_FULL_GL
 /* GL_EXT_stencil_two_side */
 void GLAPIENTRY
-_mesa_ActiveStencilFaceEXT(ctx, GLcontext *ctx, GLenum face)
+_mesa_ActiveStencilFaceEXT(GLcontext *ctx, GLenum face)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -379,7 +379,7 @@ _mesa_ActiveStencilFaceEXT(ctx, GLcontext *ctx, GLenum face)
  * instead.
  */
 void GLAPIENTRY
-_mesa_StencilOpSeparate(ctx, GLcontext *ctx, GLenum face, GLenum sfail, GLenum zfail, GLenum zpass)
+_mesa_StencilOpSeparate(GLcontext *ctx, GLenum face, GLenum sfail, GLenum zfail, GLenum zpass)
 {
     GLboolean set = GL_FALSE;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -433,7 +433,7 @@ _mesa_StencilOpSeparate(ctx, GLcontext *ctx, GLenum face, GLenum sfail, GLenum z
 
 /* OpenGL 2.0 */
 void GLAPIENTRY
-_mesa_StencilFuncSeparate(ctx, GLcontext *ctx, GLenum face, GLenum func, GLint ref, GLuint mask)
+_mesa_StencilFuncSeparate(GLcontext *ctx, GLenum face, GLenum func, GLint ref, GLuint mask)
 {
     const GLint stencilMax = (1 << ctx->DrawBuffer->Visual.stencilBits) - 1;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -471,7 +471,7 @@ _mesa_StencilFuncSeparate(ctx, GLcontext *ctx, GLenum face, GLenum func, GLint r
 
 /* OpenGL 2.0 */
 void GLAPIENTRY
-_mesa_StencilMaskSeparate(ctx, GLcontext *ctx, GLenum face, GLuint mask)
+_mesa_StencilMaskSeparate(GLcontext *ctx, GLenum face, GLuint mask)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -498,7 +498,7 @@ _mesa_StencilMaskSeparate(ctx, GLcontext *ctx, GLenum face, GLuint mask)
  * Update derived stencil state.
  */
 void
-_mesa_update_stencil(ctx, GLcontext *ctx)
+_mesa_update_stencil(GLcontext *ctx)
 {
     if (ctx->Extensions.EXT_stencil_two_side) {
 	ctx->Stencil._TestTwoSide = ctx->Stencil.TestTwoSide;
@@ -523,7 +523,7 @@ _mesa_update_stencil(ctx, GLcontext *ctx)
  * Initializes __GLcontextRec::Stencil attribute group.
  */
 void
-_mesa_init_stencil(ctx, GLcontext *ctx)
+_mesa_init_stencil(GLcontext *ctx)
 {
     ctx->Stencil.Enabled = GL_FALSE;
     ctx->Stencil.TestTwoSide = GL_FALSE;

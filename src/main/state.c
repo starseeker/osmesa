@@ -1157,7 +1157,7 @@ update_tricaps(GLcontext *ctx, GLbitfield new_state)
  * _mesa_update_lighting(ctx) and _mesa_update_tnl_spaces(ctx).
  */
 void
-_mesa_update_state_locked(ctx, GLcontext *ctx)
+_mesa_update_state_locked(GLcontext *ctx)
 {
     GLbitfield new_state = ctx->NewState;
 
@@ -1245,7 +1245,7 @@ _mesa_update_state_locked(ctx, GLcontext *ctx)
 /* This is the usual entrypoint for state updates:
  */
 void
-_mesa_update_state(ctx, GLcontext *ctx)
+_mesa_update_state(GLcontext *ctx)
 {
     _mesa_lock_context_textures(ctx);
     _mesa_update_state_locked(ctx);

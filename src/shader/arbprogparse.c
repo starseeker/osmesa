@@ -3629,7 +3629,7 @@ enable_parser_extensions(GLcontext *ctx, grammar id)
  * \return GL_TRUE on sucess, GL_FALSE on error
  */
 static GLboolean
-_mesa_parse_arb_program(ctx, GLcontext *ctx, GLenum target,
+_mesa_parse_arb_program(GLcontext *ctx, GLenum target,
 			const GLubyte *str, GLsizei len,
 			struct arb_program *program)
 {
@@ -3829,7 +3829,7 @@ _mesa_parse_arb_program(ctx, GLcontext *ctx, GLenum target,
 
 
 void
-_mesa_parse_arb_fragment_program(GLcontext* ctx, GLenum target,
+_mesa_parse_arb_fragment_program(GLcontext *ctx, GLcontext* ctx, GLenum target,
 				 const GLvoid *str, GLsizei len,
 				 struct gl_fragment_program *program)
 {
@@ -3944,4 +3944,4 @@ _mesa_parse_arb_vertex_program(GLcontext *ctx, GLenum target,
  * c-file-style: "stroustrup"
  * End:
  * ex: shiftwidth=4 tabstop=8
- */)
+ */

@@ -117,7 +117,7 @@ _mesa_copy_texture_state(const GLcontext *src, GLcontext *dst)
 	dst->Texture.Unit[i].Combine.ScaleShiftA = src->Texture.Unit[i].Combine.ScaleShiftA;
 
 	/* copy texture object bindings, not contents of texture objects */
-	_mesa_lock_context_textures(ctx, dst);
+	_mesa_lock_context_textures(dst);
 
 	_mesa_reference_texobj(&dst->Texture.Unit[i].Current1D,
 			       src->Texture.Unit[i].Current1D);
@@ -130,7 +130,7 @@ _mesa_copy_texture_state(const GLcontext *src, GLcontext *dst)
 	_mesa_reference_texobj(&dst->Texture.Unit[i].CurrentRect,
 			       src->Texture.Unit[i].CurrentRect);
 
-	_mesa_unlock_context_textures(ctx, dst);
+	_mesa_unlock_context_textures(dst);
     }
 }
 
@@ -139,7 +139,7 @@ _mesa_copy_texture_state(const GLcontext *src, GLcontext *dst)
  * For debugging
  */
 void
-_mesa_print_texunit_state(ctx, GLcontext *ctx, GLuint unit)
+_mesa_print_texunit_state(GLcontext *ctx, GLuint unit)
 {
     const struct gl_texture_unit *texUnit = ctx->Texture.Unit + unit;
     _mesa_printf("Texture Unit %d\n", unit);
@@ -291,7 +291,7 @@ calculate_derived_texenv(struct gl_tex_env_combine_state *state,
 
 
 void GLAPIENTRY
-_mesa_TexEnvfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *param)
+_mesa_TexEnvfv(GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *param)
 {
     GLuint maxUnit;
     struct gl_texture_unit *texUnit;
@@ -720,7 +720,7 @@ _mesa_TexEnvfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *
 
 
 void GLAPIENTRY
-_mesa_TexEnvf(GLenum target, GLenum pname, GLfloat param)
+_mesa_TexEnvf(GLcontext *ctx, GLenum target, GLenum pname, GLfloat param)
 {
     GLfloat p[4] = {0.0};
     p[0] = param;
@@ -729,7 +729,7 @@ _mesa_TexEnvf(GLenum target, GLenum pname, GLfloat param)
 
 
 void GLAPIENTRY
-_mesa_TexEnvi(GLenum target, GLenum pname, GLint param)
+_mesa_TexEnvi(GLcontext *ctx, GLenum target, GLenum pname, GLint param)
 {
     GLfloat p[4];
     p[0] = (GLfloat) param;
@@ -739,7 +739,7 @@ _mesa_TexEnvi(GLenum target, GLenum pname, GLint param)
 
 
 void GLAPIENTRY
-_mesa_TexEnviv(GLenum target, GLenum pname, const GLint *param)
+_mesa_TexEnviv(GLcontext *ctx, GLenum target, GLenum pname, const GLint *param)
 {
     GLfloat p[4];
     if (pname == GL_TEXTURE_ENV_COLOR) {
@@ -756,7 +756,7 @@ _mesa_TexEnviv(GLenum target, GLenum pname, const GLint *param)
 
 
 void GLAPIENTRY
-_mesa_GetTexEnvfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
+_mesa_GetTexEnvfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
     GLuint maxUnit;
     const struct gl_texture_unit *texUnit;
@@ -903,7 +903,7 @@ _mesa_GetTexEnvfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *par
 
 
 void GLAPIENTRY
-_mesa_GetTexEnviv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
+_mesa_GetTexEnviv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
     GLuint maxUnit;
     const struct gl_texture_unit *texUnit;
@@ -1060,7 +1060,7 @@ _mesa_GetTexEnviv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *param
 /**********************************************************************/
 
 static GLboolean
-_mesa_validate_texture_wrap_mode(ctx, GLcontext * ctx,
+_mesa_validate_texture_wrap_mode(GLcontext *ctx,
 				 GLenum target, GLenum eparam)
 {
     const struct gl_extensions * const e = & ctx->Extensions;
@@ -1089,7 +1089,7 @@ _mesa_validate_texture_wrap_mode(ctx, GLcontext * ctx,
 
 
 void GLAPIENTRY
-_mesa_TexParameterf(GLenum target, GLenum pname, GLfloat param)
+_mesa_TexParameterf(GLcontext *ctx, GLenum target, GLenum pname, GLfloat param)
 {
     GLfloat p[4] = {0.0};
     p[0] = param;
@@ -1098,7 +1098,7 @@ _mesa_TexParameterf(GLenum target, GLenum pname, GLfloat param)
 
 
 void GLAPIENTRY
-_mesa_TexParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params)
+_mesa_TexParameterfv(GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params)
 {
     const GLenum eparam = (GLenum)(GLint) params[0];
     struct gl_texture_unit *texUnit;
@@ -1409,7 +1409,7 @@ _mesa_TexParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, const GLf
 
 
 void GLAPIENTRY
-_mesa_TexParameteri(GLenum target, GLenum pname, GLint param)
+_mesa_TexParameteri(GLcontext *ctx, GLenum target, GLenum pname, GLint param)
 {
     GLfloat fparam[4];
     if (pname == GL_TEXTURE_PRIORITY)
@@ -1422,7 +1422,7 @@ _mesa_TexParameteri(GLenum target, GLenum pname, GLint param)
 
 
 void GLAPIENTRY
-_mesa_TexParameteriv(GLenum target, GLenum pname, const GLint *params)
+_mesa_TexParameteriv(GLcontext *ctx, GLenum target, GLenum pname, const GLint *params)
 {
     GLfloat fparam[4];
     if (pname == GL_TEXTURE_BORDER_COLOR) {
@@ -1442,7 +1442,7 @@ _mesa_TexParameteriv(GLenum target, GLenum pname, const GLint *params)
 
 
 void GLAPIENTRY
-_mesa_GetTexLevelParameterfv(GLenum target, GLint level,
+_mesa_GetTexLevelParameterfv(GLcontext *ctx, GLenum target, GLint level,
 			     GLenum pname, GLfloat *params)
 {
     GLint iparam;
@@ -1484,7 +1484,7 @@ tex_image_dimensions(GLcontext *ctx, GLenum target)
 
 
 void GLAPIENTRY
-_mesa_GetTexLevelParameteriv(ctx, GLcontext *ctx, GLenum target, GLint level,
+_mesa_GetTexLevelParameteriv(GLcontext *ctx, GLenum target, GLint level,
 			     GLenum pname, GLint *params)
 {
     const struct gl_texture_unit *texUnit;
@@ -1717,7 +1717,7 @@ out:
 
 
 void GLAPIENTRY
-_mesa_GetTexParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
+_mesa_GetTexParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
     struct gl_texture_unit *texUnit;
     struct gl_texture_object *obj;
@@ -1852,7 +1852,7 @@ _mesa_GetTexParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloa
 
 
 void GLAPIENTRY
-_mesa_GetTexParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
+_mesa_GetTexParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
     struct gl_texture_unit *texUnit;
     struct gl_texture_object *obj;
@@ -1994,7 +1994,7 @@ _mesa_GetTexParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint 
 
 #if FEATURE_texgen
 void GLAPIENTRY
-_mesa_TexGenfv(ctx, GLcontext *ctx, GLenum coord, GLenum pname, const GLfloat *params)
+_mesa_TexGenfv(GLcontext *ctx, GLenum coord, GLenum pname, const GLfloat *params)
 {
     struct gl_texture_unit *texUnit;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -2213,7 +2213,7 @@ _mesa_TexGenfv(ctx, GLcontext *ctx, GLenum coord, GLenum pname, const GLfloat *p
 
 
 void GLAPIENTRY
-_mesa_TexGeniv(GLenum coord, GLenum pname, const GLint *params)
+_mesa_TexGeniv(GLcontext *ctx, GLenum coord, GLenum pname, const GLint *params)
 {
     GLfloat p[4];
     p[0] = (GLfloat) params[0];
@@ -2238,7 +2238,7 @@ _mesa_TexGend(GLenum coord, GLenum pname, GLdouble param)
 
 
 void GLAPIENTRY
-_mesa_TexGendv(GLenum coord, GLenum pname, const GLdouble *params)
+_mesa_TexGendv(GLcontext *ctx, GLenum coord, GLenum pname, const GLdouble *params)
 {
     GLfloat p[4];
     p[0] = (GLfloat) params[0];
@@ -2254,7 +2254,7 @@ _mesa_TexGendv(GLenum coord, GLenum pname, const GLdouble *params)
 
 
 void GLAPIENTRY
-_mesa_TexGenf(GLenum coord, GLenum pname, GLfloat param)
+_mesa_TexGenf(GLcontext *ctx, GLenum coord, GLenum pname, GLfloat param)
 {
     GLfloat p[4] = {0.0};
     p[0] = param;
@@ -2273,7 +2273,7 @@ _mesa_TexGeni(GLenum coord, GLenum pname, GLint param)
 
 
 void GLAPIENTRY
-_mesa_GetTexGendv(ctx, GLcontext *ctx, GLenum coord, GLenum pname, GLdouble *params)
+_mesa_GetTexGendv(GLcontext *ctx, GLenum coord, GLenum pname, GLdouble *params)
 {
     const struct gl_texture_unit *texUnit;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -2343,7 +2343,7 @@ _mesa_GetTexGendv(ctx, GLcontext *ctx, GLenum coord, GLenum pname, GLdouble *par
 
 
 void GLAPIENTRY
-_mesa_GetTexGenfv(ctx, GLcontext *ctx, GLenum coord, GLenum pname, GLfloat *params)
+_mesa_GetTexGenfv(GLcontext *ctx, GLenum coord, GLenum pname, GLfloat *params)
 {
     const struct gl_texture_unit *texUnit;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -2413,7 +2413,7 @@ _mesa_GetTexGenfv(ctx, GLcontext *ctx, GLenum coord, GLenum pname, GLfloat *para
 
 
 void GLAPIENTRY
-_mesa_GetTexGeniv(ctx, GLcontext *ctx, GLenum coord, GLenum pname, GLint *params)
+_mesa_GetTexGeniv(GLcontext *ctx, GLenum coord, GLenum pname, GLint *params)
 {
     const struct gl_texture_unit *texUnit;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -2508,7 +2508,7 @@ _mesa_GetTexGeniv(ctx, GLcontext *ctx, GLenum coord, GLenum pname, GLint *params
 
 /* GL_ARB_multitexture */
 void GLAPIENTRY
-_mesa_ActiveTextureARB(ctx, GLcontext *ctx, GLenum texture)
+_mesa_ActiveTextureARB(GLcontext *ctx, GLenum texture)
 {
     const GLuint texUnit = texture - GL_TEXTURE0;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -2542,7 +2542,7 @@ _mesa_ActiveTextureARB(ctx, GLcontext *ctx, GLenum texture)
 
 /* GL_ARB_multitexture */
 void GLAPIENTRY
-_mesa_ClientActiveTextureARB(ctx, GLcontext *ctx, GLenum texture)
+_mesa_ClientActiveTextureARB(GLcontext *ctx, GLenum texture)
 {
     GLuint texUnit = texture - GL_TEXTURE0;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -2805,7 +2805,7 @@ update_texture_state(GLcontext *ctx)
  * Update texture-related derived state.
  */
 void
-_mesa_update_texture(ctx, GLcontext *ctx, GLuint new_state)
+_mesa_update_texture(GLcontext *ctx, GLuint new_state)
 {
     if (new_state & _NEW_TEXTURE_MATRIX)
 	update_texture_matrices(ctx);
@@ -2922,7 +2922,7 @@ init_texture_unit(GLcontext *ctx, GLuint unit)
  * Initialize texture state for the given context.
  */
 GLboolean
-_mesa_init_texture(ctx, GLcontext *ctx)
+_mesa_init_texture(GLcontext *ctx)
 {
     GLuint i;
 
@@ -2957,7 +2957,7 @@ _mesa_init_texture(ctx, GLcontext *ctx)
  * Free dynamically-allocated texture data attached to the given context.
  */
 void
-_mesa_free_texture_data(ctx, GLcontext *ctx)
+_mesa_free_texture_data(GLcontext *ctx)
 {
     GLuint u;
 

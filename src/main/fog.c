@@ -32,7 +32,7 @@
 
 
 void GLAPIENTRY
-_mesa_Fogf(GLenum pname, GLfloat param)
+_mesa_Fogf(GLcontext *ctx, GLenum pname, GLfloat param)
 {
     GLfloat p[4] = {0.0};
     p[0] = param;
@@ -50,7 +50,7 @@ _mesa_Fogi(GLenum pname, GLint param)
 
 
 void GLAPIENTRY
-_mesa_Fogiv(GLenum pname, const GLint *params)
+_mesa_Fogiv(GLcontext *ctx, GLenum pname, const GLint *params)
 {
     GLfloat p[4] = {0};
     switch (pname) {
@@ -85,7 +85,7 @@ _mesa_Fogiv(GLenum pname, const GLint *params)
 
 
 void GLAPIENTRY
-_mesa_Fogfv(ctx, GLcontext *ctx, GLenum pname, const GLfloat *params)
+_mesa_Fogfv(GLcontext *ctx, GLenum pname, const GLfloat *params)
 {
     GLenum m;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -174,7 +174,7 @@ _mesa_Fogfv(ctx, GLcontext *ctx, GLenum pname, const GLfloat *params)
 /*****                      Initialization                        *****/
 /**********************************************************************/
 
-void _mesa_init_fog(ctx, GLcontext * ctx)
+void _mesa_init_fog(GLcontext *ctx)
 {
     /* Fog group */
     ctx->Fog.Enabled = GL_FALSE;

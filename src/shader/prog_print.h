@@ -63,7 +63,7 @@ _mesa_print_program_opt(const struct gl_program *prog, gl_prog_print_mode mode,
 			GLboolean lineNumbers);
 
 extern void
-_mesa_print_program_parameters(ctx, GLcontext *ctx, const struct gl_program *prog);
+_mesa_print_program_parameters(GLcontext *ctx, const struct gl_program *prog);
 
 extern void
 _mesa_print_parameter_list(const struct gl_program_parameter_list *list);

@@ -147,12 +147,12 @@ struct vbo_save_context {
 };
 
 
-void vbo_save_init(ctx, GLcontext *ctx);
-void vbo_save_destroy(ctx, GLcontext *ctx);
+void vbo_save_init(GLcontext *ctx);
+void vbo_save_destroy(GLcontext *ctx);
 
 /* save_loopback.c:
  */
-void vbo_loopback_vertex_list(ctx, GLcontext *ctx,
+void vbo_loopback_vertex_list(GLcontext *ctx,
 			      const GLfloat *buffer,
 			      const GLubyte *attrsz,
 			      const struct _mesa_prim *prim,
@@ -162,14 +162,14 @@ void vbo_loopback_vertex_list(ctx, GLcontext *ctx,
 
 /* Callbacks:
  */
-void vbo_save_EndList(ctx, GLcontext *ctx);
-void vbo_save_NewList(ctx, GLcontext *ctx, GLuint list, GLenum mode);
-void vbo_save_EndCallList(ctx, GLcontext *ctx);
-void vbo_save_BeginCallList(ctx, GLcontext *ctx, struct mesa_display_list *list);
-void vbo_save_SaveFlushVertices(ctx, GLcontext *ctx);
-GLboolean vbo_save_NotifyBegin(ctx, GLcontext *ctx, GLenum mode);
+void vbo_save_EndList(GLcontext *ctx);
+void vbo_save_NewList(GLcontext *ctx, GLuint list, GLenum mode);
+void vbo_save_EndCallList(GLcontext *ctx);
+void vbo_save_BeginCallList(GLcontext *ctx, struct mesa_display_list *list);
+void vbo_save_SaveFlushVertices(GLcontext *ctx);
+GLboolean vbo_save_NotifyBegin(GLcontext *ctx, GLenum mode);
 
-void vbo_save_playback_vertex_list(ctx, GLcontext *ctx, void *data);
+void vbo_save_playback_vertex_list(GLcontext *ctx, void *data);
 
 void vbo_save_api_init(struct vbo_save_context *save);
 

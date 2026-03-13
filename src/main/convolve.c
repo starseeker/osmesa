@@ -103,7 +103,7 @@ base_filter_format(GLenum format)
 
 
 void GLAPIENTRY
-_mesa_ConvolutionFilter1D(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLsizei width, GLenum format, GLenum type, const GLvoid *image)
+_mesa_ConvolutionFilter1D(GLcontext *ctx, GLenum target, GLenum internalFormat, GLsizei width, GLenum format, GLenum type, const GLvoid *image)
 {
     GLint baseFormat;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -192,7 +192,7 @@ _mesa_ConvolutionFilter1D(ctx, GLcontext *ctx, GLenum target, GLenum internalFor
 
 
 void GLAPIENTRY
-_mesa_ConvolutionFilter2D(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *image)
+_mesa_ConvolutionFilter2D(GLcontext *ctx, GLenum target, GLenum internalFormat, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *image)
 {
     GLint baseFormat;
     GLint i;
@@ -293,7 +293,7 @@ _mesa_ConvolutionFilter2D(ctx, GLcontext *ctx, GLenum target, GLenum internalFor
 
 
 void GLAPIENTRY
-_mesa_ConvolutionParameterf(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat param)
+_mesa_ConvolutionParameterf(GLcontext *ctx, GLenum target, GLenum pname, GLfloat param)
 {
     GLuint c;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -334,7 +334,7 @@ _mesa_ConvolutionParameterf(ctx, GLcontext *ctx, GLenum target, GLenum pname, GL
 
 
 void GLAPIENTRY
-_mesa_ConvolutionParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params)
+_mesa_ConvolutionParameterfv(GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params)
 {
     GLuint c;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -384,7 +384,7 @@ _mesa_ConvolutionParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, c
 
 
 void GLAPIENTRY
-_mesa_ConvolutionParameteri(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint param)
+_mesa_ConvolutionParameteri(GLcontext *ctx, GLenum target, GLenum pname, GLint param)
 {
     GLuint c;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -425,7 +425,7 @@ _mesa_ConvolutionParameteri(ctx, GLcontext *ctx, GLenum target, GLenum pname, GL
 
 
 void GLAPIENTRY
-_mesa_ConvolutionParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, const GLint *params)
+_mesa_ConvolutionParameteriv(GLcontext *ctx, GLenum target, GLenum pname, const GLint *params)
 {
     GLuint c;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -488,7 +488,7 @@ _mesa_ConvolutionParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, c
 
 
 void GLAPIENTRY
-_mesa_CopyConvolutionFilter1D(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLint x, GLint y, GLsizei width)
+_mesa_CopyConvolutionFilter1D(GLcontext *ctx, GLenum target, GLenum internalFormat, GLint x, GLint y, GLsizei width)
 {
     GLint baseFormat;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -515,7 +515,7 @@ _mesa_CopyConvolutionFilter1D(ctx, GLcontext *ctx, GLenum target, GLenum interna
 
 
 void GLAPIENTRY
-_mesa_CopyConvolutionFilter2D(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLint x, GLint y, GLsizei width, GLsizei height)
+_mesa_CopyConvolutionFilter2D(GLcontext *ctx, GLenum target, GLenum internalFormat, GLint x, GLint y, GLsizei width, GLsizei height)
 {
     GLint baseFormat;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -546,7 +546,7 @@ _mesa_CopyConvolutionFilter2D(ctx, GLcontext *ctx, GLenum target, GLenum interna
 
 
 void GLAPIENTRY
-_mesa_GetConvolutionFilter(ctx, GLcontext *ctx, GLenum target, GLenum format, GLenum type,
+_mesa_GetConvolutionFilter(GLcontext *ctx, GLenum target, GLenum format, GLenum type,
 			   GLvoid *image)
 {
     struct gl_convolution_attrib *filter;
@@ -622,7 +622,7 @@ _mesa_GetConvolutionFilter(ctx, GLcontext *ctx, GLenum target, GLenum format, GL
 
 
 void GLAPIENTRY
-_mesa_GetConvolutionParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
+_mesa_GetConvolutionParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
     const struct gl_convolution_attrib *conv;
     GLuint c;
@@ -682,7 +682,7 @@ _mesa_GetConvolutionParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname
 
 
 void GLAPIENTRY
-_mesa_GetConvolutionParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
+_mesa_GetConvolutionParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
     const struct gl_convolution_attrib *conv;
     GLuint c;
@@ -751,7 +751,7 @@ _mesa_GetConvolutionParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname
 
 
 void GLAPIENTRY
-_mesa_GetSeparableFilter(ctx, GLcontext *ctx, GLenum target, GLenum format, GLenum type,
+_mesa_GetSeparableFilter(GLcontext *ctx, GLenum target, GLenum format, GLenum type,
 			 GLvoid *row, GLvoid *column, GLvoid *span)
 {
     const GLint colStart = MAX_CONVOLUTION_WIDTH * 4;
@@ -841,7 +841,7 @@ _mesa_GetSeparableFilter(ctx, GLcontext *ctx, GLenum target, GLenum format, GLen
 
 
 void GLAPIENTRY
-_mesa_SeparableFilter2D(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *row, const GLvoid *column)
+_mesa_SeparableFilter2D(GLcontext *ctx, GLenum target, GLenum internalFormat, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *row, const GLvoid *column)
 {
     const GLint colStart = MAX_CONVOLUTION_WIDTH * 4;
     GLint baseFormat;

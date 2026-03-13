@@ -287,7 +287,7 @@ store_colortable_entries(GLcontext *ctx, struct gl_color_table *table,
 
 
 void GLAPIENTRY
-_mesa_ColorTable(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat,
+_mesa_ColorTable(GLcontext *ctx, GLenum target, GLenum internalFormat,
 		 GLsizei width, GLenum format, GLenum type,
 		 const GLvoid *data)
 {
@@ -481,7 +481,7 @@ _mesa_ColorTable(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat,
 
 
 void GLAPIENTRY
-_mesa_ColorSubTable(ctx, GLcontext *ctx, GLenum target, GLsizei start,
+_mesa_ColorSubTable(GLcontext *ctx, GLenum target, GLsizei start,
 		    GLsizei count, GLenum format, GLenum type,
 		    const GLvoid *data)
 {
@@ -593,7 +593,7 @@ _mesa_ColorSubTable(ctx, GLcontext *ctx, GLenum target, GLsizei start,
 
 
 void GLAPIENTRY
-_mesa_CopyColorTable(ctx, GLcontext *ctx, GLenum target, GLenum internalformat,
+_mesa_CopyColorTable(GLcontext *ctx, GLenum target, GLenum internalformat,
 		     GLint x, GLint y, GLsizei width)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -605,7 +605,7 @@ _mesa_CopyColorTable(ctx, GLcontext *ctx, GLenum target, GLenum internalformat,
 
 
 void GLAPIENTRY
-_mesa_CopyColorSubTable(ctx, GLcontext *ctx, GLenum target, GLsizei start,
+_mesa_CopyColorSubTable(GLcontext *ctx, GLenum target, GLsizei start,
 			GLint x, GLint y, GLsizei width)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -616,7 +616,7 @@ _mesa_CopyColorSubTable(ctx, GLcontext *ctx, GLenum target, GLsizei start,
 
 
 void GLAPIENTRY
-_mesa_GetColorTable(ctx, GLcontext *ctx, GLenum target, GLenum format,
+_mesa_GetColorTable(GLcontext *ctx, GLenum target, GLenum format,
 		    GLenum type, GLvoid *data)
 {
     struct gl_texture_unit *texUnit = &ctx->Texture.Unit[ctx->Texture.CurrentUnit];
@@ -767,7 +767,7 @@ _mesa_GetColorTable(ctx, GLcontext *ctx, GLenum target, GLenum format,
 
 
 void GLAPIENTRY
-_mesa_ColorTableParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params)
+_mesa_ColorTableParameterfv(GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -827,7 +827,7 @@ _mesa_ColorTableParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, co
 
 
 void GLAPIENTRY
-_mesa_ColorTableParameteriv(GLenum target, GLenum pname, const GLint *params)
+_mesa_ColorTableParameteriv(GLcontext *ctx, GLenum target, GLenum pname, const GLint *params)
 {
     GLfloat fparams[4] = {0.0};
     if (pname == GL_COLOR_TABLE_SGI ||
@@ -849,7 +849,7 @@ _mesa_ColorTableParameteriv(GLenum target, GLenum pname, const GLint *params)
 
 
 void GLAPIENTRY
-_mesa_GetColorTableParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
+_mesa_GetColorTableParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
     struct gl_texture_unit *texUnit = &ctx->Texture.Unit[ctx->Texture.CurrentUnit];
     struct gl_color_table *table = NULL;
@@ -994,7 +994,7 @@ _mesa_GetColorTableParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname,
 
 
 void GLAPIENTRY
-_mesa_GetColorTableParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
+_mesa_GetColorTableParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
     struct gl_texture_unit *texUnit = &ctx->Texture.Unit[ctx->Texture.CurrentUnit];
     struct gl_color_table *table = NULL;
@@ -1200,7 +1200,7 @@ _mesa_free_colortable_data(struct gl_color_table *p)
  * Initialize all colortables for a context.
  */
 void
-_mesa_init_colortables(ctx, GLcontext * ctx)
+_mesa_init_colortables(GLcontext *ctx)
 {
     GLuint i;
     for (i = 0; i < COLORTABLE_MAX; i++) {
@@ -1214,7 +1214,7 @@ _mesa_init_colortables(ctx, GLcontext * ctx)
  * Free all colortable data for a context
  */
 void
-_mesa_free_colortables_data(ctx, GLcontext *ctx)
+_mesa_free_colortables_data(GLcontext *ctx)
 {
     GLuint i;
     for (i = 0; i < COLORTABLE_MAX; i++) {

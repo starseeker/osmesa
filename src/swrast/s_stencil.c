@@ -963,7 +963,7 @@ stencil_and_ztest_pixels(GLcontext *ctx, SWspan *span, GLuint face)
  * GL_FALSE = all fragments failed.
  */
 GLboolean
-_swrast_stencil_and_ztest_span(ctx, GLcontext *ctx, SWspan *span)
+_swrast_stencil_and_ztest_span(GLcontext *ctx, SWspan *span)
 {
     if (span->arrayMask & SPAN_XY)
 	return stencil_and_ztest_pixels(ctx, span, span->facing);
@@ -1012,7 +1012,7 @@ clip_span(GLuint bufferWidth, GLuint bufferHeight,
  * Output:  stencil - the array of stencil values
  */
 void
-_swrast_read_stencil_span(ctx, GLcontext *ctx, struct gl_renderbuffer *rb,
+_swrast_read_stencil_span(GLcontext *ctx, struct gl_renderbuffer *rb,
 			  GLint n, GLint x, GLint y, GLstencil stencil[])
 {
     if (y < 0 || y >= (GLint) rb->Height ||
@@ -1049,7 +1049,7 @@ _swrast_read_stencil_span(ctx, GLcontext *ctx, struct gl_renderbuffer *rb,
  *         stencil - the array of stencil values
  */
 void
-_swrast_write_stencil_span(ctx, GLcontext *ctx, GLint n, GLint x, GLint y,
+_swrast_write_stencil_span(GLcontext *ctx, GLint n, GLint x, GLint y,
 			   const GLstencil stencil[])
 {
     struct gl_framebuffer *fb = ctx->DrawBuffer;
@@ -1097,7 +1097,7 @@ _swrast_write_stencil_span(ctx, GLcontext *ctx, GLint n, GLint x, GLint y,
  * Clear the stencil buffer.
  */
 void
-_swrast_clear_stencil_buffer(ctx, GLcontext *ctx, struct gl_renderbuffer *rb)
+_swrast_clear_stencil_buffer(GLcontext *ctx, struct gl_renderbuffer *rb)
 {
     const GLubyte stencilBits = ctx->DrawBuffer->Visual.stencilBits;
     const GLuint mask = ctx->Stencil.WriteMask[0];

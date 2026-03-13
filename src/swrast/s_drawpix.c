@@ -813,7 +813,7 @@ draw_depth_stencil_pixels(GLcontext *ctx, GLint x, GLint y,
  * By time we get here, all error checking will have been done.
  */
 void
-_swrast_DrawPixels(ctx, GLcontext *ctx,
+_swrast_DrawPixels(GLcontext *ctx,
 		   GLint x, GLint y,
 		   GLsizei width, GLsizei height,
 		   GLenum format, GLenum type,
@@ -903,7 +903,7 @@ _swrast_DrawPixels(ctx, GLcontext *ctx,
  * Execute glDrawDepthPixelsMESA().
  */
 void
-_swrast_DrawDepthPixelsMESA(ctx, GLcontext *ctx,
+_swrast_DrawDepthPixelsMESA(GLcontext *ctx,
 			    GLint x, GLint y,
 			    GLsizei width, GLsizei height,
 			    GLenum colorFormat, GLenum colorType,

@@ -41,7 +41,7 @@
 
 
 void GLAPIENTRY
-_mesa_ClipPlane(ctx, GLcontext *ctx, GLenum plane, const GLdouble *eq)
+_mesa_ClipPlane(GLcontext *ctx, GLenum plane, const GLdouble *eq)
 {
     GLint p;
     GLfloat equation[4];
@@ -97,7 +97,7 @@ _mesa_ClipPlane(ctx, GLcontext *ctx, GLenum plane, const GLdouble *eq)
 
 
 void GLAPIENTRY
-_mesa_GetClipPlane(ctx, GLcontext *ctx, GLenum plane, GLdouble *equation)
+_mesa_GetClipPlane(GLcontext *ctx, GLenum plane, GLdouble *equation)
 {
     GLint p;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -115,7 +115,7 @@ _mesa_GetClipPlane(ctx, GLcontext *ctx, GLenum plane, GLdouble *equation)
 }
 
 void GLAPIENTRY
-_mesa_CullParameterfvEXT(ctx, GLcontext *ctx, GLenum cap, GLfloat *v)
+_mesa_CullParameterfvEXT(GLcontext *ctx, GLenum cap, GLfloat *v)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -143,7 +143,7 @@ _mesa_CullParameterfvEXT(ctx, GLcontext *ctx, GLenum cap, GLfloat *v)
 }
 
 void GLAPIENTRY
-_mesa_CullParameterdvEXT(GLenum cap, GLdouble *v)
+_mesa_CullParameterdvEXT(GLcontext *ctx, GLenum cap, GLdouble *v)
 {
     GLfloat f[4];
 

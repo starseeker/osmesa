@@ -30,29 +30,29 @@
 
 
 extern void
-_swrast_write_zoomed_rgba_span(ctx, GLcontext *ctx, GLint imgX, GLint imgY,
+_swrast_write_zoomed_rgba_span(GLcontext *ctx, GLint imgX, GLint imgY,
 			       const SWspan *span, const GLvoid *rgba);
 
 extern void
-_swrast_write_zoomed_rgb_span(ctx, GLcontext *ctx, GLint imgX, GLint imgY,
+_swrast_write_zoomed_rgb_span(GLcontext *ctx, GLint imgX, GLint imgY,
 			      const SWspan *span, const GLvoid *rgb);
 
 extern void
-_swrast_write_zoomed_index_span(ctx, GLcontext *ctx, GLint imgX, GLint imgY,
+_swrast_write_zoomed_index_span(GLcontext *ctx, GLint imgX, GLint imgY,
 				const SWspan *span);
 
 extern void
-_swrast_write_zoomed_depth_span(ctx, GLcontext *ctx, GLint imgX, GLint imgY,
+_swrast_write_zoomed_depth_span(GLcontext *ctx, GLint imgX, GLint imgY,
 				const SWspan *span);
 
 
 extern void
-_swrast_write_zoomed_stencil_span(ctx, GLcontext *ctx, GLint imgX, GLint imgY,
+_swrast_write_zoomed_stencil_span(GLcontext *ctx, GLint imgX, GLint imgY,
 				  GLint width, GLint spanX, GLint spanY,
 				  const GLstencil stencil[]);
 
 extern void
-_swrast_write_zoomed_z_span(ctx, GLcontext *ctx, GLint imgX, GLint imgY,
+_swrast_write_zoomed_z_span(GLcontext *ctx, GLint imgX, GLint imgY,
 			    GLint width, GLint spanX, GLint spanY,
 			    const GLvoid *z);
 

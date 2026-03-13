@@ -40,7 +40,7 @@
 
 
 void GLAPIENTRY
-_mesa_EnableVertexAttribArrayARB(ctx, GLcontext *ctx, GLuint index)
+_mesa_EnableVertexAttribArrayARB(GLcontext *ctx, GLuint index)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -58,7 +58,7 @@ _mesa_EnableVertexAttribArrayARB(ctx, GLcontext *ctx, GLuint index)
 
 
 void GLAPIENTRY
-_mesa_DisableVertexAttribArrayARB(ctx, GLcontext *ctx, GLuint index)
+_mesa_DisableVertexAttribArrayARB(GLcontext *ctx, GLuint index)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -76,7 +76,7 @@ _mesa_DisableVertexAttribArrayARB(ctx, GLcontext *ctx, GLuint index)
 
 
 void GLAPIENTRY
-_mesa_GetVertexAttribdvARB(ctx, GLcontext *ctx, GLuint index, GLenum pname, GLdouble *params)
+_mesa_GetVertexAttribdvARB(GLcontext *ctx, GLuint index, GLenum pname, GLdouble *params)
 {
     GLfloat fparams[4] = {0.0};
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -93,7 +93,7 @@ _mesa_GetVertexAttribdvARB(ctx, GLcontext *ctx, GLuint index, GLenum pname, GLdo
 
 
 void GLAPIENTRY
-_mesa_GetVertexAttribfvARB(ctx, GLcontext *ctx, GLuint index, GLenum pname, GLfloat *params)
+_mesa_GetVertexAttribfvARB(GLcontext *ctx, GLuint index, GLenum pname, GLfloat *params)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -142,7 +142,7 @@ _mesa_GetVertexAttribfvARB(ctx, GLcontext *ctx, GLuint index, GLenum pname, GLfl
 
 
 void GLAPIENTRY
-_mesa_GetVertexAttribivARB(ctx, GLcontext *ctx, GLuint index, GLenum pname, GLint *params)
+_mesa_GetVertexAttribivARB(GLcontext *ctx, GLuint index, GLenum pname, GLint *params)
 {
     GLfloat fparams[4] = {0.0};
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -159,7 +159,7 @@ _mesa_GetVertexAttribivARB(ctx, GLcontext *ctx, GLuint index, GLenum pname, GLin
 
 
 void GLAPIENTRY
-_mesa_GetVertexAttribPointervARB(ctx, GLcontext *ctx, GLuint index, GLenum pname, GLvoid **pointer)
+_mesa_GetVertexAttribPointervARB(GLcontext *ctx, GLuint index, GLenum pname, GLvoid **pointer)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -185,7 +185,7 @@ _mesa_GetVertexAttribPointervARB(ctx, GLcontext *ctx, GLuint index, GLenum pname
  * \return GL_TRUE if id is a program, else GL_FALSE.
  */
 GLboolean GLAPIENTRY
-_mesa_IsProgramARB(ctx, GLcontext *ctx, GLuint id)
+_mesa_IsProgramARB(GLcontext *ctx, GLuint id)
 {
     struct gl_program *prog = NULL;
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, GL_FALSE);
@@ -202,7 +202,7 @@ _mesa_IsProgramARB(ctx, GLcontext *ctx, GLuint id)
 
 
 void GLAPIENTRY
-_mesa_ProgramStringARB(ctx, GLcontext *ctx, GLenum target, GLenum format, GLsizei len,
+_mesa_ProgramStringARB(GLcontext *ctx, GLenum target, GLenum format, GLsizei len,
 		       const GLvoid *string)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -236,7 +236,7 @@ _mesa_ProgramStringARB(ctx, GLcontext *ctx, GLenum target, GLenum format, GLsize
 
 
 void GLAPIENTRY
-_mesa_ProgramEnvParameter4dARB(GLenum target, GLuint index,
+_mesa_ProgramEnvParameter4dARB(GLcontext *ctx, GLenum target, GLuint index,
 			       GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
     _mesa_ProgramEnvParameter4fARB(ctx, target, index, (GLfloat) x, (GLfloat) y,
@@ -245,7 +245,7 @@ _mesa_ProgramEnvParameter4dARB(GLenum target, GLuint index,
 
 
 void GLAPIENTRY
-_mesa_ProgramEnvParameter4dvARB(GLenum target, GLuint index,
+_mesa_ProgramEnvParameter4dvARB(GLcontext *ctx, GLenum target, GLuint index,
 				const GLdouble *params)
 {
     _mesa_ProgramEnvParameter4fARB(ctx, target, index, (GLfloat) params[0],
@@ -255,7 +255,7 @@ _mesa_ProgramEnvParameter4dvARB(GLenum target, GLuint index,
 
 
 void GLAPIENTRY
-_mesa_ProgramEnvParameter4fARB(ctx, GLcontext *ctx, GLenum target, GLuint index,
+_mesa_ProgramEnvParameter4fARB(GLcontext *ctx, GLenum target, GLuint index,
 			       GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -284,7 +284,7 @@ _mesa_ProgramEnvParameter4fARB(ctx, GLcontext *ctx, GLenum target, GLuint index,
 
 
 void GLAPIENTRY
-_mesa_ProgramEnvParameter4fvARB(GLenum target, GLuint index,
+_mesa_ProgramEnvParameter4fvARB(GLcontext *ctx, GLenum target, GLuint index,
 				const GLfloat *params)
 {
     _mesa_ProgramEnvParameter4fARB(ctx, target, index, params[0], params[1],
@@ -293,7 +293,7 @@ _mesa_ProgramEnvParameter4fvARB(GLenum target, GLuint index,
 
 
 void GLAPIENTRY
-_mesa_ProgramEnvParameters4fvEXT(ctx, GLcontext *ctx, GLenum target, GLuint index, GLsizei count,
+_mesa_ProgramEnvParameters4fvEXT(GLcontext *ctx, GLenum target, GLuint index, GLsizei count,
 				 const GLfloat *params)
 {
     GLint i;
@@ -334,7 +334,7 @@ _mesa_ProgramEnvParameters4fvEXT(ctx, GLcontext *ctx, GLenum target, GLuint inde
 
 
 void GLAPIENTRY
-_mesa_GetProgramEnvParameterdvARB(ctx, GLcontext *ctx, GLenum target, GLuint index,
+_mesa_GetProgramEnvParameterdvARB(GLcontext *ctx, GLenum target, GLuint index,
 				  GLdouble *params)
 {
     GLfloat fparams[4] = {0.0};
@@ -350,7 +350,7 @@ _mesa_GetProgramEnvParameterdvARB(ctx, GLcontext *ctx, GLenum target, GLuint ind
 
 
 void GLAPIENTRY
-_mesa_GetProgramEnvParameterfvARB(ctx, GLcontext *ctx, GLenum target, GLuint index,
+_mesa_GetProgramEnvParameterfvARB(GLcontext *ctx, GLenum target, GLuint index,
 				  GLfloat *params)
 {
     FLUSH_VERTICES(ctx, _NEW_PROGRAM);
@@ -383,7 +383,7 @@ _mesa_GetProgramEnvParameterfvARB(ctx, GLcontext *ctx, GLenum target, GLuint ind
  * Note, this function is also used by the GL_NV_fragment_program extension.
  */
 void GLAPIENTRY
-_mesa_ProgramLocalParameter4fARB(ctx, GLcontext *ctx, GLenum target, GLuint index,
+_mesa_ProgramLocalParameter4fARB(GLcontext *ctx, GLenum target, GLuint index,
 				 GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
     struct gl_program *prog;
@@ -424,7 +424,7 @@ _mesa_ProgramLocalParameter4fARB(ctx, GLcontext *ctx, GLenum target, GLuint inde
  * Note, this function is also used by the GL_NV_fragment_program extension.
  */
 void GLAPIENTRY
-_mesa_ProgramLocalParameter4fvARB(GLenum target, GLuint index,
+_mesa_ProgramLocalParameter4fvARB(GLcontext *ctx, GLenum target, GLuint index,
 				  const GLfloat *params)
 {
     _mesa_ProgramLocalParameter4fARB(ctx, target, index, params[0], params[1],
@@ -433,7 +433,7 @@ _mesa_ProgramLocalParameter4fvARB(GLenum target, GLuint index,
 
 
 void GLAPIENTRY
-_mesa_ProgramLocalParameters4fvEXT(ctx, GLcontext *ctx, GLenum target, GLuint index, GLsizei count,
+_mesa_ProgramLocalParameters4fvEXT(GLcontext *ctx, GLenum target, GLuint index, GLsizei count,
 				   const GLfloat *params)
 {
     struct gl_program *prog;
@@ -477,7 +477,7 @@ _mesa_ProgramLocalParameters4fvEXT(ctx, GLcontext *ctx, GLenum target, GLuint in
  * Note, this function is also used by the GL_NV_fragment_program extension.
  */
 void GLAPIENTRY
-_mesa_ProgramLocalParameter4dARB(GLenum target, GLuint index,
+_mesa_ProgramLocalParameter4dARB(GLcontext *ctx, GLenum target, GLuint index,
 				 GLdouble x, GLdouble y,
 				 GLdouble z, GLdouble w)
 {
@@ -490,7 +490,7 @@ _mesa_ProgramLocalParameter4dARB(GLenum target, GLuint index,
  * Note, this function is also used by the GL_NV_fragment_program extension.
  */
 void GLAPIENTRY
-_mesa_ProgramLocalParameter4dvARB(GLenum target, GLuint index,
+_mesa_ProgramLocalParameter4dvARB(GLcontext *ctx, GLenum target, GLuint index,
 				  const GLdouble *params)
 {
     _mesa_ProgramLocalParameter4fARB(ctx, target, index,
@@ -503,7 +503,7 @@ _mesa_ProgramLocalParameter4dvARB(GLenum target, GLuint index,
  * Note, this function is also used by the GL_NV_fragment_program extension.
  */
 void GLAPIENTRY
-_mesa_GetProgramLocalParameterfvARB(ctx, GLcontext *ctx, GLenum target, GLuint index,
+_mesa_GetProgramLocalParameterfvARB(GLcontext *ctx, GLenum target, GLuint index,
 				    GLfloat *params)
 {
     const struct gl_program *prog;
@@ -544,7 +544,7 @@ _mesa_GetProgramLocalParameterfvARB(ctx, GLcontext *ctx, GLenum target, GLuint i
  * Note, this function is also used by the GL_NV_fragment_program extension.
  */
 void GLAPIENTRY
-_mesa_GetProgramLocalParameterdvARB(ctx, GLcontext *ctx, GLenum target, GLuint index,
+_mesa_GetProgramLocalParameterdvARB(GLcontext *ctx, GLenum target, GLuint index,
 				    GLdouble *params)
 {
     GLfloat floatParams[4] = {0.0};
@@ -556,7 +556,7 @@ _mesa_GetProgramLocalParameterdvARB(ctx, GLcontext *ctx, GLenum target, GLuint i
 
 
 void GLAPIENTRY
-_mesa_GetProgramivARB(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
+_mesa_GetProgramivARB(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
     const struct gl_program_constants *limits;
     struct gl_program *prog;
@@ -732,7 +732,7 @@ _mesa_GetProgramivARB(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *p
 
 
 void GLAPIENTRY
-_mesa_GetProgramStringARB(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLvoid *string)
+_mesa_GetProgramStringARB(GLcontext *ctx, GLenum target, GLenum pname, GLvoid *string)
 {
     const struct gl_program *prog;
     char *dst = (char *) string;

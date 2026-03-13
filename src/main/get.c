@@ -67,7 +67,7 @@
 
 
 void GLAPIENTRY
-_mesa_GetBooleanv(ctx, GLcontext *ctx, GLenum pname, GLboolean *params)
+_mesa_GetBooleanv(GLcontext *ctx, GLenum pname, GLboolean *params)
 {
     int itmp = 0;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -1889,7 +1889,7 @@ _mesa_GetBooleanv(ctx, GLcontext *ctx, GLenum pname, GLboolean *params)
 }
 
 void GLAPIENTRY
-_mesa_GetFloatv(ctx, GLcontext *ctx, GLenum pname, GLfloat *params)
+_mesa_GetFloatv(GLcontext *ctx, GLenum pname, GLfloat *params)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -3705,7 +3705,7 @@ _mesa_GetFloatv(ctx, GLcontext *ctx, GLenum pname, GLfloat *params)
 }
 
 void GLAPIENTRY
-_mesa_GetIntegerv(ctx, GLcontext *ctx, GLenum pname, GLint *params)
+_mesa_GetIntegerv(GLcontext *ctx, GLenum pname, GLint *params)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -5522,7 +5522,7 @@ _mesa_GetIntegerv(ctx, GLcontext *ctx, GLenum pname, GLint *params)
 
 
 void GLAPIENTRY
-_mesa_GetDoublev(GLenum pname, GLdouble *params)
+_mesa_GetDoublev(GLcontext *ctx, GLenum pname, GLdouble *params)
 {
     const GLfloat magic = -1234.5F;
     GLfloat values[16];

@@ -32,11 +32,11 @@
 
 
 extern void
-_swrast_blend_span(ctx, GLcontext *ctx, struct gl_renderbuffer *rb, SWspan *span);
+_swrast_blend_span(GLcontext *ctx, struct gl_renderbuffer *rb, SWspan *span);
 
 
 extern void
-_swrast_choose_blend_func(ctx, GLcontext *ctx, GLenum chanType);
+_swrast_choose_blend_func(GLcontext *ctx, GLenum chanType);
 
 
 #endif

@@ -190,7 +190,7 @@ draw_wide_line(GLcontext *ctx, SWspan *span, GLboolean xMajor)
 
 
 void
-_swrast_add_spec_terms_line(ctx, GLcontext *ctx,
+_swrast_add_spec_terms_line(GLcontext *ctx,
 			    const SWvertex *v0,
 			    const SWvertex *v1)
 {
@@ -209,9 +209,9 @@ _swrast_add_spec_terms_line(ctx, GLcontext *ctx,
 
 #ifdef DEBUG
 extern void
-_mesa_print_line_function(ctx, GLcontext *ctx);  /* silence compiler warning */
+_mesa_print_line_function(GLcontext *ctx);  /* silence compiler warning */
 void
-_mesa_print_line_function(ctx, GLcontext *ctx)
+_mesa_print_line_function(GLcontext *ctx)
 {
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
 
@@ -261,7 +261,7 @@ do {                                    \
  * tests to this code.
  */
 void
-_swrast_choose_line(ctx, GLcontext *ctx)
+_swrast_choose_line(GLcontext *ctx)
 {
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
     const GLboolean rgbmode = ctx->Visual.rgbMode;

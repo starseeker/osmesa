@@ -37,13 +37,13 @@
 
 
 extern void GLAPIENTRY
-_mesa_LineWidth(ctx, GLcontext *ctx, GLfloat width);
+_mesa_LineWidth(GLcontext *ctx, GLfloat width);
 
 extern void GLAPIENTRY
-_mesa_LineStipple(ctx, GLcontext *ctx, GLint factor, GLushort pattern);
+_mesa_LineStipple(GLcontext *ctx, GLint factor, GLushort pattern);
 
 extern void GLAPIENTRY
-_mesa_init_line(ctx, GLcontext * ctx);
+_mesa_init_line(GLcontext *ctx);
 
 #endif
 

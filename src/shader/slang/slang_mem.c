@@ -121,12 +121,13 @@ is_valid_address(const slang_mempool *pool, void *addr)
  * Alloc 'bytes' from shader mempool.
  */
 void *
-_slang_alloc(GLcontext *ctx, GLuint bytes)
+_slang_alloc(GLuint bytes)
 {
 #if USE_MALLOC_FREE
     return calloc(1,bytes);
 #else
     slang_mempool *pool;
+    GET_CURRENT_CONTEXT(ctx);
     pool = (slang_mempool *) ctx->Shader.MemPool;
 
     if (bytes == 0)
@@ -185,7 +186,7 @@ _slang_realloc(void *oldBuffer, GLuint oldSize, GLuint newSize)
 	void *newBuffer = _slang_alloc(newSize);
 
 #if 0
-	if (GLcontext *ctx, oldBuffer) {
+	if (oldBuffer) {
 	    slang_mempool *pool = (slang_mempool *) ctx->Shader.MemPool;
 	    ASSERT(is_valid_address(pool, oldBuffer));
 	}
@@ -227,7 +228,7 @@ _slang_free(void *addr)
 #if USE_MALLOC_FREE
     free(addr);
 #else
-    if (GLcontext *ctx, addr) {
+    if (addr) {
 	//	//slang_mempool *pool = (slang_mempool *) ctx->Shader.MemPool;
 	//ASSERT(is_valid_address(pool, addr));
     }

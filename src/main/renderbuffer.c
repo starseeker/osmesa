@@ -927,7 +927,7 @@ put_mono_values_ushort4(GLcontext *ctx, struct gl_renderbuffer *rb,
  * Get/PutValues functions.
  */
 GLboolean
-_mesa_soft_renderbuffer_storage(ctx, GLcontext *ctx, struct gl_renderbuffer *rb,
+_mesa_soft_renderbuffer_storage(GLcontext *ctx, struct gl_renderbuffer *rb,
 				GLenum internalFormat,
 				GLuint width, GLuint height)
 {
@@ -1553,7 +1553,7 @@ _mesa_new_soft_renderbuffer(GLcontext *ctx, GLuint name)
  * rendering!
  */
 GLboolean
-_mesa_add_color_renderbuffers(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
+_mesa_add_color_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb,
 			      GLuint rgbBits, GLuint alphaBits,
 			      GLboolean frontLeft, GLboolean backLeft,
 			      GLboolean frontRight, GLboolean backRight)
@@ -1622,7 +1622,7 @@ _mesa_add_color_renderbuffers(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
  * rendering!
  */
 GLboolean
-_mesa_add_color_index_renderbuffers(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
+_mesa_add_color_index_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb,
 				    GLuint indexBits,
 				    GLboolean frontLeft, GLboolean backLeft,
 				    GLboolean frontRight, GLboolean backRight)
@@ -1678,7 +1678,7 @@ _mesa_add_color_index_renderbuffers(ctx, GLcontext *ctx, struct gl_framebuffer *
  * rendering!
  */
 GLboolean
-_mesa_add_alpha_renderbuffers(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
+_mesa_add_alpha_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb,
 			      GLuint alphaBits,
 			      GLboolean frontLeft, GLboolean backLeft,
 			      GLboolean frontRight, GLboolean backRight)
@@ -1763,7 +1763,7 @@ _mesa_add_alpha_renderbuffers(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
  * copy the back buffer alpha channel into the front buffer alpha channel.
  */
 void
-_mesa_copy_soft_alpha_renderbuffers(ctx, GLcontext *ctx, struct gl_framebuffer *fb)
+_mesa_copy_soft_alpha_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb)
 {
     if (fb->Attachment[BUFFER_FRONT_LEFT].Renderbuffer &&
 	fb->Attachment[BUFFER_BACK_LEFT].Renderbuffer)
@@ -1787,7 +1787,7 @@ _mesa_copy_soft_alpha_renderbuffers(ctx, GLcontext *ctx, struct gl_framebuffer *
  * rendering!
  */
 GLboolean
-_mesa_add_depth_renderbuffer(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
+_mesa_add_depth_renderbuffer(GLcontext *ctx, struct gl_framebuffer *fb,
 			     GLuint depthBits)
 {
     struct gl_renderbuffer *rb;
@@ -1831,7 +1831,7 @@ _mesa_add_depth_renderbuffer(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
  * rendering!
  */
 GLboolean
-_mesa_add_stencil_renderbuffer(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
+_mesa_add_stencil_renderbuffer(GLcontext *ctx, struct gl_framebuffer *fb,
 			       GLuint stencilBits)
 {
     struct gl_renderbuffer *rb;
@@ -1874,7 +1874,7 @@ _mesa_add_stencil_renderbuffer(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
  * rendering!
  */
 GLboolean
-_mesa_add_accum_renderbuffer(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
+_mesa_add_accum_renderbuffer(GLcontext *ctx, struct gl_framebuffer *fb,
 			     GLuint redBits, GLuint greenBits,
 			     GLuint blueBits, GLuint alphaBits)
 {
@@ -1915,7 +1915,7 @@ _mesa_add_accum_renderbuffer(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
  * NOTE: color-index aux buffers not supported.
  */
 GLboolean
-_mesa_add_aux_renderbuffers(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
+_mesa_add_aux_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb,
 			    GLuint colorBits, GLuint numBuffers)
 {
     GLuint i;
@@ -1958,7 +1958,7 @@ _mesa_add_aux_renderbuffers(ctx, GLcontext *ctx, struct gl_framebuffer *fb,
  * call the individual _mesa_add_*_renderbuffer() routines directly.
  */
 void
-_mesa_add_soft_renderbuffers(struct gl_framebuffer *fb,
+_mesa_add_soft_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb,
 			     GLboolean color,
 			     GLboolean depth,
 			     GLboolean stencil,
@@ -2037,7 +2037,7 @@ _mesa_add_soft_renderbuffers(struct gl_framebuffer *fb,
  * Attach a renderbuffer to a framebuffer.
  */
 void
-_mesa_add_renderbuffer(struct gl_framebuffer *fb,
+_mesa_add_renderbuffer(GLcontext *ctx, struct gl_framebuffer *fb,
 		       GLuint bufferName, struct gl_renderbuffer *rb)
 {
     assert(fb);
@@ -2064,11 +2064,11 @@ _mesa_add_renderbuffer(struct gl_framebuffer *fb,
      * use a "renderbuffer adaptor/wrapper" to do the necessary conversions.
      */
     if (rb->_BaseFormat == GL_RGBA) {
-	if (GLcontext *ctx, CHAN_BITS == 16 && rb->DataType == GL_UNSIGNED_BYTE) {
+	if(CHAN_BITS == 16 && rb->DataType == GL_UNSIGNED_BYTE) {
 	    rb = _mesa_new_renderbuffer_16wrap8(ctx, rb);
-	} else if (GLcontext *ctx, CHAN_BITS == 32 && rb->DataType == GL_UNSIGNED_BYTE) {
+	} else if(CHAN_BITS == 32 && rb->DataType == GL_UNSIGNED_BYTE) {
 	    rb = _mesa_new_renderbuffer_32wrap8(ctx, rb);
-	} else if (GLcontext *ctx, CHAN_BITS == 32 && rb->DataType == GL_UNSIGNED_SHORT) {
+	} else if(CHAN_BITS == 32 && rb->DataType == GL_UNSIGNED_SHORT) {
 	    rb = _mesa_new_renderbuffer_32wrap16(ctx, rb);
 	}
     }

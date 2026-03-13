@@ -47,7 +47,7 @@
  * Just used for feedback mode.
  */
 GLboolean
-_swrast_culltriangle(ctx, GLcontext *ctx,
+_swrast_culltriangle(GLcontext *ctx,
 		     const SWvertex *v0,
 		     const SWvertex *v1,
 		     const SWvertex *v2)
@@ -929,7 +929,7 @@ nodraw_triangle(GLcontext *ctx,
  * draw the triangle, then restore the original primary color.
  * Inefficient, but seldom needed.
  */
-void _swrast_add_spec_terms_triangle(ctx, GLcontext *ctx,
+void _swrast_add_spec_terms_triangle(GLcontext *ctx,
 				     const SWvertex *v0,
 				     const SWvertex *v1,
 				     const SWvertex *v2)
@@ -1007,7 +1007,7 @@ do {						\
  * remove tests to this code.
  */
 void
-_swrast_choose_triangle(ctx, GLcontext *ctx)
+_swrast_choose_triangle(GLcontext *ctx)
 {
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
     const GLboolean rgbmode = ctx->Visual.rgbMode;

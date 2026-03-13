@@ -434,7 +434,7 @@ update_wrapper(GLcontext *ctx, const struct gl_renderbuffer_attachment *att)
  * \sa _mesa_framebuffer_renderbuffer
  */
 void
-_mesa_render_texture(ctx, GLcontext *ctx,
+_mesa_render_texture(GLcontext *ctx,
 		     struct gl_framebuffer *fb,
 		     struct gl_renderbuffer_attachment *att)
 {
@@ -451,7 +451,7 @@ _mesa_render_texture(ctx, GLcontext *ctx,
 
 
 void
-_mesa_finish_render_texture(ctx, GLcontext *ctx,
+_mesa_finish_render_texture(GLcontext *ctx,
 			    struct gl_renderbuffer_attachment *att)
 {
     /* do nothing */

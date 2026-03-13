@@ -55,7 +55,7 @@ fxt1_decode_1(const void *texture, GLint stride,
  * Called during context initialization.
  */
 void
-_mesa_init_texture_fxt1(ctx, GLcontext *ctx)
+_mesa_init_texture_fxt1(GLcontext *ctx)
 {
     (void) ctx;
 }
@@ -1349,7 +1349,7 @@ fxt1_encode(GLuint width, GLuint height, GLint comps,
 	GLint newWidth = (width + 7) & ~7;
 	GLint newHeight = (height + 3) & ~3;
 	newSource = malloc(comps * newWidth * newHeight * sizeof(GLchan));
-	if (GLcontext *ctx, !newSource) {
+	if(!newSource) {
 	    _mesa_error(ctx, GL_OUT_OF_MEMORY, "texture compression");
 	    goto cleanUp;
 	}
@@ -1368,7 +1368,7 @@ fxt1_encode(GLuint width, GLuint height, GLint comps,
 	const GLchan *src = (const GLchan *) source;
 	GLubyte *dest = (GLubyte *) malloc(n * sizeof(GLubyte));
 	GLuint i;
-	if (GLcontext *ctx, !dest) {
+	if(!dest) {
 	    _mesa_error(ctx, GL_OUT_OF_MEMORY, "texture compression");
 	    goto cleanUp;
 	}

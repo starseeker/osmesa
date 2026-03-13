@@ -444,7 +444,7 @@ spec_tex_aa_tri(GLcontext *ctx,
  * appropriate antialiased triangle rasterizer function.
  */
 void
-_swrast_set_aa_triangle_function(ctx, GLcontext *ctx)
+_swrast_set_aa_triangle_function(GLcontext *ctx)
 {
     ASSERT(ctx->Polygon.SmoothFlag);
 

@@ -143,7 +143,7 @@ error_check_format_type(GLcontext *ctx, GLenum format, GLenum type,
  * Execute glDrawPixels
  */
 void GLAPIENTRY
-_mesa_DrawPixels(ctx, GLcontext *ctx, GLsizei width, GLsizei height,
+_mesa_DrawPixels(GLcontext *ctx, GLsizei width, GLsizei height,
 		 GLenum format, GLenum type, const GLvoid *pixels)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);

@@ -30,15 +30,15 @@
 #if _HAVE_FULL_GL
 
 extern GLuint
-_mesa_get_compressed_formats(ctx, GLcontext *ctx, GLint *formats, GLboolean all);
+_mesa_get_compressed_formats(GLcontext *ctx, GLint *formats, GLboolean all);
 
 extern GLuint
-_mesa_compressed_texture_size(ctx, GLcontext *ctx,
+_mesa_compressed_texture_size(GLcontext *ctx,
 			      GLsizei width, GLsizei height, GLsizei depth,
 			      GLuint mesaFormat);
 
 extern GLuint
-_mesa_compressed_texture_size_glenum(ctx, GLcontext *ctx,
+_mesa_compressed_texture_size_glenum(GLcontext *ctx,
 				     GLsizei width, GLsizei height,
 				     GLsizei depth, GLenum glformat);
 
@@ -53,10 +53,10 @@ _mesa_compressed_image_address(GLint col, GLint row, GLint img,
 
 
 extern void
-_mesa_init_texture_s3tc(ctx, GLcontext *ctx);
+_mesa_init_texture_s3tc(GLcontext *ctx);
 
 extern void
-_mesa_init_texture_fxt1(ctx, GLcontext *ctx);
+_mesa_init_texture_fxt1(GLcontext *ctx);
 
 
 #else /* _HAVE_FULL_GL */

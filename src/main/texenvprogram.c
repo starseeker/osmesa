@@ -1285,7 +1285,7 @@ static GLuint hash_key(const struct state_key *key)
  * This function generates that program and puts it into effect.
  */
 void
-_mesa_UpdateTexEnvProgram(ctx, GLcontext *ctx)
+_mesa_UpdateTexEnvProgram(GLcontext *ctx)
 {
     struct state_key key;
     GLuint hash;
@@ -1336,7 +1336,7 @@ _mesa_UpdateTexEnvProgram(ctx, GLcontext *ctx)
 }
 
 
-void _mesa_TexEnvProgramCacheInit(ctx, GLcontext *ctx)
+void _mesa_TexEnvProgramCacheInit(GLcontext *ctx)
 {
     ctx->Texture.env_fp_cache.ctx = ctx;
     ctx->Texture.env_fp_cache.size = 17;
@@ -1347,7 +1347,7 @@ void _mesa_TexEnvProgramCacheInit(ctx, GLcontext *ctx)
 }
 
 
-void _mesa_TexEnvProgramCacheDestroy(ctx, GLcontext *ctx)
+void _mesa_TexEnvProgramCacheDestroy(GLcontext *ctx)
 {
     clear_cache(&ctx->Texture.env_fp_cache);
     free(ctx->Texture.env_fp_cache.items);

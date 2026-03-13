@@ -861,7 +861,7 @@ blend_general(GLcontext *ctx, GLuint n, const GLubyte mask[],
  * Result: the ctx->Color.BlendFunc pointer is updated.
  */
 void
-_swrast_choose_blend_func(ctx, GLcontext *ctx, GLenum chanType)
+_swrast_choose_blend_func(GLcontext *ctx, GLenum chanType)
 {
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
     const GLenum eq = ctx->Color.BlendEquationRGB;
@@ -940,7 +940,7 @@ _swrast_choose_blend_func(ctx, GLcontext *ctx, GLenum chanType)
  * pixel coordinates.
  */
 void
-_swrast_blend_span(ctx, GLcontext *ctx, struct gl_renderbuffer *rb, SWspan *span)
+_swrast_blend_span(GLcontext *ctx, struct gl_renderbuffer *rb, SWspan *span)
 {
     SWcontext *swrast = SWRAST_CONTEXT(ctx);
     void *rbPixels;

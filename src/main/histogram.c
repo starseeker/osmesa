@@ -40,7 +40,7 @@
  * Update the min/max values from an array of fragment colors.
  */
 void
-_mesa_update_minmax(ctx, GLcontext *ctx, GLuint n, const GLfloat rgba[][4])
+_mesa_update_minmax(GLcontext *ctx, GLuint n, const GLfloat rgba[][4])
 {
     GLuint i;
     for (i = 0; i < n; i++) {
@@ -71,7 +71,7 @@ _mesa_update_minmax(ctx, GLcontext *ctx, GLuint n, const GLfloat rgba[][4])
  * Update the histogram values from an array of fragment colors.
  */
 void
-_mesa_update_histogram(ctx, GLcontext *ctx, GLuint n, const GLfloat rgba[][4])
+_mesa_update_histogram(GLcontext *ctx, GLuint n, const GLfloat rgba[][4])
 {
     const GLint max = ctx->Histogram.Width - 1;
     GLfloat w = (GLfloat) max;
@@ -652,7 +652,7 @@ base_histogram_format(GLenum format)
 
 
 void GLAPIENTRY
-_mesa_GetMinmax(ctx, GLcontext *ctx, GLenum target, GLboolean reset, GLenum format, GLenum type, GLvoid *values)
+_mesa_GetMinmax(GLcontext *ctx, GLenum target, GLboolean reset, GLenum format, GLenum type, GLvoid *values)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -734,7 +734,7 @@ _mesa_GetMinmax(ctx, GLcontext *ctx, GLenum target, GLboolean reset, GLenum form
 
 
 void GLAPIENTRY
-_mesa_GetHistogram(ctx, GLcontext *ctx, GLenum target, GLboolean reset, GLenum format, GLenum type, GLvoid *values)
+_mesa_GetHistogram(GLcontext *ctx, GLenum target, GLboolean reset, GLenum format, GLenum type, GLvoid *values)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -812,7 +812,7 @@ _mesa_GetHistogram(ctx, GLcontext *ctx, GLenum target, GLboolean reset, GLenum f
 
 
 void GLAPIENTRY
-_mesa_GetHistogramParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
+_mesa_GetHistogramParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -858,7 +858,7 @@ _mesa_GetHistogramParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, 
 
 
 void GLAPIENTRY
-_mesa_GetHistogramParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
+_mesa_GetHistogramParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -904,7 +904,7 @@ _mesa_GetHistogramParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, 
 
 
 void GLAPIENTRY
-_mesa_GetMinmaxParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
+_mesa_GetMinmaxParameterfv(GLcontext *ctx, GLenum target, GLenum pname, GLfloat *params)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -927,7 +927,7 @@ _mesa_GetMinmaxParameterfv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLf
 
 
 void GLAPIENTRY
-_mesa_GetMinmaxParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
+_mesa_GetMinmaxParameteriv(GLcontext *ctx, GLenum target, GLenum pname, GLint *params)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -950,7 +950,7 @@ _mesa_GetMinmaxParameteriv(ctx, GLcontext *ctx, GLenum target, GLenum pname, GLi
 
 
 void GLAPIENTRY
-_mesa_Histogram(ctx, GLcontext *ctx, GLenum target, GLsizei width, GLenum internalFormat, GLboolean sink)
+_mesa_Histogram(GLcontext *ctx, GLenum target, GLsizei width, GLenum internalFormat, GLboolean sink)
 {
     GLuint i;
     GLboolean error = GL_FALSE;
@@ -1028,7 +1028,7 @@ _mesa_Histogram(ctx, GLcontext *ctx, GLenum target, GLsizei width, GLenum intern
 
 
 void GLAPIENTRY
-_mesa_Minmax(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLboolean sink)
+_mesa_Minmax(GLcontext *ctx, GLenum target, GLenum internalFormat, GLboolean sink)
 {
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
@@ -1055,7 +1055,7 @@ _mesa_Minmax(ctx, GLcontext *ctx, GLenum target, GLenum internalFormat, GLboolea
 
 
 void GLAPIENTRY
-_mesa_ResetHistogram(ctx, GLcontext *ctx, GLenum target)
+_mesa_ResetHistogram(GLcontext *ctx, GLenum target)
 {
     GLuint i;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx); /* sideeffects */
@@ -1082,7 +1082,7 @@ _mesa_ResetHistogram(ctx, GLcontext *ctx, GLenum target)
 
 
 void GLAPIENTRY
-_mesa_ResetMinmax(ctx, GLcontext *ctx, GLenum target)
+_mesa_ResetMinmax(GLcontext *ctx, GLenum target)
 {
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
 
@@ -1113,7 +1113,7 @@ _mesa_ResetMinmax(ctx, GLcontext *ctx, GLenum target)
 /*****                      Initialization                        *****/
 /**********************************************************************/
 
-void _mesa_init_histogram(ctx, GLcontext * ctx)
+void _mesa_init_histogram(GLcontext *ctx)
 {
     int i;
 

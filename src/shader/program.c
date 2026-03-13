@@ -48,7 +48,7 @@ struct gl_program _mesa_DummyProgram;
  * Init context's vertex/fragment program state
  */
 void
-_mesa_init_program(ctx, GLcontext *ctx)
+_mesa_init_program(GLcontext *ctx)
 {
     GLuint i;
 
@@ -89,7 +89,7 @@ _mesa_init_program(ctx, GLcontext *ctx)
  * Free a context's vertex/fragment program state
  */
 void
-_mesa_free_program_data(ctx, GLcontext *ctx)
+_mesa_free_program_data(GLcontext *ctx)
 {
 #if FEATURE_NV_vertex_program || FEATURE_ARB_vertex_program
     if (ctx->VertexProgram.Current) {
@@ -125,7 +125,7 @@ _mesa_free_program_data(ctx, GLcontext *ctx)
  * This is generally called from within the parsers.
  */
 void
-_mesa_set_program_error(ctx, GLcontext *ctx, GLint pos, const char *string)
+_mesa_set_program_error(GLcontext *ctx, GLint pos, const char *string)
 {
     ctx->Program.ErrorPos = pos;
     free((void *) ctx->Program.ErrorString);
@@ -264,7 +264,7 @@ _mesa_new_program(GLcontext *ctx, GLenum target, GLuint id)
  * by a device driver function.
  */
 void
-_mesa_delete_program(ctx, GLcontext *ctx, struct gl_program *prog)
+_mesa_delete_program(GLcontext *ctx, struct gl_program *prog)
 {
     (void) ctx;
     ASSERT(prog);
@@ -434,7 +434,7 @@ compatible_program_targets(GLenum t1, GLenum t2)
  * and glBindProgramARB.
  */
 void GLAPIENTRY
-_mesa_BindProgram(ctx, GLcontext *ctx, GLenum target, GLuint id)
+_mesa_BindProgram(GLcontext *ctx, GLenum target, GLuint id)
 {
     struct gl_program *curProg, *newProg;
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -528,7 +528,7 @@ _mesa_BindProgram(ctx, GLcontext *ctx, GLenum target, GLuint id)
  * \note Called by both glDeleteProgramsNV and glDeleteProgramsARB.
  */
 void GLAPIENTRY
-_mesa_DeletePrograms(ctx, GLcontext *ctx, GLsizei n, const GLuint *ids)
+_mesa_DeletePrograms(GLcontext *ctx, GLsizei n, const GLuint *ids)
 {
     GLint i;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx);
@@ -581,7 +581,7 @@ _mesa_DeletePrograms(ctx, GLcontext *ctx, GLsizei n, const GLuint *ids)
  * \note Called by both glGenProgramsNV and glGenProgramsARB.
  */
 void GLAPIENTRY
-_mesa_GenPrograms(ctx, GLcontext *ctx, GLsizei n, GLuint *ids)
+_mesa_GenPrograms(GLcontext *ctx, GLsizei n, GLuint *ids)
 {
     GLuint first;
     GLuint i;

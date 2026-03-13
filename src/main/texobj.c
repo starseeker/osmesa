@@ -146,7 +146,7 @@ _mesa_initialize_texture_object(struct gl_texture_object *obj,
  * \param texOjb the texture object to delete.
  */
 void
-_mesa_delete_texture_object(ctx, GLcontext *ctx, struct gl_texture_object *texObj)
+_mesa_delete_texture_object(GLcontext *ctx, struct gl_texture_object *texObj)
 {
     GLuint i, face;
 
@@ -252,7 +252,7 @@ valid_texture_object(const struct gl_texture_object *tex)
  * If 'tex' is non-null, increment its refcount.
  */
 void
-_mesa_reference_texobj(struct gl_texture_object **ptr,
+_mesa_reference_texobj(GLcontext *ctx, struct gl_texture_object **ptr,
 		       struct gl_texture_object *tex)
 {
     assert(ptr);
@@ -275,7 +275,7 @@ _mesa_reference_texobj(struct gl_texture_object **ptr,
 	deleteFlag = (oldTex->RefCount == 0);
 	_glthread_UNLOCK_MUTEX(oldTex->Mutex);
 
-	if (GLcontext *ctx, deleteFlag) {
+	if(deleteFlag) {
 	    if (ctx)
 		ctx->Driver.DeleteTexture(ctx, oldTex);
 	    else
@@ -623,7 +623,7 @@ _glthread_DECLARE_STATIC_MUTEX(GenTexturesLock);
  * Corresponding empty texture objects are also generated.
  */
 void GLAPIENTRY
-_mesa_GenTextures(ctx, GLcontext *ctx, GLsizei n, GLuint *textures)
+_mesa_GenTextures(GLcontext *ctx, GLsizei n, GLuint *textures)
 {
     GLuint first;
     GLint i;
@@ -734,7 +734,7 @@ unbind_texobj_from_texunits(GLcontext *ctx, struct gl_texture_object *texObj)
  * contexts.
  */
 void GLAPIENTRY
-_mesa_DeleteTextures(ctx, GLcontext *ctx, GLsizei n, const GLuint *textures)
+_mesa_DeleteTextures(GLcontext *ctx, GLsizei n, const GLuint *textures)
 {
     GLint i;
     ASSERT_OUTSIDE_BEGIN_END_AND_FLUSH(ctx); /* too complex */
@@ -798,7 +798,7 @@ _mesa_DeleteTextures(ctx, GLcontext *ctx, GLsizei n, const GLuint *textures)
  * count and deletes it if it reaches zero.
  */
 void GLAPIENTRY
-_mesa_BindTexture(ctx, GLcontext *ctx, GLenum target, GLuint texName)
+_mesa_BindTexture(GLcontext *ctx, GLenum target, GLuint texName)
 {
     const GLuint unit = ctx->Texture.CurrentUnit;
     struct gl_texture_unit *texUnit = &ctx->Texture.Unit[unit];
@@ -926,7 +926,7 @@ _mesa_BindTexture(ctx, GLcontext *ctx, GLenum target, GLuint texName)
  * 0.0 and 1.0, and calls dd_function_table::PrioritizeTexture.
  */
 void GLAPIENTRY
-_mesa_PrioritizeTextures(ctx, GLcontext *ctx, GLsizei n, const GLuint *texName,
+_mesa_PrioritizeTextures(GLcontext *ctx, GLsizei n, const GLuint *texName,
 			 const GLclampf *priorities)
 {
     GLint i;
@@ -969,7 +969,7 @@ _mesa_PrioritizeTextures(ctx, GLcontext *ctx, GLsizei n, const GLuint *texName,
  * dd_function_table::IsTextureResident.
  */
 GLboolean GLAPIENTRY
-_mesa_AreTexturesResident(ctx, GLcontext *ctx, GLsizei n, const GLuint *texName,
+_mesa_AreTexturesResident(GLcontext *ctx, GLsizei n, const GLuint *texName,
 			  GLboolean *residences)
 {
     GLboolean allResident = GL_TRUE;
@@ -1027,7 +1027,7 @@ _mesa_AreTexturesResident(ctx, GLcontext *ctx, GLsizei n, const GLuint *texName,
  * Calls _mesa_HashLookup().
  */
 GLboolean GLAPIENTRY
-_mesa_IsTexture(ctx, GLcontext *ctx, GLuint texture)
+_mesa_IsTexture(GLcontext *ctx, GLuint texture)
 {
     struct gl_texture_object *t;
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, GL_FALSE);
@@ -1048,7 +1048,7 @@ _mesa_IsTexture(ctx, GLcontext *ctx, GLuint texture)
  *
  * See also _mesa_lock/unlock_texture in texobj.h
  */
-void _mesa_lock_context_textures(ctx, GLcontext *ctx)
+void _mesa_lock_context_textures(GLcontext *ctx)
 {
     _glthread_LOCK_MUTEX(ctx->Shared->TexMutex);
 
@@ -1059,7 +1059,7 @@ void _mesa_lock_context_textures(ctx, GLcontext *ctx)
 }
 
 
-void _mesa_unlock_context_textures(ctx, GLcontext *ctx)
+void _mesa_unlock_context_textures(GLcontext *ctx)
 {
     assert(ctx->Shared->TextureStateStamp == ctx->TextureStateTimestamp);
     _glthread_UNLOCK_MUTEX(ctx->Shared->TexMutex);

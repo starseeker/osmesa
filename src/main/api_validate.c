@@ -78,7 +78,7 @@ max_buffer_index(GLcontext *ctx, GLuint count, GLenum type,
 
 
 GLboolean
-_mesa_validate_DrawElements(ctx, GLcontext *ctx,
+_mesa_validate_DrawElements(GLcontext *ctx,
 			    GLenum mode, GLsizei count, GLenum type,
 			    const GLvoid *indices)
 {
@@ -151,7 +151,7 @@ _mesa_validate_DrawElements(ctx, GLcontext *ctx,
 
 
 GLboolean
-_mesa_validate_DrawRangeElements(ctx, GLcontext *ctx, GLenum mode,
+_mesa_validate_DrawRangeElements(GLcontext *ctx, GLenum mode,
 				 GLuint start, GLuint end,
 				 GLsizei count, GLenum type,
 				 const GLvoid *indices)
@@ -233,7 +233,7 @@ _mesa_validate_DrawRangeElements(ctx, GLcontext *ctx, GLenum mode,
  * verify that we really can draw something.
  */
 GLboolean
-_mesa_validate_DrawArrays(ctx, GLcontext *ctx,
+_mesa_validate_DrawArrays(GLcontext *ctx,
 			  GLenum mode, GLint start, GLsizei count)
 {
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, GL_FALSE);

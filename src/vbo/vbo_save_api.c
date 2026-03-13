@@ -710,7 +710,7 @@ static void GLAPIENTRY _save_CallLists(GLcontext *ctx, GLsizei n, GLenum type, c
 /* This begin is hooked into ...  Updating of
  * ctx->Driver.CurrentSavePrimitive is already taken care of.
  */
-GLboolean vbo_save_NotifyBegin(ctx, GLcontext *ctx, GLenum mode)
+GLboolean vbo_save_NotifyBegin(GLcontext *ctx, GLenum mode)
 {
     struct vbo_save_context *save = &vbo_context(ctx)->save;
 
@@ -1002,7 +1002,7 @@ static void _save_vtxfmt_init(GLcontext *ctx)
 }
 
 
-void vbo_save_SaveFlushVertices(ctx, GLcontext *ctx)
+void vbo_save_SaveFlushVertices(GLcontext *ctx)
 {
     struct vbo_save_context *save = &vbo_context(ctx)->save;
 
@@ -1022,7 +1022,7 @@ void vbo_save_SaveFlushVertices(ctx, GLcontext *ctx)
     ctx->Driver.SaveNeedFlush = 0;
 }
 
-void vbo_save_NewList(ctx, GLcontext *ctx, GLuint list, GLenum mode)
+void vbo_save_NewList(GLcontext *ctx, GLuint list, GLenum mode)
 {
     struct vbo_save_context *save = &vbo_context(ctx)->save;
 
@@ -1042,7 +1042,7 @@ void vbo_save_NewList(ctx, GLcontext *ctx, GLuint list, GLenum mode)
     ctx->Driver.SaveNeedFlush = 0;
 }
 
-void vbo_save_EndList(ctx, GLcontext *ctx)
+void vbo_save_EndList(GLcontext *ctx)
 {
     struct vbo_save_context *save = &vbo_context(ctx)->save;
     unmap_vertex_store(ctx, save->vertex_store);
@@ -1050,13 +1050,13 @@ void vbo_save_EndList(ctx, GLcontext *ctx)
     assert(save->vertex_size == 0);
 }
 
-void vbo_save_BeginCallList(ctx, GLcontext *ctx, struct mesa_display_list *dlist)
+void vbo_save_BeginCallList(GLcontext *ctx, struct mesa_display_list *dlist)
 {
     struct vbo_save_context *save = &vbo_context(ctx)->save;
     save->replay_flags |= dlist->flags;
 }
 
-void vbo_save_EndCallList(ctx, GLcontext *ctx)
+void vbo_save_EndCallList(GLcontext *ctx)
 {
     struct vbo_save_context *save = &vbo_context(ctx)->save;
 
@@ -1069,7 +1069,7 @@ void vbo_save_EndCallList(ctx, GLcontext *ctx)
 }
 
 
-static void vbo_destroy_vertex_list(ctx, GLcontext *ctx, void *data)
+static void vbo_destroy_vertex_list(GLcontext *ctx, void *data)
 {
     struct vbo_save_vertex_list *node = (struct vbo_save_vertex_list *)data;
     (void) ctx;
@@ -1082,7 +1082,7 @@ static void vbo_destroy_vertex_list(ctx, GLcontext *ctx, void *data)
 }
 
 
-static void vbo_print_vertex_list(ctx, GLcontext *ctx, void *data)
+static void vbo_print_vertex_list(GLcontext *ctx, void *data)
 {
     struct vbo_save_vertex_list *node = (struct vbo_save_vertex_list *)data;
     GLuint i;

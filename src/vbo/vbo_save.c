@@ -35,7 +35,7 @@
 
 
 
-static void vbo_save_callback_init(ctx, GLcontext *ctx)
+static void vbo_save_callback_init(GLcontext *ctx)
 {
     ctx->Driver.NewList = vbo_save_NewList;
     ctx->Driver.EndList = vbo_save_EndList;
@@ -47,7 +47,7 @@ static void vbo_save_callback_init(ctx, GLcontext *ctx)
 
 
 
-void vbo_save_init(ctx, GLcontext *ctx)
+void vbo_save_init(GLcontext *ctx)
 {
     struct vbo_context *vbo = vbo_context(ctx);
     struct vbo_save_context *save = &vbo->save;
@@ -67,7 +67,7 @@ void vbo_save_init(ctx, GLcontext *ctx)
 }
 
 
-void vbo_save_destroy(ctx, GLcontext *ctx)
+void vbo_save_destroy(GLcontext *ctx)
 {
     struct vbo_context *vbo = vbo_context(ctx);
     struct vbo_save_context *save = &vbo->save;
