@@ -81,7 +81,8 @@ _mesa_new_texture_object(GLcontext *ctx, GLuint name, GLenum target)
     struct gl_texture_object *obj;
     (void) ctx;
     obj = MALLOC_STRUCT(gl_texture_object);
-    _mesa_initialize_texture_object(obj, name, target);
+    if (obj)
+	_mesa_initialize_texture_object(obj, name, target);
     return obj;
 }
 
