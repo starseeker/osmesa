@@ -761,155 +761,155 @@ window_pos3f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 static void
 window_pos4f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    window_pos3f(x, y, z);
+    window_pos3f(ctx, x, y, z);
     ctx->Current.RasterPos[3] = w;
 }
 
 
 void GLAPIENTRY
-_mesa_WindowPos2dMESA(GLdouble x, GLdouble y)
+_mesa_WindowPos2dMESA(GLcontext *ctx, GLdouble x, GLdouble y)
 {
-    window_pos4f((GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
+    window_pos4f(ctx, (GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos2fMESA(GLfloat x, GLfloat y)
+_mesa_WindowPos2fMESA(GLcontext *ctx, GLfloat x, GLfloat y)
 {
-    window_pos4f(x, y, 0.0F, 1.0F);
+    window_pos4f(ctx, x, y, 0.0F, 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos2iMESA(GLint x, GLint y)
+_mesa_WindowPos2iMESA(GLcontext *ctx, GLint x, GLint y)
 {
-    window_pos4f((GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
+    window_pos4f(ctx, (GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos2sMESA(GLshort x, GLshort y)
+_mesa_WindowPos2sMESA(GLcontext *ctx, GLshort x, GLshort y)
 {
-    window_pos4f(x, y, 0.0F, 1.0F);
+    window_pos4f(ctx, x, y, 0.0F, 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos3dMESA(GLdouble x, GLdouble y, GLdouble z)
+_mesa_WindowPos3dMESA(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z)
 {
-    window_pos4f((GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
+    window_pos4f(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos3fMESA(GLfloat x, GLfloat y, GLfloat z)
+_mesa_WindowPos3fMESA(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
-    window_pos4f(x, y, z, 1.0F);
+    window_pos4f(ctx, x, y, z, 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos3iMESA(GLint x, GLint y, GLint z)
+_mesa_WindowPos3iMESA(GLcontext *ctx, GLint x, GLint y, GLint z)
 {
-    window_pos4f((GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
+    window_pos4f(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos3sMESA(GLshort x, GLshort y, GLshort z)
+_mesa_WindowPos3sMESA(GLcontext *ctx, GLshort x, GLshort y, GLshort z)
 {
-    window_pos4f(x, y, z, 1.0F);
+    window_pos4f(ctx, x, y, z, 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos4dMESA(GLdouble x, GLdouble y, GLdouble z, GLdouble w)
+_mesa_WindowPos4dMESA(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-    window_pos4f((GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
+    window_pos4f(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos4fMESA(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+_mesa_WindowPos4fMESA(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    window_pos4f(x, y, z, w);
+    window_pos4f(ctx, x, y, z, w);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos4iMESA(GLint x, GLint y, GLint z, GLint w)
+_mesa_WindowPos4iMESA(GLcontext *ctx, GLint x, GLint y, GLint z, GLint w)
 {
-    window_pos4f((GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
+    window_pos4f(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos4sMESA(GLshort x, GLshort y, GLshort z, GLshort w)
+_mesa_WindowPos4sMESA(GLcontext *ctx, GLshort x, GLshort y, GLshort z, GLshort w)
 {
-    window_pos4f(x, y, z, w);
+    window_pos4f(ctx, x, y, z, w);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos2dvMESA(const GLdouble *v)
+_mesa_WindowPos2dvMESA(GLcontext *ctx, const GLdouble *v)
 {
-    window_pos4f((GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
+    window_pos4f(ctx, (GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos2fvMESA(const GLfloat *v)
+_mesa_WindowPos2fvMESA(GLcontext *ctx, const GLfloat *v)
 {
-    window_pos4f(v[0], v[1], 0.0F, 1.0F);
+    window_pos4f(ctx, v[0], v[1], 0.0F, 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos2ivMESA(const GLint *v)
+_mesa_WindowPos2ivMESA(GLcontext *ctx, const GLint *v)
 {
-    window_pos4f((GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
+    window_pos4f(ctx, (GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos2svMESA(const GLshort *v)
+_mesa_WindowPos2svMESA(GLcontext *ctx, const GLshort *v)
 {
-    window_pos4f(v[0], v[1], 0.0F, 1.0F);
+    window_pos4f(ctx, v[0], v[1], 0.0F, 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos3dvMESA(const GLdouble *v)
+_mesa_WindowPos3dvMESA(GLcontext *ctx, const GLdouble *v)
 {
-    window_pos4f((GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
+    window_pos4f(ctx, (GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos3fvMESA(const GLfloat *v)
+_mesa_WindowPos3fvMESA(GLcontext *ctx, const GLfloat *v)
 {
-    window_pos4f(v[0], v[1], v[2], 1.0);
+    window_pos4f(ctx, v[0], v[1], v[2], 1.0);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos3ivMESA(const GLint *v)
+_mesa_WindowPos3ivMESA(GLcontext *ctx, const GLint *v)
 {
-    window_pos4f((GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
+    window_pos4f(ctx, (GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos3svMESA(const GLshort *v)
+_mesa_WindowPos3svMESA(GLcontext *ctx, const GLshort *v)
 {
-    window_pos4f(v[0], v[1], v[2], 1.0F);
+    window_pos4f(ctx, v[0], v[1], v[2], 1.0F);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos4dvMESA(const GLdouble *v)
+_mesa_WindowPos4dvMESA(GLcontext *ctx, const GLdouble *v)
 {
-    window_pos4f((GLfloat) v[0], (GLfloat) v[1],
+    window_pos4f(ctx, (GLfloat) v[0], (GLfloat) v[1],
 		 (GLfloat) v[2], (GLfloat) v[3]);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos4fvMESA(const GLfloat *v)
+_mesa_WindowPos4fvMESA(GLcontext *ctx, const GLfloat *v)
 {
-    window_pos4f(v[0], v[1], v[2], v[3]);
+    window_pos4f(ctx, v[0], v[1], v[2], v[3]);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos4ivMESA(const GLint *v)
+_mesa_WindowPos4ivMESA(GLcontext *ctx, const GLint *v)
 {
-    window_pos4f((GLfloat) v[0], (GLfloat) v[1],
+    window_pos4f(ctx, (GLfloat) v[0], (GLfloat) v[1],
 		 (GLfloat) v[2], (GLfloat) v[3]);
 }
 
 void GLAPIENTRY
-_mesa_WindowPos4svMESA(const GLshort *v)
+_mesa_WindowPos4svMESA(GLcontext *ctx, const GLshort *v)
 {
-    window_pos4f(v[0], v[1], v[2], v[3]);
+    window_pos4f(ctx, v[0], v[1], v[2], v[3]);
 }
 
 #endif

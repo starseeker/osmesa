@@ -442,12 +442,12 @@ static void GLAPIENTRY vbo_exec_EvalCoord2f(GLcontext *ctx, GLfloat u, GLfloat v
 		 exec->vtx.vertex_size * sizeof(GLfloat));
 }
 
-static void GLAPIENTRY vbo_exec_EvalCoord1fv(const GLfloat *u)
+static void GLAPIENTRY vbo_exec_EvalCoord1fv(GLcontext *ctx, const GLfloat *u)
 {
     vbo_exec_EvalCoord1f(ctx, u[0]);
 }
 
-static void GLAPIENTRY vbo_exec_EvalCoord2fv(const GLfloat *u)
+static void GLAPIENTRY vbo_exec_EvalCoord2fv(GLcontext *ctx, const GLfloat *u)
 {
     vbo_exec_EvalCoord2f(ctx, u[0], u[1]);
 }
@@ -654,7 +654,7 @@ void vbo_exec_vtx_init(struct vbo_exec_context *exec)
 
     /* Hook our functions into the dispatch table.
      */
-    _mesa_install_exec_vtxfmt(ctx, exec->ctx, &exec->vtxfmt);
+    _mesa_install_exec_vtxfmt(exec->ctx, &exec->vtxfmt);
 
     for (i = 0 ; i < VBO_ATTRIB_MAX ; i++) {
 	exec->vtx.attrsz[i] = 0;

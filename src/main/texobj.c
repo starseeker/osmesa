@@ -705,15 +705,15 @@ unbind_texobj_from_texunits(GLcontext *ctx, struct gl_texture_object *texObj)
     for (u = 0; u < MAX_TEXTURE_IMAGE_UNITS; u++) {
 	struct gl_texture_unit *unit = &ctx->Texture.Unit[u];
 	if (texObj == unit->Current1D) {
-	    _mesa_reference_texobj(&unit->Current1D, ctx->Shared->Default1D);
+	    _mesa_reference_texobj(ctx, &unit->Current1D, ctx->Shared->Default1D);
 	} else if (texObj == unit->Current2D) {
-	    _mesa_reference_texobj(&unit->Current2D, ctx->Shared->Default2D);
+	    _mesa_reference_texobj(ctx, &unit->Current2D, ctx->Shared->Default2D);
 	} else if (texObj == unit->Current3D) {
-	    _mesa_reference_texobj(&unit->Current3D, ctx->Shared->Default3D);
+	    _mesa_reference_texobj(ctx, &unit->Current3D, ctx->Shared->Default3D);
 	} else if (texObj == unit->CurrentCubeMap) {
-	    _mesa_reference_texobj(&unit->CurrentCubeMap, ctx->Shared->DefaultCubeMap);
+	    _mesa_reference_texobj(ctx, &unit->CurrentCubeMap, ctx->Shared->DefaultCubeMap);
 	} else if (texObj == unit->CurrentRect) {
-	    _mesa_reference_texobj(&unit->CurrentRect, ctx->Shared->DefaultRect);
+	    _mesa_reference_texobj(ctx, &unit->CurrentRect, ctx->Shared->DefaultRect);
 	}
     }
 }
@@ -775,7 +775,7 @@ _mesa_DeleteTextures(GLcontext *ctx, GLsizei n, const GLuint *textures)
 		/* Unreference the texobj.  If refcount hits zero, the texture
 		 * will be deleted.
 		 */
-		_mesa_reference_texobj(&delObj, NULL);
+		_mesa_reference_texobj(ctx, &delObj, NULL);
 	    }
 	}
     }
@@ -887,19 +887,19 @@ _mesa_BindTexture(GLcontext *ctx, GLenum target, GLuint texName)
      */
     switch (target) {
 	case GL_TEXTURE_1D:
-	    _mesa_reference_texobj(&texUnit->Current1D, newTexObj);
+	    _mesa_reference_texobj(ctx, &texUnit->Current1D, newTexObj);
 	    break;
 	case GL_TEXTURE_2D:
-	    _mesa_reference_texobj(&texUnit->Current2D, newTexObj);
+	    _mesa_reference_texobj(ctx, &texUnit->Current2D, newTexObj);
 	    break;
 	case GL_TEXTURE_3D:
-	    _mesa_reference_texobj(&texUnit->Current3D, newTexObj);
+	    _mesa_reference_texobj(ctx, &texUnit->Current3D, newTexObj);
 	    break;
 	case GL_TEXTURE_CUBE_MAP_ARB:
-	    _mesa_reference_texobj(&texUnit->CurrentCubeMap, newTexObj);
+	    _mesa_reference_texobj(ctx, &texUnit->CurrentCubeMap, newTexObj);
 	    break;
 	case GL_TEXTURE_RECTANGLE_NV:
-	    _mesa_reference_texobj(&texUnit->CurrentRect, newTexObj);
+	    _mesa_reference_texobj(ctx, &texUnit->CurrentRect, newTexObj);
 	    break;
 	default:
 	    /* Bad target should be caught above */

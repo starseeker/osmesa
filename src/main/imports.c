@@ -563,6 +563,7 @@ _mesa_float_to_half(float val)
     const int flt_s = (flt >> 31) & 0x1;
     int s, e, m = 0;
     GLhalfARB result;
+    GET_CURRENT_CONTEXT(ctx);
 
     /* sign bit */
     s = flt_s;
@@ -627,7 +628,7 @@ _mesa_float_to_half(float val)
 		    m = 1;
 		    break;
 		default:
-		    _mesa_warning(ctx, NULL,
+		    _mesa_warning(ctx,
 				  "float_to_half: logical error in denorm creation!\n");
 		    break;
 	    }

@@ -1250,7 +1250,7 @@ OSMesaCreateContextExt(GLenum format, GLint depthBits, GLint stencilBits,
 	functions.GetBufferSize = NULL;
 	functions.Finish = osmesa_finish;
 
-	if (!_mesa_initialize_context(ctx, &osmesa->mesa,
+	if (!_mesa_initialize_context(&osmesa->mesa,
 				      osmesa->gl_visual,
 				      sharelist ? &sharelist->mesa
 				      : (GLcontext *) NULL,
@@ -1260,25 +1260,25 @@ OSMesaCreateContextExt(GLenum format, GLint depthBits, GLint stencilBits,
 	    return NULL;
 	}
 
-	_mesa_enable_sw_extensions(ctx, &(osmesa->mesa));
-	_mesa_enable_1_3_extensions(ctx, &(osmesa->mesa));
-	_mesa_enable_1_4_extensions(ctx, &(osmesa->mesa));
-	_mesa_enable_1_5_extensions(ctx, &(osmesa->mesa));
+	_mesa_enable_sw_extensions(&(osmesa->mesa));
+	_mesa_enable_1_3_extensions(&(osmesa->mesa));
+	_mesa_enable_1_4_extensions(&(osmesa->mesa));
+	_mesa_enable_1_5_extensions(&(osmesa->mesa));
 
 	osmesa->gl_buffer = _mesa_create_framebuffer(osmesa->gl_visual);
 	if (!osmesa->gl_buffer) {
 	    _mesa_destroy_visual(osmesa->gl_visual);
-	    _mesa_free_context_data(ctx, &osmesa->mesa);
+	    _mesa_free_context_data(&osmesa->mesa);
 	    free(osmesa);
 	    return NULL;
 	}
 
 	/* create front color buffer in user-provided memory (no back buffer) */
 	osmesa->rb = new_osmesa_renderbuffer(&osmesa->mesa, format, type);
-	_mesa_add_renderbuffer(osmesa->gl_buffer, BUFFER_FRONT_LEFT, osmesa->rb);
+	_mesa_add_renderbuffer(&osmesa->mesa, osmesa->gl_buffer, BUFFER_FRONT_LEFT, osmesa->rb);
 	assert(osmesa->rb->RefCount == 2);
 
-	_mesa_add_soft_renderbuffers(osmesa->gl_buffer,
+	_mesa_add_soft_renderbuffers(&osmesa->mesa, osmesa->gl_buffer,
 				     GL_FALSE, /* color */
 				     osmesa->gl_visual->haveDepthBuffer,
 				     osmesa->gl_visual->haveStencilBuffer,
@@ -1342,14 +1342,14 @@ OSMesaDestroyContext(OSMesaContext osmesa)
 	    _mesa_reference_renderbuffer(&osmesa->rb, NULL);
 
 	_swsetup_DestroyContext(&osmesa->mesa);
-	_tnl_DestroyContext(ctx, &osmesa->mesa);
+	_tnl_DestroyContext(&osmesa->mesa);
 	_vbo_DestroyContext(&osmesa->mesa);
-	_swrast_DestroyContext(ctx, &osmesa->mesa);
+	_swrast_DestroyContext(&osmesa->mesa);
 
 	_mesa_destroy_visual(osmesa->gl_visual);
 	_mesa_unreference_framebuffer(&osmesa->gl_buffer);
 
-	_mesa_free_context_data(ctx, &osmesa->mesa);
+	_mesa_free_context_data(&osmesa->mesa);
 	free(osmesa);
     }
 }
@@ -1390,7 +1390,7 @@ OSMesaMakeCurrent(OSMesaContext osmesa, void *buffer, GLenum type,
      * This is the only portable way callers can release the current OSMesa
      * context without making another one current. */
     if (!osmesa && !buffer) {
-	_mesa_make_current(ctx, NULL, NULL, NULL);
+	_mesa_make_current(NULL, NULL, NULL);
 	return GL_TRUE;
     }
 
@@ -1430,23 +1430,23 @@ OSMesaMakeCurrent(OSMesaContext osmesa, void *buffer, GLenum type,
     /* Set the framebuffer's size.  This causes the
      * osmesa_renderbuffer_storage() function to get called.
      */
-    _mesa_resize_framebuffer(ctx, &osmesa->mesa, osmesa->gl_buffer, width, height);
+    _mesa_resize_framebuffer(&osmesa->mesa, osmesa->gl_buffer, width, height);
     osmesa->gl_buffer->Initialized = GL_TRUE; /* XXX TEMPORARY? */
 
-    _mesa_make_current(ctx, &osmesa->mesa, osmesa->gl_buffer, osmesa->gl_buffer);
+    _mesa_make_current(&osmesa->mesa, osmesa->gl_buffer, osmesa->gl_buffer);
 
     /* Remove renderbuffer attachment, then re-add.  This installs the
      * renderbuffer adaptor/wrapper if needed (for bpp conversion).
      */
     _mesa_remove_renderbuffer(osmesa->gl_buffer, BUFFER_FRONT_LEFT);
-    _mesa_add_renderbuffer(osmesa->gl_buffer, BUFFER_FRONT_LEFT, osmesa->rb);
+    _mesa_add_renderbuffer(&osmesa->mesa, osmesa->gl_buffer, BUFFER_FRONT_LEFT, osmesa->rb);
 
 
     /* this updates the visual's red/green/blue/alphaBits fields */
     _mesa_update_framebuffer_visual(osmesa->gl_buffer);
 
     /* update the framebuffer size */
-    _mesa_resize_framebuffer(ctx, &osmesa->mesa, osmesa->gl_buffer, width, height);
+    _mesa_resize_framebuffer(&osmesa->mesa, osmesa->gl_buffer, width, height);
 
     return GL_TRUE;
 }
@@ -1473,7 +1473,7 @@ OSMesaPixelStore(GLint pname, GLint value)
     switch (pname) {
 	case OSMESA_ROW_LENGTH:
 	    if (value<0) {
-		_mesa_error(ctx, &osmesa->mesa, GL_INVALID_VALUE,
+		_mesa_error(&osmesa->mesa, GL_INVALID_VALUE,
 			    "OSMesaPixelStore(value)");
 		return;
 	    }
@@ -1483,7 +1483,7 @@ OSMesaPixelStore(GLint pname, GLint value)
 	    osmesa->yup = value ? GL_TRUE : GL_FALSE;
 	    break;
 	default:
-	    _mesa_error(ctx, &osmesa->mesa, GL_INVALID_ENUM, "OSMesaPixelStore(pname)");
+	    _mesa_error(&osmesa->mesa, GL_INVALID_ENUM, "OSMesaPixelStore(pname)");
 	    return;
     }
 
@@ -1533,7 +1533,7 @@ OSMesaGetIntegerv(GLint pname, GLint *value)
 	    *value = MAX_HEIGHT;
 	    return;
 	default:
-	    _mesa_error(ctx, &osmesa->mesa, GL_INVALID_ENUM, "OSMesaGetIntergerv(pname)");
+	    _mesa_error(&osmesa->mesa, GL_INVALID_ENUM, "OSMesaGetIntergerv(pname)");
 	    return;
     }
 }
@@ -1636,6 +1636,8 @@ static struct name_function functions[] = {
     { "OSMesaColorClamp", (OSMESAproc) OSMesaColorClamp },
     { "OSMesaFXAAEnable", (OSMESAproc) OSMesaFXAAEnable },
     { "OSMesaSetCurrentContext", (OSMESAproc) OSMesaSetCurrentContext },
+    { "OSMesaGetDispatch", (OSMESAproc) OSMesaGetDispatch },
+    { "OSMesaGetGLcontext", (OSMESAproc) OSMesaGetGLcontext },
     { NULL, NULL }
 };
 #if defined(__GNUC__)
@@ -1693,6 +1695,24 @@ OSMesaSetCurrentContext(OSMesaContext ctx)
 	_glapi_set_dispatch(NULL);
     }
     return prev;
+}
+
+
+GLAPI struct _glapi_table * GLAPIENTRY
+OSMesaGetDispatch(OSMesaContext ctx)
+{
+    if (!ctx)
+	return NULL;
+    return ctx->mesa.CurrentDispatch;
+}
+
+
+GLAPI GLcontext * GLAPIENTRY
+OSMesaGetGLcontext(OSMesaContext ctx)
+{
+    if (!ctx)
+	return NULL;
+    return &ctx->mesa;
 }
 
 

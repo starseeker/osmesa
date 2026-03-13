@@ -74,7 +74,7 @@ _mesa_ColorMask(GLcontext *ctx, GLboolean red, GLboolean green,
 
 
 extern void GLAPIENTRY
-_mesa_ClampColorARB(ctx, GLenum target, GLenum clamp);
+_mesa_ClampColorARB(GLcontext *ctx, GLenum target, GLenum clamp);
 
 
 extern void

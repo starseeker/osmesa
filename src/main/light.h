@@ -51,7 +51,7 @@ extern void GLAPIENTRY
 _mesa_Lightiv(GLcontext *ctx, GLenum light, GLenum pname, const GLint *params);
 
 extern void GLAPIENTRY
-_mesa_Lighti(GLenum light, GLenum pname, GLint param);
+_mesa_Lighti(GLcontext *ctx, GLenum light, GLenum pname, GLint param);
 
 extern void GLAPIENTRY
 _mesa_LightModelf(GLcontext *ctx, GLenum pname, GLfloat param);
@@ -60,7 +60,7 @@ extern void GLAPIENTRY
 _mesa_LightModelfv(GLcontext *ctx, GLenum pname, const GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_LightModeli(GLenum pname, GLint param);
+_mesa_LightModeli(GLcontext *ctx, GLenum pname, GLint param);
 
 extern void GLAPIENTRY
 _mesa_LightModeliv(GLcontext *ctx, GLenum pname, const GLint *params);

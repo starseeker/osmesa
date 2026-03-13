@@ -659,49 +659,49 @@ do {									\
 static void GLAPIENTRY _save_EvalCoord1f(GLcontext *ctx, GLfloat u)
 {
     DO_FALLBACK(ctx);
-    ctx->Save->EvalCoord1f(u);
+    ctx->Save->EvalCoord1f(ctx, u);
 }
 
 static void GLAPIENTRY _save_EvalCoord1fv(GLcontext *ctx, const GLfloat *v)
 {
     DO_FALLBACK(ctx);
-    ctx->Save->EvalCoord1fv(v);
+    ctx->Save->EvalCoord1fv(ctx, v);
 }
 
 static void GLAPIENTRY _save_EvalCoord2f(GLcontext *ctx, GLfloat u, GLfloat v)
 {
     DO_FALLBACK(ctx);
-    ctx->Save->EvalCoord2f(u, v);
+    ctx->Save->EvalCoord2f(ctx, u, v);
 }
 
 static void GLAPIENTRY _save_EvalCoord2fv(GLcontext *ctx, const GLfloat *v)
 {
     DO_FALLBACK(ctx);
-    ctx->Save->EvalCoord2fv(v);
+    ctx->Save->EvalCoord2fv(ctx, v);
 }
 
 static void GLAPIENTRY _save_EvalPoint1(GLcontext *ctx, GLint i)
 {
     DO_FALLBACK(ctx);
-    ctx->Save->EvalPoint1(i);
+    ctx->Save->EvalPoint1(ctx, i);
 }
 
 static void GLAPIENTRY _save_EvalPoint2(GLcontext *ctx, GLint i, GLint j)
 {
     DO_FALLBACK(ctx);
-    ctx->Save->EvalPoint2(i, j);
+    ctx->Save->EvalPoint2(ctx, i, j);
 }
 
 static void GLAPIENTRY _save_CallList(GLcontext *ctx, GLuint l)
 {
     DO_FALLBACK(ctx);
-    ctx->Save->CallList(l);
+    ctx->Save->CallList(ctx, l);
 }
 
 static void GLAPIENTRY _save_CallLists(GLcontext *ctx, GLsizei n, GLenum type, const GLvoid *v)
 {
     DO_FALLBACK(ctx);
-    ctx->Save->CallLists(n, type, v);
+    ctx->Save->CallLists(ctx, n, type, v);
 }
 
 
@@ -908,7 +908,7 @@ static void GLAPIENTRY _save_OBE_DrawRangeElements(GLcontext *ctx, GLenum mode,
     if (_mesa_validate_DrawRangeElements(ctx, mode,
 					 start, end,
 					 count, type, indices))
-	_save_OBE_DrawElements(mode, count, type, indices);
+	_save_OBE_DrawElements(ctx, mode, count, type, indices);
 }
 
 

@@ -1157,7 +1157,7 @@ loopback_VertexAttribs1svNV(GLcontext *ctx, GLuint index, GLsizei n, const GLsho
 {
     GLint i;
     for (i = n - 1; i >= 0; i--)
-	loopback_VertexAttrib1svNV(index + i, v + i);
+	loopback_VertexAttrib1svNV(ctx, index + i, v + i);
 }
 
 static void GLAPIENTRY
@@ -1173,7 +1173,7 @@ loopback_VertexAttribs1dvNV(GLcontext *ctx, GLuint index, GLsizei n, const GLdou
 {
     GLint i;
     for (i = n - 1; i >= 0; i--)
-	loopback_VertexAttrib1dvNV(index + i, v + i);
+	loopback_VertexAttrib1dvNV(ctx, index + i, v + i);
 }
 
 static void GLAPIENTRY
@@ -1181,7 +1181,7 @@ loopback_VertexAttribs2svNV(GLcontext *ctx, GLuint index, GLsizei n, const GLsho
 {
     GLint i;
     for (i = n - 1; i >= 0; i--)
-	loopback_VertexAttrib2svNV(index + i, v + 2 * i);
+	loopback_VertexAttrib2svNV(ctx, index + i, v + 2 * i);
 }
 
 static void GLAPIENTRY
@@ -1197,7 +1197,7 @@ loopback_VertexAttribs2dvNV(GLcontext *ctx, GLuint index, GLsizei n, const GLdou
 {
     GLint i;
     for (i = n - 1; i >= 0; i--)
-	loopback_VertexAttrib2dvNV(index + i, v + 2 * i);
+	loopback_VertexAttrib2dvNV(ctx, index + i, v + 2 * i);
 }
 
 static void GLAPIENTRY
@@ -1205,7 +1205,7 @@ loopback_VertexAttribs3svNV(GLcontext *ctx, GLuint index, GLsizei n, const GLsho
 {
     GLint i;
     for (i = n - 1; i >= 0; i--)
-	loopback_VertexAttrib3svNV(index + i, v + 3 * i);
+	loopback_VertexAttrib3svNV(ctx, index + i, v + 3 * i);
 }
 
 static void GLAPIENTRY
@@ -1221,7 +1221,7 @@ loopback_VertexAttribs3dvNV(GLcontext *ctx, GLuint index, GLsizei n, const GLdou
 {
     GLint i;
     for (i = n - 1; i >= 0; i--)
-	loopback_VertexAttrib3dvNV(index + i, v + 3 * i);
+	loopback_VertexAttrib3dvNV(ctx, index + i, v + 3 * i);
 }
 
 static void GLAPIENTRY
@@ -1229,7 +1229,7 @@ loopback_VertexAttribs4svNV(GLcontext *ctx, GLuint index, GLsizei n, const GLsho
 {
     GLint i;
     for (i = n - 1; i >= 0; i--)
-	loopback_VertexAttrib4svNV(index + i, v + 4 * i);
+	loopback_VertexAttrib4svNV(ctx, index + i, v + 4 * i);
 }
 
 static void GLAPIENTRY
@@ -1245,7 +1245,7 @@ loopback_VertexAttribs4dvNV(GLcontext *ctx, GLuint index, GLsizei n, const GLdou
 {
     GLint i;
     for (i = n - 1; i >= 0; i--)
-	loopback_VertexAttrib4dvNV(index + i, v + 4 * i);
+	loopback_VertexAttrib4dvNV(ctx, index + i, v + 4 * i);
 }
 
 static void GLAPIENTRY
@@ -1253,7 +1253,7 @@ loopback_VertexAttribs4ubvNV(GLcontext *ctx, GLuint index, GLsizei n, const GLub
 {
     GLint i;
     for (i = n - 1; i >= 0; i--)
-	loopback_VertexAttrib4ubvNV(index + i, v + 4 * i);
+	loopback_VertexAttrib4ubvNV(ctx, index + i, v + 4 * i);
 }
 
 

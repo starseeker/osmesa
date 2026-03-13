@@ -1162,7 +1162,7 @@ _mesa_update_state_locked(GLcontext *ctx)
     GLbitfield new_state = ctx->NewState;
 
     if (MESA_VERBOSE & VERBOSE_STATE)
-	_mesa_print_state("_mesa_update_state", new_state);
+	_mesa_print_state(ctx, "_mesa_update_state", new_state);
 
     if (new_state & _NEW_PROGRAM)
 	update_program(ctx);

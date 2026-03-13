@@ -51,7 +51,7 @@
  * evaluator.  Return 0 if bad target.
  * See table 5.1 in the OpenGL 1.2 spec.
  */
-GLuint _mesa_evaluator_components(GLcontext *ctx, GLenum target)
+GLuint _mesa_evaluator_components(GLenum target)
 {
     switch (target) {
 	case GL_MAP1_VERTEX_3:
@@ -436,18 +436,18 @@ map1(GLcontext *ctx, GLenum target, GLfloat u1, GLfloat u2, GLint ustride,
 
 
 void GLAPIENTRY
-_mesa_Map1f(GLenum target, GLfloat u1, GLfloat u2, GLint stride,
+_mesa_Map1f(GLcontext *ctx, GLenum target, GLfloat u1, GLfloat u2, GLint stride,
 	    GLint order, const GLfloat *points)
 {
-    map1(target, u1, u2, stride, order, points, GL_FLOAT);
+    map1(ctx, target, u1, u2, stride, order, points, GL_FLOAT);
 }
 
 
 void GLAPIENTRY
-_mesa_Map1d(GLenum target, GLdouble u1, GLdouble u2, GLint stride,
+_mesa_Map1d(GLcontext *ctx, GLenum target, GLdouble u1, GLdouble u2, GLint stride,
 	    GLint order, const GLdouble *points)
 {
-    map1(target, (GLfloat) u1, (GLfloat) u2, stride, order, points, GL_DOUBLE);
+    map1(ctx, target, (GLfloat) u1, (GLfloat) u2, stride, order, points, GL_DOUBLE);
 }
 
 
@@ -534,23 +534,23 @@ map2(GLcontext *ctx, GLenum target, GLfloat u1, GLfloat u2, GLint ustride, GLint
 
 
 void GLAPIENTRY
-_mesa_Map2f(GLenum target,
+_mesa_Map2f(GLcontext *ctx, GLenum target,
 	    GLfloat u1, GLfloat u2, GLint ustride, GLint uorder,
 	    GLfloat v1, GLfloat v2, GLint vstride, GLint vorder,
 	    const GLfloat *points)
 {
-    map2(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder,
+    map2(ctx, target, u1, u2, ustride, uorder, v1, v2, vstride, vorder,
 	 points, GL_FLOAT);
 }
 
 
 void GLAPIENTRY
-_mesa_Map2d(GLenum target,
+_mesa_Map2d(GLcontext *ctx, GLenum target,
 	    GLdouble u1, GLdouble u2, GLint ustride, GLint uorder,
 	    GLdouble v1, GLdouble v2, GLint vstride, GLint vorder,
 	    const GLdouble *points)
 {
-    map2(target, (GLfloat) u1, (GLfloat) u2, ustride, uorder,
+    map2(ctx, target, (GLfloat) u1, (GLfloat) u2, ustride, uorder,
 	 (GLfloat) v1, (GLfloat) v2, vstride, vorder, points, GL_DOUBLE);
 }
 

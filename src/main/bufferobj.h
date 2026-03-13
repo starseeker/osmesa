@@ -118,7 +118,7 @@ _mesa_GetBufferSubDataARB(GLcontext *ctx, GLenum target, GLintptrARB offset,
 			  GLsizeiptrARB size, void * data);
 
 extern void * GLAPIENTRY
-_mesa_MapBufferARB(GLenum target, GLenum access);
+_mesa_MapBufferARB(GLcontext *ctx, GLenum target, GLenum access);
 
 extern GLboolean GLAPIENTRY
 _mesa_UnmapBufferARB(GLcontext *ctx, GLenum target);

@@ -105,7 +105,7 @@ _mesa_TexParameteriv(GLcontext *ctx, GLenum target, GLenum pname, const GLint *p
 
 
 extern void GLAPIENTRY
-_mesa_TexGend(GLenum coord, GLenum pname, GLdouble param);
+_mesa_TexGend(GLcontext *ctx, GLenum coord, GLenum pname, GLdouble param);
 
 extern void GLAPIENTRY
 _mesa_TexGendv(GLcontext *ctx, GLenum coord, GLenum pname, const GLdouble *params);
@@ -117,7 +117,7 @@ extern void GLAPIENTRY
 _mesa_TexGenfv(GLcontext *ctx, GLenum coord, GLenum pname, const GLfloat *params);
 
 extern void GLAPIENTRY
-_mesa_TexGeni(GLenum coord, GLenum pname, GLint param);
+_mesa_TexGeni(GLcontext *ctx, GLenum coord, GLenum pname, GLint param);
 
 extern void GLAPIENTRY
 _mesa_TexGeniv(GLcontext *ctx, GLenum coord, GLenum pname, const GLint *params);

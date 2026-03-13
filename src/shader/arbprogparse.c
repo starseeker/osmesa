@@ -3829,7 +3829,7 @@ _mesa_parse_arb_program(GLcontext *ctx, GLenum target,
 
 
 void
-_mesa_parse_arb_fragment_program(GLcontext *ctx, GLcontext* ctx, GLenum target,
+_mesa_parse_arb_fragment_program(GLcontext *ctx, GLenum target,
 				 const GLvoid *str, GLsizei len,
 				 struct gl_fragment_program *program)
 {

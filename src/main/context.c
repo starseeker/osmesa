@@ -1235,7 +1235,7 @@ _mesa_free_context_data(GLcontext *ctx)
 
     /* unbind the context if it's currently bound */
     if (ctx == _mesa_get_current_context()) {
-	_mesa_make_current(ctx, NULL, NULL, NULL);
+	_mesa_make_current(NULL, NULL, NULL);
     }
 }
 
@@ -1465,7 +1465,7 @@ initialize_framebuffer_size(GLcontext *ctx, GLframebuffer *fb)
  * \param readBuffer  the reading framebuffer
  */
 void
-_mesa_make_current(GLcontext *ctx, ctx, GLcontext *newCtx, GLframebuffer *drawBuffer,
+_mesa_make_current(GLcontext *newCtx, GLframebuffer *drawBuffer,
 		   GLframebuffer *readBuffer)
 {
     if (MESA_VERBOSE & VERBOSE_API)
@@ -1475,14 +1475,14 @@ _mesa_make_current(GLcontext *ctx, ctx, GLcontext *newCtx, GLframebuffer *drawBu
      */
     if (newCtx && drawBuffer && newCtx->WinSysDrawBuffer != drawBuffer) {
 	if (!check_compatible(newCtx, drawBuffer)) {
-	    _mesa_warning(ctx, newCtx,
+	    _mesa_warning(newCtx,
 			  "MakeCurrent: incompatible visuals for context and drawbuffer");
 	    return;
 	}
     }
     if (newCtx && readBuffer && newCtx->WinSysReadBuffer != readBuffer) {
 	if (!check_compatible(newCtx, readBuffer)) {
-	    _mesa_warning(ctx, newCtx,
+	    _mesa_warning(newCtx,
 			  "MakeCurrent: incompatible visuals for context and readbuffer");
 	    return;
 	}
@@ -1529,7 +1529,7 @@ _mesa_make_current(GLcontext *ctx, ctx, GLcontext *newCtx, GLframebuffer *drawBu
 		initialize_framebuffer_size(newCtx, readBuffer);
 	    }
 
-	    _mesa_resizebuffers(ctx, newCtx);
+	    _mesa_resizebuffers(newCtx);
 #endif
 
 #else
@@ -1550,9 +1550,9 @@ _mesa_make_current(GLcontext *ctx, ctx, GLcontext *newCtx, GLframebuffer *drawBu
 
 	    if (newCtx->FirstTimeCurrent) {
 		/* set initial viewport and scissor size now */
-		_mesa_set_viewport(ctx, newCtx, 0, 0,
+		_mesa_set_viewport(newCtx, 0, 0,
 				   drawBuffer->Width, drawBuffer->Height);
-		_mesa_set_scissor(ctx, newCtx, 0, 0,
+		_mesa_set_scissor(newCtx, 0, 0,
 				  drawBuffer->Width, drawBuffer->Height);
 		check_context_limits(newCtx);
 	    }
@@ -1565,7 +1565,7 @@ _mesa_make_current(GLcontext *ctx, ctx, GLcontext *newCtx, GLframebuffer *drawBu
 	 */
 	if (newCtx->FirstTimeCurrent) {
 	    if (_mesa_getenv("MESA_INFO")) {
-		_mesa_print_info();
+		_mesa_print_info(newCtx);
 	    }
 	    newCtx->FirstTimeCurrent = GL_FALSE;
 	}

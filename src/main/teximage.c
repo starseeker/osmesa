@@ -782,7 +782,7 @@ _mesa_select_tex_object(GLcontext *ctx, const struct gl_texture_unit *texUnit,
 	    return ctx->Extensions.NV_texture_rectangle
 		   ? ctx->Texture.ProxyRect : NULL;
 	default:
-	    _mesa_problem(NULL, "bad target in _mesa_select_tex_object()");
+	    _mesa_problem(NULL, "bad target in _mesa_select_tex_object(ctx)");
 	    return NULL;
     }
 }
@@ -852,7 +852,7 @@ _mesa_select_tex_image(GLcontext *ctx, const struct gl_texture_object *texObj,
 
 
 /**
- * Like _mesa_select_tex_image() but if the image doesn't exist, allocate
+ * Like _mesa_select_tex_image(ctx) but if the image doesn't exist, allocate
  * it and install it.  Only return NULL if passed a bad parameter or run
  * out of memory.
  */

@@ -431,7 +431,7 @@ union node {
  */
 static GLuint InstSize[OPCODE_END_OF_LIST + 1];
 
-void mesa_print_display_list(GLuint list);
+void mesa_print_display_list(GLcontext *ctx, GLuint list);
 
 
 /**********************************************************************/
@@ -1790,16 +1790,16 @@ save_Fogfv(GLcontext *ctx, GLenum pname, const GLfloat *params)
 
 
 static void GLAPIENTRY
-save_Fogf(GLenum pname, GLfloat param)
+save_Fogf(GLcontext *ctx, GLenum pname, GLfloat param)
 {
     GLfloat p[4] = {0.0};
     p[0] = param;
-    save_Fogfv(pname, p);
+    save_Fogfv(ctx, pname, p);
 }
 
 
 static void GLAPIENTRY
-save_Fogiv(GLenum pname, const GLint *params)
+save_Fogiv(GLcontext *ctx, GLenum pname, const GLint *params)
 {
     GLfloat p[4] = {0.0};
     switch (pname) {
@@ -1820,16 +1820,16 @@ save_Fogiv(GLenum pname, const GLint *params)
 	    /* Error will be caught later in gl_Fogfv */
 	    ;
     }
-    save_Fogfv(pname, p);
+    save_Fogfv(ctx, pname, p);
 }
 
 
 static void GLAPIENTRY
-save_Fogi(GLenum pname, GLint param)
+save_Fogi(GLcontext *ctx, GLenum pname, GLint param)
 {
     GLint p[4] = {0};
     p[0] = param;
-    save_Fogiv(pname, p);
+    save_Fogiv(ctx, pname, p);
 }
 
 
@@ -1986,16 +1986,16 @@ save_Lightfv(GLcontext *ctx, GLenum light, GLenum pname, const GLfloat *params)
 
 
 static void GLAPIENTRY
-save_Lightf(GLenum light, GLenum pname, GLfloat params)
+save_Lightf(GLcontext *ctx, GLenum light, GLenum pname, GLfloat params)
 {
     GLfloat p[4] = {0.0};
     p[0] = params;
-    save_Lightfv(light, pname, p);
+    save_Lightfv(ctx, light, pname, p);
 }
 
 
 static void GLAPIENTRY
-save_Lightiv(GLenum light, GLenum pname, const GLint *params)
+save_Lightiv(GLcontext *ctx, GLenum light, GLenum pname, const GLint *params)
 {
     GLfloat fparam[4];
     switch (pname) {
@@ -2029,16 +2029,16 @@ save_Lightiv(GLenum light, GLenum pname, const GLint *params)
 	    /* error will be caught later in gl_Lightfv */
 	    ;
     }
-    save_Lightfv(light, pname, fparam);
+    save_Lightfv(ctx, light, pname, fparam);
 }
 
 
 static void GLAPIENTRY
-save_Lighti(GLenum light, GLenum pname, GLint param)
+save_Lighti(GLcontext *ctx, GLenum light, GLenum pname, GLint param)
 {
     GLint p[4] = {0};
     p[0] = param;
-    save_Lightiv(light, pname, p);
+    save_Lightiv(ctx, light, pname, p);
 }
 
 
@@ -2062,16 +2062,16 @@ save_LightModelfv(GLcontext *ctx, GLenum pname, const GLfloat *params)
 
 
 static void GLAPIENTRY
-save_LightModelf(GLenum pname, GLfloat param)
+save_LightModelf(GLcontext *ctx, GLenum pname, GLfloat param)
 {
     GLfloat p[4] = {0.0};
     p[0] = param;
-    save_LightModelfv(pname, p);
+    save_LightModelfv(ctx, pname, p);
 }
 
 
 static void GLAPIENTRY
-save_LightModeliv(GLenum pname, const GLint *params)
+save_LightModeliv(GLcontext *ctx, GLenum pname, const GLint *params)
 {
     GLfloat fparam[4] = {0.0};
     switch (pname) {
@@ -2090,16 +2090,16 @@ save_LightModeliv(GLenum pname, const GLint *params)
 	    /* Error will be caught later in gl_LightModelfv */
 	    ;
     }
-    save_LightModelfv(pname, fparam);
+    save_LightModelfv(ctx, pname, fparam);
 }
 
 
 static void GLAPIENTRY
-save_LightModeli(GLenum pname, GLint param)
+save_LightModeli(GLcontext *ctx, GLenum pname, GLint param)
 {
     GLint p[4] = {0};
     p[0] = param;
-    save_LightModeliv(pname, p);
+    save_LightModeliv(ctx, pname, p);
 }
 
 
@@ -2179,14 +2179,14 @@ save_LoadMatrixf(GLcontext *ctx, const GLfloat * m)
 
 
 static void GLAPIENTRY
-save_LoadMatrixd(const GLdouble * m)
+save_LoadMatrixd(GLcontext *ctx, const GLdouble * m)
 {
     GLfloat f[16];
     GLint i;
     for (i = 0; i < 16; i++) {
 	f[i] = (GLfloat) m[i];
     }
-    save_LoadMatrixf(f);
+    save_LoadMatrixf(ctx, f);
 }
 
 
@@ -2344,9 +2344,9 @@ save_MapGrid1f(GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2)
 
 
 static void GLAPIENTRY
-save_MapGrid1d(GLint un, GLdouble u1, GLdouble u2)
+save_MapGrid1d(GLcontext *ctx, GLint un, GLdouble u1, GLdouble u2)
 {
-    save_MapGrid1f(un, (GLfloat) u1, (GLfloat) u2);
+    save_MapGrid1f(ctx, un, (GLfloat) u1, (GLfloat) u2);
 }
 
 
@@ -2373,10 +2373,10 @@ save_MapGrid2f(GLcontext *ctx, GLint un, GLfloat u1, GLfloat u2,
 
 
 static void GLAPIENTRY
-save_MapGrid2d(GLint un, GLdouble u1, GLdouble u2,
+save_MapGrid2d(GLcontext *ctx, GLint un, GLdouble u1, GLdouble u2,
 	       GLint vn, GLdouble v1, GLdouble v2)
 {
-    save_MapGrid2f(un, (GLfloat) u1, (GLfloat) u2,
+    save_MapGrid2f(ctx, un, (GLfloat) u1, (GLfloat) u2,
 		   vn, (GLfloat) v1, (GLfloat) v2);
 }
 
@@ -2433,14 +2433,14 @@ save_MultMatrixf(GLcontext *ctx, const GLfloat * m)
 
 
 static void GLAPIENTRY
-save_MultMatrixd(const GLdouble * m)
+save_MultMatrixd(GLcontext *ctx, const GLdouble * m)
 {
     GLfloat f[16];
     GLint i;
     for (i = 0; i < 16; i++) {
 	f[i] = (GLfloat) m[i];
     }
-    save_MultMatrixf(f);
+    save_MultMatrixf(ctx, f);
 }
 
 
@@ -2495,7 +2495,7 @@ save_PixelMapfv(GLcontext *ctx, GLenum map, GLint mapsize, const GLfloat *values
 
 
 static void GLAPIENTRY
-save_PixelMapuiv(GLenum map, GLint mapsize, const GLuint *values)
+save_PixelMapuiv(GLcontext *ctx, GLenum map, GLint mapsize, const GLuint *values)
 {
     GLfloat fvalues[MAX_PIXEL_MAP_TABLE];
     GLint i;
@@ -2508,12 +2508,12 @@ save_PixelMapuiv(GLenum map, GLint mapsize, const GLuint *values)
 	    fvalues[i] = UINT_TO_FLOAT(values[i]);
 	}
     }
-    save_PixelMapfv(map, mapsize, fvalues);
+    save_PixelMapfv(ctx, map, mapsize, fvalues);
 }
 
 
 static void GLAPIENTRY
-save_PixelMapusv(GLenum map, GLint mapsize, const GLushort *values)
+save_PixelMapusv(GLcontext *ctx, GLenum map, GLint mapsize, const GLushort *values)
 {
     GLfloat fvalues[MAX_PIXEL_MAP_TABLE];
     GLint i;
@@ -2526,7 +2526,7 @@ save_PixelMapusv(GLenum map, GLint mapsize, const GLushort *values)
 	    fvalues[i] = USHORT_TO_FLOAT(values[i]);
 	}
     }
-    save_PixelMapfv(map, mapsize, fvalues);
+    save_PixelMapfv(ctx, map, mapsize, fvalues);
 }
 
 
@@ -2547,9 +2547,9 @@ save_PixelTransferf(GLcontext *ctx, GLenum pname, GLfloat param)
 
 
 static void GLAPIENTRY
-save_PixelTransferi(GLenum pname, GLint param)
+save_PixelTransferi(GLcontext *ctx, GLenum pname, GLint param)
 {
-    save_PixelTransferf(pname, (GLfloat) param);
+    save_PixelTransferf(ctx, pname, (GLfloat) param);
 }
 
 
@@ -2588,27 +2588,27 @@ save_PointParameterfvEXT(GLcontext *ctx, GLenum pname, const GLfloat *params)
 
 
 static void GLAPIENTRY
-save_PointParameterfEXT(GLenum pname, GLfloat param)
+save_PointParameterfEXT(GLcontext *ctx, GLenum pname, GLfloat param)
 {
     GLfloat p[4] = {0};
     p[0] = (GLfloat) param;
-    save_PointParameterfvEXT(pname, p);
+    save_PointParameterfvEXT(ctx, pname, p);
 }
 
 static void GLAPIENTRY
-save_PointParameteriNV(GLenum pname, GLint param)
+save_PointParameteriNV(GLcontext *ctx, GLenum pname, GLint param)
 {
     GLfloat p[4] = {0};
     p[0] = (GLfloat) param;
-    save_PointParameterfvEXT(pname, p);
+    save_PointParameterfvEXT(ctx, pname, p);
 }
 
 static void GLAPIENTRY
-save_PointParameterivNV(GLenum pname, const GLint * param)
+save_PointParameterivNV(GLcontext *ctx, GLenum pname, const GLint * param)
 {
     GLfloat p[4] = {0};
     p[0] = (GLfloat) param[0];
-    save_PointParameterfvEXT(pname, p);
+    save_PointParameterfvEXT(ctx, pname, p);
 }
 
 
@@ -2678,7 +2678,7 @@ static void GLAPIENTRY
 save_PolygonOffsetEXT(GLcontext *ctx, GLfloat factor, GLfloat bias)
 {
     /* XXX mult by DepthMaxF here??? */
-    save_PolygonOffset(factor, ctx->DrawBuffer->_DepthMaxF * bias);
+    save_PolygonOffset(ctx, factor, ctx->DrawBuffer->_DepthMaxF * bias);
 }
 
 
@@ -2795,143 +2795,143 @@ save_RasterPos4f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 }
 
 static void GLAPIENTRY
-save_RasterPos2d(GLdouble x, GLdouble y)
+save_RasterPos2d(GLcontext *ctx, GLdouble x, GLdouble y)
 {
-    save_RasterPos4f((GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
+    save_RasterPos4f(ctx, (GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos2f(GLfloat x, GLfloat y)
+save_RasterPos2f(GLcontext *ctx, GLfloat x, GLfloat y)
 {
-    save_RasterPos4f(x, y, 0.0F, 1.0F);
+    save_RasterPos4f(ctx, x, y, 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos2i(GLint x, GLint y)
+save_RasterPos2i(GLcontext *ctx, GLint x, GLint y)
 {
-    save_RasterPos4f((GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
+    save_RasterPos4f(ctx, (GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos2s(GLshort x, GLshort y)
+save_RasterPos2s(GLcontext *ctx, GLshort x, GLshort y)
 {
-    save_RasterPos4f(x, y, 0.0F, 1.0F);
+    save_RasterPos4f(ctx, x, y, 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos3d(GLdouble x, GLdouble y, GLdouble z)
+save_RasterPos3d(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z)
 {
-    save_RasterPos4f((GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
+    save_RasterPos4f(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos3f(GLfloat x, GLfloat y, GLfloat z)
+save_RasterPos3f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
-    save_RasterPos4f(x, y, z, 1.0F);
+    save_RasterPos4f(ctx, x, y, z, 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos3i(GLint x, GLint y, GLint z)
+save_RasterPos3i(GLcontext *ctx, GLint x, GLint y, GLint z)
 {
-    save_RasterPos4f((GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
+    save_RasterPos4f(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos3s(GLshort x, GLshort y, GLshort z)
+save_RasterPos3s(GLcontext *ctx, GLshort x, GLshort y, GLshort z)
 {
-    save_RasterPos4f(x, y, z, 1.0F);
+    save_RasterPos4f(ctx, x, y, z, 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos4d(GLdouble x, GLdouble y, GLdouble z, GLdouble w)
+save_RasterPos4d(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-    save_RasterPos4f((GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
+    save_RasterPos4f(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
 }
 
 static void GLAPIENTRY
-save_RasterPos4i(GLint x, GLint y, GLint z, GLint w)
+save_RasterPos4i(GLcontext *ctx, GLint x, GLint y, GLint z, GLint w)
 {
-    save_RasterPos4f((GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
+    save_RasterPos4f(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
 }
 
 static void GLAPIENTRY
-save_RasterPos4s(GLshort x, GLshort y, GLshort z, GLshort w)
+save_RasterPos4s(GLcontext *ctx, GLshort x, GLshort y, GLshort z, GLshort w)
 {
-    save_RasterPos4f(x, y, z, w);
+    save_RasterPos4f(ctx, x, y, z, w);
 }
 
 static void GLAPIENTRY
-save_RasterPos2dv(const GLdouble * v)
+save_RasterPos2dv(GLcontext *ctx, const GLdouble * v)
 {
-    save_RasterPos4f((GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
+    save_RasterPos4f(ctx, (GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos2fv(const GLfloat * v)
+save_RasterPos2fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_RasterPos4f(v[0], v[1], 0.0F, 1.0F);
+    save_RasterPos4f(ctx, v[0], v[1], 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos2iv(const GLint * v)
+save_RasterPos2iv(GLcontext *ctx, const GLint * v)
 {
-    save_RasterPos4f((GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
+    save_RasterPos4f(ctx, (GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos2sv(const GLshort * v)
+save_RasterPos2sv(GLcontext *ctx, const GLshort * v)
 {
-    save_RasterPos4f(v[0], v[1], 0.0F, 1.0F);
+    save_RasterPos4f(ctx, v[0], v[1], 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos3dv(const GLdouble * v)
+save_RasterPos3dv(GLcontext *ctx, const GLdouble * v)
 {
-    save_RasterPos4f((GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
+    save_RasterPos4f(ctx, (GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos3fv(const GLfloat * v)
+save_RasterPos3fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_RasterPos4f(v[0], v[1], v[2], 1.0F);
+    save_RasterPos4f(ctx, v[0], v[1], v[2], 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos3iv(const GLint * v)
+save_RasterPos3iv(GLcontext *ctx, const GLint * v)
 {
-    save_RasterPos4f((GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
+    save_RasterPos4f(ctx, (GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos3sv(const GLshort * v)
+save_RasterPos3sv(GLcontext *ctx, const GLshort * v)
 {
-    save_RasterPos4f(v[0], v[1], v[2], 1.0F);
+    save_RasterPos4f(ctx, v[0], v[1], v[2], 1.0F);
 }
 
 static void GLAPIENTRY
-save_RasterPos4dv(const GLdouble * v)
+save_RasterPos4dv(GLcontext *ctx, const GLdouble * v)
 {
-    save_RasterPos4f((GLfloat) v[0], (GLfloat) v[1],
+    save_RasterPos4f(ctx, (GLfloat) v[0], (GLfloat) v[1],
 		     (GLfloat) v[2], (GLfloat) v[3]);
 }
 
 static void GLAPIENTRY
-save_RasterPos4fv(const GLfloat * v)
+save_RasterPos4fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_RasterPos4f(v[0], v[1], v[2], v[3]);
+    save_RasterPos4f(ctx, v[0], v[1], v[2], v[3]);
 }
 
 static void GLAPIENTRY
-save_RasterPos4iv(const GLint * v)
+save_RasterPos4iv(GLcontext *ctx, const GLint * v)
 {
-    save_RasterPos4f((GLfloat) v[0], (GLfloat) v[1],
+    save_RasterPos4f(ctx, (GLfloat) v[0], (GLfloat) v[1],
 		     (GLfloat) v[2], (GLfloat) v[3]);
 }
 
 static void GLAPIENTRY
-save_RasterPos4sv(const GLshort * v)
+save_RasterPos4sv(GLcontext *ctx, const GLshort * v)
 {
-    save_RasterPos4f(v[0], v[1], v[2], v[3]);
+    save_RasterPos4f(ctx, v[0], v[1], v[2], v[3]);
 }
 
 
@@ -3014,9 +3014,9 @@ save_Rotatef(GLcontext *ctx, GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 
 
 static void GLAPIENTRY
-save_Rotated(GLdouble angle, GLdouble x, GLdouble y, GLdouble z)
+save_Rotated(GLcontext *ctx, GLdouble angle, GLdouble x, GLdouble y, GLdouble z)
 {
-    save_Rotatef((GLfloat) angle, (GLfloat) x, (GLfloat) y, (GLfloat) z);
+    save_Rotatef(ctx, (GLfloat) angle, (GLfloat) x, (GLfloat) y, (GLfloat) z);
 }
 
 
@@ -3038,9 +3038,9 @@ save_Scalef(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 
 
 static void GLAPIENTRY
-save_Scaled(GLdouble x, GLdouble y, GLdouble z)
+save_Scaled(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z)
 {
-    save_Scalef((GLfloat) x, (GLfloat) y, (GLfloat) z);
+    save_Scalef(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z);
 }
 
 
@@ -3233,26 +3233,26 @@ save_TexEnvfv(GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *params
 
 
 static void GLAPIENTRY
-save_TexEnvf(GLenum target, GLenum pname, GLfloat param)
+save_TexEnvf(GLcontext *ctx, GLenum target, GLenum pname, GLfloat param)
 {
     GLfloat p[4] = {0.0};
     p[0] = param;
-    save_TexEnvfv(target, pname, p);
+    save_TexEnvfv(ctx, target, pname, p);
 }
 
 
 static void GLAPIENTRY
-save_TexEnvi(GLenum target, GLenum pname, GLint param)
+save_TexEnvi(GLcontext *ctx, GLenum target, GLenum pname, GLint param)
 {
     GLfloat p[4];
     p[0] = (GLfloat) param;
     p[1] = p[2] = p[3] = 0.0;
-    save_TexEnvfv(target, pname, p);
+    save_TexEnvfv(ctx, target, pname, p);
 }
 
 
 static void GLAPIENTRY
-save_TexEnviv(GLenum target, GLenum pname, const GLint * param)
+save_TexEnviv(GLcontext *ctx, GLenum target, GLenum pname, const GLint * param)
 {
     GLfloat p[4];
     if (pname == GL_TEXTURE_ENV_COLOR) {
@@ -3264,7 +3264,7 @@ save_TexEnviv(GLenum target, GLenum pname, const GLint * param)
 	p[0] = (GLfloat) param[0];
 	p[1] = p[2] = p[3] = 0.0F;
     }
-    save_TexEnvfv(target, pname, p);
+    save_TexEnvfv(ctx, target, pname, p);
 }
 
 
@@ -3289,53 +3289,53 @@ save_TexGenfv(GLcontext *ctx, GLenum coord, GLenum pname, const GLfloat *params)
 
 
 static void GLAPIENTRY
-save_TexGeniv(GLenum coord, GLenum pname, const GLint *params)
+save_TexGeniv(GLcontext *ctx, GLenum coord, GLenum pname, const GLint *params)
 {
     GLfloat p[4];
     p[0] = (GLfloat) params[0];
     p[1] = (GLfloat) params[1];
     p[2] = (GLfloat) params[2];
     p[3] = (GLfloat) params[3];
-    save_TexGenfv(coord, pname, p);
+    save_TexGenfv(ctx, coord, pname, p);
 }
 
 
 static void GLAPIENTRY
-save_TexGend(GLenum coord, GLenum pname, GLdouble param)
+save_TexGend(GLcontext *ctx, GLenum coord, GLenum pname, GLdouble param)
 {
     GLfloat p[4] = {0};
     p[0] = (GLfloat) param;
-    save_TexGenfv(coord, pname, p);
+    save_TexGenfv(ctx, coord, pname, p);
 }
 
 
 static void GLAPIENTRY
-save_TexGendv(GLenum coord, GLenum pname, const GLdouble *params)
+save_TexGendv(GLcontext *ctx, GLenum coord, GLenum pname, const GLdouble *params)
 {
     GLfloat p[4];
     p[0] = (GLfloat) params[0];
     p[1] = (GLfloat) params[1];
     p[2] = (GLfloat) params[2];
     p[3] = (GLfloat) params[3];
-    save_TexGenfv(coord, pname, p);
+    save_TexGenfv(ctx, coord, pname, p);
 }
 
 
 static void GLAPIENTRY
-save_TexGenf(GLenum coord, GLenum pname, GLfloat param)
+save_TexGenf(GLcontext *ctx, GLenum coord, GLenum pname, GLfloat param)
 {
     GLfloat p[4] = {0.0};
     p[0] = param;
-    save_TexGenfv(coord, pname, p);
+    save_TexGenfv(ctx, coord, pname, p);
 }
 
 
 static void GLAPIENTRY
-save_TexGeni(GLenum coord, GLenum pname, GLint param)
+save_TexGeni(GLcontext *ctx, GLenum coord, GLenum pname, GLint param)
 {
     GLint p[4] = {0};
     p[0] = param;
-    save_TexGeniv(coord, pname, p);
+    save_TexGeniv(ctx, coord, pname, p);
 }
 
 
@@ -3360,31 +3360,31 @@ save_TexParameterfv(GLcontext *ctx, GLenum target, GLenum pname, const GLfloat *
 
 
 static void GLAPIENTRY
-save_TexParameterf(GLenum target, GLenum pname, GLfloat param)
+save_TexParameterf(GLcontext *ctx, GLenum target, GLenum pname, GLfloat param)
 {
     GLfloat p[4] = {0.0};
     p[0] = param;
-    save_TexParameterfv(target, pname, p);
+    save_TexParameterfv(ctx, target, pname, p);
 }
 
 
 static void GLAPIENTRY
-save_TexParameteri(GLenum target, GLenum pname, GLint param)
+save_TexParameteri(GLcontext *ctx, GLenum target, GLenum pname, GLint param)
 {
     GLfloat fparam[4];
     fparam[0] = (GLfloat) param;
     fparam[1] = fparam[2] = fparam[3] = 0.0;
-    save_TexParameterfv(target, pname, fparam);
+    save_TexParameterfv(ctx, target, pname, fparam);
 }
 
 
 static void GLAPIENTRY
-save_TexParameteriv(GLenum target, GLenum pname, const GLint *params)
+save_TexParameteriv(GLcontext *ctx, GLenum target, GLenum pname, const GLint *params)
 {
     GLfloat fparam[4];
     fparam[0] = (GLfloat) params[0];
     fparam[1] = fparam[2] = fparam[3] = 0.0;
-    save_TexParameterfv(target, pname, fparam);
+    save_TexParameterfv(ctx, target, pname, fparam);
 }
 
 
@@ -3590,9 +3590,9 @@ save_Translatef(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 
 
 static void GLAPIENTRY
-save_Translated(GLdouble x, GLdouble y, GLdouble z)
+save_Translated(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z)
 {
-    save_Translatef((GLfloat) x, (GLfloat) y, (GLfloat) z);
+    save_Translatef(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z);
 }
 
 
@@ -3633,143 +3633,143 @@ save_WindowPos4fMESA(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 }
 
 static void GLAPIENTRY
-save_WindowPos2dMESA(GLdouble x, GLdouble y)
+save_WindowPos2dMESA(GLcontext *ctx, GLdouble x, GLdouble y)
 {
-    save_WindowPos4fMESA((GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
+    save_WindowPos4fMESA(ctx, (GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos2fMESA(GLfloat x, GLfloat y)
+save_WindowPos2fMESA(GLcontext *ctx, GLfloat x, GLfloat y)
 {
-    save_WindowPos4fMESA(x, y, 0.0F, 1.0F);
+    save_WindowPos4fMESA(ctx, x, y, 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos2iMESA(GLint x, GLint y)
+save_WindowPos2iMESA(GLcontext *ctx, GLint x, GLint y)
 {
-    save_WindowPos4fMESA((GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
+    save_WindowPos4fMESA(ctx, (GLfloat) x, (GLfloat) y, 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos2sMESA(GLshort x, GLshort y)
+save_WindowPos2sMESA(GLcontext *ctx, GLshort x, GLshort y)
 {
-    save_WindowPos4fMESA(x, y, 0.0F, 1.0F);
+    save_WindowPos4fMESA(ctx, x, y, 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos3dMESA(GLdouble x, GLdouble y, GLdouble z)
+save_WindowPos3dMESA(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z)
 {
-    save_WindowPos4fMESA((GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
+    save_WindowPos4fMESA(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos3fMESA(GLfloat x, GLfloat y, GLfloat z)
+save_WindowPos3fMESA(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
-    save_WindowPos4fMESA(x, y, z, 1.0F);
+    save_WindowPos4fMESA(ctx, x, y, z, 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos3iMESA(GLint x, GLint y, GLint z)
+save_WindowPos3iMESA(GLcontext *ctx, GLint x, GLint y, GLint z)
 {
-    save_WindowPos4fMESA((GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
+    save_WindowPos4fMESA(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos3sMESA(GLshort x, GLshort y, GLshort z)
+save_WindowPos3sMESA(GLcontext *ctx, GLshort x, GLshort y, GLshort z)
 {
-    save_WindowPos4fMESA(x, y, z, 1.0F);
+    save_WindowPos4fMESA(ctx, x, y, z, 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos4dMESA(GLdouble x, GLdouble y, GLdouble z, GLdouble w)
+save_WindowPos4dMESA(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-    save_WindowPos4fMESA((GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
+    save_WindowPos4fMESA(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
 }
 
 static void GLAPIENTRY
-save_WindowPos4iMESA(GLint x, GLint y, GLint z, GLint w)
+save_WindowPos4iMESA(GLcontext *ctx, GLint x, GLint y, GLint z, GLint w)
 {
-    save_WindowPos4fMESA((GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
+    save_WindowPos4fMESA(ctx, (GLfloat) x, (GLfloat) y, (GLfloat) z, (GLfloat) w);
 }
 
 static void GLAPIENTRY
-save_WindowPos4sMESA(GLshort x, GLshort y, GLshort z, GLshort w)
+save_WindowPos4sMESA(GLcontext *ctx, GLshort x, GLshort y, GLshort z, GLshort w)
 {
-    save_WindowPos4fMESA(x, y, z, w);
+    save_WindowPos4fMESA(ctx, x, y, z, w);
 }
 
 static void GLAPIENTRY
-save_WindowPos2dvMESA(const GLdouble * v)
+save_WindowPos2dvMESA(GLcontext *ctx, const GLdouble * v)
 {
-    save_WindowPos4fMESA((GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
+    save_WindowPos4fMESA(ctx, (GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos2fvMESA(const GLfloat * v)
+save_WindowPos2fvMESA(GLcontext *ctx, const GLfloat * v)
 {
-    save_WindowPos4fMESA(v[0], v[1], 0.0F, 1.0F);
+    save_WindowPos4fMESA(ctx, v[0], v[1], 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos2ivMESA(const GLint * v)
+save_WindowPos2ivMESA(GLcontext *ctx, const GLint * v)
 {
-    save_WindowPos4fMESA((GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
+    save_WindowPos4fMESA(ctx, (GLfloat) v[0], (GLfloat) v[1], 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos2svMESA(const GLshort * v)
+save_WindowPos2svMESA(GLcontext *ctx, const GLshort * v)
 {
-    save_WindowPos4fMESA(v[0], v[1], 0.0F, 1.0F);
+    save_WindowPos4fMESA(ctx, v[0], v[1], 0.0F, 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos3dvMESA(const GLdouble * v)
+save_WindowPos3dvMESA(GLcontext *ctx, const GLdouble * v)
 {
-    save_WindowPos4fMESA((GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
+    save_WindowPos4fMESA(ctx, (GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos3fvMESA(const GLfloat * v)
+save_WindowPos3fvMESA(GLcontext *ctx, const GLfloat * v)
 {
-    save_WindowPos4fMESA(v[0], v[1], v[2], 1.0F);
+    save_WindowPos4fMESA(ctx, v[0], v[1], v[2], 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos3ivMESA(const GLint * v)
+save_WindowPos3ivMESA(GLcontext *ctx, const GLint * v)
 {
-    save_WindowPos4fMESA((GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
+    save_WindowPos4fMESA(ctx, (GLfloat) v[0], (GLfloat) v[1], (GLfloat) v[2], 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos3svMESA(const GLshort * v)
+save_WindowPos3svMESA(GLcontext *ctx, const GLshort * v)
 {
-    save_WindowPos4fMESA(v[0], v[1], v[2], 1.0F);
+    save_WindowPos4fMESA(ctx, v[0], v[1], v[2], 1.0F);
 }
 
 static void GLAPIENTRY
-save_WindowPos4dvMESA(const GLdouble * v)
+save_WindowPos4dvMESA(GLcontext *ctx, const GLdouble * v)
 {
-    save_WindowPos4fMESA((GLfloat) v[0], (GLfloat) v[1],
+    save_WindowPos4fMESA(ctx, (GLfloat) v[0], (GLfloat) v[1],
 			 (GLfloat) v[2], (GLfloat) v[3]);
 }
 
 static void GLAPIENTRY
-save_WindowPos4fvMESA(const GLfloat * v)
+save_WindowPos4fvMESA(GLcontext *ctx, const GLfloat * v)
 {
-    save_WindowPos4fMESA(v[0], v[1], v[2], v[3]);
+    save_WindowPos4fMESA(ctx, v[0], v[1], v[2], v[3]);
 }
 
 static void GLAPIENTRY
-save_WindowPos4ivMESA(const GLint * v)
+save_WindowPos4ivMESA(GLcontext *ctx, const GLint * v)
 {
-    save_WindowPos4fMESA((GLfloat) v[0], (GLfloat) v[1],
+    save_WindowPos4fMESA(ctx, (GLfloat) v[0], (GLfloat) v[1],
 			 (GLfloat) v[2], (GLfloat) v[3]);
 }
 
 static void GLAPIENTRY
-save_WindowPos4svMESA(const GLshort * v)
+save_WindowPos4svMESA(GLcontext *ctx, const GLshort * v)
 {
-    save_WindowPos4fMESA(v[0], v[1], v[2], v[3]);
+    save_WindowPos4fMESA(ctx, v[0], v[1], v[2], v[3]);
 }
 
 
@@ -3793,38 +3793,38 @@ save_ActiveTextureARB(GLcontext *ctx, GLenum target)
 /* GL_ARB_transpose_matrix */
 
 static void GLAPIENTRY
-save_LoadTransposeMatrixdARB(const GLdouble m[16])
+save_LoadTransposeMatrixdARB(GLcontext *ctx, const GLdouble m[16])
 {
     GLfloat tm[16];
     _math_transposefd(tm, m);
-    save_LoadMatrixf(tm);
+    save_LoadMatrixf(ctx, tm);
 }
 
 
 static void GLAPIENTRY
-save_LoadTransposeMatrixfARB(const GLfloat m[16])
+save_LoadTransposeMatrixfARB(GLcontext *ctx, const GLfloat m[16])
 {
     GLfloat tm[16];
     _math_transposef(tm, m);
-    save_LoadMatrixf(tm);
+    save_LoadMatrixf(ctx, tm);
 }
 
 
 static void GLAPIENTRY
-save_MultTransposeMatrixdARB(const GLdouble m[16])
+save_MultTransposeMatrixdARB(GLcontext *ctx, const GLdouble m[16])
 {
     GLfloat tm[16];
     _math_transposefd(tm, m);
-    save_MultMatrixf(tm);
+    save_MultMatrixf(ctx, tm);
 }
 
 
 static void GLAPIENTRY
-save_MultTransposeMatrixfARB(const GLfloat m[16])
+save_MultTransposeMatrixfARB(GLcontext *ctx, const GLfloat m[16])
 {
     GLfloat tm[16];
     _math_transposef(tm, m);
-    save_MultMatrixf(tm);
+    save_MultMatrixf(ctx, tm);
 }
 
 
@@ -4133,51 +4133,51 @@ save_ProgramParameter4fNV(GLcontext *ctx, GLenum target, GLuint index,
 
 
 static void GLAPIENTRY
-save_ProgramParameter4fvNV(GLenum target, GLuint index,
+save_ProgramParameter4fvNV(GLcontext *ctx, GLenum target, GLuint index,
 			   const GLfloat *params)
 {
-    save_ProgramParameter4fNV(target, index, params[0], params[1],
+    save_ProgramParameter4fNV(ctx, target, index, params[0], params[1],
 			      params[2], params[3]);
 }
 
 
 static void GLAPIENTRY
-save_ProgramParameter4dNV(GLenum target, GLuint index,
+save_ProgramParameter4dNV(GLcontext *ctx, GLenum target, GLuint index,
 			  GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-    save_ProgramParameter4fNV(target, index, (GLfloat) x, (GLfloat) y,
+    save_ProgramParameter4fNV(ctx, target, index, (GLfloat) x, (GLfloat) y,
 			      (GLfloat) z, (GLfloat) w);
 }
 
 
 static void GLAPIENTRY
-save_ProgramParameter4dvNV(GLenum target, GLuint index,
+save_ProgramParameter4dvNV(GLcontext *ctx, GLenum target, GLuint index,
 			   const GLdouble *params)
 {
-    save_ProgramParameter4fNV(target, index, (GLfloat) params[0],
+    save_ProgramParameter4fNV(ctx, target, index, (GLfloat) params[0],
 			      (GLfloat) params[1], (GLfloat) params[2],
 			      (GLfloat) params[3]);
 }
 
 
 static void GLAPIENTRY
-save_ProgramParameters4dvNV(GLenum target, GLuint index,
+save_ProgramParameters4dvNV(GLcontext *ctx, GLenum target, GLuint index,
 			    GLuint num, const GLdouble *params)
 {
     GLuint i;
     for (i = 0; i < num; i++) {
-	save_ProgramParameter4dvNV(target, index + i, params + 4 * i);
+	save_ProgramParameter4dvNV(ctx, target, index + i, params + 4 * i);
     }
 }
 
 
 static void GLAPIENTRY
-save_ProgramParameters4fvNV(GLenum target, GLuint index,
+save_ProgramParameters4fvNV(GLcontext *ctx, GLenum target, GLuint index,
 			    GLuint num, const GLfloat *params)
 {
     GLuint i;
     for (i = 0; i < num; i++) {
-	save_ProgramParameter4fvNV(target, index + i, params + 4 * i);
+	save_ProgramParameter4fvNV(ctx, target, index + i, params + 4 * i);
     }
 }
 
@@ -4407,27 +4407,27 @@ save_ProgramNamedParameter4fNV(GLcontext *ctx, GLuint id, GLsizei len, const GLu
 
 
 static void GLAPIENTRY
-save_ProgramNamedParameter4fvNV(GLuint id, GLsizei len, const GLubyte * name,
+save_ProgramNamedParameter4fvNV(GLcontext *ctx, GLuint id, GLsizei len, const GLubyte * name,
 				const float v[])
 {
-    save_ProgramNamedParameter4fNV(id, len, name, v[0], v[1], v[2], v[3]);
+    save_ProgramNamedParameter4fNV(ctx, id, len, name, v[0], v[1], v[2], v[3]);
 }
 
 
 static void GLAPIENTRY
-save_ProgramNamedParameter4dNV(GLuint id, GLsizei len, const GLubyte * name,
+save_ProgramNamedParameter4dNV(GLcontext *ctx, GLuint id, GLsizei len, const GLubyte * name,
 			       GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-    save_ProgramNamedParameter4fNV(id, len, name, (GLfloat) x, (GLfloat) y,
+    save_ProgramNamedParameter4fNV(ctx, id, len, name, (GLfloat) x, (GLfloat) y,
 				   (GLfloat) z, (GLfloat) w);
 }
 
 
 static void GLAPIENTRY
-save_ProgramNamedParameter4dvNV(GLuint id, GLsizei len, const GLubyte * name,
+save_ProgramNamedParameter4dvNV(GLcontext *ctx, GLuint id, GLsizei len, const GLubyte * name,
 				const double v[])
 {
-    save_ProgramNamedParameter4fNV(id, len, name, (GLfloat) v[0],
+    save_ProgramNamedParameter4fNV(ctx, id, len, name, (GLfloat) v[0],
 				   (GLfloat) v[1], (GLfloat) v[2],
 				   (GLfloat) v[3]);
 }
@@ -4524,10 +4524,10 @@ save_ProgramEnvParameter4fARB(GLcontext *ctx, GLenum target, GLuint index,
 
 
 static void GLAPIENTRY
-save_ProgramEnvParameter4fvARB(GLenum target, GLuint index,
+save_ProgramEnvParameter4fvARB(GLcontext *ctx, GLenum target, GLuint index,
 			       const GLfloat *params)
 {
-    save_ProgramEnvParameter4fARB(target, index, params[0], params[1],
+    save_ProgramEnvParameter4fARB(ctx, target, index, params[0], params[1],
 				  params[2], params[3]);
 }
 
@@ -4564,20 +4564,20 @@ save_ProgramEnvParameters4fvEXT(GLcontext *ctx, GLenum target, GLuint index, GLs
 
 
 static void GLAPIENTRY
-save_ProgramEnvParameter4dARB(GLenum target, GLuint index,
+save_ProgramEnvParameter4dARB(GLcontext *ctx, GLenum target, GLuint index,
 			      GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-    save_ProgramEnvParameter4fARB(target, index,
+    save_ProgramEnvParameter4fARB(ctx, target, index,
 				  (GLfloat) x,
 				  (GLfloat) y, (GLfloat) z, (GLfloat) w);
 }
 
 
 static void GLAPIENTRY
-save_ProgramEnvParameter4dvARB(GLenum target, GLuint index,
+save_ProgramEnvParameter4dvARB(GLcontext *ctx, GLenum target, GLuint index,
 			       const GLdouble *params)
 {
-    save_ProgramEnvParameter4fARB(target, index,
+    save_ProgramEnvParameter4fARB(ctx, target, index,
 				  (GLfloat) params[0],
 				  (GLfloat) params[1],
 				  (GLfloat) params[2], (GLfloat) params[3]);
@@ -4864,9 +4864,9 @@ save_EvalCoord1f(GLcontext *ctx, GLfloat x)
 }
 
 static void GLAPIENTRY
-save_EvalCoord1fv(const GLfloat * v)
+save_EvalCoord1fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_EvalCoord1f(v[0]);
+    save_EvalCoord1f(ctx, v[0]);
 }
 
 static void GLAPIENTRY
@@ -4885,9 +4885,9 @@ save_EvalCoord2f(GLcontext *ctx, GLfloat x, GLfloat y)
 }
 
 static void GLAPIENTRY
-save_EvalCoord2fv(const GLfloat * v)
+save_EvalCoord2fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_EvalCoord2f(v[0], v[1]);
+    save_EvalCoord2f(ctx, v[0], v[1]);
 }
 
 
@@ -4921,21 +4921,21 @@ save_EvalPoint2(GLcontext *ctx, GLint x, GLint y)
 }
 
 static void GLAPIENTRY
-save_Indexf(GLfloat x)
+save_Indexf(GLcontext *ctx, GLfloat x)
 {
-    save_Attr1fNV(VERT_ATTRIB_COLOR_INDEX, x);
+    save_Attr1fNV(ctx, VERT_ATTRIB_COLOR_INDEX, x);
 }
 
 static void GLAPIENTRY
-save_Indexfv(const GLfloat * v)
+save_Indexfv(GLcontext *ctx, const GLfloat * v)
 {
-    save_Attr1fNV(VERT_ATTRIB_COLOR_INDEX, v[0]);
+    save_Attr1fNV(ctx, VERT_ATTRIB_COLOR_INDEX, v[0]);
 }
 
 static void GLAPIENTRY
-save_EdgeFlag(GLboolean x)
+save_EdgeFlag(GLcontext *ctx, GLboolean x)
 {
-    save_Attr1fNV(VERT_ATTRIB_EDGEFLAG, x ? 1.0 : 0.0);
+    save_Attr1fNV(ctx, VERT_ATTRIB_EDGEFLAG, x ? 1.0 : 0.0);
 }
 
 static void GLAPIENTRY
@@ -5068,207 +5068,207 @@ save_Rectf(GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c, GLfloat d)
 
 
 static void GLAPIENTRY
-save_Vertex2f(GLfloat x, GLfloat y)
+save_Vertex2f(GLcontext *ctx, GLfloat x, GLfloat y)
 {
-    save_Attr2fNV(VERT_ATTRIB_POS, x, y);
+    save_Attr2fNV(ctx, VERT_ATTRIB_POS, x, y);
 }
 
 static void GLAPIENTRY
-save_Vertex2fv(const GLfloat * v)
+save_Vertex2fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_Attr2fNV(VERT_ATTRIB_POS, v[0], v[1]);
+    save_Attr2fNV(ctx, VERT_ATTRIB_POS, v[0], v[1]);
 }
 
 static void GLAPIENTRY
-save_Vertex3f(GLfloat x, GLfloat y, GLfloat z)
+save_Vertex3f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
-    save_Attr3fNV(VERT_ATTRIB_POS, x, y, z);
+    save_Attr3fNV(ctx, VERT_ATTRIB_POS, x, y, z);
 }
 
 static void GLAPIENTRY
-save_Vertex3fv(const GLfloat * v)
+save_Vertex3fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_Attr3fNV(VERT_ATTRIB_POS, v[0], v[1], v[2]);
+    save_Attr3fNV(ctx, VERT_ATTRIB_POS, v[0], v[1], v[2]);
 }
 
 static void GLAPIENTRY
-save_Vertex4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+save_Vertex4f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    save_Attr4fNV(VERT_ATTRIB_POS, x, y, z, w);
+    save_Attr4fNV(ctx, VERT_ATTRIB_POS, x, y, z, w);
 }
 
 static void GLAPIENTRY
-save_Vertex4fv(const GLfloat * v)
+save_Vertex4fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_Attr4fNV(VERT_ATTRIB_POS, v[0], v[1], v[2], v[3]);
+    save_Attr4fNV(ctx, VERT_ATTRIB_POS, v[0], v[1], v[2], v[3]);
 }
 
 static void GLAPIENTRY
-save_TexCoord1f(GLfloat x)
+save_TexCoord1f(GLcontext *ctx, GLfloat x)
 {
-    save_Attr1fNV(VERT_ATTRIB_TEX0, x);
+    save_Attr1fNV(ctx, VERT_ATTRIB_TEX0, x);
 }
 
 static void GLAPIENTRY
-save_TexCoord1fv(const GLfloat * v)
+save_TexCoord1fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_Attr1fNV(VERT_ATTRIB_TEX0, v[0]);
+    save_Attr1fNV(ctx, VERT_ATTRIB_TEX0, v[0]);
 }
 
 static void GLAPIENTRY
-save_TexCoord2f(GLfloat x, GLfloat y)
+save_TexCoord2f(GLcontext *ctx, GLfloat x, GLfloat y)
 {
-    save_Attr2fNV(VERT_ATTRIB_TEX0, x, y);
+    save_Attr2fNV(ctx, VERT_ATTRIB_TEX0, x, y);
 }
 
 static void GLAPIENTRY
-save_TexCoord2fv(const GLfloat * v)
+save_TexCoord2fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_Attr2fNV(VERT_ATTRIB_TEX0, v[0], v[1]);
+    save_Attr2fNV(ctx, VERT_ATTRIB_TEX0, v[0], v[1]);
 }
 
 static void GLAPIENTRY
-save_TexCoord3f(GLfloat x, GLfloat y, GLfloat z)
+save_TexCoord3f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
-    save_Attr3fNV(VERT_ATTRIB_TEX0, x, y, z);
+    save_Attr3fNV(ctx, VERT_ATTRIB_TEX0, x, y, z);
 }
 
 static void GLAPIENTRY
-save_TexCoord3fv(const GLfloat * v)
+save_TexCoord3fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_Attr3fNV(VERT_ATTRIB_TEX0, v[0], v[1], v[2]);
+    save_Attr3fNV(ctx, VERT_ATTRIB_TEX0, v[0], v[1], v[2]);
 }
 
 static void GLAPIENTRY
-save_TexCoord4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+save_TexCoord4f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    save_Attr4fNV(VERT_ATTRIB_TEX0, x, y, z, w);
+    save_Attr4fNV(ctx, VERT_ATTRIB_TEX0, x, y, z, w);
 }
 
 static void GLAPIENTRY
-save_TexCoord4fv(const GLfloat * v)
+save_TexCoord4fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_Attr4fNV(VERT_ATTRIB_TEX0, v[0], v[1], v[2], v[3]);
+    save_Attr4fNV(ctx, VERT_ATTRIB_TEX0, v[0], v[1], v[2], v[3]);
 }
 
 static void GLAPIENTRY
-save_Normal3f(GLfloat x, GLfloat y, GLfloat z)
+save_Normal3f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
-    save_Attr3fNV(VERT_ATTRIB_NORMAL, x, y, z);
+    save_Attr3fNV(ctx, VERT_ATTRIB_NORMAL, x, y, z);
 }
 
 static void GLAPIENTRY
-save_Normal3fv(const GLfloat * v)
+save_Normal3fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_Attr3fNV(VERT_ATTRIB_NORMAL, v[0], v[1], v[2]);
+    save_Attr3fNV(ctx, VERT_ATTRIB_NORMAL, v[0], v[1], v[2]);
 }
 
 static void GLAPIENTRY
-save_FogCoordfEXT(GLfloat x)
+save_FogCoordfEXT(GLcontext *ctx, GLfloat x)
 {
-    save_Attr1fNV(VERT_ATTRIB_FOG, x);
+    save_Attr1fNV(ctx, VERT_ATTRIB_FOG, x);
 }
 
 static void GLAPIENTRY
-save_FogCoordfvEXT(const GLfloat * v)
+save_FogCoordfvEXT(GLcontext *ctx, const GLfloat * v)
 {
-    save_Attr1fNV(VERT_ATTRIB_FOG, v[0]);
+    save_Attr1fNV(ctx, VERT_ATTRIB_FOG, v[0]);
 }
 
 static void GLAPIENTRY
-save_Color3f(GLfloat x, GLfloat y, GLfloat z)
+save_Color3f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
-    save_Attr3fNV(VERT_ATTRIB_COLOR0, x, y, z);
+    save_Attr3fNV(ctx, VERT_ATTRIB_COLOR0, x, y, z);
 }
 
 static void GLAPIENTRY
-save_Color3fv(const GLfloat * v)
+save_Color3fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_Attr3fNV(VERT_ATTRIB_COLOR0, v[0], v[1], v[2]);
+    save_Attr3fNV(ctx, VERT_ATTRIB_COLOR0, v[0], v[1], v[2]);
 }
 
 static void GLAPIENTRY
-save_Color4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+save_Color4f(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-    save_Attr4fNV(VERT_ATTRIB_COLOR0, x, y, z, w);
+    save_Attr4fNV(ctx, VERT_ATTRIB_COLOR0, x, y, z, w);
 }
 
 static void GLAPIENTRY
-save_Color4fv(const GLfloat * v)
+save_Color4fv(GLcontext *ctx, const GLfloat * v)
 {
-    save_Attr4fNV(VERT_ATTRIB_COLOR0, v[0], v[1], v[2], v[3]);
+    save_Attr4fNV(ctx, VERT_ATTRIB_COLOR0, v[0], v[1], v[2], v[3]);
 }
 
 static void GLAPIENTRY
-save_SecondaryColor3fEXT(GLfloat x, GLfloat y, GLfloat z)
+save_SecondaryColor3fEXT(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z)
 {
-    save_Attr3fNV(VERT_ATTRIB_COLOR1, x, y, z);
+    save_Attr3fNV(ctx, VERT_ATTRIB_COLOR1, x, y, z);
 }
 
 static void GLAPIENTRY
-save_SecondaryColor3fvEXT(const GLfloat * v)
+save_SecondaryColor3fvEXT(GLcontext *ctx, const GLfloat * v)
 {
-    save_Attr3fNV(VERT_ATTRIB_COLOR1, v[0], v[1], v[2]);
+    save_Attr3fNV(ctx, VERT_ATTRIB_COLOR1, v[0], v[1], v[2]);
 }
 
 
 /* Just call the respective ATTR for texcoord
  */
 static void GLAPIENTRY
-save_MultiTexCoord1f(GLenum target, GLfloat x)
+save_MultiTexCoord1f(GLcontext *ctx, GLenum target, GLfloat x)
 {
     GLuint attr = (target & 0x7) + VERT_ATTRIB_TEX0;
-    save_Attr1fNV(attr, x);
+    save_Attr1fNV(ctx, attr, x);
 }
 
 static void GLAPIENTRY
-save_MultiTexCoord1fv(GLenum target, const GLfloat * v)
+save_MultiTexCoord1fv(GLcontext *ctx, GLenum target, const GLfloat * v)
 {
     GLuint attr = (target & 0x7) + VERT_ATTRIB_TEX0;
-    save_Attr1fNV(attr, v[0]);
+    save_Attr1fNV(ctx, attr, v[0]);
 }
 
 static void GLAPIENTRY
-save_MultiTexCoord2f(GLenum target, GLfloat x, GLfloat y)
+save_MultiTexCoord2f(GLcontext *ctx, GLenum target, GLfloat x, GLfloat y)
 {
     GLuint attr = (target & 0x7) + VERT_ATTRIB_TEX0;
-    save_Attr2fNV(attr, x, y);
+    save_Attr2fNV(ctx, attr, x, y);
 }
 
 static void GLAPIENTRY
-save_MultiTexCoord2fv(GLenum target, const GLfloat * v)
+save_MultiTexCoord2fv(GLcontext *ctx, GLenum target, const GLfloat * v)
 {
     GLuint attr = (target & 0x7) + VERT_ATTRIB_TEX0;
-    save_Attr2fNV(attr, v[0], v[1]);
+    save_Attr2fNV(ctx, attr, v[0], v[1]);
 }
 
 static void GLAPIENTRY
-save_MultiTexCoord3f(GLenum target, GLfloat x, GLfloat y, GLfloat z)
+save_MultiTexCoord3f(GLcontext *ctx, GLenum target, GLfloat x, GLfloat y, GLfloat z)
 {
     GLuint attr = (target & 0x7) + VERT_ATTRIB_TEX0;
-    save_Attr3fNV(attr, x, y, z);
+    save_Attr3fNV(ctx, attr, x, y, z);
 }
 
 static void GLAPIENTRY
-save_MultiTexCoord3fv(GLenum target, const GLfloat * v)
+save_MultiTexCoord3fv(GLcontext *ctx, GLenum target, const GLfloat * v)
 {
     GLuint attr = (target & 0x7) + VERT_ATTRIB_TEX0;
-    save_Attr3fNV(attr, v[0], v[1], v[2]);
+    save_Attr3fNV(ctx, attr, v[0], v[1], v[2]);
 }
 
 static void GLAPIENTRY
-save_MultiTexCoord4f(GLenum target, GLfloat x, GLfloat y,
+save_MultiTexCoord4f(GLcontext *ctx, GLenum target, GLfloat x, GLfloat y,
 		     GLfloat z, GLfloat w)
 {
     GLuint attr = (target & 0x7) + VERT_ATTRIB_TEX0;
-    save_Attr4fNV(attr, x, y, z, w);
+    save_Attr4fNV(ctx, attr, x, y, z, w);
 }
 
 static void GLAPIENTRY
-save_MultiTexCoord4fv(GLenum target, const GLfloat * v)
+save_MultiTexCoord4fv(GLcontext *ctx, GLenum target, const GLfloat * v)
 {
     GLuint attr = (target & 0x7) + VERT_ATTRIB_TEX0;
-    save_Attr4fNV(attr, v[0], v[1], v[2], v[3]);
+    save_Attr4fNV(ctx, attr, v[0], v[1], v[2], v[3]);
 }
 
 
@@ -5288,152 +5288,152 @@ index_error(GLcontext *ctx)
  * Check for errors at compile time?.
  */
 static void GLAPIENTRY
-save_VertexAttrib1fNV(GLuint index, GLfloat x)
+save_VertexAttrib1fNV(GLcontext *ctx, GLuint index, GLfloat x)
 {
     if (index < MAX_VERTEX_PROGRAM_ATTRIBS)
-	save_Attr1fNV(index, x);
+	save_Attr1fNV(ctx, index, x);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib1fvNV(GLuint index, const GLfloat * v)
+save_VertexAttrib1fvNV(GLcontext *ctx, GLuint index, const GLfloat * v)
 {
     if (index < MAX_VERTEX_PROGRAM_ATTRIBS)
-	save_Attr1fNV(index, v[0]);
+	save_Attr1fNV(ctx, index, v[0]);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib2fNV(GLuint index, GLfloat x, GLfloat y)
+save_VertexAttrib2fNV(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y)
 {
     if (index < MAX_VERTEX_PROGRAM_ATTRIBS)
-	save_Attr2fNV(index, x, y);
+	save_Attr2fNV(ctx, index, x, y);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib2fvNV(GLuint index, const GLfloat * v)
+save_VertexAttrib2fvNV(GLcontext *ctx, GLuint index, const GLfloat * v)
 {
     if (index < MAX_VERTEX_PROGRAM_ATTRIBS)
-	save_Attr2fNV(index, v[0], v[1]);
+	save_Attr2fNV(ctx, index, v[0], v[1]);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib3fNV(GLuint index, GLfloat x, GLfloat y, GLfloat z)
+save_VertexAttrib3fNV(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y, GLfloat z)
 {
     if (index < MAX_VERTEX_PROGRAM_ATTRIBS)
-	save_Attr3fNV(index, x, y, z);
+	save_Attr3fNV(ctx, index, x, y, z);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib3fvNV(GLuint index, const GLfloat * v)
+save_VertexAttrib3fvNV(GLcontext *ctx, GLuint index, const GLfloat * v)
 {
     if (index < MAX_VERTEX_PROGRAM_ATTRIBS)
-	save_Attr3fNV(index, v[0], v[1], v[2]);
+	save_Attr3fNV(ctx, index, v[0], v[1], v[2]);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib4fNV(GLuint index, GLfloat x, GLfloat y,
+save_VertexAttrib4fNV(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y,
 		      GLfloat z, GLfloat w)
 {
     if (index < MAX_VERTEX_PROGRAM_ATTRIBS)
-	save_Attr4fNV(index, x, y, z, w);
+	save_Attr4fNV(ctx, index, x, y, z, w);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib4fvNV(GLuint index, const GLfloat * v)
+save_VertexAttrib4fvNV(GLcontext *ctx, GLuint index, const GLfloat * v)
 {
     if (index < MAX_VERTEX_PROGRAM_ATTRIBS)
-	save_Attr4fNV(index, v[0], v[1], v[2], v[3]);
+	save_Attr4fNV(ctx, index, v[0], v[1], v[2], v[3]);
     else
-	index_error();
+	index_error(ctx);
 }
 
 
 
 
 static void GLAPIENTRY
-save_VertexAttrib1fARB(GLuint index, GLfloat x)
+save_VertexAttrib1fARB(GLcontext *ctx, GLuint index, GLfloat x)
 {
     if (index < MAX_VERTEX_ATTRIBS)
-	save_Attr1fARB(index, x);
+	save_Attr1fARB(ctx, index, x);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib1fvARB(GLuint index, const GLfloat * v)
+save_VertexAttrib1fvARB(GLcontext *ctx, GLuint index, const GLfloat * v)
 {
     if (index < MAX_VERTEX_ATTRIBS)
-	save_Attr1fARB(index, v[0]);
+	save_Attr1fARB(ctx, index, v[0]);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib2fARB(GLuint index, GLfloat x, GLfloat y)
+save_VertexAttrib2fARB(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y)
 {
     if (index < MAX_VERTEX_ATTRIBS)
-	save_Attr2fARB(index, x, y);
+	save_Attr2fARB(ctx, index, x, y);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib2fvARB(GLuint index, const GLfloat * v)
+save_VertexAttrib2fvARB(GLcontext *ctx, GLuint index, const GLfloat * v)
 {
     if (index < MAX_VERTEX_ATTRIBS)
-	save_Attr2fARB(index, v[0], v[1]);
+	save_Attr2fARB(ctx, index, v[0], v[1]);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib3fARB(GLuint index, GLfloat x, GLfloat y, GLfloat z)
+save_VertexAttrib3fARB(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y, GLfloat z)
 {
     if (index < MAX_VERTEX_ATTRIBS)
-	save_Attr3fARB(index, x, y, z);
+	save_Attr3fARB(ctx, index, x, y, z);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib3fvARB(GLuint index, const GLfloat * v)
+save_VertexAttrib3fvARB(GLcontext *ctx, GLuint index, const GLfloat * v)
 {
     if (index < MAX_VERTEX_ATTRIBS)
-	save_Attr3fARB(index, v[0], v[1], v[2]);
+	save_Attr3fARB(ctx, index, v[0], v[1], v[2]);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib4fARB(GLuint index, GLfloat x, GLfloat y, GLfloat z,
+save_VertexAttrib4fARB(GLcontext *ctx, GLuint index, GLfloat x, GLfloat y, GLfloat z,
 		       GLfloat w)
 {
     if (index < MAX_VERTEX_ATTRIBS)
-	save_Attr4fARB(index, x, y, z, w);
+	save_Attr4fARB(ctx, index, x, y, z, w);
     else
-	index_error();
+	index_error(ctx);
 }
 
 static void GLAPIENTRY
-save_VertexAttrib4fvARB(GLuint index, const GLfloat * v)
+save_VertexAttrib4fvARB(GLcontext *ctx, GLuint index, const GLfloat * v)
 {
     if (index < MAX_VERTEX_ATTRIBS)
-	save_Attr4fARB(index, v[0], v[1], v[2], v[3]);
+	save_Attr4fARB(ctx, index, v[0], v[1], v[2], v[3]);
     else
-	index_error();
+	index_error(ctx);
 }
 
 
@@ -6548,7 +6548,7 @@ _mesa_EndList(GLcontext *ctx)
 
 
     if (MESA_VERBOSE & VERBOSE_DISPLAY_LIST)
-	mesa_print_display_list(ctx->ListState.CurrentListNum);
+	mesa_print_display_list(ctx, ctx->ListState.CurrentListNum);
 
     ctx->Driver.EndList(ctx);
 

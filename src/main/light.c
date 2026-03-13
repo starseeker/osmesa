@@ -250,11 +250,11 @@ _mesa_Lightfv(GLcontext *ctx, GLenum light, GLenum pname, const GLfloat *params)
 
 
 void GLAPIENTRY
-_mesa_Lighti(GLenum light, GLenum pname, GLint param)
+_mesa_Lighti(GLcontext *ctx, GLenum light, GLenum pname, GLint param)
 {
     GLint p[4] = {0.0};
     p[0] = param;
-    _mesa_Lightiv(light, pname, p);
+    _mesa_Lightiv(ctx, light, pname, p);
 }
 
 
@@ -501,11 +501,11 @@ _mesa_LightModeliv(GLcontext *ctx, GLenum pname, const GLint *params)
 
 
 void GLAPIENTRY
-_mesa_LightModeli(GLenum pname, GLint param)
+_mesa_LightModeli(GLcontext *ctx, GLenum pname, GLint param)
 {
     GLint p[4] = {0};
     p[0] = param;
-    _mesa_LightModeliv(pname, p);
+    _mesa_LightModeliv(ctx, pname, p);
 }
 
 

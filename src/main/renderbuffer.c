@@ -1606,7 +1606,7 @@ _mesa_add_color_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb,
 	rb->InternalFormat = rb->_ActualFormat;
 
 	rb->AllocStorage = _mesa_soft_renderbuffer_storage;
-	_mesa_add_renderbuffer(fb, b, rb);
+	_mesa_add_renderbuffer(ctx, fb, b, rb);
     }
 
     return GL_TRUE;
@@ -1662,7 +1662,7 @@ _mesa_add_color_index_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb,
 	rb->InternalFormat = rb->_ActualFormat;
 
 	rb->AllocStorage = _mesa_soft_renderbuffer_storage;
-	_mesa_add_renderbuffer(fb, b, rb);
+	_mesa_add_renderbuffer(ctx, fb, b, rb);
     }
 
     return GL_TRUE;
@@ -1750,7 +1750,7 @@ _mesa_add_alpha_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb,
 	fb->Attachment[b].Renderbuffer = NULL;
 
 	/* plug the alpha renderbuffer into the colorbuffer attachment */
-	_mesa_add_renderbuffer(fb, b, arb);
+	_mesa_add_renderbuffer(ctx, fb, b, arb);
     }
 
     return GL_TRUE;
@@ -1816,7 +1816,7 @@ _mesa_add_depth_renderbuffer(GLcontext *ctx, struct gl_framebuffer *fb,
     rb->InternalFormat = rb->_ActualFormat;
 
     rb->AllocStorage = _mesa_soft_renderbuffer_storage;
-    _mesa_add_renderbuffer(fb, BUFFER_DEPTH, rb);
+    _mesa_add_renderbuffer(ctx, fb, BUFFER_DEPTH, rb);
 
     return GL_TRUE;
 }
@@ -1859,7 +1859,7 @@ _mesa_add_stencil_renderbuffer(GLcontext *ctx, struct gl_framebuffer *fb,
     rb->InternalFormat = rb->_ActualFormat;
 
     rb->AllocStorage = _mesa_soft_renderbuffer_storage;
-    _mesa_add_renderbuffer(fb, BUFFER_STENCIL, rb);
+    _mesa_add_renderbuffer(ctx, fb, BUFFER_STENCIL, rb);
 
     return GL_TRUE;
 }
@@ -1897,7 +1897,7 @@ _mesa_add_accum_renderbuffer(GLcontext *ctx, struct gl_framebuffer *fb,
     rb->_ActualFormat = GL_RGBA16;
     rb->InternalFormat = GL_RGBA16;
     rb->AllocStorage = _mesa_soft_renderbuffer_storage;
-    _mesa_add_renderbuffer(fb, BUFFER_ACCUM, rb);
+    _mesa_add_renderbuffer(ctx, fb, BUFFER_ACCUM, rb);
 
     return GL_TRUE;
 }
@@ -1946,7 +1946,7 @@ _mesa_add_aux_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb,
 	rb->InternalFormat = rb->_ActualFormat;
 
 	rb->AllocStorage = _mesa_soft_renderbuffer_storage;
-	_mesa_add_renderbuffer(fb, BUFFER_AUX0 + i, rb);
+	_mesa_add_renderbuffer(ctx, fb, BUFFER_AUX0 + i, rb);
     }
     return GL_TRUE;
 }
@@ -1975,13 +1975,13 @@ _mesa_add_soft_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb,
 	if (fb->Visual.rgbMode) {
 	    assert(fb->Visual.redBits == fb->Visual.greenBits);
 	    assert(fb->Visual.redBits == fb->Visual.blueBits);
-	    _mesa_add_color_renderbuffers(ctx, NULL, fb,
+	    _mesa_add_color_renderbuffers(ctx, fb,
 					  fb->Visual.redBits,
 					  fb->Visual.alphaBits,
 					  frontLeft, backLeft,
 					  frontRight, backRight);
 	} else {
-	    _mesa_add_color_index_renderbuffers(ctx, NULL, fb,
+	    _mesa_add_color_index_renderbuffers(ctx, fb,
 						fb->Visual.indexBits,
 						frontLeft, backLeft,
 						frontRight, backRight);
@@ -1990,12 +1990,12 @@ _mesa_add_soft_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb,
 
     if (depth) {
 	assert(fb->Visual.depthBits > 0);
-	_mesa_add_depth_renderbuffer(ctx, NULL, fb, fb->Visual.depthBits);
+	_mesa_add_depth_renderbuffer(ctx, fb, fb->Visual.depthBits);
     }
 
     if (stencil) {
 	assert(fb->Visual.stencilBits > 0);
-	_mesa_add_stencil_renderbuffer(ctx, NULL, fb, fb->Visual.stencilBits);
+	_mesa_add_stencil_renderbuffer(ctx, fb, fb->Visual.stencilBits);
     }
 
     if (accum) {
@@ -2003,7 +2003,7 @@ _mesa_add_soft_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb,
 	assert(fb->Visual.accumRedBits > 0);
 	assert(fb->Visual.accumGreenBits > 0);
 	assert(fb->Visual.accumBlueBits > 0);
-	_mesa_add_accum_renderbuffer(ctx, NULL, fb,
+	_mesa_add_accum_renderbuffer(ctx, fb,
 				     fb->Visual.accumRedBits,
 				     fb->Visual.accumGreenBits,
 				     fb->Visual.accumBlueBits,
@@ -2013,14 +2013,14 @@ _mesa_add_soft_renderbuffers(GLcontext *ctx, struct gl_framebuffer *fb,
     if (aux) {
 	assert(fb->Visual.rgbMode);
 	assert(fb->Visual.numAuxBuffers > 0);
-	_mesa_add_aux_renderbuffers(ctx, NULL, fb, fb->Visual.redBits,
+	_mesa_add_aux_renderbuffers(ctx, fb, fb->Visual.redBits,
 				    fb->Visual.numAuxBuffers);
     }
 
     if (alpha) {
 	assert(fb->Visual.rgbMode);
 	assert(fb->Visual.alphaBits > 0);
-	_mesa_add_alpha_renderbuffers(ctx, NULL, fb, fb->Visual.alphaBits,
+	_mesa_add_alpha_renderbuffers(ctx, fb, fb->Visual.alphaBits,
 				      frontLeft, backLeft,
 				      frontRight, backRight);
     }
@@ -2163,7 +2163,7 @@ _mesa_new_depthstencil_renderbuffer(GLcontext *ctx, GLuint name)
     if (!dsrb)
 	return NULL;
 
-    /* init fields not covered by _mesa_new_renderbuffer() */
+    /* init fields not covered by _mesa_new_renderbuffer(ctx) */
     dsrb->InternalFormat = GL_DEPTH24_STENCIL8_EXT;
     dsrb->_ActualFormat = GL_DEPTH24_STENCIL8_EXT;
     dsrb->AllocStorage = _mesa_soft_renderbuffer_storage;

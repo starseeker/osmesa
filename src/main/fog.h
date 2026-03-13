@@ -46,7 +46,7 @@ extern void GLAPIENTRY
 _mesa_Fogf(GLcontext *ctx, GLenum pname, GLfloat param);
 
 extern void GLAPIENTRY
-_mesa_Fogi(GLenum pname, GLint param);
+_mesa_Fogi(GLcontext *ctx, GLenum pname, GLint param);
 
 extern void GLAPIENTRY
 _mesa_Fogfv(GLcontext *ctx, GLenum pname, const GLfloat *params);

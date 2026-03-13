@@ -3,6 +3,8 @@ set(OSMESA_HDRS
   OSMesa/glext.h
   OSMesa/osmesa.h
   OSMesa/gl_mangle.h
+  OSMesa/glctx.h
+  OSMesa/glapitable.h
   )
 install(FILES ${OSMESA_HDRS} DESTINATION include/OSMesa)
 

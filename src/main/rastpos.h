@@ -114,76 +114,76 @@ _mesa_RasterPos4sv(GLcontext *ctx, const GLshort *v);
 /*@{*/
 
 extern void GLAPIENTRY
-_mesa_WindowPos2dMESA(GLdouble x, GLdouble y);
+_mesa_WindowPos2dMESA(GLcontext *ctx, GLdouble x, GLdouble y);
 
 extern void GLAPIENTRY
-_mesa_WindowPos2fMESA(GLfloat x, GLfloat y);
+_mesa_WindowPos2fMESA(GLcontext *ctx, GLfloat x, GLfloat y);
 
 extern void GLAPIENTRY
-_mesa_WindowPos2iMESA(GLint x, GLint y);
+_mesa_WindowPos2iMESA(GLcontext *ctx, GLint x, GLint y);
 
 extern void GLAPIENTRY
-_mesa_WindowPos2sMESA(GLshort x, GLshort y);
+_mesa_WindowPos2sMESA(GLcontext *ctx, GLshort x, GLshort y);
 
 extern void GLAPIENTRY
-_mesa_WindowPos3dMESA(GLdouble x, GLdouble y, GLdouble z);
+_mesa_WindowPos3dMESA(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z);
 
 extern void GLAPIENTRY
-_mesa_WindowPos3fMESA(GLfloat x, GLfloat y, GLfloat z);
+_mesa_WindowPos3fMESA(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z);
 
 extern void GLAPIENTRY
-_mesa_WindowPos3iMESA(GLint x, GLint y, GLint z);
+_mesa_WindowPos3iMESA(GLcontext *ctx, GLint x, GLint y, GLint z);
 
 extern void GLAPIENTRY
-_mesa_WindowPos3sMESA(GLshort x, GLshort y, GLshort z);
+_mesa_WindowPos3sMESA(GLcontext *ctx, GLshort x, GLshort y, GLshort z);
 
 extern void GLAPIENTRY
-_mesa_WindowPos4dMESA(GLdouble x, GLdouble y, GLdouble z, GLdouble w);
+_mesa_WindowPos4dMESA(GLcontext *ctx, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
 
 extern void GLAPIENTRY
-_mesa_WindowPos4fMESA(GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+_mesa_WindowPos4fMESA(GLcontext *ctx, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 
 extern void GLAPIENTRY
-_mesa_WindowPos4iMESA(GLint x, GLint y, GLint z, GLint w);
+_mesa_WindowPos4iMESA(GLcontext *ctx, GLint x, GLint y, GLint z, GLint w);
 
 extern void GLAPIENTRY
-_mesa_WindowPos4sMESA(GLshort x, GLshort y, GLshort z, GLshort w);
+_mesa_WindowPos4sMESA(GLcontext *ctx, GLshort x, GLshort y, GLshort z, GLshort w);
 
 extern void GLAPIENTRY
-_mesa_WindowPos2dvMESA(const GLdouble *v);
+_mesa_WindowPos2dvMESA(GLcontext *ctx, const GLdouble *v);
 
 extern void GLAPIENTRY
-_mesa_WindowPos2fvMESA(const GLfloat *v);
+_mesa_WindowPos2fvMESA(GLcontext *ctx, const GLfloat *v);
 
 extern void GLAPIENTRY
-_mesa_WindowPos2ivMESA(const GLint *v);
+_mesa_WindowPos2ivMESA(GLcontext *ctx, const GLint *v);
 
 extern void GLAPIENTRY
-_mesa_WindowPos2svMESA(const GLshort *v);
+_mesa_WindowPos2svMESA(GLcontext *ctx, const GLshort *v);
 
 extern void GLAPIENTRY
-_mesa_WindowPos3dvMESA(const GLdouble *v);
+_mesa_WindowPos3dvMESA(GLcontext *ctx, const GLdouble *v);
 
 extern void GLAPIENTRY
-_mesa_WindowPos3fvMESA(const GLfloat *v);
+_mesa_WindowPos3fvMESA(GLcontext *ctx, const GLfloat *v);
 
 extern void GLAPIENTRY
-_mesa_WindowPos3ivMESA(const GLint *v);
+_mesa_WindowPos3ivMESA(GLcontext *ctx, const GLint *v);
 
 extern void GLAPIENTRY
-_mesa_WindowPos3svMESA(const GLshort *v);
+_mesa_WindowPos3svMESA(GLcontext *ctx, const GLshort *v);
 
 extern void GLAPIENTRY
-_mesa_WindowPos4dvMESA(const GLdouble *v);
+_mesa_WindowPos4dvMESA(GLcontext *ctx, const GLdouble *v);
 
 extern void GLAPIENTRY
-_mesa_WindowPos4fvMESA(const GLfloat *v);
+_mesa_WindowPos4fvMESA(GLcontext *ctx, const GLfloat *v);
 
 extern void GLAPIENTRY
-_mesa_WindowPos4ivMESA(const GLint *v);
+_mesa_WindowPos4ivMESA(GLcontext *ctx, const GLint *v);
 
 extern void GLAPIENTRY
-_mesa_WindowPos4svMESA(const GLshort *v);
+_mesa_WindowPos4svMESA(GLcontext *ctx, const GLshort *v);
 
 extern void
 _mesa_init_rastpos(GLcontext *ctx);

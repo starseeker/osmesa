@@ -42,7 +42,7 @@
 
 
 static void
-fxt1_encode(GLuint width, GLuint height, GLint comps,
+fxt1_encode(GLcontext *ctx, GLuint width, GLuint height, GLint comps,
 	    const void *source, GLint srcRowStride,
 	    void *dest, GLint destRowStride);
 
@@ -106,7 +106,7 @@ texstore_rgb_fxt1(TEXSTORE_PARAMS)
 					 dstFormat->MesaFormat,
 					 texWidth, (GLubyte *) dstAddr);
 
-    fxt1_encode(srcWidth, srcHeight, 3, pixels, srcRowStride,
+    fxt1_encode(ctx, srcWidth, srcHeight, 3, pixels, srcRowStride,
 		dst, dstRowStride);
 
     if (tempImage)
@@ -161,7 +161,7 @@ texstore_rgba_fxt1(TEXSTORE_PARAMS)
 					 dstFormat->MesaFormat,
 					 texWidth, (GLubyte *) dstAddr);
 
-    fxt1_encode(srcWidth, srcHeight, 4, pixels, srcRowStride,
+    fxt1_encode(ctx, srcWidth, srcHeight, 4, pixels, srcRowStride,
 		dst, dstRowStride);
 
     if (tempImage)
@@ -1333,7 +1333,7 @@ fxt1_quantize(GLuint *cc, const GLubyte *lines[], GLint comps)
 
 
 static void
-fxt1_encode(GLuint width, GLuint height, GLint comps,
+fxt1_encode(GLcontext *ctx, GLuint width, GLuint height, GLint comps,
 	    const void *source, GLint srcRowStride,
 	    void *dest, GLint destRowStride)
 {

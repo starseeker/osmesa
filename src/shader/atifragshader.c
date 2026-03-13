@@ -605,16 +605,16 @@ _mesa_FragmentOpXATI(GLcontext *ctx, GLint optype, GLuint arg_count, GLenum op, 
 	_mesa_error(ctx, GL_INVALID_OPERATION, "C/AFragmentOpATI(sec_interp)");
     }
 
-    if (!check_arith_arg(curProg, optype, arg1, arg1Rep)) {
+    if (!check_arith_arg(ctx, curProg, optype, arg1, arg1Rep)) {
 	return;
     }
     if (arg2) {
-	if (!check_arith_arg(curProg, optype, arg2, arg2Rep)) {
+	if (!check_arith_arg(ctx, curProg, optype, arg2, arg2Rep)) {
 	    return;
 	}
     }
     if (arg3) {
-	if (!check_arith_arg(curProg, optype, arg3, arg3Rep)) {
+	if (!check_arith_arg(ctx, curProg, optype, arg3, arg3Rep)) {
 	    return;
 	}
 	if ((arg1 >= GL_CON_0_ATI) && (arg1 <= GL_CON_7_ATI) &&

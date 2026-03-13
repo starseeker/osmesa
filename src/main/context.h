@@ -126,7 +126,7 @@ _mesa_copy_context(const GLcontext *src, GLcontext *dst, GLuint mask);
 
 
 extern void
-_mesa_make_current(GLcontext *ctx, GLframebuffer *drawBuffer,
+_mesa_make_current(GLcontext *newCtx, GLframebuffer *drawBuffer,
 		   GLframebuffer *readBuffer);
 
 extern GLboolean

@@ -60,6 +60,14 @@ extern "C" {
 #include "OSMesa/gl.h"
 
 
+/*
+ * Forward declaration so that OSMesaGetDispatch/OSMesaGetGLcontext can
+ * return the internal GLcontext * type without pulling in all of mtypes.h.
+ */
+struct __GLcontextRec;
+typedef struct __GLcontextRec GLcontext;
+
+
 #define OSMESA_MAJOR_VERSION 6
 #define OSMESA_MINOR_VERSION 5
 #define OSMESA_PATCH_VERSION 0
@@ -309,6 +317,41 @@ OSMesaFXAAEnable(GLboolean enable);
  */
 GLAPI OSMesaContext GLAPIENTRY
 OSMesaSetCurrentContext(OSMesaContext ctx);
+
+
+/*
+ * Return the internal GL dispatch table for the given OSMesa context.
+ *
+ * The dispatch table is the struct _glapi_table that holds all GL function
+ * pointers.  After this refactor, every function pointer in the table accepts
+ * GLcontext * as its first parameter, so callers can invoke GL functions
+ * on a specific context without touching global TLS state:
+ *
+ *   struct _glapi_table *tbl = OSMesaGetDispatch(ctx);
+ *   GLcontext *gl = OSMesaGetGLcontext(ctx);
+ *   tbl->ClearColor(gl, 0.0f, 0.0f, 0.0f, 1.0f);
+ *   tbl->Clear(gl, GL_COLOR_BUFFER_BIT);
+ *
+ * This is the foundation for the zero-TLS explicit-context API provided by
+ * glctx.h.
+ *
+ * New in Mesa 6.5.4+
+ */
+GLAPI struct _glapi_table * GLAPIENTRY
+OSMesaGetDispatch(OSMesaContext ctx);
+
+
+/*
+ * Return the internal GLcontext pointer for the given OSMesaContext.
+ *
+ * The returned pointer is suitable for use as the first argument to every
+ * function in the dispatch table returned by OSMesaGetDispatch().
+ *
+ * New in Mesa 6.5.4+
+ */
+GLAPI GLcontext * GLAPIENTRY
+OSMesaGetGLcontext(OSMesaContext ctx);
+
 
 #ifdef __cplusplus
 }

@@ -8,6 +8,10 @@ add_executable(osdemo osdemo.c)
 target_link_libraries(osdemo osmesa ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 set_property(TARGET osdemo APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
 
+add_executable(osdemo_ctx osdemo_ctx.c)
+target_link_libraries(osdemo_ctx osmesa ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+set_property(TARGET osdemo_ctx APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
+
 add_executable(gl2_ext_test gl2_ext_test.c)
 target_link_libraries(gl2_ext_test osmesa ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 set_property(TARGET gl2_ext_test APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")

@@ -188,7 +188,8 @@ _mesa_free_framebuffer_data(struct gl_framebuffer *fb)
 	    _mesa_reference_renderbuffer(&att->Renderbuffer, NULL);
 	}
 	if (att->Texture) {
-	    _mesa_reference_texobj(&att->Texture, NULL);
+	    GLcontext *ctx = NULL; /* cleanup path */
+	    _mesa_reference_texobj(ctx, &att->Texture, NULL);
 	}
 	ASSERT(!att->Renderbuffer);
 	ASSERT(!att->Texture);

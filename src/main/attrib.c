@@ -376,11 +376,11 @@ _mesa_PushAttrib(GLcontext *ctx, GLbitfield mask)
 	 * accidentally get deleted while referenced in the attribute stack.
 	 */
 	for (u = 0; u < ctx->Const.MaxTextureUnits; u++) {
-	    _mesa_reference_texobj(&texstate->SavedRef1D[u], ctx->Texture.Unit[u].Current1D);
-	    _mesa_reference_texobj(&texstate->SavedRef2D[u], ctx->Texture.Unit[u].Current2D);
-	    _mesa_reference_texobj(&texstate->SavedRef3D[u], ctx->Texture.Unit[u].Current3D);
-	    _mesa_reference_texobj(&texstate->SavedRefCube[u], ctx->Texture.Unit[u].CurrentCubeMap);
-	    _mesa_reference_texobj(&texstate->SavedRefRect[u], ctx->Texture.Unit[u].CurrentRect);
+	    _mesa_reference_texobj(ctx, &texstate->SavedRef1D[u], ctx->Texture.Unit[u].Current1D);
+	    _mesa_reference_texobj(ctx, &texstate->SavedRef2D[u], ctx->Texture.Unit[u].Current2D);
+	    _mesa_reference_texobj(ctx, &texstate->SavedRef3D[u], ctx->Texture.Unit[u].Current3D);
+	    _mesa_reference_texobj(ctx, &texstate->SavedRefCube[u], ctx->Texture.Unit[u].CurrentCubeMap);
+	    _mesa_reference_texobj(ctx, &texstate->SavedRefRect[u], ctx->Texture.Unit[u].CurrentRect);
 	}
 
 	/* copy state/contents of the currently bound texture objects */
@@ -679,12 +679,12 @@ pop_texture_group(GLcontext *ctx, struct texture_state *texstate)
 	    _mesa_set_enable(ctx, GL_TEXTURE_COLOR_TABLE_SGI,
 			     unit->ColorTableEnabled);
 	}
-	_mesa_TexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, unit->EnvMode);
+	_mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, unit->EnvMode);
 	_mesa_TexEnvfv(ctx, GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, unit->EnvColor);
-	_mesa_TexGeni(GL_S, GL_TEXTURE_GEN_MODE, unit->GenModeS);
-	_mesa_TexGeni(GL_T, GL_TEXTURE_GEN_MODE, unit->GenModeT);
-	_mesa_TexGeni(GL_R, GL_TEXTURE_GEN_MODE, unit->GenModeR);
-	_mesa_TexGeni(GL_Q, GL_TEXTURE_GEN_MODE, unit->GenModeQ);
+	_mesa_TexGeni(ctx, GL_S, GL_TEXTURE_GEN_MODE, unit->GenModeS);
+	_mesa_TexGeni(ctx, GL_T, GL_TEXTURE_GEN_MODE, unit->GenModeT);
+	_mesa_TexGeni(ctx, GL_R, GL_TEXTURE_GEN_MODE, unit->GenModeR);
+	_mesa_TexGeni(ctx, GL_Q, GL_TEXTURE_GEN_MODE, unit->GenModeQ);
 	_mesa_TexGenfv(ctx, GL_S, GL_OBJECT_PLANE, unit->ObjectPlaneS);
 	_mesa_TexGenfv(ctx, GL_T, GL_OBJECT_PLANE, unit->ObjectPlaneT);
 	_mesa_TexGenfv(ctx, GL_R, GL_OBJECT_PLANE, unit->ObjectPlaneR);
@@ -712,42 +712,42 @@ pop_texture_group(GLcontext *ctx, struct texture_state *texstate)
 	_mesa_set_enable(ctx, GL_TEXTURE_GEN_Q,
 			 ((unit->TexGenEnabled & Q_BIT) ? GL_TRUE : GL_FALSE));
 	if (ctx->Extensions.EXT_texture_lod_bias) {
-	    _mesa_TexEnvf(GL_TEXTURE_FILTER_CONTROL_EXT,
+	    _mesa_TexEnvf(ctx, GL_TEXTURE_FILTER_CONTROL_EXT,
 			  GL_TEXTURE_LOD_BIAS_EXT, unit->LodBias);
 	}
 	if (ctx->Extensions.EXT_texture_env_combine ||
 	    ctx->Extensions.ARB_texture_env_combine) {
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_COMBINE_RGB,
 			  unit->Combine.ModeRGB);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_COMBINE_ALPHA,
 			  unit->Combine.ModeA);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_SOURCE0_RGB,
 			  unit->Combine.SourceRGB[0]);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_SOURCE1_RGB,
 			  unit->Combine.SourceRGB[1]);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_RGB,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_SOURCE2_RGB,
 			  unit->Combine.SourceRGB[2]);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_SOURCE0_ALPHA,
 			  unit->Combine.SourceA[0]);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_SOURCE1_ALPHA,
 			  unit->Combine.SourceA[1]);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_ALPHA,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_SOURCE2_ALPHA,
 			  unit->Combine.SourceA[2]);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_OPERAND0_RGB,
 			  unit->Combine.OperandRGB[0]);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_OPERAND1_RGB,
 			  unit->Combine.OperandRGB[1]);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_OPERAND2_RGB,
 			  unit->Combine.OperandRGB[2]);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_OPERAND0_ALPHA,
 			  unit->Combine.OperandA[0]);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_OPERAND1_ALPHA,
 			  unit->Combine.OperandA[1]);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_ALPHA,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_OPERAND2_ALPHA,
 			  unit->Combine.OperandA[2]);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_RGB_SCALE,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_RGB_SCALE,
 			  1 << unit->Combine.ScaleShiftRGB);
-	    _mesa_TexEnvi(GL_TEXTURE_ENV, GL_ALPHA_SCALE,
+	    _mesa_TexEnvi(ctx, GL_TEXTURE_ENV, GL_ALPHA_SCALE,
 			  1 << unit->Combine.ScaleShiftA);
 	}
 
@@ -796,41 +796,41 @@ pop_texture_group(GLcontext *ctx, struct texture_state *texstate)
 	    bordColor[2] = CHAN_TO_FLOAT(obj->BorderColor[2]);
 	    bordColor[3] = CHAN_TO_FLOAT(obj->BorderColor[3]);
 
-	    _mesa_TexParameterf(target, GL_TEXTURE_PRIORITY, obj->Priority);
+	    _mesa_TexParameterf(ctx, target, GL_TEXTURE_PRIORITY, obj->Priority);
 	    _mesa_TexParameterfv(ctx, target, GL_TEXTURE_BORDER_COLOR, bordColor);
-	    _mesa_TexParameteri(target, GL_TEXTURE_WRAP_S, obj->WrapS);
-	    _mesa_TexParameteri(target, GL_TEXTURE_WRAP_T, obj->WrapT);
-	    _mesa_TexParameteri(target, GL_TEXTURE_WRAP_R, obj->WrapR);
-	    _mesa_TexParameteri(target, GL_TEXTURE_MIN_FILTER, obj->MinFilter);
-	    _mesa_TexParameteri(target, GL_TEXTURE_MAG_FILTER, obj->MagFilter);
-	    _mesa_TexParameterf(target, GL_TEXTURE_MIN_LOD, obj->MinLod);
-	    _mesa_TexParameterf(target, GL_TEXTURE_MAX_LOD, obj->MaxLod);
-	    _mesa_TexParameterf(target, GL_TEXTURE_LOD_BIAS, obj->LodBias);
-	    _mesa_TexParameteri(target, GL_TEXTURE_BASE_LEVEL, obj->BaseLevel);
+	    _mesa_TexParameteri(ctx, target, GL_TEXTURE_WRAP_S, obj->WrapS);
+	    _mesa_TexParameteri(ctx, target, GL_TEXTURE_WRAP_T, obj->WrapT);
+	    _mesa_TexParameteri(ctx, target, GL_TEXTURE_WRAP_R, obj->WrapR);
+	    _mesa_TexParameteri(ctx, target, GL_TEXTURE_MIN_FILTER, obj->MinFilter);
+	    _mesa_TexParameteri(ctx, target, GL_TEXTURE_MAG_FILTER, obj->MagFilter);
+	    _mesa_TexParameterf(ctx, target, GL_TEXTURE_MIN_LOD, obj->MinLod);
+	    _mesa_TexParameterf(ctx, target, GL_TEXTURE_MAX_LOD, obj->MaxLod);
+	    _mesa_TexParameterf(ctx, target, GL_TEXTURE_LOD_BIAS, obj->LodBias);
+	    _mesa_TexParameteri(ctx, target, GL_TEXTURE_BASE_LEVEL, obj->BaseLevel);
 	    if (target != GL_TEXTURE_RECTANGLE_ARB)
-		_mesa_TexParameteri(target, GL_TEXTURE_MAX_LEVEL, obj->MaxLevel);
+		_mesa_TexParameteri(ctx, target, GL_TEXTURE_MAX_LEVEL, obj->MaxLevel);
 	    if (ctx->Extensions.EXT_texture_filter_anisotropic) {
-		_mesa_TexParameterf(target, GL_TEXTURE_MAX_ANISOTROPY_EXT,
+		_mesa_TexParameterf(ctx, target, GL_TEXTURE_MAX_ANISOTROPY_EXT,
 				    obj->MaxAnisotropy);
 	    }
 	    if (ctx->Extensions.SGIX_shadow) {
-		_mesa_TexParameteri(target, GL_TEXTURE_COMPARE_SGIX,
+		_mesa_TexParameteri(ctx, target, GL_TEXTURE_COMPARE_SGIX,
 				    obj->CompareFlag);
-		_mesa_TexParameteri(target, GL_TEXTURE_COMPARE_OPERATOR_SGIX,
+		_mesa_TexParameteri(ctx, target, GL_TEXTURE_COMPARE_OPERATOR_SGIX,
 				    obj->CompareOperator);
 	    }
 	    if (ctx->Extensions.SGIX_shadow_ambient) {
-		_mesa_TexParameterf(target, GL_SHADOW_AMBIENT_SGIX,
+		_mesa_TexParameterf(ctx, target, GL_SHADOW_AMBIENT_SGIX,
 				    obj->ShadowAmbient);
 	    }
 	}
 
 	/* remove saved references to the texture objects */
-	_mesa_reference_texobj(&texstate->SavedRef1D[u], NULL);
-	_mesa_reference_texobj(&texstate->SavedRef2D[u], NULL);
-	_mesa_reference_texobj(&texstate->SavedRef3D[u], NULL);
-	_mesa_reference_texobj(&texstate->SavedRefCube[u], NULL);
-	_mesa_reference_texobj(&texstate->SavedRefRect[u], NULL);
+	_mesa_reference_texobj(ctx, &texstate->SavedRef1D[u], NULL);
+	_mesa_reference_texobj(ctx, &texstate->SavedRef2D[u], NULL);
+	_mesa_reference_texobj(ctx, &texstate->SavedRef3D[u], NULL);
+	_mesa_reference_texobj(ctx, &texstate->SavedRefCube[u], NULL);
+	_mesa_reference_texobj(ctx, &texstate->SavedRefRect[u], NULL);
     }
 
     _mesa_ActiveTextureARB(ctx, GL_TEXTURE0_ARB + texstate->Texture.CurrentUnit);
@@ -918,7 +918,7 @@ _mesa_PopAttrib(GLcontext *ctx)
 		     * to record that error.  Per OpenGL ARB decision.
 		     */
 		    if (multipleBuffers)
-			_mesa_DrawBuffersARB(ctx->Const.MaxDrawBuffers,
+			_mesa_DrawBuffersARB(ctx, ctx->Const.MaxDrawBuffers,
 					     color->DrawBuffer);
 		    else
 			_mesa_DrawBuffer(ctx, color->DrawBuffer[0]);
@@ -981,11 +981,11 @@ _mesa_PopAttrib(GLcontext *ctx)
 		fog = (const struct gl_fog_attrib *) attr->data;
 		_mesa_set_enable(ctx, GL_FOG, fog->Enabled);
 		_mesa_Fogfv(ctx, GL_FOG_COLOR, fog->Color);
-		_mesa_Fogf(GL_FOG_DENSITY, fog->Density);
-		_mesa_Fogf(GL_FOG_START, fog->Start);
-		_mesa_Fogf(GL_FOG_END, fog->End);
-		_mesa_Fogf(GL_FOG_INDEX, fog->Index);
-		_mesa_Fogi(GL_FOG_MODE, fog->Mode);
+		_mesa_Fogf(ctx, GL_FOG_DENSITY, fog->Density);
+		_mesa_Fogf(ctx, GL_FOG_START, fog->Start);
+		_mesa_Fogf(ctx, GL_FOG_END, fog->End);
+		_mesa_Fogf(ctx, GL_FOG_INDEX, fog->Index);
+		_mesa_Fogi(ctx, GL_FOG_MODE, fog->Mode);
 	    }
 	    break;
 	    case GL_HINT_BIT: {
@@ -1037,11 +1037,11 @@ _mesa_PopAttrib(GLcontext *ctx)
 		/* light model */
 		_mesa_LightModelfv(ctx, GL_LIGHT_MODEL_AMBIENT,
 				   light->Model.Ambient);
-		_mesa_LightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER,
+		_mesa_LightModelf(ctx, GL_LIGHT_MODEL_LOCAL_VIEWER,
 				  (GLfloat) light->Model.LocalViewer);
-		_mesa_LightModelf(GL_LIGHT_MODEL_TWO_SIDE,
+		_mesa_LightModelf(ctx, GL_LIGHT_MODEL_TWO_SIDE,
 				  (GLfloat) light->Model.TwoSide);
-		_mesa_LightModelf(GL_LIGHT_MODEL_COLOR_CONTROL,
+		_mesa_LightModelf(ctx, GL_LIGHT_MODEL_COLOR_CONTROL,
 				  (GLfloat) light->Model.ColorControl);
 		/* shade model */
 		_mesa_ShadeModel(ctx, light->ShadeModel);
@@ -1070,7 +1070,7 @@ _mesa_PopAttrib(GLcontext *ctx)
 	    case GL_PIXEL_MODE_BIT:
 		memcpy(&ctx->Pixel, attr->data, sizeof(struct gl_pixel_attrib));
 		/* XXX what other pixel state needs to be set by function calls? */
-		_mesa_ReadBuffer(ctx->Pixel.ReadBuffer);
+		_mesa_ReadBuffer(ctx, ctx->Pixel.ReadBuffer);
 		ctx->NewState |= _NEW_PIXEL;
 		break;
 	    case GL_POINT_BIT: {
@@ -1081,25 +1081,25 @@ _mesa_PopAttrib(GLcontext *ctx)
 		if (ctx->Extensions.EXT_point_parameters) {
 		    _mesa_PointParameterfvEXT(ctx, GL_DISTANCE_ATTENUATION_EXT,
 					      point->Params);
-		    _mesa_PointParameterfEXT(GL_POINT_SIZE_MIN_EXT,
+		    _mesa_PointParameterfEXT(ctx, GL_POINT_SIZE_MIN_EXT,
 					     point->MinSize);
-		    _mesa_PointParameterfEXT(GL_POINT_SIZE_MAX_EXT,
+		    _mesa_PointParameterfEXT(ctx, GL_POINT_SIZE_MAX_EXT,
 					     point->MaxSize);
-		    _mesa_PointParameterfEXT(GL_POINT_FADE_THRESHOLD_SIZE_EXT,
+		    _mesa_PointParameterfEXT(ctx, GL_POINT_FADE_THRESHOLD_SIZE_EXT,
 					     point->Threshold);
 		}
 		if (ctx->Extensions.NV_point_sprite
 		    || ctx->Extensions.ARB_point_sprite) {
 		    GLuint u;
 		    for (u = 0; u < ctx->Const.MaxTextureUnits; u++) {
-			_mesa_TexEnvi(GL_POINT_SPRITE_NV, GL_COORD_REPLACE_NV,
+			_mesa_TexEnvi(ctx, GL_POINT_SPRITE_NV, GL_COORD_REPLACE_NV,
 				      (GLint) point->CoordReplace[u]);
 		    }
 		    _mesa_set_enable(ctx, GL_POINT_SPRITE_NV,point->PointSprite);
 		    if (ctx->Extensions.NV_point_sprite)
-			_mesa_PointParameteriNV(GL_POINT_SPRITE_R_MODE_NV,
+			_mesa_PointParameteriNV(ctx, GL_POINT_SPRITE_R_MODE_NV,
 						ctx->Point.SpriteRMode);
-		    _mesa_PointParameterfEXT(GL_POINT_SPRITE_COORD_ORIGIN,
+		    _mesa_PointParameterfEXT(ctx, GL_POINT_SPRITE_COORD_ORIGIN,
 					     (GLfloat)ctx->Point.SpriteOrigin);
 		}
 	    }
@@ -1437,11 +1437,11 @@ _mesa_free_attrib_data(GLcontext *ctx)
 		GLuint u;
 		/* clear references to the saved texture objects */
 		for (u = 0; u < ctx->Const.MaxTextureUnits; u++) {
-		    _mesa_reference_texobj(&texstate->SavedRef1D[u], NULL);
-		    _mesa_reference_texobj(&texstate->SavedRef2D[u], NULL);
-		    _mesa_reference_texobj(&texstate->SavedRef3D[u], NULL);
-		    _mesa_reference_texobj(&texstate->SavedRefCube[u], NULL);
-		    _mesa_reference_texobj(&texstate->SavedRefRect[u], NULL);
+		    _mesa_reference_texobj(ctx, &texstate->SavedRef1D[u], NULL);
+		    _mesa_reference_texobj(ctx, &texstate->SavedRef2D[u], NULL);
+		    _mesa_reference_texobj(ctx, &texstate->SavedRef3D[u], NULL);
+		    _mesa_reference_texobj(ctx, &texstate->SavedRefCube[u], NULL);
+		    _mesa_reference_texobj(ctx, &texstate->SavedRefRect[u], NULL);
 		}
 	    } else {
 		/* any other chunks of state that requires special handling? */

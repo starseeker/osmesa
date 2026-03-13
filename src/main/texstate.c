@@ -119,15 +119,15 @@ _mesa_copy_texture_state(const GLcontext *src, GLcontext *dst)
 	/* copy texture object bindings, not contents of texture objects */
 	_mesa_lock_context_textures(dst);
 
-	_mesa_reference_texobj(&dst->Texture.Unit[i].Current1D,
+	_mesa_reference_texobj(dst, &dst->Texture.Unit[i].Current1D,
 			       src->Texture.Unit[i].Current1D);
-	_mesa_reference_texobj(&dst->Texture.Unit[i].Current2D,
+	_mesa_reference_texobj(dst, &dst->Texture.Unit[i].Current2D,
 			       src->Texture.Unit[i].Current2D);
-	_mesa_reference_texobj(&dst->Texture.Unit[i].Current3D,
+	_mesa_reference_texobj(dst, &dst->Texture.Unit[i].Current3D,
 			       src->Texture.Unit[i].Current3D);
-	_mesa_reference_texobj(&dst->Texture.Unit[i].CurrentCubeMap,
+	_mesa_reference_texobj(dst, &dst->Texture.Unit[i].CurrentCubeMap,
 			       src->Texture.Unit[i].CurrentCubeMap);
-	_mesa_reference_texobj(&dst->Texture.Unit[i].CurrentRect,
+	_mesa_reference_texobj(dst, &dst->Texture.Unit[i].CurrentRect,
 			       src->Texture.Unit[i].CurrentRect);
 
 	_mesa_unlock_context_textures(dst);
@@ -2229,11 +2229,11 @@ _mesa_TexGeniv(GLcontext *ctx, GLenum coord, GLenum pname, const GLint *params)
 
 
 void GLAPIENTRY
-_mesa_TexGend(GLenum coord, GLenum pname, GLdouble param)
+_mesa_TexGend(GLcontext *ctx, GLenum coord, GLenum pname, GLdouble param)
 {
     GLdouble p[4] = {0.0};
     p[0] = param;
-    _mesa_TexGendv(coord, pname, p);
+    _mesa_TexGendv(ctx, coord, pname, p);
 }
 
 
@@ -2263,11 +2263,11 @@ _mesa_TexGenf(GLcontext *ctx, GLenum coord, GLenum pname, GLfloat param)
 
 
 void GLAPIENTRY
-_mesa_TexGeni(GLenum coord, GLenum pname, GLint param)
+_mesa_TexGeni(GLcontext *ctx, GLenum coord, GLenum pname, GLint param)
 {
     GLint p[4] = {0};
     p[0] = param;
-    _mesa_TexGeniv(coord, pname, p);
+    _mesa_TexGeniv(ctx, coord, pname, p);
 }
 
 
@@ -2910,11 +2910,11 @@ init_texture_unit(GLcontext *ctx, GLuint unit)
     ASSIGN_4V(texUnit->EyePlaneQ, 0.0, 0.0, 0.0, 0.0);
 
     /* initialize current texture object ptrs to the shared default objects */
-    _mesa_reference_texobj(&texUnit->Current1D, ctx->Shared->Default1D);
-    _mesa_reference_texobj(&texUnit->Current2D, ctx->Shared->Default2D);
-    _mesa_reference_texobj(&texUnit->Current3D, ctx->Shared->Default3D);
-    _mesa_reference_texobj(&texUnit->CurrentCubeMap, ctx->Shared->DefaultCubeMap);
-    _mesa_reference_texobj(&texUnit->CurrentRect, ctx->Shared->DefaultRect);
+    _mesa_reference_texobj(ctx, &texUnit->Current1D, ctx->Shared->Default1D);
+    _mesa_reference_texobj(ctx, &texUnit->Current2D, ctx->Shared->Default2D);
+    _mesa_reference_texobj(ctx, &texUnit->Current3D, ctx->Shared->Default3D);
+    _mesa_reference_texobj(ctx, &texUnit->CurrentCubeMap, ctx->Shared->DefaultCubeMap);
+    _mesa_reference_texobj(ctx, &texUnit->CurrentRect, ctx->Shared->DefaultRect);
 }
 
 
@@ -2964,11 +2964,11 @@ _mesa_free_texture_data(GLcontext *ctx)
     /* unreference current textures */
     for (u = 0; u < MAX_TEXTURE_IMAGE_UNITS; u++) {
 	struct gl_texture_unit *unit = ctx->Texture.Unit + u;
-	_mesa_reference_texobj(&unit->Current1D, NULL);
-	_mesa_reference_texobj(&unit->Current2D, NULL);
-	_mesa_reference_texobj(&unit->Current3D, NULL);
-	_mesa_reference_texobj(&unit->CurrentCubeMap, NULL);
-	_mesa_reference_texobj(&unit->CurrentRect, NULL);
+	_mesa_reference_texobj(ctx, &unit->Current1D, NULL);
+	_mesa_reference_texobj(ctx, &unit->Current2D, NULL);
+	_mesa_reference_texobj(ctx, &unit->Current3D, NULL);
+	_mesa_reference_texobj(ctx, &unit->CurrentCubeMap, NULL);
+	_mesa_reference_texobj(ctx, &unit->CurrentRect, NULL);
     }
 
     /* Free proxy texture objects */

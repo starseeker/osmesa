@@ -41,11 +41,11 @@ _mesa_Fogf(GLcontext *ctx, GLenum pname, GLfloat param)
 
 
 void GLAPIENTRY
-_mesa_Fogi(GLenum pname, GLint param)
+_mesa_Fogi(GLcontext *ctx, GLenum pname, GLint param)
 {
     GLint p[4] = {0};
     p[0] = param;
-    _mesa_Fogiv(pname, p);
+    _mesa_Fogiv(ctx, pname, p);
 }
 
 

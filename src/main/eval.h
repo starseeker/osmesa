@@ -45,7 +45,7 @@ extern void _mesa_init_eval(GLcontext *ctx);
 extern void _mesa_free_eval_data(GLcontext *ctx);
 
 
-extern GLuint _mesa_evaluator_components(GLcontext *ctx, GLenum target);
+extern GLuint _mesa_evaluator_components(GLenum target);
 
 
 extern void gl_free_control_points(GLcontext *ctx,
@@ -73,21 +73,21 @@ extern GLfloat *_mesa_copy_map_points2d(GLenum target,
 
 
 extern void GLAPIENTRY
-_mesa_Map1f(GLenum target, GLfloat u1, GLfloat u2, GLint stride,
+_mesa_Map1f(GLcontext *ctx, GLenum target, GLfloat u1, GLfloat u2, GLint stride,
 	    GLint order, const GLfloat *points);
 
 extern void GLAPIENTRY
-_mesa_Map2f(GLenum target,
+_mesa_Map2f(GLcontext *ctx, GLenum target,
 	    GLfloat u1, GLfloat u2, GLint ustride, GLint uorder,
 	    GLfloat v1, GLfloat v2, GLint vstride, GLint vorder,
 	    const GLfloat *points);
 
 extern void GLAPIENTRY
-_mesa_Map1d(GLenum target, GLdouble u1, GLdouble u2, GLint stride,
+_mesa_Map1d(GLcontext *ctx, GLenum target, GLdouble u1, GLdouble u2, GLint stride,
 	    GLint order, const GLdouble *points);
 
 extern void GLAPIENTRY
-_mesa_Map2d(GLenum target,
+_mesa_Map2d(GLcontext *ctx, GLenum target,
 	    GLdouble u1, GLdouble u2, GLint ustride, GLint uorder,
 	    GLdouble v1, GLdouble v2, GLint vstride, GLint vorder,
 	    const GLdouble *points);

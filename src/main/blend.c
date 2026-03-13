@@ -54,8 +54,7 @@
 void GLAPIENTRY
 _mesa_BlendFunc(GLcontext *ctx, GLenum sfactor, GLenum dfactor)
 {
-    (*ctx->CurrentDispatch->BlendFuncSeparateEXT)(sfactor, dfactor,
-	    sfactor, dfactor);
+    (*ctx->CurrentDispatch->BlendFuncSeparateEXT)(ctx, sfactor, dfactor, sfactor, dfactor);
 }
 
 
