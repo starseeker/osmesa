@@ -166,7 +166,7 @@ static GLint NoOpUnused(void)
 #if defined(THREADS)
 
 static GLboolean ThreadSafe = GL_FALSE;  /**< In thread-safe mode? */
-_glthread_TSD _gl_DispatchTSD;           /**< Per-thread dispatch pointer */
+static _glthread_TSD _gl_DispatchTSD;    /**< Per-thread dispatch pointer */
 static _glthread_TSD ContextTSD;         /**< Per-thread context pointer */
 
 #endif /* defined(THREADS) */
