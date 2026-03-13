@@ -527,36 +527,42 @@ _mesa_noop_Materialfv(GLcontext *ctx, GLenum face, GLenum pname, const GLfloat *
 /**
  * These really are noops outside begin/end:
  */
-static void GLAPIENTRY _mesa_noop_Vertex2fv(const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_Vertex2fv(GLcontext *ctx, const GLfloat *v)
 {
+    (void) ctx;
     (void) v;
 }
 
-static void GLAPIENTRY _mesa_noop_Vertex3fv(const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_Vertex3fv(GLcontext *ctx, const GLfloat *v)
 {
+    (void) ctx;
     (void) v;
 }
 
-static void GLAPIENTRY _mesa_noop_Vertex4fv(const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_Vertex4fv(GLcontext *ctx, const GLfloat *v)
 {
+    (void) ctx;
     (void) v;
 }
 
-static void GLAPIENTRY _mesa_noop_Vertex2f(GLfloat a, GLfloat b)
+static void GLAPIENTRY _mesa_noop_Vertex2f(GLcontext *ctx, GLfloat a, GLfloat b)
 {
+    (void) ctx;
     (void) a;
     (void) b;
 }
 
-static void GLAPIENTRY _mesa_noop_Vertex3f(GLfloat a, GLfloat b, GLfloat c)
+static void GLAPIENTRY _mesa_noop_Vertex3f(GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c)
 {
+    (void) ctx;
     (void) a;
     (void) b;
     (void) c;
 }
 
-static void GLAPIENTRY _mesa_noop_Vertex4f(GLfloat a, GLfloat b, GLfloat c, GLfloat d)
+static void GLAPIENTRY _mesa_noop_Vertex4f(GLcontext *ctx, GLfloat a, GLfloat b, GLfloat c, GLfloat d)
 {
+    (void) ctx;
     (void) a;
     (void) b;
     (void) c;
@@ -565,34 +571,40 @@ static void GLAPIENTRY _mesa_noop_Vertex4f(GLfloat a, GLfloat b, GLfloat c, GLfl
 
 /* Similarly, these have no effect outside begin/end:
  */
-static void GLAPIENTRY _mesa_noop_EvalCoord1f(GLfloat a)
+static void GLAPIENTRY _mesa_noop_EvalCoord1f(GLcontext *ctx, GLfloat a)
 {
+    (void) ctx;
     (void) a;
 }
 
-static void GLAPIENTRY _mesa_noop_EvalCoord1fv(const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_EvalCoord1fv(GLcontext *ctx, const GLfloat *v)
 {
+    (void) ctx;
     (void) v;
 }
 
-static void GLAPIENTRY _mesa_noop_EvalCoord2f(GLfloat a, GLfloat b)
+static void GLAPIENTRY _mesa_noop_EvalCoord2f(GLcontext *ctx, GLfloat a, GLfloat b)
 {
+    (void) ctx;
     (void) a;
     (void) b;
 }
 
-static void GLAPIENTRY _mesa_noop_EvalCoord2fv(const GLfloat *v)
+static void GLAPIENTRY _mesa_noop_EvalCoord2fv(GLcontext *ctx, const GLfloat *v)
 {
+    (void) ctx;
     (void) v;
 }
 
-static void GLAPIENTRY _mesa_noop_EvalPoint1(GLint a)
+static void GLAPIENTRY _mesa_noop_EvalPoint1(GLcontext *ctx, GLint a)
 {
+    (void) ctx;
     (void) a;
 }
 
-static void GLAPIENTRY _mesa_noop_EvalPoint2(GLint a, GLint b)
+static void GLAPIENTRY _mesa_noop_EvalPoint2(GLcontext *ctx, GLint a, GLint b)
 {
+    (void) ctx;
     (void) a;
     (void) b;
 }
@@ -601,8 +613,9 @@ static void GLAPIENTRY _mesa_noop_EvalPoint2(GLint a, GLint b)
 /* Begin -- call into driver, should result in the vtxfmt being
  * swapped out:
  */
-static void GLAPIENTRY _mesa_noop_Begin(GLenum mode)
+static void GLAPIENTRY _mesa_noop_Begin(GLcontext *ctx, GLenum mode)
 {
+    (void) ctx;
     (void) mode;
 }
 
