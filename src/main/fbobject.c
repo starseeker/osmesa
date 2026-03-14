@@ -386,22 +386,27 @@ fbo_incomplete(const char *msg, int index)
 void
 _mesa_test_framebuffer_completeness(GLcontext *ctx, struct gl_framebuffer *fb)
 {
-    GLuint numImages, width = 0, height = 0;
-    GLenum intFormat = GL_NONE;
+    GLuint numImages;
     GLuint w = 0, h = 0;
     GLint i;
     GLuint j;
+    /* GL_ARB_framebuffer_object: track sample count for consistency check */
+    GLint firstSamples = -1; /* -1 = not yet seen any attachment */
 
     assert(fb->Name != 0);
 
     numImages = 0;
-    fb->Width = 0;
-    fb->Height = 0;
+    /*
+     * Initialise to UINT_MAX so we can unconditionally take the minimum
+     * of each attachment's dimensions inside the loop below.
+     */
+    fb->Width  = ~0u;
+    fb->Height = ~0u;
 
     /* Start at -2 to more easily loop over all attachment points */
     for (i = -2; i < (GLint) ctx->Const.MaxColorAttachments; i++) {
 	struct gl_renderbuffer_attachment *att;
-	GLenum f;
+	GLint attSamples;
 
 	if (i == -2) {
 	    att = &fb->Attachment[BUFFER_DEPTH];
@@ -409,6 +414,7 @@ _mesa_test_framebuffer_completeness(GLcontext *ctx, struct gl_framebuffer *fb)
 	    if (!att->Complete) {
 		fb->_Status = GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT;
 		fbo_incomplete("depth attachment incomplete", -1);
+		fb->Width = fb->Height = 0;
 		return;
 	    }
 	} else if (i == -1) {
@@ -417,6 +423,7 @@ _mesa_test_framebuffer_completeness(GLcontext *ctx, struct gl_framebuffer *fb)
 	    if (!att->Complete) {
 		fb->_Status = GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT;
 		fbo_incomplete("stencil attachment incomplete", -1);
+		fb->Width = fb->Height = 0;
 		return;
 	    }
 	} else {
@@ -425,6 +432,7 @@ _mesa_test_framebuffer_completeness(GLcontext *ctx, struct gl_framebuffer *fb)
 	    if (!att->Complete) {
 		fb->_Status = GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT;
 		fbo_incomplete("color attachment incomplete", i);
+		fb->Width = fb->Height = 0;
 		return;
 	    }
 	}
@@ -434,42 +442,40 @@ _mesa_test_framebuffer_completeness(GLcontext *ctx, struct gl_framebuffer *fb)
 		    = att->Texture->Image[att->CubeMapFace][att->TextureLevel];
 	    w = texImg->Width;
 	    h = texImg->Height;
-	    f = texImg->_BaseFormat;
+	    attSamples = 0; /* textures are always single-sample */
 	    numImages++;
-	    if (f != GL_RGB && f != GL_RGBA && f != GL_DEPTH_COMPONENT
-		&& f != GL_DEPTH_STENCIL_EXT) {
-		fb->_Status = GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT;
-		fbo_incomplete("texture attachment incomplete", -1);
-		return;
-	    }
 	} else if (att->Type == GL_RENDERBUFFER_EXT) {
 	    w = att->Renderbuffer->Width;
 	    h = att->Renderbuffer->Height;
-	    f = att->Renderbuffer->InternalFormat;
+	    attSamples = (GLint) att->Renderbuffer->NumSamples;
 	    numImages++;
 	} else {
 	    assert(att->Type == GL_NONE);
 	    continue;
 	}
 
-	if (numImages == 1) {
-	    /* set required width, height and format */
-	    width = w;
-	    height = h;
-	    if (i >= 0)
-		intFormat = f;
-	} else {
-	    /* check that width, height, format are same */
-	    if (w != width || h != height) {
-		fb->_Status = GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT;
-		fbo_incomplete("width or height mismatch", -1);
-		return;
-	    }
-	    if (intFormat != GL_NONE && f != intFormat) {
-		fb->_Status = GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT;
-		fbo_incomplete("format mismatch", -1);
-		return;
-	    }
+	/*
+	 * GL_ARB_framebuffer_object: width/height and format need not match
+	 * across attachments (unlike the old EXT extension).
+	 * Use the intersection (minimum) of all attachment dimensions as the
+	 * effective framebuffer size.
+	 */
+	if (w < fb->Width)
+	    fb->Width = w;
+	if (h < fb->Height)
+	    fb->Height = h;
+
+	/*
+	 * However, all attachments must have the same sample count
+	 * (GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE).
+	 */
+	if (firstSamples == -1) {
+	    firstSamples = attSamples;
+	} else if (attSamples != firstSamples) {
+	    fb->_Status = GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE;
+	    fbo_incomplete("sample count mismatch", -1);
+	    fb->Width = fb->Height = 0;
+	    return;
 	}
     }
 
@@ -482,6 +488,7 @@ _mesa_test_framebuffer_completeness(GLcontext *ctx, struct gl_framebuffer *fb)
 	    if (att->Type == GL_NONE) {
 		fb->_Status = GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT;
 		fbo_incomplete("missing drawbuffer", j);
+		fb->Width = fb->Height = 0;
 		return;
 	    }
 	}
@@ -495,6 +502,7 @@ _mesa_test_framebuffer_completeness(GLcontext *ctx, struct gl_framebuffer *fb)
 	if (att->Type == GL_NONE) {
 	    fb->_Status = GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT;
 	    fbo_incomplete("missing readbuffer", -1);
+	    fb->Width = fb->Height = 0;
 	    return;
 	}
     }
@@ -502,6 +510,7 @@ _mesa_test_framebuffer_completeness(GLcontext *ctx, struct gl_framebuffer *fb)
     if (numImages == 0) {
 	fb->_Status = GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT;
 	fbo_incomplete("no attachments", -1);
+	fb->Width = fb->Height = 0;
 	return;
     }
 
@@ -509,8 +518,6 @@ _mesa_test_framebuffer_completeness(GLcontext *ctx, struct gl_framebuffer *fb)
      * If we get here, the framebuffer is complete!
      */
     fb->_Status = GL_FRAMEBUFFER_COMPLETE_EXT;
-    fb->Width = w;
-    fb->Height = h;
 }
 
 
@@ -1031,6 +1038,9 @@ _mesa_DeleteFramebuffersEXT(GLsizei n, const GLuint *framebuffers)
 		    /* bind default */
 		    ASSERT(fb->RefCount >= 2);
 		    _mesa_BindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+		} else if (fb == ctx->ReadBuffer) {
+		    /* Bound only as the read buffer (not draw); unbind it. */
+		    _mesa_BindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
 		}
 
 		/* remove from hash table immediately, to free the ID */
@@ -1374,6 +1384,7 @@ _mesa_GetFramebufferAttachmentParameterivEXT(GLenum target, GLenum attachment,
 {
     const struct gl_renderbuffer_attachment *att;
     struct gl_framebuffer *buffer;
+    GLboolean is_default_fb;
     GET_CURRENT_CONTEXT(ctx);
 
     ASSERT_OUTSIDE_BEGIN_END(ctx);
@@ -1406,10 +1417,72 @@ _mesa_GetFramebufferAttachmentParameterivEXT(GLenum target, GLenum attachment,
 	    return;
     }
 
-    if (buffer->Name == 0) {
-	_mesa_error(ctx, GL_INVALID_OPERATION,
-		    "glGetFramebufferAttachmentParameterivEXT");
-	return;
+    is_default_fb = (buffer->Name == 0);
+
+    if (is_default_fb) {
+	/*
+	 * GL_ARB_framebuffer_object allows querying the default framebuffer.
+	 * Map the attachment enum to a buffer slot, then synthesize an
+	 * att-like answer directly from the framebuffer's attached renderbuffers.
+	 * Only a small subset of pnames is valid for the default FBO.
+	 */
+	struct gl_renderbuffer *rb = NULL;
+
+	switch (attachment) {
+	    case GL_FRONT_LEFT:
+		rb = buffer->Attachment[BUFFER_FRONT_LEFT].Renderbuffer;
+		break;
+	    case GL_BACK_LEFT:
+		rb = buffer->Attachment[BUFFER_BACK_LEFT].Renderbuffer;
+		if (!rb)
+		    rb = buffer->Attachment[BUFFER_FRONT_LEFT].Renderbuffer;
+		break;
+	    case GL_DEPTH:
+		rb = buffer->_DepthBuffer;
+		break;
+	    case GL_STENCIL:
+		rb = buffer->_StencilBuffer;
+		break;
+	    default:
+		_mesa_error(ctx, GL_INVALID_ENUM,
+			    "glGetFramebufferAttachmentParameterivEXT"
+			    "(invalid attachment for default framebuffer)");
+		return;
+	}
+
+	switch (pname) {
+	    case GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE_EXT:
+		*params = rb ? GL_FRAMEBUFFER_DEFAULT : GL_NONE;
+		return;
+	    case GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING:
+		*params = GL_LINEAR;
+		return;
+	    case GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE:
+		*params = GL_UNSIGNED_NORMALIZED;
+		return;
+	    case GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE:
+		*params = rb ? rb->RedBits : 0;
+		return;
+	    case GL_FRAMEBUFFER_ATTACHMENT_GREEN_SIZE:
+		*params = rb ? rb->GreenBits : 0;
+		return;
+	    case GL_FRAMEBUFFER_ATTACHMENT_BLUE_SIZE:
+		*params = rb ? rb->BlueBits : 0;
+		return;
+	    case GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE:
+		*params = rb ? rb->AlphaBits : 0;
+		return;
+	    case GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE:
+		*params = rb ? rb->DepthBits : 0;
+		return;
+	    case GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE:
+		*params = rb ? rb->StencilBits : 0;
+		return;
+	    default:
+		_mesa_error(ctx, GL_INVALID_ENUM,
+			    "glGetFramebufferAttachmentParameterivEXT(pname)");
+		return;
+	}
     }
 
     att = _mesa_get_attachment(ctx, buffer, attachment);
@@ -1461,6 +1534,7 @@ _mesa_GetFramebufferAttachmentParameterivEXT(GLenum target, GLenum attachment,
 	    }
 	    return;
 	case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_3D_ZOFFSET_EXT:
+	/* GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER shares the same value */
 	    if (att->Type == GL_TEXTURE) {
 		if (att->Texture && att->Texture->Target == GL_TEXTURE_3D) {
 		    *params = att->Zoffset;
@@ -1471,6 +1545,88 @@ _mesa_GetFramebufferAttachmentParameterivEXT(GLenum target, GLenum attachment,
 		_mesa_error(ctx, GL_INVALID_ENUM,
 			    "glGetFramebufferAttachmentParameterivEXT(pname)");
 	    }
+	    return;
+	/*
+	 * GL_ARB_framebuffer_object: per-attachment component queries.
+	 */
+	case GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING:
+	    /* This implementation has no sRGB renderbuffer support; always linear */
+	    if (att->Type == GL_NONE) {
+		_mesa_error(ctx, GL_INVALID_ENUM,
+			    "glGetFramebufferAttachmentParameterivEXT(pname)");
+		return;
+	    }
+	    *params = GL_LINEAR;
+	    return;
+	case GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE:
+	    /* All renderbuffer formats in this implementation are unsigned
+	     * normalized fixed-point. */
+	    if (att->Type == GL_NONE) {
+		_mesa_error(ctx, GL_INVALID_ENUM,
+			    "glGetFramebufferAttachmentParameterivEXT(pname)");
+		return;
+	    }
+	    *params = GL_UNSIGNED_NORMALIZED;
+	    return;
+	case GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE:
+	    if (att->Type == GL_RENDERBUFFER_EXT && att->Renderbuffer)
+		*params = att->Renderbuffer->RedBits;
+	    else if (att->Type == GL_TEXTURE && att->Texture) {
+		const struct gl_texture_image *img =
+		    att->Texture->Image[att->CubeMapFace][att->TextureLevel];
+		*params = img ? img->TexFormat->RedBits : 0;
+	    } else
+		*params = 0;
+	    return;
+	case GL_FRAMEBUFFER_ATTACHMENT_GREEN_SIZE:
+	    if (att->Type == GL_RENDERBUFFER_EXT && att->Renderbuffer)
+		*params = att->Renderbuffer->GreenBits;
+	    else if (att->Type == GL_TEXTURE && att->Texture) {
+		const struct gl_texture_image *img =
+		    att->Texture->Image[att->CubeMapFace][att->TextureLevel];
+		*params = img ? img->TexFormat->GreenBits : 0;
+	    } else
+		*params = 0;
+	    return;
+	case GL_FRAMEBUFFER_ATTACHMENT_BLUE_SIZE:
+	    if (att->Type == GL_RENDERBUFFER_EXT && att->Renderbuffer)
+		*params = att->Renderbuffer->BlueBits;
+	    else if (att->Type == GL_TEXTURE && att->Texture) {
+		const struct gl_texture_image *img =
+		    att->Texture->Image[att->CubeMapFace][att->TextureLevel];
+		*params = img ? img->TexFormat->BlueBits : 0;
+	    } else
+		*params = 0;
+	    return;
+	case GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE:
+	    if (att->Type == GL_RENDERBUFFER_EXT && att->Renderbuffer)
+		*params = att->Renderbuffer->AlphaBits;
+	    else if (att->Type == GL_TEXTURE && att->Texture) {
+		const struct gl_texture_image *img =
+		    att->Texture->Image[att->CubeMapFace][att->TextureLevel];
+		*params = img ? img->TexFormat->AlphaBits : 0;
+	    } else
+		*params = 0;
+	    return;
+	case GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE:
+	    if (att->Type == GL_RENDERBUFFER_EXT && att->Renderbuffer)
+		*params = att->Renderbuffer->DepthBits;
+	    else if (att->Type == GL_TEXTURE && att->Texture) {
+		const struct gl_texture_image *img =
+		    att->Texture->Image[att->CubeMapFace][att->TextureLevel];
+		*params = img ? img->TexFormat->DepthBits : 0;
+	    } else
+		*params = 0;
+	    return;
+	case GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE:
+	    if (att->Type == GL_RENDERBUFFER_EXT && att->Renderbuffer)
+		*params = att->Renderbuffer->StencilBits;
+	    else if (att->Type == GL_TEXTURE && att->Texture) {
+		const struct gl_texture_image *img =
+		    att->Texture->Image[att->CubeMapFace][att->TextureLevel];
+		*params = img ? img->TexFormat->StencilBits : 0;
+	    } else
+		*params = 0;
 	    return;
 	default:
 	    _mesa_error(ctx, GL_INVALID_ENUM,

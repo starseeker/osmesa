@@ -1505,6 +1505,167 @@ test_arb_fbo(int W, int H)
     }
     pDeleteRenderbuffers(1, &rbo_ms);
 
+    /* --- Test: mismatched attachment dimensions must not break FBO --- */
+    {
+	typedef void (APIENTRY *PFNGETFRAMEBUFFERATTACHMENTPARAMIV)(GLenum, GLenum, GLenum, GLint *);
+	PFNGETFRAMEBUFFERATTACHMENTPARAMIV pGetFBAttach =
+	    (PFNGETFRAMEBUFFERATTACHMENTPARAMIV)
+	    OSMesaGetProcAddress("glGetFramebufferAttachmentParameteriv");
+
+	/* Create a new FBO with color (WxH) and depth (W/2 x H/2) */
+	GLuint fbo2, rbo_c2, rbo_d2;
+	pGenFramebuffers(1, &fbo2);
+	pGenRenderbuffers(1, &rbo_c2);
+	pGenRenderbuffers(1, &rbo_d2);
+
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, fbo2);
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_c2);
+	pRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_RGBA, W, H);
+	pFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+				 GL_RENDERBUFFER_EXT, rbo_c2);
+
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_d2);
+	pRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, W / 2, H / 2);
+	pFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
+				 GL_RENDERBUFFER_EXT, rbo_d2);
+
+	GLenum st2 = pCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
+	if (st2 != GL_FRAMEBUFFER_COMPLETE_EXT) {
+	    fprintf(stderr,
+		    "  FAIL: FBO with mismatched attachment sizes incomplete "
+		    "(status=0x%x); ARB_FBO allows mismatched sizes\n",
+		    (unsigned)st2);
+	    g_failed++;
+	} else {
+	    printf("  PASS: FBO with mismatched attachment sizes is complete\n");
+	}
+	clear_errors();
+
+	/* Test GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE on the color attachment */
+	if (pGetFBAttach) {
+	    GLint red_bits = -1;
+	    pGetFBAttach(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+			 GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE, &red_bits);
+	    err = glGetError();
+	    if (err != GL_NO_ERROR || red_bits < 1) {
+		fprintf(stderr,
+			"  FAIL: GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE=%d err=0x%x\n",
+			red_bits, err);
+		g_failed++;
+	    } else {
+		printf("  PASS: GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE = %d\n",
+		       red_bits);
+	    }
+
+	    /* Test GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING */
+	    GLint enc = -1;
+	    pGetFBAttach(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+			 GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, &enc);
+	    err = glGetError();
+	    if (err != GL_NO_ERROR || enc != GL_LINEAR) {
+		fprintf(stderr,
+			"  FAIL: GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING=0x%x "
+			"(expected GL_LINEAR=0x%x) err=0x%x\n",
+			enc, GL_LINEAR, err);
+		g_failed++;
+	    } else {
+		printf("  PASS: GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING = "
+		       "GL_LINEAR\n");
+	    }
+
+	    /* Test GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE */
+	    GLint comp = -1;
+	    pGetFBAttach(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+			 GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE, &comp);
+	    err = glGetError();
+	    if (err != GL_NO_ERROR || comp != GL_UNSIGNED_NORMALIZED) {
+		fprintf(stderr,
+			"  FAIL: GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE=0x%x "
+			"err=0x%x\n", comp, err);
+		g_failed++;
+	    } else {
+		printf("  PASS: GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE = "
+		       "GL_UNSIGNED_NORMALIZED\n");
+	    }
+
+	    /* Test GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE on depth attachment */
+	    GLint depth_bits = -1;
+	    pGetFBAttach(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
+			 GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
+	    err = glGetError();
+	    if (err != GL_NO_ERROR || depth_bits < 1) {
+		fprintf(stderr,
+			"  FAIL: GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE=%d "
+			"err=0x%x\n", depth_bits, err);
+		g_failed++;
+	    } else {
+		printf("  PASS: GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE = %d\n",
+		       depth_bits);
+	    }
+
+	    /* Default framebuffer: query GL_BACK_LEFT color encoding */
+	    pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	    GLint dflt_enc = -1;
+	    pGetFBAttach(GL_FRAMEBUFFER_EXT, GL_BACK_LEFT,
+			 GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, &dflt_enc);
+	    err = glGetError();
+	    if (err != GL_NO_ERROR) {
+		fprintf(stderr,
+			"  FAIL: default FBO GL_BACK_LEFT query error 0x%x\n",
+			err);
+		g_failed++;
+	    } else {
+		printf("  PASS: default FBO GL_BACK_LEFT query succeeded\n");
+	    }
+	    pBindFramebuffer(GL_FRAMEBUFFER_EXT, fbo2);
+	}
+
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	pDeleteFramebuffers(1, &fbo2);
+	pDeleteRenderbuffers(1, &rbo_c2);
+	pDeleteRenderbuffers(1, &rbo_d2);
+    }
+
+    /* --- Test: GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE when sample counts differ --- */
+    if (max_samples >= 1) {
+	GLuint fbo3, rbo_c3, rbo_d3;
+	pGenFramebuffers(1, &fbo3);
+	pGenRenderbuffers(1, &rbo_c3);
+	pGenRenderbuffers(1, &rbo_d3);
+
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, fbo3);
+
+	/* color: samples=1 */
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_c3);
+	pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 1, GL_RGBA, W, H);
+	pFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+				 GL_RENDERBUFFER_EXT, rbo_c3);
+
+	/* depth: samples=0 (mismatch!) */
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_d3);
+	pRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, W, H);
+	pFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
+				 GL_RENDERBUFFER_EXT, rbo_d3);
+
+	GLenum st3 = pCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
+	if (st3 != GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE) {
+	    fprintf(stderr,
+		    "  FAIL: mixed sample counts should yield "
+		    "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE, got 0x%x\n",
+		    (unsigned)st3);
+	    g_failed++;
+	} else {
+	    printf("  PASS: mixed sample counts -> "
+		   "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE\n");
+	}
+	clear_errors();
+
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	pDeleteFramebuffers(1, &fbo3);
+	pDeleteRenderbuffers(1, &rbo_c3);
+	pDeleteRenderbuffers(1, &rbo_d3);
+    }
+
     /* Cleanup */
     pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
     pDeleteFramebuffers(1, &fbo);
