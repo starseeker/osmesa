@@ -528,7 +528,14 @@ _mesa_IsRenderbufferEXT(GLuint renderbuffer)
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, GL_FALSE);
     if (renderbuffer) {
 	struct gl_renderbuffer *rb = _mesa_lookup_renderbuffer(ctx, renderbuffer);
-	if (rb != NULL)
+	/*
+	 * Per GL_ARB_framebuffer_object: glIsRenderbuffer returns GL_TRUE only
+	 * if renderbuffer is the name of a renderbuffer object (i.e. it has
+	 * been bound at least once).  Names reserved by glGenRenderbuffers but
+	 * never yet bound are represented in the hash by &DummyRenderbuffer and
+	 * must return GL_FALSE.
+	 */
+	if (rb != NULL && rb != &DummyRenderbuffer)
 	    return GL_TRUE;
     }
     return GL_FALSE;
@@ -867,7 +874,13 @@ _mesa_IsFramebufferEXT(GLuint framebuffer)
     ASSERT_OUTSIDE_BEGIN_END_WITH_RETVAL(ctx, GL_FALSE);
     if (framebuffer) {
 	struct gl_framebuffer *rb = _mesa_lookup_framebuffer(ctx, framebuffer);
-	if (rb != NULL)
+	/*
+	 * Per GL_ARB_framebuffer_object: glIsFramebuffer returns GL_TRUE only
+	 * if framebuffer is the name of a framebuffer object (bound at least
+	 * once).  Names reserved by glGenFramebuffers but never yet bound are
+	 * stored as &DummyFramebuffer and must return GL_FALSE.
+	 */
+	if (rb != NULL && rb != &DummyFramebuffer)
 	    return GL_TRUE;
     }
     return GL_FALSE;
@@ -1149,13 +1162,34 @@ framebuffer_texture(GLcontext *ctx, const char *caller, GLenum target,
 
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
-    if (target != GL_FRAMEBUFFER_EXT) {
-	_mesa_error(ctx, GL_INVALID_ENUM,
+    switch (target) {
+#if FEATURE_EXT_framebuffer_blit
+	case GL_DRAW_FRAMEBUFFER_EXT:
+	    if (!ctx->Extensions.EXT_framebuffer_blit) {
+		_mesa_error(ctx, GL_INVALID_ENUM,
+			    "glFramebufferTexture%sEXT(target)", caller);
+		return;
+	    }
+	    fb = ctx->DrawBuffer;
+	    break;
+	case GL_READ_FRAMEBUFFER_EXT:
+	    if (!ctx->Extensions.EXT_framebuffer_blit) {
+		_mesa_error(ctx, GL_INVALID_ENUM,
+			    "glFramebufferTexture%sEXT(target)", caller);
+		return;
+	    }
+	    fb = ctx->ReadBuffer;
+	    break;
+#endif
+	case GL_FRAMEBUFFER_EXT:
+	    fb = ctx->DrawBuffer;
+	    break;
+	default:
+	    _mesa_error(ctx, GL_INVALID_ENUM,
 		    "glFramebufferTexture%sEXT(target)", caller);
-	return;
+	    return;
     }
 
-    fb = ctx->DrawBuffer;
     ASSERT(fb);
 
     /* check framebuffer binding */
@@ -1700,13 +1734,16 @@ _mesa_RenderbufferStorageMultisample(GLenum target, GLsizei samples,
     _mesa_RenderbufferStorageEXT(target, internalFormat, width, height);
 
     /* Record the requested sample count so that GL_RENDERBUFFER_SAMPLES
-     * queries return the right answer.  Only do this if the storage
-     * allocation succeeded (no error was posted by the call above). */
-    if (ctx->ErrorValue == GL_NO_ERROR) {
-	rb = ctx->CurrentRenderbuffer;
-	if (rb)
-	    rb->NumSamples = (GLuint)samples;
-    }
+     * queries return the right answer.  Detect success by checking the
+     * renderbuffer dimensions after the call: on failure RenderbufferStorageEXT
+     * resets Width/Height to 0; on success (including the no-op early-return
+     * when the allocation is unchanged) Width/Height equal the requested size.
+     * Avoid relying on ctx->ErrorValue because a pre-existing unqueried error
+     * from an earlier call would suppress the update incorrectly.
+     */
+    rb = ctx->CurrentRenderbuffer;
+    if (rb && rb->Width == (GLuint)width && rb->Height == (GLuint)height)
+	rb->NumSamples = (GLuint)samples;
 }
 
 
@@ -1788,6 +1825,11 @@ _mesa_BlitFramebufferEXT(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
     if (mask & GL_STENCIL_BUFFER_BIT) {
 	struct gl_renderbuffer *readRb = ctx->ReadBuffer->_StencilBuffer;
 	struct gl_renderbuffer *drawRb = ctx->DrawBuffer->_StencilBuffer;
+	if (!readRb || !drawRb) {
+	    _mesa_error(ctx, GL_INVALID_OPERATION,
+			"glBlitFramebufferEXT(missing stencil buffer)");
+	    return;
+	}
 	if (readRb->StencilBits != drawRb->StencilBits) {
 	    _mesa_error(ctx, GL_INVALID_OPERATION,
 			"glBlitFramebufferEXT(stencil buffer size mismatch");
@@ -1798,6 +1840,11 @@ _mesa_BlitFramebufferEXT(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
     if (mask & GL_DEPTH_BUFFER_BIT) {
 	struct gl_renderbuffer *readRb = ctx->ReadBuffer->_DepthBuffer;
 	struct gl_renderbuffer *drawRb = ctx->DrawBuffer->_DepthBuffer;
+	if (!readRb || !drawRb) {
+	    _mesa_error(ctx, GL_INVALID_OPERATION,
+			"glBlitFramebufferEXT(missing depth buffer)");
+	    return;
+	}
 	if (readRb->DepthBits != drawRb->DepthBits) {
 	    _mesa_error(ctx, GL_INVALID_OPERATION,
 			"glBlitFramebufferEXT(depth buffer size mismatch");

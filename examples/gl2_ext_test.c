@@ -1384,9 +1384,15 @@ test_arb_fbo(int W, int H)
     pGenRenderbuffers(1, &rbo_color);
     pGenRenderbuffers(1, &rbo_depth);
 
-    if (!pIsFramebuffer(fbo) || !pIsRenderbuffer(rbo_color) ||
-	!pIsRenderbuffer(rbo_depth)) {
-	fprintf(stderr, "  FAIL: IsFramebuffer/IsRenderbuffer returned wrong value\n");
+    /*
+     * Per GL_ARB_framebuffer_object: Is* must return FALSE for names that
+     * have been Gen'd but never yet Bind'd (they are not objects yet).
+     */
+    if (pIsFramebuffer(fbo) || pIsRenderbuffer(rbo_color) ||
+	pIsRenderbuffer(rbo_depth)) {
+	fprintf(stderr,
+		"  FAIL: Is* returned TRUE for gen-but-never-bound names "
+		"(should be FALSE per ARB spec)\n");
 	g_failed++;
 	pDeleteFramebuffers(1, &fbo);
 	pDeleteRenderbuffers(1, &rbo_color);
@@ -1394,8 +1400,19 @@ test_arb_fbo(int W, int H)
 	return;
     }
 
+    /* After binding, Is* must return TRUE */
     pBindFramebuffer(GL_FRAMEBUFFER_EXT, fbo);
     pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_color);
+    if (!pIsFramebuffer(fbo) || !pIsRenderbuffer(rbo_color)) {
+	fprintf(stderr,
+		"  FAIL: Is* returned FALSE after bind (should be TRUE)\n");
+	g_failed++;
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	pDeleteFramebuffers(1, &fbo);
+	pDeleteRenderbuffers(1, &rbo_color);
+	pDeleteRenderbuffers(1, &rbo_depth);
+	return;
+    }
     pRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_RGBA, W, H);
     pFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
 			     GL_RENDERBUFFER_EXT, rbo_color);
@@ -1664,6 +1681,94 @@ test_arb_fbo(int W, int H)
 	pDeleteFramebuffers(1, &fbo3);
 	pDeleteRenderbuffers(1, &rbo_c3);
 	pDeleteRenderbuffers(1, &rbo_d3);
+    }
+
+    /* --- Test: IsRenderbuffer / IsFramebuffer on gen'd-but-never-bound names --- */
+    {
+	GLuint unbound_rb, unbound_fb;
+	pGenRenderbuffers(1, &unbound_rb);
+	pGenFramebuffers(1, &unbound_fb);
+
+	/* Spec: glIs* returns FALSE until the name has been bound at least once */
+	if (pIsRenderbuffer(unbound_rb)) {
+	    fprintf(stderr,
+		    "  FAIL: glIsRenderbuffer returned TRUE for gen-but-never-"
+		    "bound name %u\n", unbound_rb);
+	    g_failed++;
+	} else {
+	    printf("  PASS: glIsRenderbuffer returns FALSE for unbound name\n");
+	}
+
+	if (pIsFramebuffer(unbound_fb)) {
+	    fprintf(stderr,
+		    "  FAIL: glIsFramebuffer returned TRUE for gen-but-never-"
+		    "bound name %u\n", unbound_fb);
+	    g_failed++;
+	} else {
+	    printf("  PASS: glIsFramebuffer returns FALSE for unbound name\n");
+	}
+
+	/* After binding, they must return TRUE */
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, unbound_rb);
+	if (!pIsRenderbuffer(unbound_rb)) {
+	    fprintf(stderr,
+		    "  FAIL: glIsRenderbuffer returned FALSE after bind\n");
+	    g_failed++;
+	} else {
+	    printf("  PASS: glIsRenderbuffer returns TRUE after bind\n");
+	}
+
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, unbound_fb);
+	if (!pIsFramebuffer(unbound_fb)) {
+	    fprintf(stderr,
+		    "  FAIL: glIsFramebuffer returned FALSE after bind\n");
+	    g_failed++;
+	} else {
+	    printf("  PASS: glIsFramebuffer returns TRUE after bind\n");
+	}
+
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
+	pDeleteFramebuffers(1, &unbound_fb);
+	pDeleteRenderbuffers(1, &unbound_rb);
+	clear_errors();
+    }
+
+    /* --- Test: RenderbufferStorageMultisample NumSamples not clobbered by
+     *          a prior unrelated GL error (ctx->ErrorValue fragility fix)    --- */
+    {
+	GLuint rbo_err;
+	pGenRenderbuffers(1, &rbo_err);
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_err);
+
+	/* Poison the error state with an unrelated error */
+	glEnable(0xDEAD);
+	/* Now successfully allocate multisample storage */
+	pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 0, GL_RGBA, W, H);
+
+	/* Clear the unrelated error */
+	(void)glGetError();
+	(void)glGetError();
+
+	typedef void (APIENTRY *PFNGETRENDERBUFFERPARAMIV)(GLenum, GLenum, GLint *);
+	PFNGETRENDERBUFFERPARAMIV pGetRBParam =
+	    (PFNGETRENDERBUFFERPARAMIV)
+	    OSMesaGetProcAddress("glGetRenderbufferParameteriv");
+	if (pGetRBParam) {
+	    GLint s = -1;
+	    pGetRBParam(GL_RENDERBUFFER_EXT, GL_RENDERBUFFER_SAMPLES, &s);
+	    if (s != 0) {
+		fprintf(stderr,
+			"  FAIL: NumSamples=%d after multisample storage with "
+			"prior error; expected 0\n", s);
+		g_failed++;
+	    } else {
+		printf("  PASS: RenderbufferStorageMultisample NumSamples "
+		       "correct despite prior error\n");
+	    }
+	}
+	pDeleteRenderbuffers(1, &rbo_err);
+	clear_errors();
     }
 
     /* Cleanup */
