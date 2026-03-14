@@ -1444,7 +1444,16 @@ test_arb_fbo(int W, int H)
 	printf("  PASS: ARB FBO entry points work correctly\n");
     }
 
-    /* Test glRenderbufferStorageMultisample with samples=0 (valid) */
+    /* Query GL_MAX_SAMPLES and verify it is at least 1 */
+    GLint max_samples = 0;
+    glGetIntegerv(GL_MAX_SAMPLES, &max_samples);
+    if (max_samples < 1) {
+	fprintf(stderr, "  FAIL: GL_MAX_SAMPLES=%d, expected >= 1\n",
+		max_samples);
+	g_failed++;
+    }
+
+    /* Test glRenderbufferStorageMultisample with samples=0 (always valid) */
     GLuint rbo_ms;
     pGenRenderbuffers(1, &rbo_ms);
     pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_ms);
@@ -1455,12 +1464,43 @@ test_arb_fbo(int W, int H)
 		err);
 	g_failed++;
     }
-    /* With samples>0 we expect GL_INVALID_VALUE since MAX_SAMPLES=0 */
+
+    /* Test glRenderbufferStorageMultisample with samples=1 (now valid) */
     pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 1, GL_RGBA, W, H);
     err = glGetError();
-    if (err != GL_INVALID_VALUE) {
-	fprintf(stderr, "  FAIL: RenderbufferStorageMultisample(samples=1) should return GL_INVALID_VALUE, got 0x%x\n",
+    if (err != GL_NO_ERROR) {
+	fprintf(stderr, "  FAIL: RenderbufferStorageMultisample(samples=1) returned error 0x%x\n",
 		err);
+	g_failed++;
+    } else {
+	/* Verify GL_RENDERBUFFER_SAMPLES reports 1 */
+	typedef void (APIENTRY *PFNGETRENDERBUFFERPARAMETERIV)(GLenum, GLenum, GLint *);
+	PFNGETRENDERBUFFERPARAMETERIV pGetRenderbufferParameteriv =
+	    (PFNGETRENDERBUFFERPARAMETERIV) OSMesaGetProcAddress("glGetRenderbufferParameteriv");
+	if (pGetRenderbufferParameteriv) {
+	    GLint nsamples = 0;
+	    pGetRenderbufferParameteriv(GL_RENDERBUFFER_EXT,
+				       GL_RENDERBUFFER_SAMPLES, &nsamples);
+	    if (nsamples != 1) {
+		fprintf(stderr,
+			"  FAIL: GL_RENDERBUFFER_SAMPLES=%d, expected 1\n",
+			nsamples);
+		g_failed++;
+	    } else {
+		printf("  PASS: RenderbufferStorageMultisample(samples=1) works\n");
+	    }
+	}
+    }
+
+    /* samples > GL_MAX_SAMPLES should still return GL_INVALID_VALUE */
+    pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, max_samples + 1,
+				    GL_RGBA, W, H);
+    err = glGetError();
+    if (err != GL_INVALID_VALUE) {
+	fprintf(stderr,
+		"  FAIL: RenderbufferStorageMultisample(samples=%d) should "
+		"return GL_INVALID_VALUE, got 0x%x\n",
+		max_samples + 1, err);
 	g_failed++;
     }
     pDeleteRenderbuffers(1, &rbo_ms);

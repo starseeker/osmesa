@@ -2157,6 +2157,7 @@ struct gl_renderbuffer {
     GLuint Name;
     GLint RefCount;
     GLuint Width, Height;
+    GLuint NumSamples; /**< Requested sample count (0 = single-sample) */
     GLenum InternalFormat; /**< The user-specified format */
     GLenum _ActualFormat;  /**< The driver-chosen format */
     GLenum _BaseFormat;    /**< Either GL_RGB, GL_RGBA, GL_DEPTH_COMPONENT or
@@ -2395,9 +2396,10 @@ struct gl_constants {
     /* GL_OES_read_format */
     GLenum ColorReadFormat;
     GLenum ColorReadType;
-    /* GL_EXT_framebuffer_object */
+    /* GL_EXT_framebuffer_object / GL_ARB_framebuffer_object */
     GLuint MaxColorAttachments;
     GLuint MaxRenderbufferSize;
+    GLuint MaxSamples; /**< GL_MAX_SAMPLES; 0 = no MSAA */
     /* GL_ARB_vertex_shader */
     GLuint MaxVertexTextureImageUnits;
     GLuint MaxVarying;

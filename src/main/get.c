@@ -1851,6 +1851,10 @@ _mesa_GetBooleanv(GLenum pname, GLboolean *params)
 	    CHECK_EXT1(EXT_framebuffer_object, "GetBooleanv");
 	    params[0] = INT_TO_BOOLEAN(ctx->Const.MaxRenderbufferSize);
 	    break;
+	case GL_MAX_SAMPLES:
+	    CHECK_EXT1(ARB_framebuffer_object, "GetBooleanv");
+	    params[0] = INT_TO_BOOLEAN(ctx->Const.MaxSamples);
+	    break;
 	case GL_READ_FRAMEBUFFER_BINDING_EXT:
 	    CHECK_EXT1(EXT_framebuffer_blit, "GetBooleanv");
 	    params[0] = INT_TO_BOOLEAN(ctx->ReadBuffer->Name);
@@ -3669,6 +3673,10 @@ _mesa_GetFloatv(GLenum pname, GLfloat *params)
 	    CHECK_EXT1(EXT_framebuffer_object, "GetFloatv");
 	    params[0] = (GLfloat)(ctx->Const.MaxRenderbufferSize);
 	    break;
+	case GL_MAX_SAMPLES:
+	    CHECK_EXT1(ARB_framebuffer_object, "GetFloatv");
+	    params[0] = (GLfloat)(ctx->Const.MaxSamples);
+	    break;
 	case GL_READ_FRAMEBUFFER_BINDING_EXT:
 	    CHECK_EXT1(EXT_framebuffer_blit, "GetFloatv");
 	    params[0] = (GLfloat)(ctx->ReadBuffer->Name);
@@ -5485,6 +5493,10 @@ _mesa_GetIntegerv(GLenum pname, GLint *params)
 	case GL_MAX_RENDERBUFFER_SIZE_EXT:
 	    CHECK_EXT1(EXT_framebuffer_object, "GetIntegerv");
 	    params[0] = ctx->Const.MaxRenderbufferSize;
+	    break;
+	case GL_MAX_SAMPLES:
+	    CHECK_EXT1(ARB_framebuffer_object, "GetIntegerv");
+	    params[0] = ctx->Const.MaxSamples;
 	    break;
 	case GL_READ_FRAMEBUFFER_BINDING_EXT:
 	    CHECK_EXT1(EXT_framebuffer_blit, "GetIntegerv");

@@ -842,6 +842,9 @@ _mesa_GetRenderbufferParameterivEXT(GLenum target, GLenum pname, GLint *params)
 	case GL_RENDERBUFFER_STENCIL_SIZE_EXT:
 	    *params = ctx->CurrentRenderbuffer->StencilBits;
 	    break;
+	case GL_RENDERBUFFER_SAMPLES:
+	    *params = (GLint) ctx->CurrentRenderbuffer->NumSamples;
+	    break;
 	default:
 	    _mesa_error(ctx, GL_INVALID_ENUM,
 			"glGetRenderbufferParameterivEXT(target)");
@@ -1511,24 +1514,43 @@ _mesa_GenerateMipmapEXT(GLenum target)
 
 /**
  * GL_ARB_framebuffer_object: Allocate renderbuffer storage with multisampling.
- * This software renderer does not support multisampling (MAX_SAMPLES = 0),
- * so samples must be 0; otherwise GL_INVALID_VALUE is generated.
+ * The software rasterizer has no real MSAA support; any sample count from 0
+ * to GL_MAX_SAMPLES is accepted and the renderbuffer is created as
+ * single-sample internally.  The requested count is stored so that
+ * GL_RENDERBUFFER_SAMPLES queries return the correct value.
  */
 void GLAPIENTRY
 _mesa_RenderbufferStorageMultisample(GLenum target, GLsizei samples,
 				     GLenum internalFormat,
 				     GLsizei width, GLsizei height)
 {
+    struct gl_renderbuffer *rb;
     GET_CURRENT_CONTEXT(ctx);
     ASSERT_OUTSIDE_BEGIN_END(ctx);
 
-    if (samples < 0 || samples > 0) {
+    if (samples < 0) {
 	_mesa_error(ctx, GL_INVALID_VALUE,
 		    "glRenderbufferStorageMultisample(samples)");
 	return;
     }
 
+    if ((GLuint)samples > ctx->Const.MaxSamples) {
+	_mesa_error(ctx, GL_INVALID_VALUE,
+		    "glRenderbufferStorageMultisample(samples)");
+	return;
+    }
+
+    /* Allocate storage exactly as the single-sample path does */
     _mesa_RenderbufferStorageEXT(target, internalFormat, width, height);
+
+    /* Record the requested sample count so that GL_RENDERBUFFER_SAMPLES
+     * queries return the right answer.  Only do this if the storage
+     * allocation succeeded (no error was posted by the call above). */
+    if (ctx->ErrorValue == GL_NO_ERROR) {
+	rb = ctx->CurrentRenderbuffer;
+	if (rb)
+	    rb->NumSamples = (GLuint)samples;
+    }
 }
 
 
