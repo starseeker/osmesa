@@ -861,7 +861,7 @@ _mesa_GetRenderbufferParameterivEXT(GLenum target, GLenum pname, GLint *params)
 	    break;
 	default:
 	    _mesa_error(ctx, GL_INVALID_ENUM,
-			"glGetRenderbufferParameterivEXT(target)");
+			"glGetRenderbufferParameterivEXT(pname)");
 	    return;
     }
 }
@@ -1735,14 +1735,18 @@ _mesa_RenderbufferStorageMultisample(GLenum target, GLsizei samples,
 
     /* Record the requested sample count so that GL_RENDERBUFFER_SAMPLES
      * queries return the right answer.  Detect success by checking the
-     * renderbuffer dimensions after the call: on failure RenderbufferStorageEXT
-     * resets Width/Height to 0; on success (including the no-op early-return
-     * when the allocation is unchanged) Width/Height equal the requested size.
-     * Avoid relying on ctx->ErrorValue because a pre-existing unqueried error
-     * from an earlier call would suppress the update incorrectly.
-     */
+     * renderbuffer dimensions AND internal format after the call:
+     *  - on failure (AllocStorage error) RenderbufferStorageEXT resets
+     *    Width/Height to 0 and InternalFormat to GL_NONE;
+     *  - on success (including the no-op early-return when the allocation
+     *    is unchanged) Width/Height equal the requested size and
+     *    InternalFormat equals the requested format.
+     * Checking both guards against the edge-case where a pre-existing
+     * renderbuffer happens to have the same dimensions but the call fails
+     * due to an invalid internal format. */
     rb = ctx->CurrentRenderbuffer;
-    if (rb && rb->Width == (GLuint)width && rb->Height == (GLuint)height)
+    if (rb && rb->Width == (GLuint)width && rb->Height == (GLuint)height
+	    && rb->InternalFormat == internalFormat)
 	rb->NumSamples = (GLuint)samples;
 }
 
@@ -1758,6 +1762,8 @@ _mesa_FramebufferTextureLayer(GLenum target, GLenum attachment,
 {
     GLenum textarget = GL_TEXTURE_3D;
     GET_CURRENT_CONTEXT(ctx);
+
+    ASSERT_OUTSIDE_BEGIN_END(ctx);
 
     if (texture != 0) {
 	struct gl_texture_object *texObj = _mesa_lookup_texture(ctx, texture);
@@ -1818,7 +1824,7 @@ _mesa_BlitFramebufferEXT(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
     if ((mask & (GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT))
 	&& filter != GL_NEAREST) {
 	_mesa_error(ctx, GL_INVALID_OPERATION,
-		    "glBlitFramebufferEXT(depth/stencil requires GL_NEAREST filter");
+		    "glBlitFramebufferEXT(depth/stencil requires GL_NEAREST filter)");
 	return;
     }
 
@@ -1832,7 +1838,7 @@ _mesa_BlitFramebufferEXT(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
 	}
 	if (readRb->StencilBits != drawRb->StencilBits) {
 	    _mesa_error(ctx, GL_INVALID_OPERATION,
-			"glBlitFramebufferEXT(stencil buffer size mismatch");
+			"glBlitFramebufferEXT(stencil buffer size mismatch)");
 	    return;
 	}
     }
@@ -1847,7 +1853,7 @@ _mesa_BlitFramebufferEXT(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
 	}
 	if (readRb->DepthBits != drawRb->DepthBits) {
 	    _mesa_error(ctx, GL_INVALID_OPERATION,
-			"glBlitFramebufferEXT(depth buffer size mismatch");
+			"glBlitFramebufferEXT(depth buffer size mismatch)");
 	    return;
 	}
     }

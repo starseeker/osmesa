@@ -1771,6 +1771,47 @@ test_arb_fbo(int W, int H)
 	clear_errors();
     }
 
+    /* --- Test: RenderbufferStorageMultisample NumSamples not set when
+     *          call fails due to invalid internal format (same dimensions,
+     *          invalid format → INVALID_ENUM should not update NumSamples) --- */
+    {
+	typedef void (APIENTRY *PFNGETRENDERBUFFERPARAMIV)(GLenum, GLenum, GLint *);
+	PFNGETRENDERBUFFERPARAMIV pGetRBParam =
+	    (PFNGETRENDERBUFFERPARAMIV)
+	    OSMesaGetProcAddress("glGetRenderbufferParameteriv");
+	if (pGetRBParam) {
+	    GLuint rbo_bad;
+	    GLint s = -1;
+
+	    pGenRenderbuffers(1, &rbo_bad);
+	    pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_bad);
+
+	    /* First: valid allocation with samples=0 at W x H */
+	    pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 0, GL_RGBA, W, H);
+	    (void)glGetError();
+
+	    /* Second: same dimensions, same samples, but INVALID format.
+	     * NumSamples must remain at 0 (not updated to 1). */
+	    pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 1,
+					   0xDEAD /* invalid format */, W, H);
+	    (void)glGetError(); /* consume the GL_INVALID_ENUM */
+
+	    s = -1;
+	    pGetRBParam(GL_RENDERBUFFER_EXT, GL_RENDERBUFFER_SAMPLES, &s);
+	    if (s != 0) {
+		fprintf(stderr,
+			"  FAIL: NumSamples=%d after failed multisample alloc "
+			"(invalid format, same dims); expected 0\n", s);
+		g_failed++;
+	    } else {
+		printf("  PASS: RenderbufferStorageMultisample NumSamples "
+		       "unchanged after failed alloc (invalid format)\n");
+	    }
+	    pDeleteRenderbuffers(1, &rbo_bad);
+	    clear_errors();
+	}
+    }
+
     /* Cleanup */
     pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
     pDeleteFramebuffers(1, &fbo);

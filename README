@@ -119,6 +119,55 @@ is a no-go.  Implementing what is missing (or backporting it from newer Mesa3D
 versions) would most likely be a significant effort, and is not currently in
 the scope of the libosmesa effort.
 
+
+--------------------------------------------------------------------------------
+A note about GL_ARB_framebuffer_object under OpenGL 2.0:
+
+GL_ARB_framebuffer_object was originally defined as an extension layered on top
+of OpenGL 2.x and later promoted to core in OpenGL 3.0.  libosmesa advertises
+this extension and implements the full entry-point set:
+
+  glIsRenderbuffer / glBindRenderbuffer / glDeleteRenderbuffers
+  glGenRenderbuffers / glRenderbufferStorage / glGetRenderbufferParameteriv
+  glIsFramebuffer / glBindFramebuffer / glDeleteFramebuffers
+  glGenFramebuffers / glCheckFramebufferStatus
+  glFramebufferTexture1D/2D/3D / glFramebufferRenderbuffer
+  glGetFramebufferAttachmentParameteriv / glGenerateMipmap
+  glBlitFramebuffer / glRenderbufferStorageMultisample / glFramebufferTextureLayer
+
+Known limitations arising from the GL 2.0 context:
+
+* Multisample (GL_RENDERBUFFER_SAMPLES):
+  GL_MAX_SAMPLES is 1.  glRenderbufferStorageMultisample() accepts any sample
+  count in [0, 1] and creates a single-sample renderbuffer internally; no real
+  multi-sampling is performed.  Requesting samples > 1 generates
+  GL_INVALID_VALUE.
+
+* Layered / array textures (glFramebufferTextureLayer):
+  Only GL_TEXTURE_3D layers are supported.  GL_TEXTURE_1D_ARRAY and
+  GL_TEXTURE_2D_ARRAY require OpenGL 3.0 and are not available.
+
+* Integer framebuffer formats (e.g. GL_RGBA8I, GL_RGBA8UI):
+  These require GL_EXT_texture_integer (core in GL 3.0) and are not supported
+  as renderbuffer or texture attachment formats.
+
+* sRGB framebuffers (GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING):
+  GL_EXT_framebuffer_sRGB / GL_ARB_framebuffer_sRGB are not implemented.
+  All color attachments report GL_LINEAR encoding.
+
+* GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE:
+  All supported formats are fixed-point unsigned normalized (GL_UNSIGNED_
+  NORMALIZED).  Floating-point and signed integer types are not available.
+
+* gl_FragDepth / GLSL depth output to FBO:
+  Writing to gl_FragDepth in a GLSL fragment shader and reading back the
+  depth buffer from an FBO both work correctly under GL 2.0 GLSL v1.10/1.20.
+
+Applications that check for GL_ARB_framebuffer_object in the extension string
+(rather than checking GL_VERSION >= 3.0) will work correctly within the above
+limitations.  All validation, completeness checks, and query functions conform
+to the GL_ARB_framebuffer_object specification.
+
 For more detailed info about what is supported, here's what a (slightly
 modified) glewinfo reports when compiled against libosmesa (see examples/glew
 for the version used to produce this output):
