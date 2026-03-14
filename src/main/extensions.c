@@ -46,6 +46,7 @@ static const struct {
 } default_extensions[] = {
     { OFF, "GL_ARB_depth_texture",              F(ARB_depth_texture) },
     { OFF, "GL_ARB_draw_buffers",               F(ARB_draw_buffers) },
+    { OFF, "GL_ARB_framebuffer_object",         F(ARB_framebuffer_object) },
     { OFF, "GL_ARB_fragment_program",           F(ARB_fragment_program) },
     { OFF, "GL_ARB_fragment_shader",            F(ARB_fragment_shader) },
     { OFF, "GL_ARB_half_float_pixel",           F(ARB_half_float_pixel) },
@@ -239,6 +240,7 @@ _mesa_enable_sw_extensions(GLcontext *ctx)
     ctx->Extensions.EXT_fog_coord = GL_TRUE;
 #if FEATURE_EXT_framebuffer_object
     ctx->Extensions.EXT_framebuffer_object = GL_TRUE;
+    ctx->Extensions.ARB_framebuffer_object = GL_TRUE;
 #endif
 #if FEATURE_EXT_framebuffer_blit
     ctx->Extensions.EXT_framebuffer_blit = GL_TRUE;

@@ -5191,6 +5191,16 @@ KEYWORD1_ALT void KEYWORD2 NAME(_dispatch_stub_772)(GLuint id, GLenum pname, GLu
     DISPATCH(GetQueryObjectui64vEXT, (id, pname, params), (F, "glGetQueryObjectui64vEXT(%d, 0x%x, %p);\n", id, pname, (const void *) params));
 }
 
+KEYWORD1 void KEYWORD2 NAME(RenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height)
+{
+    DISPATCH(RenderbufferStorageMultisample, (target, samples, internalformat, width, height), (F, "glRenderbufferStorageMultisample(0x%x, %d, 0x%x, %d, %d);\n", target, samples, internalformat, width, height));
+}
+
+KEYWORD1 void KEYWORD2 NAME(FramebufferTextureLayer)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer)
+{
+    DISPATCH(FramebufferTextureLayer, (target, attachment, texture, level, layer), (F, "glFramebufferTextureLayer(0x%x, 0x%x, %d, %d, %d);\n", target, attachment, texture, level, layer));
+}
+
 
 #endif /* defined( NAME ) */
 
@@ -5978,6 +5988,8 @@ static _glapi_proc DISPATCH_TABLE_NAME[] = {
     TABLE_ENTRY(_dispatch_stub_770),
     TABLE_ENTRY(_dispatch_stub_771),
     TABLE_ENTRY(_dispatch_stub_772),
+    TABLE_ENTRY(RenderbufferStorageMultisample),
+    TABLE_ENTRY(FramebufferTextureLayer),
     /* A whole bunch of no-op functions.  These might be called
      * when someone tries to call a dynamically-registered
      * extension function without a current rendering context.

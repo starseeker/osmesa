@@ -780,7 +780,7 @@ GL_ARB_fragment_shader_interlock:                              MISSING
 GL_ARB_framebuffer_no_attachments:                             MISSING
 ----------------------------------
 
-GL_ARB_framebuffer_object:                                     MISSING
+GL_ARB_framebuffer_object:                                     OK
 --------------------------
 
 GL_ARB_framebuffer_sRGB:                                       MISSING

@@ -22,6 +22,8 @@
  *   GL_ARB_depth_texture
  *   GL_ARB_shadow
  *   GL_EXT_texture_rectangle
+ *   GL_EXT_framebuffer_object
+ *   GL_ARB_framebuffer_object
  *   GL_ARB_fragment_program
  *   GL_ARB_vertex_program
  *   GL_ARB_shader_objects
@@ -160,6 +162,7 @@ test_extension_strings(void)
 	"GL_EXT_multi_draw_arrays",
 	"GL_ARB_depth_texture",
 	"GL_EXT_framebuffer_object",
+	"GL_ARB_framebuffer_object",
 	"GL_ARB_shadow",
 	"GL_EXT_texture_rectangle",
 	"GL_ARB_fragment_program",
@@ -1304,6 +1307,172 @@ test_fbo_depth_texture(int W, int H)
 }
 
 /* ------------------------------------------------------------------ */
+/* Test 13c: GL_ARB_framebuffer_object (no-suffix entry points)       */
+/* Tests that the ARB FBO functions (without EXT suffix) work via     */
+/* glGetProcAddress and produce correct results.                      */
+/* ------------------------------------------------------------------ */
+static void
+test_arb_fbo(int W, int H)
+{
+    printf("Test 13c: GL_ARB_framebuffer_object\n");
+
+    if (!check_ext("GL_ARB_framebuffer_object"))
+	return;
+
+    clear_errors();
+
+    /* Look up ARB entry points (no-suffix) via glGetProcAddress */
+    typedef GLboolean (APIENTRY *PFNISRENDERBUFFER)(GLuint);
+    typedef void (APIENTRY *PFNBINDRENDERBUFFER)(GLenum, GLuint);
+    typedef void (APIENTRY *PFNDELETERENDERBUFFERS)(GLsizei, const GLuint *);
+    typedef void (APIENTRY *PFNGENRENDERBUFFERS)(GLsizei, GLuint *);
+    typedef void (APIENTRY *PFNRENDERBUFFERSTORAGE)(GLenum, GLenum, GLsizei, GLsizei);
+    typedef GLboolean (APIENTRY *PFNISFRAMEBUFFER)(GLuint);
+    typedef void (APIENTRY *PFNBINDFRAMEBUFFER)(GLenum, GLuint);
+    typedef void (APIENTRY *PFNDELETEFRAMEBUFFERS)(GLsizei, const GLuint *);
+    typedef void (APIENTRY *PFNGENFRAMEBUFFERS)(GLsizei, GLuint *);
+    typedef GLenum (APIENTRY *PFNCHECKFRAMEBUFFERSTATUS)(GLenum);
+    typedef void (APIENTRY *PFNFRAMEBUFFERTEXTURE2D)(GLenum, GLenum, GLenum, GLuint, GLint);
+    typedef void (APIENTRY *PFNFRAMEBUFFERRENDERBUFFER)(GLenum, GLenum, GLenum, GLuint);
+    typedef void (APIENTRY *PFNGENERATEMIPMAP)(GLenum);
+    typedef void (APIENTRY *PFNRENDERBUFFERSTORAGEMULTISAMPLE)(GLenum, GLsizei, GLenum, GLsizei, GLsizei);
+
+    PFNISRENDERBUFFER pIsRenderbuffer =
+	(PFNISRENDERBUFFER) OSMesaGetProcAddress("glIsRenderbuffer");
+    PFNBINDRENDERBUFFER pBindRenderbuffer =
+	(PFNBINDRENDERBUFFER) OSMesaGetProcAddress("glBindRenderbuffer");
+    PFNDELETERENDERBUFFERS pDeleteRenderbuffers =
+	(PFNDELETERENDERBUFFERS) OSMesaGetProcAddress("glDeleteRenderbuffers");
+    PFNGENRENDERBUFFERS pGenRenderbuffers =
+	(PFNGENRENDERBUFFERS) OSMesaGetProcAddress("glGenRenderbuffers");
+    PFNRENDERBUFFERSTORAGE pRenderbufferStorage =
+	(PFNRENDERBUFFERSTORAGE) OSMesaGetProcAddress("glRenderbufferStorage");
+    PFNISFRAMEBUFFER pIsFramebuffer =
+	(PFNISFRAMEBUFFER) OSMesaGetProcAddress("glIsFramebuffer");
+    PFNBINDFRAMEBUFFER pBindFramebuffer =
+	(PFNBINDFRAMEBUFFER) OSMesaGetProcAddress("glBindFramebuffer");
+    PFNDELETEFRAMEBUFFERS pDeleteFramebuffers =
+	(PFNDELETEFRAMEBUFFERS) OSMesaGetProcAddress("glDeleteFramebuffers");
+    PFNGENFRAMEBUFFERS pGenFramebuffers =
+	(PFNGENFRAMEBUFFERS) OSMesaGetProcAddress("glGenFramebuffers");
+    PFNCHECKFRAMEBUFFERSTATUS pCheckFramebufferStatus =
+	(PFNCHECKFRAMEBUFFERSTATUS) OSMesaGetProcAddress("glCheckFramebufferStatus");
+    PFNFRAMEBUFFERTEXTURE2D pFramebufferTexture2D =
+	(PFNFRAMEBUFFERTEXTURE2D) OSMesaGetProcAddress("glFramebufferTexture2D");
+    PFNFRAMEBUFFERRENDERBUFFER pFramebufferRenderbuffer =
+	(PFNFRAMEBUFFERRENDERBUFFER) OSMesaGetProcAddress("glFramebufferRenderbuffer");
+    PFNGENERATEMIPMAP pGenerateMipmap =
+	(PFNGENERATEMIPMAP) OSMesaGetProcAddress("glGenerateMipmap");
+    PFNRENDERBUFFERSTORAGEMULTISAMPLE pRenderbufferStorageMultisample =
+	(PFNRENDERBUFFERSTORAGEMULTISAMPLE) OSMesaGetProcAddress("glRenderbufferStorageMultisample");
+
+    if (!pIsRenderbuffer || !pBindRenderbuffer || !pDeleteRenderbuffers ||
+	!pGenRenderbuffers || !pRenderbufferStorage || !pIsFramebuffer ||
+	!pBindFramebuffer || !pDeleteFramebuffers || !pGenFramebuffers ||
+	!pCheckFramebufferStatus || !pFramebufferTexture2D ||
+	!pFramebufferRenderbuffer || !pGenerateMipmap ||
+	!pRenderbufferStorageMultisample) {
+	fprintf(stderr, "  FAIL: one or more ARB FBO entry points not found\n");
+	g_failed++;
+	return;
+    }
+
+    /* Create and bind a framebuffer using ARB no-suffix entry points */
+    GLuint fbo, rbo_color, rbo_depth;
+
+    pGenFramebuffers(1, &fbo);
+    pGenRenderbuffers(1, &rbo_color);
+    pGenRenderbuffers(1, &rbo_depth);
+
+    if (!pIsFramebuffer(fbo) || !pIsRenderbuffer(rbo_color) ||
+	!pIsRenderbuffer(rbo_depth)) {
+	fprintf(stderr, "  FAIL: IsFramebuffer/IsRenderbuffer returned wrong value\n");
+	g_failed++;
+	pDeleteFramebuffers(1, &fbo);
+	pDeleteRenderbuffers(1, &rbo_color);
+	pDeleteRenderbuffers(1, &rbo_depth);
+	return;
+    }
+
+    pBindFramebuffer(GL_FRAMEBUFFER_EXT, fbo);
+    pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_color);
+    pRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_RGBA, W, H);
+    pFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+			     GL_RENDERBUFFER_EXT, rbo_color);
+
+    pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_depth);
+    pRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, W, H);
+    pFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
+			     GL_RENDERBUFFER_EXT, rbo_depth);
+
+    GLenum status = pCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
+    if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
+	fprintf(stderr, "  FAIL: FBO incomplete (status=0x%x)\n",
+		(unsigned)status);
+	g_failed++;
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	pDeleteFramebuffers(1, &fbo);
+	pDeleteRenderbuffers(1, &rbo_color);
+	pDeleteRenderbuffers(1, &rbo_depth);
+	return;
+    }
+
+    /* Render a solid red quad into the FBO */
+    glViewport(0, 0, W, H);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glBegin(GL_QUADS);
+    glVertex2f(-1.0f, -1.0f);
+    glVertex2f( 1.0f, -1.0f);
+    glVertex2f( 1.0f,  1.0f);
+    glVertex2f(-1.0f,  1.0f);
+    glEnd();
+
+    /* Read back a pixel and verify it is red */
+    GLubyte pixel[4];
+    glReadPixels(W/2, H/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
+    if (pixel[0] < 200 || pixel[1] > 10 || pixel[2] > 10) {
+	fprintf(stderr, "  FAIL: expected red pixel, got (%d,%d,%d)\n",
+		pixel[0], pixel[1], pixel[2]);
+	g_failed++;
+    } else {
+	printf("  PASS: ARB FBO entry points work correctly\n");
+    }
+
+    /* Test glRenderbufferStorageMultisample with samples=0 (valid) */
+    GLuint rbo_ms;
+    pGenRenderbuffers(1, &rbo_ms);
+    pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_ms);
+    pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 0, GL_RGBA, W, H);
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR) {
+	fprintf(stderr, "  FAIL: RenderbufferStorageMultisample(samples=0) returned error 0x%x\n",
+		err);
+	g_failed++;
+    }
+    /* With samples>0 we expect GL_INVALID_VALUE since MAX_SAMPLES=0 */
+    pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 1, GL_RGBA, W, H);
+    err = glGetError();
+    if (err != GL_INVALID_VALUE) {
+	fprintf(stderr, "  FAIL: RenderbufferStorageMultisample(samples=1) should return GL_INVALID_VALUE, got 0x%x\n",
+		err);
+	g_failed++;
+    }
+    pDeleteRenderbuffers(1, &rbo_ms);
+
+    /* Cleanup */
+    pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+    pDeleteFramebuffers(1, &fbo);
+    pDeleteRenderbuffers(1, &rbo_color);
+    pDeleteRenderbuffers(1, &rbo_depth);
+}
+
+/* ------------------------------------------------------------------ */
 /* Test 14: GL_ARB_shadow                                              */
 /* ------------------------------------------------------------------ */
 static void
@@ -1881,6 +2050,7 @@ main(void)
     test_multi_draw_arrays(W, H);
     test_depth_texture(W, H);
     test_fbo_depth_texture(W, H);
+    test_arb_fbo(W, H);
     test_shadow(W, H);
     test_texture_rectangle(W, H);
     test_vertex_program(W, H);

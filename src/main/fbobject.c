@@ -1509,6 +1509,61 @@ _mesa_GenerateMipmapEXT(GLenum target)
 }
 
 
+/**
+ * GL_ARB_framebuffer_object: Allocate renderbuffer storage with multisampling.
+ * This software renderer does not support multisampling (MAX_SAMPLES = 0),
+ * so samples must be 0; otherwise GL_INVALID_VALUE is generated.
+ */
+void GLAPIENTRY
+_mesa_RenderbufferStorageMultisample(GLenum target, GLsizei samples,
+				     GLenum internalFormat,
+				     GLsizei width, GLsizei height)
+{
+    GET_CURRENT_CONTEXT(ctx);
+    ASSERT_OUTSIDE_BEGIN_END(ctx);
+
+    if (samples < 0 || samples > 0) {
+	_mesa_error(ctx, GL_INVALID_VALUE,
+		    "glRenderbufferStorageMultisample(samples)");
+	return;
+    }
+
+    _mesa_RenderbufferStorageEXT(target, internalFormat, width, height);
+}
+
+
+/**
+ * GL_ARB_framebuffer_object: Attach a layer of a layered texture (3D or
+ * 2D array) to a framebuffer attachment point.
+ * This implementation supports GL_TEXTURE_3D only (no array textures).
+ */
+void GLAPIENTRY
+_mesa_FramebufferTextureLayer(GLenum target, GLenum attachment,
+			      GLuint texture, GLint level, GLint layer)
+{
+    GLenum textarget = GL_TEXTURE_3D;
+    GET_CURRENT_CONTEXT(ctx);
+
+    if (texture != 0) {
+	struct gl_texture_object *texObj = _mesa_lookup_texture(ctx, texture);
+	if (!texObj) {
+	    _mesa_error(ctx, GL_INVALID_VALUE,
+			"glFramebufferTextureLayer(texture)");
+	    return;
+	}
+	if (texObj->Target != GL_TEXTURE_3D) {
+	    _mesa_error(ctx, GL_INVALID_OPERATION,
+			"glFramebufferTextureLayer(texture target not GL_TEXTURE_3D)");
+	    return;
+	}
+	textarget = texObj->Target;
+    }
+
+    _mesa_FramebufferTexture3DEXT(target, attachment, textarget,
+				  texture, level, layer);
+}
+
+
 #if FEATURE_EXT_framebuffer_blit
 void GLAPIENTRY
 _mesa_BlitFramebufferEXT(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,

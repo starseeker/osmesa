@@ -799,6 +799,8 @@ _mesa_init_exec_table(struct _glapi_table *exec)
     SET_FramebufferRenderbufferEXT(exec, _mesa_FramebufferRenderbufferEXT);
     SET_GetFramebufferAttachmentParameterivEXT(exec, _mesa_GetFramebufferAttachmentParameterivEXT);
     SET_GenerateMipmapEXT(exec, _mesa_GenerateMipmapEXT);
+    SET_RenderbufferStorageMultisample(exec, _mesa_RenderbufferStorageMultisample);
+    SET_FramebufferTextureLayer(exec, _mesa_FramebufferTextureLayer);
 #endif
 
 #if FEATURE_EXT_timer_query

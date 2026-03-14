@@ -805,7 +805,9 @@
 #define _gloffset_ProgramLocalParameters4fvEXT 770
 #define _gloffset_GetQueryObjecti64vEXT 771
 #define _gloffset_GetQueryObjectui64vEXT 772
-#define _gloffset_FIRST_DYNAMIC 773
+#define _gloffset_RenderbufferStorageMultisample 773
+#define _gloffset_FramebufferTextureLayer 774
+#define _gloffset_FIRST_DYNAMIC 775
 
 #else
 
@@ -1174,6 +1176,8 @@
 #define _gloffset_ProgramLocalParameters4fvEXT driDispatchRemapTable[ProgramLocalParameters4fvEXT_remap_index]
 #define _gloffset_GetQueryObjecti64vEXT driDispatchRemapTable[GetQueryObjecti64vEXT_remap_index]
 #define _gloffset_GetQueryObjectui64vEXT driDispatchRemapTable[GetQueryObjectui64vEXT_remap_index]
+#define _gloffset_RenderbufferStorageMultisample driDispatchRemapTable[RenderbufferStorageMultisample_remap_index]
+#define _gloffset_FramebufferTextureLayer driDispatchRemapTable[FramebufferTextureLayer_remap_index]
 
 #endif /* !defined(IN_DRI_DRIVER) */
 

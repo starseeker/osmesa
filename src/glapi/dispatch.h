@@ -2375,10 +2375,16 @@
 #define CALL_GetQueryObjectui64vEXT(disp, parameters) (*((disp)->GetQueryObjectui64vEXT)) parameters
 #define GET_GetQueryObjectui64vEXT(disp) ((disp)->GetQueryObjectui64vEXT)
 #define SET_GetQueryObjectui64vEXT(disp, fn) ((disp)->GetQueryObjectui64vEXT = fn)
+#define CALL_RenderbufferStorageMultisample(disp, parameters) (*((disp)->RenderbufferStorageMultisample)) parameters
+#define GET_RenderbufferStorageMultisample(disp) ((disp)->RenderbufferStorageMultisample)
+#define SET_RenderbufferStorageMultisample(disp, fn) ((disp)->RenderbufferStorageMultisample = fn)
+#define CALL_FramebufferTextureLayer(disp, parameters) (*((disp)->FramebufferTextureLayer)) parameters
+#define GET_FramebufferTextureLayer(disp) ((disp)->FramebufferTextureLayer)
+#define SET_FramebufferTextureLayer(disp, fn) ((disp)->FramebufferTextureLayer = fn)
 
 #else
 
-#define driDispatchRemapTable_size 365
+#define driDispatchRemapTable_size 367
 extern int driDispatchRemapTable[ driDispatchRemapTable_size ];
 
 #define AttachShader_remap_index 0
@@ -2746,6 +2752,8 @@ extern int driDispatchRemapTable[ driDispatchRemapTable_size ];
 #define ProgramLocalParameters4fvEXT_remap_index 362
 #define GetQueryObjecti64vEXT_remap_index 363
 #define GetQueryObjectui64vEXT_remap_index 364
+#define RenderbufferStorageMultisample_remap_index 365
+#define FramebufferTextureLayer_remap_index 366
 
 #define CALL_AttachShader(disp, parameters) CALL_by_offset(disp, (void (GLAPIENTRYP)(GLuint, GLuint)), driDispatchRemapTable[AttachShader_remap_index], parameters)
 #define GET_AttachShader(disp) GET_by_offset(disp, driDispatchRemapTable[AttachShader_remap_index])
@@ -3842,6 +3850,12 @@ extern int driDispatchRemapTable[ driDispatchRemapTable_size ];
 #define CALL_GetQueryObjectui64vEXT(disp, parameters) CALL_by_offset(disp, (void (GLAPIENTRYP)(GLuint, GLenum, GLuint64EXT *)), driDispatchRemapTable[GetQueryObjectui64vEXT_remap_index], parameters)
 #define GET_GetQueryObjectui64vEXT(disp) GET_by_offset(disp, driDispatchRemapTable[GetQueryObjectui64vEXT_remap_index])
 #define SET_GetQueryObjectui64vEXT(disp, fn) SET_by_offset(disp, driDispatchRemapTable[GetQueryObjectui64vEXT_remap_index], fn)
+#define CALL_RenderbufferStorageMultisample(disp, parameters) CALL_by_offset(disp, (void (GLAPIENTRYP)(GLenum, GLsizei, GLenum, GLsizei, GLsizei)), driDispatchRemapTable[RenderbufferStorageMultisample_remap_index], parameters)
+#define GET_RenderbufferStorageMultisample(disp) GET_by_offset(disp, driDispatchRemapTable[RenderbufferStorageMultisample_remap_index])
+#define SET_RenderbufferStorageMultisample(disp, fn) SET_by_offset(disp, driDispatchRemapTable[RenderbufferStorageMultisample_remap_index], fn)
+#define CALL_FramebufferTextureLayer(disp, parameters) CALL_by_offset(disp, (void (GLAPIENTRYP)(GLenum, GLenum, GLuint, GLint, GLint)), driDispatchRemapTable[FramebufferTextureLayer_remap_index], parameters)
+#define GET_FramebufferTextureLayer(disp) GET_by_offset(disp, driDispatchRemapTable[FramebufferTextureLayer_remap_index])
+#define SET_FramebufferTextureLayer(disp, fn) SET_by_offset(disp, driDispatchRemapTable[FramebufferTextureLayer_remap_index], fn)
 
 #endif /* !defined(IN_DRI_DRIVER) */
 
