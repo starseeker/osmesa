@@ -951,6 +951,9 @@ _mesa_PopAttrib(void)
 		_mesa_set_enable(ctx, GL_INDEX_LOGIC_OP,
 				 color->IndexLogicOpEnabled);
 		_mesa_set_enable(ctx, GL_DITHER, color->DitherFlag);
+		if (ctx->Extensions.ARB_framebuffer_sRGB)
+		    _mesa_set_enable(ctx, GL_FRAMEBUFFER_SRGB_EXT,
+				     color->sRGBEnabled);
 	    }
 	    break;
 	    case GL_CURRENT_BIT:

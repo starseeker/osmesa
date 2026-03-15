@@ -882,6 +882,7 @@ _mesa_init_constants(GLcontext *ctx)
 #if FEATURE_EXT_framebuffer_object
     ctx->Const.MaxColorAttachments = MAX_COLOR_ATTACHMENTS;
     ctx->Const.MaxRenderbufferSize = MAX_WIDTH;
+    ctx->Const.MaxSamples = MAX_SAMPLES;
 #endif
 
 #if FEATURE_ARB_vertex_shader

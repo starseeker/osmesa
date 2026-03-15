@@ -22,6 +22,8 @@
  *   GL_ARB_depth_texture
  *   GL_ARB_shadow
  *   GL_EXT_texture_rectangle
+ *   GL_EXT_framebuffer_object
+ *   GL_ARB_framebuffer_object
  *   GL_ARB_fragment_program
  *   GL_ARB_vertex_program
  *   GL_ARB_shader_objects
@@ -160,6 +162,7 @@ test_extension_strings(void)
 	"GL_EXT_multi_draw_arrays",
 	"GL_ARB_depth_texture",
 	"GL_EXT_framebuffer_object",
+	"GL_ARB_framebuffer_object",
 	"GL_ARB_shadow",
 	"GL_EXT_texture_rectangle",
 	"GL_ARB_fragment_program",
@@ -167,6 +170,9 @@ test_extension_strings(void)
 	"GL_ARB_shader_objects",
 	"GL_ARB_vertex_shader",
 	"GL_ARB_occlusion_query",
+	"GL_ARB_framebuffer_sRGB",
+	"GL_EXT_framebuffer_sRGB",
+	"GL_EXT_texture_integer",
 	NULL
     };
 
@@ -1304,6 +1310,519 @@ test_fbo_depth_texture(int W, int H)
 }
 
 /* ------------------------------------------------------------------ */
+/* Test 13c: GL_ARB_framebuffer_object (no-suffix entry points)       */
+/* Tests that the ARB FBO functions (without EXT suffix) work via     */
+/* glGetProcAddress and produce correct results.                      */
+/* ------------------------------------------------------------------ */
+static void
+test_arb_fbo(int W, int H)
+{
+    printf("Test 13c: GL_ARB_framebuffer_object\n");
+
+    if (!check_ext("GL_ARB_framebuffer_object"))
+	return;
+
+    clear_errors();
+
+    /* Look up ARB entry points (no-suffix) via glGetProcAddress */
+    typedef GLboolean (APIENTRY *PFNISRENDERBUFFER)(GLuint);
+    typedef void (APIENTRY *PFNBINDRENDERBUFFER)(GLenum, GLuint);
+    typedef void (APIENTRY *PFNDELETERENDERBUFFERS)(GLsizei, const GLuint *);
+    typedef void (APIENTRY *PFNGENRENDERBUFFERS)(GLsizei, GLuint *);
+    typedef void (APIENTRY *PFNRENDERBUFFERSTORAGE)(GLenum, GLenum, GLsizei, GLsizei);
+    typedef GLboolean (APIENTRY *PFNISFRAMEBUFFER)(GLuint);
+    typedef void (APIENTRY *PFNBINDFRAMEBUFFER)(GLenum, GLuint);
+    typedef void (APIENTRY *PFNDELETEFRAMEBUFFERS)(GLsizei, const GLuint *);
+    typedef void (APIENTRY *PFNGENFRAMEBUFFERS)(GLsizei, GLuint *);
+    typedef GLenum (APIENTRY *PFNCHECKFRAMEBUFFERSTATUS)(GLenum);
+    typedef void (APIENTRY *PFNFRAMEBUFFERTEXTURE2D)(GLenum, GLenum, GLenum, GLuint, GLint);
+    typedef void (APIENTRY *PFNFRAMEBUFFERRENDERBUFFER)(GLenum, GLenum, GLenum, GLuint);
+    typedef void (APIENTRY *PFNGENERATEMIPMAP)(GLenum);
+    typedef void (APIENTRY *PFNRENDERBUFFERSTORAGEMULTISAMPLE)(GLenum, GLsizei, GLenum, GLsizei, GLsizei);
+
+    PFNISRENDERBUFFER pIsRenderbuffer =
+	(PFNISRENDERBUFFER) OSMesaGetProcAddress("glIsRenderbuffer");
+    PFNBINDRENDERBUFFER pBindRenderbuffer =
+	(PFNBINDRENDERBUFFER) OSMesaGetProcAddress("glBindRenderbuffer");
+    PFNDELETERENDERBUFFERS pDeleteRenderbuffers =
+	(PFNDELETERENDERBUFFERS) OSMesaGetProcAddress("glDeleteRenderbuffers");
+    PFNGENRENDERBUFFERS pGenRenderbuffers =
+	(PFNGENRENDERBUFFERS) OSMesaGetProcAddress("glGenRenderbuffers");
+    PFNRENDERBUFFERSTORAGE pRenderbufferStorage =
+	(PFNRENDERBUFFERSTORAGE) OSMesaGetProcAddress("glRenderbufferStorage");
+    PFNISFRAMEBUFFER pIsFramebuffer =
+	(PFNISFRAMEBUFFER) OSMesaGetProcAddress("glIsFramebuffer");
+    PFNBINDFRAMEBUFFER pBindFramebuffer =
+	(PFNBINDFRAMEBUFFER) OSMesaGetProcAddress("glBindFramebuffer");
+    PFNDELETEFRAMEBUFFERS pDeleteFramebuffers =
+	(PFNDELETEFRAMEBUFFERS) OSMesaGetProcAddress("glDeleteFramebuffers");
+    PFNGENFRAMEBUFFERS pGenFramebuffers =
+	(PFNGENFRAMEBUFFERS) OSMesaGetProcAddress("glGenFramebuffers");
+    PFNCHECKFRAMEBUFFERSTATUS pCheckFramebufferStatus =
+	(PFNCHECKFRAMEBUFFERSTATUS) OSMesaGetProcAddress("glCheckFramebufferStatus");
+    PFNFRAMEBUFFERTEXTURE2D pFramebufferTexture2D =
+	(PFNFRAMEBUFFERTEXTURE2D) OSMesaGetProcAddress("glFramebufferTexture2D");
+    PFNFRAMEBUFFERRENDERBUFFER pFramebufferRenderbuffer =
+	(PFNFRAMEBUFFERRENDERBUFFER) OSMesaGetProcAddress("glFramebufferRenderbuffer");
+    PFNGENERATEMIPMAP pGenerateMipmap =
+	(PFNGENERATEMIPMAP) OSMesaGetProcAddress("glGenerateMipmap");
+    PFNRENDERBUFFERSTORAGEMULTISAMPLE pRenderbufferStorageMultisample =
+	(PFNRENDERBUFFERSTORAGEMULTISAMPLE) OSMesaGetProcAddress("glRenderbufferStorageMultisample");
+
+    if (!pIsRenderbuffer || !pBindRenderbuffer || !pDeleteRenderbuffers ||
+	!pGenRenderbuffers || !pRenderbufferStorage || !pIsFramebuffer ||
+	!pBindFramebuffer || !pDeleteFramebuffers || !pGenFramebuffers ||
+	!pCheckFramebufferStatus || !pFramebufferTexture2D ||
+	!pFramebufferRenderbuffer || !pGenerateMipmap ||
+	!pRenderbufferStorageMultisample) {
+	fprintf(stderr, "  FAIL: one or more ARB FBO entry points not found\n");
+	g_failed++;
+	return;
+    }
+
+    /* Create and bind a framebuffer using ARB no-suffix entry points */
+    GLuint fbo, rbo_color, rbo_depth;
+
+    pGenFramebuffers(1, &fbo);
+    pGenRenderbuffers(1, &rbo_color);
+    pGenRenderbuffers(1, &rbo_depth);
+
+    /*
+     * Per GL_ARB_framebuffer_object: Is* must return FALSE for names that
+     * have been Gen'd but never yet Bind'd (they are not objects yet).
+     */
+    if (pIsFramebuffer(fbo) || pIsRenderbuffer(rbo_color) ||
+	pIsRenderbuffer(rbo_depth)) {
+	fprintf(stderr,
+		"  FAIL: Is* returned TRUE for gen-but-never-bound names "
+		"(should be FALSE per ARB spec)\n");
+	g_failed++;
+	pDeleteFramebuffers(1, &fbo);
+	pDeleteRenderbuffers(1, &rbo_color);
+	pDeleteRenderbuffers(1, &rbo_depth);
+	return;
+    }
+
+    /* After binding, Is* must return TRUE */
+    pBindFramebuffer(GL_FRAMEBUFFER_EXT, fbo);
+    pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_color);
+    if (!pIsFramebuffer(fbo) || !pIsRenderbuffer(rbo_color)) {
+	fprintf(stderr,
+		"  FAIL: Is* returned FALSE after bind (should be TRUE)\n");
+	g_failed++;
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	pDeleteFramebuffers(1, &fbo);
+	pDeleteRenderbuffers(1, &rbo_color);
+	pDeleteRenderbuffers(1, &rbo_depth);
+	return;
+    }
+    pRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_RGBA, W, H);
+    pFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+			     GL_RENDERBUFFER_EXT, rbo_color);
+
+    pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_depth);
+    pRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, W, H);
+    pFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
+			     GL_RENDERBUFFER_EXT, rbo_depth);
+
+    GLenum status = pCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
+    if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
+	fprintf(stderr, "  FAIL: FBO incomplete (status=0x%x)\n",
+		(unsigned)status);
+	g_failed++;
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	pDeleteFramebuffers(1, &fbo);
+	pDeleteRenderbuffers(1, &rbo_color);
+	pDeleteRenderbuffers(1, &rbo_depth);
+	return;
+    }
+
+    /* Render a solid red quad into the FBO */
+    glViewport(0, 0, W, H);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glBegin(GL_QUADS);
+    glVertex2f(-1.0f, -1.0f);
+    glVertex2f( 1.0f, -1.0f);
+    glVertex2f( 1.0f,  1.0f);
+    glVertex2f(-1.0f,  1.0f);
+    glEnd();
+
+    /* Read back a pixel and verify it is red */
+    GLubyte pixel[4];
+    glReadPixels(W/2, H/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
+    if (pixel[0] < 200 || pixel[1] > 10 || pixel[2] > 10) {
+	fprintf(stderr, "  FAIL: expected red pixel, got (%d,%d,%d)\n",
+		pixel[0], pixel[1], pixel[2]);
+	g_failed++;
+    } else {
+	printf("  PASS: ARB FBO entry points work correctly\n");
+    }
+
+    /* Query GL_MAX_SAMPLES and verify it is at least 1 */
+    GLint max_samples = 0;
+    glGetIntegerv(GL_MAX_SAMPLES, &max_samples);
+    if (max_samples < 1) {
+	fprintf(stderr, "  FAIL: GL_MAX_SAMPLES=%d, expected >= 1\n",
+		max_samples);
+	g_failed++;
+    }
+
+    /* Test glRenderbufferStorageMultisample with samples=0 (always valid) */
+    GLuint rbo_ms;
+    pGenRenderbuffers(1, &rbo_ms);
+    pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_ms);
+    pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 0, GL_RGBA, W, H);
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR) {
+	fprintf(stderr, "  FAIL: RenderbufferStorageMultisample(samples=0) returned error 0x%x\n",
+		err);
+	g_failed++;
+    }
+
+    /* Test glRenderbufferStorageMultisample with samples=1 (now valid) */
+    pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 1, GL_RGBA, W, H);
+    err = glGetError();
+    if (err != GL_NO_ERROR) {
+	fprintf(stderr, "  FAIL: RenderbufferStorageMultisample(samples=1) returned error 0x%x\n",
+		err);
+	g_failed++;
+    } else {
+	/* Verify GL_RENDERBUFFER_SAMPLES reports 1 */
+	typedef void (APIENTRY *PFNGETRENDERBUFFERPARAMETERIV)(GLenum, GLenum, GLint *);
+	PFNGETRENDERBUFFERPARAMETERIV pGetRenderbufferParameteriv =
+	    (PFNGETRENDERBUFFERPARAMETERIV) OSMesaGetProcAddress("glGetRenderbufferParameteriv");
+	if (pGetRenderbufferParameteriv) {
+	    GLint nsamples = 0;
+	    pGetRenderbufferParameteriv(GL_RENDERBUFFER_EXT,
+				       GL_RENDERBUFFER_SAMPLES, &nsamples);
+	    if (nsamples != 1) {
+		fprintf(stderr,
+			"  FAIL: GL_RENDERBUFFER_SAMPLES=%d, expected 1\n",
+			nsamples);
+		g_failed++;
+	    } else {
+		printf("  PASS: RenderbufferStorageMultisample(samples=1) works\n");
+	    }
+	}
+    }
+
+    /* samples > GL_MAX_SAMPLES should still return GL_INVALID_VALUE */
+    pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, max_samples + 1,
+				    GL_RGBA, W, H);
+    err = glGetError();
+    if (err != GL_INVALID_VALUE) {
+	fprintf(stderr,
+		"  FAIL: RenderbufferStorageMultisample(samples=%d) should "
+		"return GL_INVALID_VALUE, got 0x%x\n",
+		max_samples + 1, err);
+	g_failed++;
+    }
+    pDeleteRenderbuffers(1, &rbo_ms);
+
+    /* --- Test: mismatched attachment dimensions must not break FBO --- */
+    {
+	typedef void (APIENTRY *PFNGETFRAMEBUFFERATTACHMENTPARAMIV)(GLenum, GLenum, GLenum, GLint *);
+	PFNGETFRAMEBUFFERATTACHMENTPARAMIV pGetFBAttach =
+	    (PFNGETFRAMEBUFFERATTACHMENTPARAMIV)
+	    OSMesaGetProcAddress("glGetFramebufferAttachmentParameteriv");
+
+	/* Create a new FBO with color (WxH) and depth (W/2 x H/2) */
+	GLuint fbo2, rbo_c2, rbo_d2;
+	pGenFramebuffers(1, &fbo2);
+	pGenRenderbuffers(1, &rbo_c2);
+	pGenRenderbuffers(1, &rbo_d2);
+
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, fbo2);
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_c2);
+	pRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_RGBA, W, H);
+	pFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+				 GL_RENDERBUFFER_EXT, rbo_c2);
+
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_d2);
+	pRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, W / 2, H / 2);
+	pFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
+				 GL_RENDERBUFFER_EXT, rbo_d2);
+
+	GLenum st2 = pCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
+	if (st2 != GL_FRAMEBUFFER_COMPLETE_EXT) {
+	    fprintf(stderr,
+		    "  FAIL: FBO with mismatched attachment sizes incomplete "
+		    "(status=0x%x); ARB_FBO allows mismatched sizes\n",
+		    (unsigned)st2);
+	    g_failed++;
+	} else {
+	    printf("  PASS: FBO with mismatched attachment sizes is complete\n");
+	}
+	clear_errors();
+
+	/* Test GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE on the color attachment */
+	if (pGetFBAttach) {
+	    GLint red_bits = -1;
+	    pGetFBAttach(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+			 GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE, &red_bits);
+	    err = glGetError();
+	    if (err != GL_NO_ERROR || red_bits < 1) {
+		fprintf(stderr,
+			"  FAIL: GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE=%d err=0x%x\n",
+			red_bits, err);
+		g_failed++;
+	    } else {
+		printf("  PASS: GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE = %d\n",
+		       red_bits);
+	    }
+
+	    /* Test GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING */
+	    GLint enc = -1;
+	    pGetFBAttach(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+			 GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, &enc);
+	    err = glGetError();
+	    if (err != GL_NO_ERROR || enc != GL_LINEAR) {
+		fprintf(stderr,
+			"  FAIL: GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING=0x%x "
+			"(expected GL_LINEAR=0x%x) err=0x%x\n",
+			enc, GL_LINEAR, err);
+		g_failed++;
+	    } else {
+		printf("  PASS: GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING = "
+		       "GL_LINEAR\n");
+	    }
+
+	    /* Test GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE */
+	    GLint comp = -1;
+	    pGetFBAttach(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+			 GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE, &comp);
+	    err = glGetError();
+	    if (err != GL_NO_ERROR || comp != GL_UNSIGNED_NORMALIZED) {
+		fprintf(stderr,
+			"  FAIL: GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE=0x%x "
+			"err=0x%x\n", comp, err);
+		g_failed++;
+	    } else {
+		printf("  PASS: GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE = "
+		       "GL_UNSIGNED_NORMALIZED\n");
+	    }
+
+	    /* Test GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE on depth attachment */
+	    GLint depth_bits = -1;
+	    pGetFBAttach(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
+			 GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE, &depth_bits);
+	    err = glGetError();
+	    if (err != GL_NO_ERROR || depth_bits < 1) {
+		fprintf(stderr,
+			"  FAIL: GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE=%d "
+			"err=0x%x\n", depth_bits, err);
+		g_failed++;
+	    } else {
+		printf("  PASS: GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE = %d\n",
+		       depth_bits);
+	    }
+
+	    /* Default framebuffer: query GL_BACK_LEFT color encoding */
+	    pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	    GLint dflt_enc = -1;
+	    pGetFBAttach(GL_FRAMEBUFFER_EXT, GL_BACK_LEFT,
+			 GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, &dflt_enc);
+	    err = glGetError();
+	    if (err != GL_NO_ERROR) {
+		fprintf(stderr,
+			"  FAIL: default FBO GL_BACK_LEFT query error 0x%x\n",
+			err);
+		g_failed++;
+	    } else {
+		printf("  PASS: default FBO GL_BACK_LEFT query succeeded\n");
+	    }
+	    pBindFramebuffer(GL_FRAMEBUFFER_EXT, fbo2);
+	}
+
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	pDeleteFramebuffers(1, &fbo2);
+	pDeleteRenderbuffers(1, &rbo_c2);
+	pDeleteRenderbuffers(1, &rbo_d2);
+    }
+
+    /* --- Test: GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE when sample counts differ --- */
+    if (max_samples >= 1) {
+	GLuint fbo3, rbo_c3, rbo_d3;
+	pGenFramebuffers(1, &fbo3);
+	pGenRenderbuffers(1, &rbo_c3);
+	pGenRenderbuffers(1, &rbo_d3);
+
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, fbo3);
+
+	/* color: samples=1 */
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_c3);
+	pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 1, GL_RGBA, W, H);
+	pFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+				 GL_RENDERBUFFER_EXT, rbo_c3);
+
+	/* depth: samples=0 (mismatch!) */
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_d3);
+	pRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, W, H);
+	pFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
+				 GL_RENDERBUFFER_EXT, rbo_d3);
+
+	GLenum st3 = pCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
+	if (st3 != GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE) {
+	    fprintf(stderr,
+		    "  FAIL: mixed sample counts should yield "
+		    "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE, got 0x%x\n",
+		    (unsigned)st3);
+	    g_failed++;
+	} else {
+	    printf("  PASS: mixed sample counts -> "
+		   "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE\n");
+	}
+	clear_errors();
+
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	pDeleteFramebuffers(1, &fbo3);
+	pDeleteRenderbuffers(1, &rbo_c3);
+	pDeleteRenderbuffers(1, &rbo_d3);
+    }
+
+    /* --- Test: IsRenderbuffer / IsFramebuffer on gen'd-but-never-bound names --- */
+    {
+	GLuint unbound_rb, unbound_fb;
+	pGenRenderbuffers(1, &unbound_rb);
+	pGenFramebuffers(1, &unbound_fb);
+
+	/* Spec: glIs* returns FALSE until the name has been bound at least once */
+	if (pIsRenderbuffer(unbound_rb)) {
+	    fprintf(stderr,
+		    "  FAIL: glIsRenderbuffer returned TRUE for gen-but-never-"
+		    "bound name %u\n", unbound_rb);
+	    g_failed++;
+	} else {
+	    printf("  PASS: glIsRenderbuffer returns FALSE for unbound name\n");
+	}
+
+	if (pIsFramebuffer(unbound_fb)) {
+	    fprintf(stderr,
+		    "  FAIL: glIsFramebuffer returned TRUE for gen-but-never-"
+		    "bound name %u\n", unbound_fb);
+	    g_failed++;
+	} else {
+	    printf("  PASS: glIsFramebuffer returns FALSE for unbound name\n");
+	}
+
+	/* After binding, they must return TRUE */
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, unbound_rb);
+	if (!pIsRenderbuffer(unbound_rb)) {
+	    fprintf(stderr,
+		    "  FAIL: glIsRenderbuffer returned FALSE after bind\n");
+	    g_failed++;
+	} else {
+	    printf("  PASS: glIsRenderbuffer returns TRUE after bind\n");
+	}
+
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, unbound_fb);
+	if (!pIsFramebuffer(unbound_fb)) {
+	    fprintf(stderr,
+		    "  FAIL: glIsFramebuffer returned FALSE after bind\n");
+	    g_failed++;
+	} else {
+	    printf("  PASS: glIsFramebuffer returns TRUE after bind\n");
+	}
+
+	pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
+	pDeleteFramebuffers(1, &unbound_fb);
+	pDeleteRenderbuffers(1, &unbound_rb);
+	clear_errors();
+    }
+
+    /* --- Test: RenderbufferStorageMultisample NumSamples not clobbered by
+     *          a prior unrelated GL error (ctx->ErrorValue fragility fix)    --- */
+    {
+	GLuint rbo_err;
+	pGenRenderbuffers(1, &rbo_err);
+	pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_err);
+
+	/* Poison the error state with an unrelated error */
+	glEnable(0xDEAD);
+	/* Now successfully allocate multisample storage */
+	pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 0, GL_RGBA, W, H);
+
+	/* Clear the unrelated error */
+	(void)glGetError();
+	(void)glGetError();
+
+	typedef void (APIENTRY *PFNGETRENDERBUFFERPARAMIV)(GLenum, GLenum, GLint *);
+	PFNGETRENDERBUFFERPARAMIV pGetRBParam =
+	    (PFNGETRENDERBUFFERPARAMIV)
+	    OSMesaGetProcAddress("glGetRenderbufferParameteriv");
+	if (pGetRBParam) {
+	    GLint s = -1;
+	    pGetRBParam(GL_RENDERBUFFER_EXT, GL_RENDERBUFFER_SAMPLES, &s);
+	    if (s != 0) {
+		fprintf(stderr,
+			"  FAIL: NumSamples=%d after multisample storage with "
+			"prior error; expected 0\n", s);
+		g_failed++;
+	    } else {
+		printf("  PASS: RenderbufferStorageMultisample NumSamples "
+		       "correct despite prior error\n");
+	    }
+	}
+	pDeleteRenderbuffers(1, &rbo_err);
+	clear_errors();
+    }
+
+    /* --- Test: RenderbufferStorageMultisample NumSamples not set when
+     *          call fails due to invalid internal format (same dimensions,
+     *          invalid format → INVALID_ENUM should not update NumSamples) --- */
+    {
+	typedef void (APIENTRY *PFNGETRENDERBUFFERPARAMIV)(GLenum, GLenum, GLint *);
+	PFNGETRENDERBUFFERPARAMIV pGetRBParam =
+	    (PFNGETRENDERBUFFERPARAMIV)
+	    OSMesaGetProcAddress("glGetRenderbufferParameteriv");
+	if (pGetRBParam) {
+	    GLuint rbo_bad;
+	    GLint s = -1;
+
+	    pGenRenderbuffers(1, &rbo_bad);
+	    pBindRenderbuffer(GL_RENDERBUFFER_EXT, rbo_bad);
+
+	    /* First: valid allocation with samples=0 at W x H */
+	    pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 0, GL_RGBA, W, H);
+	    (void)glGetError();
+
+	    /* Second: same dimensions, same samples, but INVALID format.
+	     * NumSamples must remain at 0 (not updated to 1). */
+	    pRenderbufferStorageMultisample(GL_RENDERBUFFER_EXT, 1,
+					   0xDEAD /* invalid format */, W, H);
+	    (void)glGetError(); /* consume the GL_INVALID_ENUM */
+
+	    s = -1;
+	    pGetRBParam(GL_RENDERBUFFER_EXT, GL_RENDERBUFFER_SAMPLES, &s);
+	    if (s != 0) {
+		fprintf(stderr,
+			"  FAIL: NumSamples=%d after failed multisample alloc "
+			"(invalid format, same dims); expected 0\n", s);
+		g_failed++;
+	    } else {
+		printf("  PASS: RenderbufferStorageMultisample NumSamples "
+		       "unchanged after failed alloc (invalid format)\n");
+	    }
+	    pDeleteRenderbuffers(1, &rbo_bad);
+	    clear_errors();
+	}
+    }
+
+    /* Cleanup */
+    pBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+    pDeleteFramebuffers(1, &fbo);
+    pDeleteRenderbuffers(1, &rbo_color);
+    pDeleteRenderbuffers(1, &rbo_depth);
+}
+
+/* ------------------------------------------------------------------ */
 /* Test 14: GL_ARB_shadow                                              */
 /* ------------------------------------------------------------------ */
 static void
@@ -1833,6 +2352,240 @@ test_occlusion_query(int W, int H)
 }
 
 /* ------------------------------------------------------------------ */
+/* Test 20: GL_ARB_framebuffer_sRGB                                    */
+/* ------------------------------------------------------------------ */
+static void
+test_framebuffer_srgb(int W, int H)
+{
+    printf("Test 20: GL_ARB_framebuffer_sRGB\n");
+
+    if (!check_ext("GL_ARB_framebuffer_sRGB") &&
+	!check_ext("GL_EXT_framebuffer_sRGB")) {
+	return;
+    }
+
+    /* Test 1: GL_FRAMEBUFFER_SRGB_CAPABLE_EXT should be TRUE */
+    {
+	GLboolean capable = GL_FALSE;
+	glGetBooleanv(GL_FRAMEBUFFER_SRGB_CAPABLE_EXT, &capable);
+	if (check_gl_error("sRGB capable query"))
+	    g_failed++;
+	else if (!capable) {
+	    fprintf(stderr, "  FAIL: GL_FRAMEBUFFER_SRGB_CAPABLE_EXT = FALSE\n");
+	    g_failed++;
+	} else
+	    printf("  PASS: GL_FRAMEBUFFER_SRGB_CAPABLE_EXT = TRUE\n");
+    }
+
+    /* Test 2: glEnable/glDisable GL_FRAMEBUFFER_SRGB_EXT should not error */
+    {
+	glEnable(GL_FRAMEBUFFER_SRGB_EXT);
+	if (check_gl_error("glEnable(GL_FRAMEBUFFER_SRGB_EXT)")) {
+	    g_failed++;
+	} else {
+	    GLboolean en = glIsEnabled(GL_FRAMEBUFFER_SRGB_EXT);
+	    if (!en) {
+		fprintf(stderr, "  FAIL: glIsEnabled(GL_FRAMEBUFFER_SRGB_EXT) = FALSE after enable\n");
+		g_failed++;
+	    } else
+		printf("  PASS: glEnable/glIsEnabled GL_FRAMEBUFFER_SRGB_EXT\n");
+	}
+	glDisable(GL_FRAMEBUFFER_SRGB_EXT);
+    }
+
+    /* Test 3: sRGB FBO: create sRGB renderbuffer, check color encoding */
+    {
+	GLuint fbo, rbo;
+	GLenum status;
+	GLint encoding = 0;
+
+	glGenFramebuffersEXT(1, &fbo);
+	glGenRenderbuffersEXT(1, &rbo);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
+	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, rbo);
+	glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_SRGB8_ALPHA8_EXT, W, H);
+	if (check_gl_error("glRenderbufferStorageEXT(GL_SRGB8_ALPHA8_EXT)")) {
+	    fprintf(stderr, "  FAIL: could not create SRGB8_ALPHA8 renderbuffer\n");
+	    g_failed++;
+	    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	    glDeleteRenderbuffersEXT(1, &rbo);
+	    glDeleteFramebuffersEXT(1, &fbo);
+	    return;
+	}
+	glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
+				     GL_COLOR_ATTACHMENT0_EXT,
+				     GL_RENDERBUFFER_EXT, rbo);
+	status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+	if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
+	    fprintf(stderr, "  FAIL: sRGB FBO incomplete (status=0x%x)\n", status);
+	    g_failed++;
+	    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	    glDeleteRenderbuffersEXT(1, &rbo);
+	    glDeleteFramebuffersEXT(1, &fbo);
+	    return;
+	}
+
+	/* Query color encoding - should return GL_SRGB */
+	glGetFramebufferAttachmentParameterivEXT(GL_FRAMEBUFFER_EXT,
+						 GL_COLOR_ATTACHMENT0_EXT,
+						 GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING,
+						 &encoding);
+	if (check_gl_error("GetFramebufferAttachmentParameteriv COLOR_ENCODING"))
+	    g_failed++;
+	else if (encoding != GL_SRGB) {
+	    fprintf(stderr, "  FAIL: COLOR_ENCODING=0x%x (expected GL_SRGB=0x8C40)\n",
+		    encoding);
+	    g_failed++;
+	} else
+	    printf("  PASS: GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING = GL_SRGB\n");
+
+	/* Test 4: render a linear 50% gray (128,128,128) with sRGB encoding on
+	 * and verify it reads back as approximately the sRGB-encoded value.
+	 * Linear 128/255 ≈ 0.502  →  sRGB ≈ 0.730 ≈ 186 */
+	{
+	    GLubyte pixel[4];
+	    GLint expected = 186;
+	    GLint tolerance = 4;
+
+	    glViewport(0, 0, W, H);
+	    glEnable(GL_FRAMEBUFFER_SRGB_EXT);
+	    glDisable(GL_DITHER);
+	    glClearColor(128.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f, 1.0f);
+	    glClear(GL_COLOR_BUFFER_BIT);
+
+	    /* Read back - the clear goes through the normal path, but a drawn
+	     * quad definitely goes through the sRGB encode path */
+	    glColor3f(128.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f);
+	    glBegin(GL_QUADS);
+	    glVertex2f(-1, -1); glVertex2f(1, -1);
+	    glVertex2f(1,  1);  glVertex2f(-1,  1);
+	    glEnd();
+	    glDisable(GL_FRAMEBUFFER_SRGB_EXT);
+
+	    glReadPixels(W/2, H/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
+	    if (abs((int)pixel[0] - expected) <= tolerance)
+		printf("  PASS: sRGB encode: linear %d -> sRGB %d (expected ~%d)\n",
+		       128, pixel[0], expected);
+	    else {
+		fprintf(stderr,
+			"  FAIL: sRGB encode: linear 128 -> %d (expected ~%d)\n",
+			pixel[0], expected);
+		g_failed++;
+	    }
+	}
+
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	glDeleteRenderbuffersEXT(1, &rbo);
+	glDeleteFramebuffersEXT(1, &fbo);
+    }
+}
+
+
+/* ------------------------------------------------------------------ */
+/* Test 21: GL_EXT_texture_integer                                     */
+/* ------------------------------------------------------------------ */
+static void
+test_texture_integer(int W, int H)
+{
+    printf("Test 21: GL_EXT_texture_integer\n");
+
+    if (!check_ext("GL_EXT_texture_integer"))
+	return;
+
+    /* Test 1: glClearColorIiEXT / glClearColorIuiEXT should not error */
+    {
+	glClearColorIiEXT(255, 128, 0, 255);
+	if (check_gl_error("glClearColorIiEXT")) {
+	    g_failed++;
+	} else
+	    printf("  PASS: glClearColorIiEXT no error\n");
+
+	glClearColorIuiEXT(255, 128, 0, 255);
+	if (check_gl_error("glClearColorIuiEXT")) {
+	    g_failed++;
+	} else
+	    printf("  PASS: glClearColorIuiEXT no error\n");
+    }
+
+    /* Test 2: Create integer RBO, check COMPONENT_TYPE */
+    {
+	GLuint fbo, rbo;
+	GLenum status;
+	GLint comp_type = 0;
+
+	glGenFramebuffersEXT(1, &fbo);
+	glGenRenderbuffersEXT(1, &rbo);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
+	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, rbo);
+	glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8UI_EXT, W, H);
+	if (check_gl_error("glRenderbufferStorageEXT(GL_RGBA8UI_EXT)")) {
+	    fprintf(stderr, "  FAIL: could not create RGBA8UI renderbuffer\n");
+	    g_failed++;
+	    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	    glDeleteRenderbuffersEXT(1, &rbo);
+	    glDeleteFramebuffersEXT(1, &fbo);
+	    return;
+	}
+	glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
+				     GL_COLOR_ATTACHMENT0_EXT,
+				     GL_RENDERBUFFER_EXT, rbo);
+	status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+	if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
+	    fprintf(stderr, "  FAIL: integer FBO incomplete (status=0x%x)\n", status);
+	    g_failed++;
+	    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	    glDeleteRenderbuffersEXT(1, &rbo);
+	    glDeleteFramebuffersEXT(1, &fbo);
+	    return;
+	}
+	printf("  PASS: GL_RGBA8UI renderbuffer created and FBO complete\n");
+
+	/* Check COMPONENT_TYPE = GL_UNSIGNED_INT */
+	glGetFramebufferAttachmentParameterivEXT(GL_FRAMEBUFFER_EXT,
+						 GL_COLOR_ATTACHMENT0_EXT,
+						 GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE,
+						 &comp_type);
+	if (check_gl_error("GetFramebufferAttachmentParameteriv COMPONENT_TYPE"))
+	    g_failed++;
+	else if (comp_type != GL_UNSIGNED_INT) {
+	    fprintf(stderr, "  FAIL: COMPONENT_TYPE=0x%x (expected GL_UNSIGNED_INT=0x%x)\n",
+		    comp_type, GL_UNSIGNED_INT);
+	    g_failed++;
+	} else
+	    printf("  PASS: GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE = GL_UNSIGNED_INT\n");
+
+	/* Test GL_RGBA_INTEGER_MODE_EXT query */
+	{
+	    GLint int_mode = 0;
+	    glGetIntegerv(GL_RGBA_INTEGER_MODE_EXT, &int_mode);
+	    if (check_gl_error("GL_RGBA_INTEGER_MODE_EXT query"))
+		g_failed++;
+	    else if (!int_mode) {
+		fprintf(stderr, "  FAIL: GL_RGBA_INTEGER_MODE_EXT = 0 (expected 1)\n");
+		g_failed++;
+	    } else
+		printf("  PASS: GL_RGBA_INTEGER_MODE_EXT = 1 with integer draw buffer\n");
+	}
+
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	glDeleteRenderbuffersEXT(1, &rbo);
+	glDeleteFramebuffersEXT(1, &fbo);
+    }
+
+    /* Test 3: Check that extension is advertised */
+    {
+	const char *exts = (const char *)glGetString(GL_EXTENSIONS);
+	if (exts && strstr(exts, "GL_EXT_texture_integer"))
+	    printf("  PASS: GL_EXT_texture_integer in extension string\n");
+	else {
+	    fprintf(stderr, "  FAIL: GL_EXT_texture_integer not in extension string\n");
+	    g_failed++;
+	}
+    }
+}
+
+
+/* ------------------------------------------------------------------ */
 /* main                                                                */
 /* ------------------------------------------------------------------ */
 
@@ -1881,12 +2634,15 @@ main(void)
     test_multi_draw_arrays(W, H);
     test_depth_texture(W, H);
     test_fbo_depth_texture(W, H);
+    test_arb_fbo(W, H);
     test_shadow(W, H);
     test_texture_rectangle(W, H);
     test_vertex_program(W, H);
     test_fragment_program(W, H);
     test_glsl_shader(W, H);
     test_occlusion_query(W, H);
+    test_framebuffer_srgb(W, H);
+    test_texture_integer(W, H);
 
     printf("\n");
     if (g_failed == 0) {

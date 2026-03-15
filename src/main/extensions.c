@@ -46,6 +46,7 @@ static const struct {
 } default_extensions[] = {
     { OFF, "GL_ARB_depth_texture",              F(ARB_depth_texture) },
     { OFF, "GL_ARB_draw_buffers",               F(ARB_draw_buffers) },
+    { OFF, "GL_ARB_framebuffer_object",         F(ARB_framebuffer_object) },
     { OFF, "GL_ARB_fragment_program",           F(ARB_fragment_program) },
     { OFF, "GL_ARB_fragment_shader",            F(ARB_fragment_shader) },
     { OFF, "GL_ARB_half_float_pixel",           F(ARB_half_float_pixel) },
@@ -125,6 +126,9 @@ static const struct {
     { ON,  "GL_EXT_texture_object",             F(EXT_texture_object) },
     { OFF, "GL_EXT_texture_rectangle",          F(NV_texture_rectangle) },
     { OFF, "GL_EXT_texture_sRGB",               F(EXT_texture_sRGB) },
+    { OFF, "GL_ARB_framebuffer_sRGB",           F(ARB_framebuffer_sRGB) },
+    { OFF, "GL_EXT_framebuffer_sRGB",           F(EXT_framebuffer_sRGB) },
+    { OFF, "GL_EXT_texture_integer",            F(EXT_texture_integer) },
     { OFF, "GL_EXT_timer_query",                F(EXT_timer_query) },
     { ON,  "GL_EXT_vertex_array",               F(EXT_vertex_array) },
     { OFF, "GL_EXT_vertex_array_set",           F(EXT_vertex_array_set) },
@@ -239,6 +243,7 @@ _mesa_enable_sw_extensions(GLcontext *ctx)
     ctx->Extensions.EXT_fog_coord = GL_TRUE;
 #if FEATURE_EXT_framebuffer_object
     ctx->Extensions.EXT_framebuffer_object = GL_TRUE;
+    ctx->Extensions.ARB_framebuffer_object = GL_TRUE;
 #endif
 #if FEATURE_EXT_framebuffer_blit
     ctx->Extensions.EXT_framebuffer_blit = GL_TRUE;
@@ -263,6 +268,11 @@ _mesa_enable_sw_extensions(GLcontext *ctx)
     ctx->Extensions.EXT_texture_lod_bias = GL_TRUE;
 #if FEATURE_EXT_texture_sRGB
     ctx->Extensions.EXT_texture_sRGB = GL_TRUE;
+    ctx->Extensions.ARB_framebuffer_sRGB = GL_TRUE;
+    ctx->Extensions.EXT_framebuffer_sRGB = GL_TRUE;
+#endif
+#if FEATURE_EXT_texture_integer
+    ctx->Extensions.EXT_texture_integer = GL_TRUE;
 #endif
     ctx->Extensions.IBM_multimode_draw_arrays = GL_TRUE;
     ctx->Extensions.MESA_pack_invert = GL_TRUE;
@@ -413,6 +423,11 @@ _mesa_enable_2_1_extensions(GLcontext *ctx)
 #endif
 #if FEATURE_EXT_texture_sRGB
     ctx->Extensions.EXT_texture_sRGB = GL_TRUE;
+    ctx->Extensions.ARB_framebuffer_sRGB = GL_TRUE;
+    ctx->Extensions.EXT_framebuffer_sRGB = GL_TRUE;
+#endif
+#if FEATURE_EXT_texture_integer
+    ctx->Extensions.EXT_texture_integer = GL_TRUE;
 #endif
 #ifdef FEATURE_ARB_shading_language_120
     ctx->Extensions.ARB_shading_language_120 = GL_FALSE; /* not quite done */

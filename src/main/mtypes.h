@@ -597,6 +597,9 @@ struct gl_colorbuffer_attrib {
     /*@}*/
 
     GLboolean DitherFlag;		/**< Dither enable flag */
+    GLboolean sRGBEnabled;  /**< GL_FRAMEBUFFER_SRGB enable */
+    GLint ClearColorI[4];     /**< Integer clear color (GL_EXT_texture_integer) */
+    GLuint ClearColorUI[4];   /**< Unsigned integer clear color */
 
     GLenum ClampFragmentColor; /**< GL_TRUE, GL_FALSE or GL_FIXED_ONLY_ARB */
     GLenum ClampReadColor;     /**< GL_TRUE, GL_FALSE or GL_FIXED_ONLY_ARB */
@@ -2157,6 +2160,7 @@ struct gl_renderbuffer {
     GLuint Name;
     GLint RefCount;
     GLuint Width, Height;
+    GLuint NumSamples; /**< Requested sample count (0 = single-sample) */
     GLenum InternalFormat; /**< The user-specified format */
     GLenum _ActualFormat;  /**< The driver-chosen format */
     GLenum _BaseFormat;    /**< Either GL_RGB, GL_RGBA, GL_DEPTH_COMPONENT or
@@ -2395,9 +2399,10 @@ struct gl_constants {
     /* GL_OES_read_format */
     GLenum ColorReadFormat;
     GLenum ColorReadType;
-    /* GL_EXT_framebuffer_object */
+    /* GL_EXT_framebuffer_object / GL_ARB_framebuffer_object */
     GLuint MaxColorAttachments;
     GLuint MaxRenderbufferSize;
+    GLuint MaxSamples; /**< GL_MAX_SAMPLES; 0 = no MSAA */
     /* GL_ARB_vertex_shader */
     GLuint MaxVertexTextureImageUnits;
     GLuint MaxVarying;
@@ -2418,6 +2423,7 @@ struct gl_extensions {
     GLboolean dummy;  /* don't remove this! */
     GLboolean ARB_depth_texture;
     GLboolean ARB_draw_buffers;
+    GLboolean ARB_framebuffer_object;
     GLboolean ARB_fragment_program;
     GLboolean ARB_fragment_shader;
     GLboolean ARB_half_float_pixel;
@@ -2490,6 +2496,9 @@ struct gl_extensions {
     GLboolean EXT_texture_lod_bias;
     GLboolean EXT_texture_mirror_clamp;
     GLboolean EXT_texture_sRGB;
+    GLboolean ARB_framebuffer_sRGB;
+    GLboolean EXT_framebuffer_sRGB;
+    GLboolean EXT_texture_integer;
     GLboolean EXT_timer_query;
     GLboolean EXT_vertex_array;
     GLboolean EXT_vertex_array_set;

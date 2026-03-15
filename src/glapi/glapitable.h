@@ -813,6 +813,14 @@ struct _glapi_table {
     void (GLAPIENTRYP ProgramLocalParameters4fvEXT)(GLenum target, GLuint index, GLsizei count, const GLfloat * params); /* 770 */
     void (GLAPIENTRYP GetQueryObjecti64vEXT)(GLuint id, GLenum pname, GLint64EXT * params); /* 771 */
     void (GLAPIENTRYP GetQueryObjectui64vEXT)(GLuint id, GLenum pname, GLuint64EXT * params); /* 772 */
+    void (GLAPIENTRYP RenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height); /* 773 */
+    void (GLAPIENTRYP FramebufferTextureLayer)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer); /* 774 */
+    void (GLAPIENTRYP ClearColorIiEXT)(GLint r, GLint g, GLint b, GLint a); /* 775 */
+    void (GLAPIENTRYP ClearColorIuiEXT)(GLuint r, GLuint g, GLuint b, GLuint a); /* 776 */
+    void (GLAPIENTRYP TexParameterIivEXT)(GLenum target, GLenum pname, const GLint *params); /* 777 */
+    void (GLAPIENTRYP TexParameterIuivEXT)(GLenum target, GLenum pname, const GLuint *params); /* 778 */
+    void (GLAPIENTRYP GetTexParameterIivEXT)(GLenum target, GLenum pname, GLint *params); /* 779 */
+    void (GLAPIENTRYP GetTexParameterIuivEXT)(GLenum target, GLenum pname, GLuint *params); /* 780 */
 };
 
 #endif /* !defined( _GLAPI_TABLE_H_ ) */

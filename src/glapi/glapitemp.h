@@ -5191,6 +5191,46 @@ KEYWORD1_ALT void KEYWORD2 NAME(_dispatch_stub_772)(GLuint id, GLenum pname, GLu
     DISPATCH(GetQueryObjectui64vEXT, (id, pname, params), (F, "glGetQueryObjectui64vEXT(%d, 0x%x, %p);\n", id, pname, (const void *) params));
 }
 
+KEYWORD1 void KEYWORD2 NAME(RenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height)
+{
+    DISPATCH(RenderbufferStorageMultisample, (target, samples, internalformat, width, height), (F, "glRenderbufferStorageMultisample(0x%x, %d, 0x%x, %d, %d);\n", target, samples, internalformat, width, height));
+}
+
+KEYWORD1 void KEYWORD2 NAME(FramebufferTextureLayer)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer)
+{
+    DISPATCH(FramebufferTextureLayer, (target, attachment, texture, level, layer), (F, "glFramebufferTextureLayer(0x%x, 0x%x, %d, %d, %d);\n", target, attachment, texture, level, layer));
+}
+
+KEYWORD1 void KEYWORD2 NAME(ClearColorIiEXT)(GLint r, GLint g, GLint b, GLint a)
+{
+    DISPATCH(ClearColorIiEXT, (r, g, b, a), (F, "glClearColorIiEXT(%d, %d, %d, %d);\n", r, g, b, a));
+}
+
+KEYWORD1 void KEYWORD2 NAME(ClearColorIuiEXT)(GLuint r, GLuint g, GLuint b, GLuint a)
+{
+    DISPATCH(ClearColorIuiEXT, (r, g, b, a), (F, "glClearColorIuiEXT(%u, %u, %u, %u);\n", r, g, b, a));
+}
+
+KEYWORD1 void KEYWORD2 NAME(TexParameterIivEXT)(GLenum target, GLenum pname, const GLint * params)
+{
+    DISPATCH(TexParameterIivEXT, (target, pname, params), (F, "glTexParameterIivEXT(0x%x, 0x%x, %p);\n", target, pname, (void *) params));
+}
+
+KEYWORD1 void KEYWORD2 NAME(TexParameterIuivEXT)(GLenum target, GLenum pname, const GLuint * params)
+{
+    DISPATCH(TexParameterIuivEXT, (target, pname, params), (F, "glTexParameterIuivEXT(0x%x, 0x%x, %p);\n", target, pname, (void *) params));
+}
+
+KEYWORD1 void KEYWORD2 NAME(GetTexParameterIivEXT)(GLenum target, GLenum pname, GLint * params)
+{
+    DISPATCH(GetTexParameterIivEXT, (target, pname, params), (F, "glGetTexParameterIivEXT(0x%x, 0x%x, %p);\n", target, pname, (void *) params));
+}
+
+KEYWORD1 void KEYWORD2 NAME(GetTexParameterIuivEXT)(GLenum target, GLenum pname, GLuint * params)
+{
+    DISPATCH(GetTexParameterIuivEXT, (target, pname, params), (F, "glGetTexParameterIuivEXT(0x%x, 0x%x, %p);\n", target, pname, (void *) params));
+}
+
 
 #endif /* defined( NAME ) */
 
@@ -5978,6 +6018,14 @@ static _glapi_proc DISPATCH_TABLE_NAME[] = {
     TABLE_ENTRY(_dispatch_stub_770),
     TABLE_ENTRY(_dispatch_stub_771),
     TABLE_ENTRY(_dispatch_stub_772),
+    TABLE_ENTRY(RenderbufferStorageMultisample),
+    TABLE_ENTRY(FramebufferTextureLayer),
+    TABLE_ENTRY(ClearColorIiEXT),
+    TABLE_ENTRY(ClearColorIuiEXT),
+    TABLE_ENTRY(TexParameterIivEXT),
+    TABLE_ENTRY(TexParameterIuivEXT),
+    TABLE_ENTRY(GetTexParameterIivEXT),
+    TABLE_ENTRY(GetTexParameterIuivEXT),
     /* A whole bunch of no-op functions.  These might be called
      * when someone tries to call a dynamically-registered
      * extension function without a current rendering context.

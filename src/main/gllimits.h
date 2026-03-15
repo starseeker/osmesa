@@ -216,9 +216,17 @@
 /*@}*/
 
 
-/** For GL_EXT_framebuffer_object */
+/** For GL_EXT_framebuffer_object / GL_ARB_framebuffer_object */
 /*@{*/
 #define MAX_COLOR_ATTACHMENTS 8
+/**
+ * Maximum sample count reported as GL_MAX_SAMPLES.  The software rasterizer
+ * has no real multi-sample support, so any sample count > 0 is silently
+ * treated as single-sample.  Setting this to 1 lets applications that
+ * request exactly 1 sample (a common idiom) create their framebuffers
+ * without error while keeping the advertised value honest.
+ */
+#define MAX_SAMPLES 1
 /*@}*/
 
 
@@ -299,6 +307,7 @@
 #define FEATURE_EXT_framebuffer_object _HAVE_FULL_GL
 #define FEATURE_EXT_pixel_buffer_object  _HAVE_FULL_GL
 #define FEATURE_EXT_texture_sRGB _HAVE_FULL_GL
+#define FEATURE_EXT_texture_integer _HAVE_FULL_GL
 #define FEATURE_EXT_timer_query  _HAVE_FULL_GL
 #define FEATURE_ATI_fragment_shader _HAVE_FULL_GL
 #define FEATURE_MESA_program_debug  _HAVE_FULL_GL

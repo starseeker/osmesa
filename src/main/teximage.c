@@ -377,6 +377,29 @@ _mesa_base_tex_format(GLcontext *ctx, GLint internalFormat)
 
 #endif /* FEATURE_EXT_texture_sRGB */
 
+#if FEATURE_EXT_texture_integer
+    if (ctx->Extensions.EXT_texture_integer) {
+	switch (internalFormat) {
+	    case GL_RGBA8I_EXT:
+	    case GL_RGBA16I_EXT:
+	    case GL_RGBA32I_EXT:
+	    case GL_RGBA8UI_EXT:
+	    case GL_RGBA16UI_EXT:
+	    case GL_RGBA32UI_EXT:
+		return GL_RGBA;
+	    case GL_RGB8I_EXT:
+	    case GL_RGB16I_EXT:
+	    case GL_RGB32I_EXT:
+	    case GL_RGB8UI_EXT:
+	    case GL_RGB16UI_EXT:
+	    case GL_RGB32UI_EXT:
+		return GL_RGB;
+	    default:
+		; /* fallthrough */
+	}
+    }
+#endif /* FEATURE_EXT_texture_integer */
+
     return -1; /* error */
 }
 
@@ -487,6 +510,20 @@ is_color_format(GLenum format)
 	case GL_COMPRESSED_SLUMINANCE_EXT:
 	case GL_COMPRESSED_SLUMINANCE_ALPHA_EXT:
 #endif /* FEATURE_EXT_texture_sRGB */
+#if FEATURE_EXT_texture_integer
+	case GL_RGBA8I_EXT:
+	case GL_RGBA8UI_EXT:
+	case GL_RGBA16I_EXT:
+	case GL_RGBA16UI_EXT:
+	case GL_RGBA32I_EXT:
+	case GL_RGBA32UI_EXT:
+	case GL_RGB8I_EXT:
+	case GL_RGB8UI_EXT:
+	case GL_RGB16I_EXT:
+	case GL_RGB16UI_EXT:
+	case GL_RGB32I_EXT:
+	case GL_RGB32UI_EXT:
+#endif /* FEATURE_EXT_texture_integer */
 	    return GL_TRUE;
 	case GL_YCBCR_MESA:  /* not considered to be RGB */
 	default:
@@ -3655,6 +3692,128 @@ _mesa_GetCompressedTexImageARB(GLenum target, GLint level, GLvoid *img)
 out:
     _mesa_unlock_texture(ctx, texObj);
 }
+
+
+#if FEATURE_EXT_texture_integer
+/**
+ * GL_EXT_texture_integer entry points.
+ */
+void GLAPIENTRY
+_mesa_ClearColorIiEXT(GLint r, GLint g, GLint b, GLint a)
+{
+    GET_CURRENT_CONTEXT(ctx);
+    ASSERT_OUTSIDE_BEGIN_END(ctx);
+    ctx->Color.ClearColorI[0] = r;
+    ctx->Color.ClearColorI[1] = g;
+    ctx->Color.ClearColorI[2] = b;
+    ctx->Color.ClearColorI[3] = a;
+}
+
+void GLAPIENTRY
+_mesa_ClearColorIuiEXT(GLuint r, GLuint g, GLuint b, GLuint a)
+{
+    GET_CURRENT_CONTEXT(ctx);
+    ASSERT_OUTSIDE_BEGIN_END(ctx);
+    ctx->Color.ClearColorUI[0] = r;
+    ctx->Color.ClearColorUI[1] = g;
+    ctx->Color.ClearColorUI[2] = b;
+    ctx->Color.ClearColorUI[3] = a;
+}
+
+void GLAPIENTRY
+_mesa_TexParameterIivEXT(GLenum target, GLenum pname, const GLint *params)
+{
+    GET_CURRENT_CONTEXT(ctx);
+    struct gl_texture_unit *texUnit;
+    struct gl_texture_object *texObj;
+    ASSERT_OUTSIDE_BEGIN_END(ctx);
+    texUnit = &ctx->Texture.Unit[ctx->Texture.CurrentUnit];
+    texObj = _mesa_select_tex_object(ctx, texUnit, target);
+    if (!texObj)
+	return;
+    if (pname == GL_TEXTURE_BORDER_COLOR) {
+	texObj->BorderColor[0] = (GLfloat)params[0] / 2147483647.0f;
+	texObj->BorderColor[1] = (GLfloat)params[1] / 2147483647.0f;
+	texObj->BorderColor[2] = (GLfloat)params[2] / 2147483647.0f;
+	texObj->BorderColor[3] = (GLfloat)params[3] / 2147483647.0f;
+    } else {
+	_mesa_TexParameteriv(target, pname, params);
+    }
+}
+
+void GLAPIENTRY
+_mesa_TexParameterIuivEXT(GLenum target, GLenum pname, const GLuint *params)
+{
+    GET_CURRENT_CONTEXT(ctx);
+    struct gl_texture_unit *texUnit;
+    struct gl_texture_object *texObj;
+    ASSERT_OUTSIDE_BEGIN_END(ctx);
+    texUnit = &ctx->Texture.Unit[ctx->Texture.CurrentUnit];
+    texObj = _mesa_select_tex_object(ctx, texUnit, target);
+    if (!texObj)
+	return;
+    if (pname == GL_TEXTURE_BORDER_COLOR) {
+	texObj->BorderColor[0] = (GLfloat)params[0] / 4294967295.0f;
+	texObj->BorderColor[1] = (GLfloat)params[1] / 4294967295.0f;
+	texObj->BorderColor[2] = (GLfloat)params[2] / 4294967295.0f;
+	texObj->BorderColor[3] = (GLfloat)params[3] / 4294967295.0f;
+    } else {
+	GLint iparams[4];
+	iparams[0] = (GLint)params[0];
+	iparams[1] = (GLint)params[1];
+	iparams[2] = (GLint)params[2];
+	iparams[3] = (GLint)params[3];
+	_mesa_TexParameteriv(target, pname, iparams);
+    }
+}
+
+void GLAPIENTRY
+_mesa_GetTexParameterIivEXT(GLenum target, GLenum pname, GLint *params)
+{
+    GET_CURRENT_CONTEXT(ctx);
+    struct gl_texture_unit *texUnit;
+    struct gl_texture_object *texObj;
+    ASSERT_OUTSIDE_BEGIN_END(ctx);
+    texUnit = &ctx->Texture.Unit[ctx->Texture.CurrentUnit];
+    texObj = _mesa_select_tex_object(ctx, texUnit, target);
+    if (!texObj)
+	return;
+    if (pname == GL_TEXTURE_BORDER_COLOR) {
+	params[0] = (GLint)(texObj->BorderColor[0] * 2147483647.0f);
+	params[1] = (GLint)(texObj->BorderColor[1] * 2147483647.0f);
+	params[2] = (GLint)(texObj->BorderColor[2] * 2147483647.0f);
+	params[3] = (GLint)(texObj->BorderColor[3] * 2147483647.0f);
+    } else {
+	_mesa_GetTexParameteriv(target, pname, params);
+    }
+}
+
+void GLAPIENTRY
+_mesa_GetTexParameterIuivEXT(GLenum target, GLenum pname, GLuint *params)
+{
+    GET_CURRENT_CONTEXT(ctx);
+    struct gl_texture_unit *texUnit;
+    struct gl_texture_object *texObj;
+    ASSERT_OUTSIDE_BEGIN_END(ctx);
+    texUnit = &ctx->Texture.Unit[ctx->Texture.CurrentUnit];
+    texObj = _mesa_select_tex_object(ctx, texUnit, target);
+    if (!texObj)
+	return;
+    if (pname == GL_TEXTURE_BORDER_COLOR) {
+	params[0] = (GLuint)(texObj->BorderColor[0] * 4294967295.0f);
+	params[1] = (GLuint)(texObj->BorderColor[1] * 4294967295.0f);
+	params[2] = (GLuint)(texObj->BorderColor[2] * 4294967295.0f);
+	params[3] = (GLuint)(texObj->BorderColor[3] * 4294967295.0f);
+    } else {
+	GLint iparams[4];
+	_mesa_GetTexParameteriv(target, pname, iparams);
+	params[0] = (GLuint)iparams[0];
+	params[1] = (GLuint)iparams[1];
+	params[2] = (GLuint)iparams[2];
+	params[3] = (GLuint)iparams[3];
+    }
+}
+#endif /* FEATURE_EXT_texture_integer */
 
 /*
  * Local Variables:

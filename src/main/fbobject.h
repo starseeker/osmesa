@@ -124,6 +124,14 @@ _mesa_GetFramebufferAttachmentParameterivEXT(GLenum target, GLenum attachment,
 extern void GLAPIENTRY
 _mesa_GenerateMipmapEXT(GLenum target);
 
+extern void GLAPIENTRY
+_mesa_RenderbufferStorageMultisample(GLenum target, GLsizei samples,
+				     GLenum internalformat,
+				     GLsizei width, GLsizei height);
+
+extern void GLAPIENTRY
+_mesa_FramebufferTextureLayer(GLenum target, GLenum attachment,
+			      GLuint texture, GLint level, GLint layer);
 
 extern void GLAPIENTRY
 _mesa_BlitFramebufferEXT(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,

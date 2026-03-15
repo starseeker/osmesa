@@ -585,6 +585,11 @@ void _mesa_init_color(GLcontext * ctx)
     ctx->Color._LogicOpEnabled = GL_FALSE;
     ctx->Color.LogicOp = GL_COPY;
     ctx->Color.DitherFlag = GL_TRUE;
+    ctx->Color.sRGBEnabled = GL_FALSE;
+    ctx->Color.ClearColorI[0] = ctx->Color.ClearColorI[1] = 0;
+    ctx->Color.ClearColorI[2] = ctx->Color.ClearColorI[3] = 0;
+    ctx->Color.ClearColorUI[0] = ctx->Color.ClearColorUI[1] = 0;
+    ctx->Color.ClearColorUI[2] = ctx->Color.ClearColorUI[3] = 0;
 
     if (ctx->Visual.doubleBufferMode) {
 	ctx->Color.DrawBuffer[0] = GL_BACK;

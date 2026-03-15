@@ -799,6 +799,8 @@ _mesa_init_exec_table(struct _glapi_table *exec)
     SET_FramebufferRenderbufferEXT(exec, _mesa_FramebufferRenderbufferEXT);
     SET_GetFramebufferAttachmentParameterivEXT(exec, _mesa_GetFramebufferAttachmentParameterivEXT);
     SET_GenerateMipmapEXT(exec, _mesa_GenerateMipmapEXT);
+    SET_RenderbufferStorageMultisample(exec, _mesa_RenderbufferStorageMultisample);
+    SET_FramebufferTextureLayer(exec, _mesa_FramebufferTextureLayer);
 #endif
 
 #if FEATURE_EXT_timer_query
@@ -818,6 +820,15 @@ _mesa_init_exec_table(struct _glapi_table *exec)
 
     /* GL_ATI_separate_stencil */
     SET_StencilFuncSeparateATI(exec, _mesa_StencilFuncSeparateATI);
+
+#if FEATURE_EXT_texture_integer
+    SET_ClearColorIiEXT(exec, _mesa_ClearColorIiEXT);
+    SET_ClearColorIuiEXT(exec, _mesa_ClearColorIuiEXT);
+    SET_TexParameterIivEXT(exec, _mesa_TexParameterIivEXT);
+    SET_TexParameterIuivEXT(exec, _mesa_TexParameterIuivEXT);
+    SET_GetTexParameterIivEXT(exec, _mesa_GetTexParameterIivEXT);
+    SET_GetTexParameterIuivEXT(exec, _mesa_GetTexParameterIuivEXT);
+#endif
 }
 
 

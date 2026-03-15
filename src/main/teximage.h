@@ -251,6 +251,15 @@ _mesa_GetCompressedTexImageARB(GLenum target, GLint lod, GLvoid *img);
 
 /*@}*/
 
+#if FEATURE_EXT_texture_integer
+extern void GLAPIENTRY _mesa_ClearColorIiEXT(GLint r, GLint g, GLint b, GLint a);
+extern void GLAPIENTRY _mesa_ClearColorIuiEXT(GLuint r, GLuint g, GLuint b, GLuint a);
+extern void GLAPIENTRY _mesa_TexParameterIivEXT(GLenum target, GLenum pname, const GLint *params);
+extern void GLAPIENTRY _mesa_TexParameterIuivEXT(GLenum target, GLenum pname, const GLuint *params);
+extern void GLAPIENTRY _mesa_GetTexParameterIivEXT(GLenum target, GLenum pname, GLint *params);
+extern void GLAPIENTRY _mesa_GetTexParameterIuivEXT(GLenum target, GLenum pname, GLuint *params);
+#endif
+
 #endif
 
 /*

@@ -50,6 +50,34 @@
 #include "s_stencil.h"
 #include "s_texcombine.h"
 
+#include <math.h>
+
+/**
+ * Linear [0,255] -> sRGB [0,255] look-up table.
+ * Built once on first use.  Used when GL_FRAMEBUFFER_SRGB is enabled and
+ * writing to an sRGB-format renderbuffer.
+ */
+static INLINE GLubyte
+_mesa_linear_ubyte_to_srgb8(GLubyte c)
+{
+    static GLubyte table[256];
+    static GLboolean ready = GL_FALSE;
+    if (!ready) {
+	GLuint i;
+	for (i = 0; i < 256; i++) {
+	    GLfloat linear = i / 255.0f;
+	    GLfloat srgb;
+	    if (linear <= 0.0031308f)
+		srgb = 12.92f * linear;
+	    else
+		srgb = 1.055f * powf(linear, 1.0f / 2.4f) - 0.055f;
+	    table[i] = (GLubyte)(srgb * 255.0f + 0.5f);
+	}
+	ready = GL_TRUE;
+    }
+    return table[c];
+}
+
 
 /**
  * Init span's Z interpolation values to the RasterPos Z.
@@ -1593,6 +1621,29 @@ _swrast_write_rgba_span(GLcontext *ctx, SWspan *span)
 		     span->array->ChanType == GL_FLOAT)
 		    ? (const void *) span->array->attribs[FRAG_ATTRIB_COL0]
 		    : (const void *) span->array->rgba;
+
+		/* sRGB encode: when GL_FRAMEBUFFER_SRGB is enabled and the RBO
+		 * uses an sRGB format, convert the linear span colours to sRGB
+		 * in-place.  Only applies to GLubyte channels. */
+#if FEATURE_EXT_texture_sRGB
+		if (ctx->Color.sRGBEnabled &&
+		    (rb->_ActualFormat == GL_SRGB8_EXT ||
+		     rb->_ActualFormat == GL_SRGB8_ALPHA8_EXT) &&
+		    colorData == (const void *) span->array->rgba) {
+		    GLuint srgb_i;
+		    GLubyte (*rgba)[4] = span->array->rgba;
+		    GLuint srgb_n = span->end;
+		    for (srgb_i = 0; srgb_i < srgb_n; srgb_i++) {
+			rgba[srgb_i][RCOMP] =
+			    _mesa_linear_ubyte_to_srgb8(rgba[srgb_i][RCOMP]);
+			rgba[srgb_i][GCOMP] =
+			    _mesa_linear_ubyte_to_srgb8(rgba[srgb_i][GCOMP]);
+			rgba[srgb_i][BCOMP] =
+			    _mesa_linear_ubyte_to_srgb8(rgba[srgb_i][BCOMP]);
+			/* alpha is NOT gamma-encoded in sRGB */
+		    }
+		}
+#endif
 
 		if (span->arrayMask & SPAN_XY) {
 		    /* array of pixel coords */
