@@ -170,6 +170,9 @@ test_extension_strings(void)
 	"GL_ARB_shader_objects",
 	"GL_ARB_vertex_shader",
 	"GL_ARB_occlusion_query",
+	"GL_ARB_framebuffer_sRGB",
+	"GL_EXT_framebuffer_sRGB",
+	"GL_EXT_texture_integer",
 	NULL
     };
 
@@ -2349,6 +2352,240 @@ test_occlusion_query(int W, int H)
 }
 
 /* ------------------------------------------------------------------ */
+/* Test 20: GL_ARB_framebuffer_sRGB                                    */
+/* ------------------------------------------------------------------ */
+static void
+test_framebuffer_srgb(int W, int H)
+{
+    printf("Test 20: GL_ARB_framebuffer_sRGB\n");
+
+    if (!check_ext("GL_ARB_framebuffer_sRGB") &&
+	!check_ext("GL_EXT_framebuffer_sRGB")) {
+	return;
+    }
+
+    /* Test 1: GL_FRAMEBUFFER_SRGB_CAPABLE_EXT should be TRUE */
+    {
+	GLboolean capable = GL_FALSE;
+	glGetBooleanv(GL_FRAMEBUFFER_SRGB_CAPABLE_EXT, &capable);
+	if (check_gl_error("sRGB capable query"))
+	    g_failed++;
+	else if (!capable) {
+	    fprintf(stderr, "  FAIL: GL_FRAMEBUFFER_SRGB_CAPABLE_EXT = FALSE\n");
+	    g_failed++;
+	} else
+	    printf("  PASS: GL_FRAMEBUFFER_SRGB_CAPABLE_EXT = TRUE\n");
+    }
+
+    /* Test 2: glEnable/glDisable GL_FRAMEBUFFER_SRGB_EXT should not error */
+    {
+	glEnable(GL_FRAMEBUFFER_SRGB_EXT);
+	if (check_gl_error("glEnable(GL_FRAMEBUFFER_SRGB_EXT)")) {
+	    g_failed++;
+	} else {
+	    GLboolean en = glIsEnabled(GL_FRAMEBUFFER_SRGB_EXT);
+	    if (!en) {
+		fprintf(stderr, "  FAIL: glIsEnabled(GL_FRAMEBUFFER_SRGB_EXT) = FALSE after enable\n");
+		g_failed++;
+	    } else
+		printf("  PASS: glEnable/glIsEnabled GL_FRAMEBUFFER_SRGB_EXT\n");
+	}
+	glDisable(GL_FRAMEBUFFER_SRGB_EXT);
+    }
+
+    /* Test 3: sRGB FBO: create sRGB renderbuffer, check color encoding */
+    {
+	GLuint fbo, rbo;
+	GLenum status;
+	GLint encoding = 0;
+
+	glGenFramebuffersEXT(1, &fbo);
+	glGenRenderbuffersEXT(1, &rbo);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
+	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, rbo);
+	glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_SRGB8_ALPHA8_EXT, W, H);
+	if (check_gl_error("glRenderbufferStorageEXT(GL_SRGB8_ALPHA8_EXT)")) {
+	    fprintf(stderr, "  FAIL: could not create SRGB8_ALPHA8 renderbuffer\n");
+	    g_failed++;
+	    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	    glDeleteRenderbuffersEXT(1, &rbo);
+	    glDeleteFramebuffersEXT(1, &fbo);
+	    return;
+	}
+	glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
+				     GL_COLOR_ATTACHMENT0_EXT,
+				     GL_RENDERBUFFER_EXT, rbo);
+	status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+	if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
+	    fprintf(stderr, "  FAIL: sRGB FBO incomplete (status=0x%x)\n", status);
+	    g_failed++;
+	    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	    glDeleteRenderbuffersEXT(1, &rbo);
+	    glDeleteFramebuffersEXT(1, &fbo);
+	    return;
+	}
+
+	/* Query color encoding - should return GL_SRGB */
+	glGetFramebufferAttachmentParameterivEXT(GL_FRAMEBUFFER_EXT,
+						 GL_COLOR_ATTACHMENT0_EXT,
+						 GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING,
+						 &encoding);
+	if (check_gl_error("GetFramebufferAttachmentParameteriv COLOR_ENCODING"))
+	    g_failed++;
+	else if (encoding != GL_SRGB) {
+	    fprintf(stderr, "  FAIL: COLOR_ENCODING=0x%x (expected GL_SRGB=0x8C40)\n",
+		    encoding);
+	    g_failed++;
+	} else
+	    printf("  PASS: GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING = GL_SRGB\n");
+
+	/* Test 4: render a linear 50% gray (128,128,128) with sRGB encoding on
+	 * and verify it reads back as approximately the sRGB-encoded value.
+	 * Linear 128/255 ≈ 0.502  →  sRGB ≈ 0.730 ≈ 186 */
+	{
+	    GLubyte pixel[4];
+	    GLint expected = 186;
+	    GLint tolerance = 4;
+
+	    glViewport(0, 0, W, H);
+	    glEnable(GL_FRAMEBUFFER_SRGB_EXT);
+	    glDisable(GL_DITHER);
+	    glClearColor(128.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f, 1.0f);
+	    glClear(GL_COLOR_BUFFER_BIT);
+
+	    /* Read back - the clear goes through the normal path, but a drawn
+	     * quad definitely goes through the sRGB encode path */
+	    glColor3f(128.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f);
+	    glBegin(GL_QUADS);
+	    glVertex2f(-1, -1); glVertex2f(1, -1);
+	    glVertex2f(1,  1);  glVertex2f(-1,  1);
+	    glEnd();
+	    glDisable(GL_FRAMEBUFFER_SRGB_EXT);
+
+	    glReadPixels(W/2, H/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
+	    if (abs((int)pixel[0] - expected) <= tolerance)
+		printf("  PASS: sRGB encode: linear %d -> sRGB %d (expected ~%d)\n",
+		       128, pixel[0], expected);
+	    else {
+		fprintf(stderr,
+			"  FAIL: sRGB encode: linear 128 -> %d (expected ~%d)\n",
+			pixel[0], expected);
+		g_failed++;
+	    }
+	}
+
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	glDeleteRenderbuffersEXT(1, &rbo);
+	glDeleteFramebuffersEXT(1, &fbo);
+    }
+}
+
+
+/* ------------------------------------------------------------------ */
+/* Test 21: GL_EXT_texture_integer                                     */
+/* ------------------------------------------------------------------ */
+static void
+test_texture_integer(int W, int H)
+{
+    printf("Test 21: GL_EXT_texture_integer\n");
+
+    if (!check_ext("GL_EXT_texture_integer"))
+	return;
+
+    /* Test 1: glClearColorIiEXT / glClearColorIuiEXT should not error */
+    {
+	glClearColorIiEXT(255, 128, 0, 255);
+	if (check_gl_error("glClearColorIiEXT")) {
+	    g_failed++;
+	} else
+	    printf("  PASS: glClearColorIiEXT no error\n");
+
+	glClearColorIuiEXT(255, 128, 0, 255);
+	if (check_gl_error("glClearColorIuiEXT")) {
+	    g_failed++;
+	} else
+	    printf("  PASS: glClearColorIuiEXT no error\n");
+    }
+
+    /* Test 2: Create integer RBO, check COMPONENT_TYPE */
+    {
+	GLuint fbo, rbo;
+	GLenum status;
+	GLint comp_type = 0;
+
+	glGenFramebuffersEXT(1, &fbo);
+	glGenRenderbuffersEXT(1, &rbo);
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
+	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, rbo);
+	glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8UI_EXT, W, H);
+	if (check_gl_error("glRenderbufferStorageEXT(GL_RGBA8UI_EXT)")) {
+	    fprintf(stderr, "  FAIL: could not create RGBA8UI renderbuffer\n");
+	    g_failed++;
+	    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	    glDeleteRenderbuffersEXT(1, &rbo);
+	    glDeleteFramebuffersEXT(1, &fbo);
+	    return;
+	}
+	glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
+				     GL_COLOR_ATTACHMENT0_EXT,
+				     GL_RENDERBUFFER_EXT, rbo);
+	status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+	if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
+	    fprintf(stderr, "  FAIL: integer FBO incomplete (status=0x%x)\n", status);
+	    g_failed++;
+	    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	    glDeleteRenderbuffersEXT(1, &rbo);
+	    glDeleteFramebuffersEXT(1, &fbo);
+	    return;
+	}
+	printf("  PASS: GL_RGBA8UI renderbuffer created and FBO complete\n");
+
+	/* Check COMPONENT_TYPE = GL_UNSIGNED_INT */
+	glGetFramebufferAttachmentParameterivEXT(GL_FRAMEBUFFER_EXT,
+						 GL_COLOR_ATTACHMENT0_EXT,
+						 GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE,
+						 &comp_type);
+	if (check_gl_error("GetFramebufferAttachmentParameteriv COMPONENT_TYPE"))
+	    g_failed++;
+	else if (comp_type != GL_UNSIGNED_INT) {
+	    fprintf(stderr, "  FAIL: COMPONENT_TYPE=0x%x (expected GL_UNSIGNED_INT=0x%x)\n",
+		    comp_type, GL_UNSIGNED_INT);
+	    g_failed++;
+	} else
+	    printf("  PASS: GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE = GL_UNSIGNED_INT\n");
+
+	/* Test GL_RGBA_INTEGER_MODE_EXT query */
+	{
+	    GLint int_mode = 0;
+	    glGetIntegerv(GL_RGBA_INTEGER_MODE_EXT, &int_mode);
+	    if (check_gl_error("GL_RGBA_INTEGER_MODE_EXT query"))
+		g_failed++;
+	    else if (!int_mode) {
+		fprintf(stderr, "  FAIL: GL_RGBA_INTEGER_MODE_EXT = 0 (expected 1)\n");
+		g_failed++;
+	    } else
+		printf("  PASS: GL_RGBA_INTEGER_MODE_EXT = 1 with integer draw buffer\n");
+	}
+
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+	glDeleteRenderbuffersEXT(1, &rbo);
+	glDeleteFramebuffersEXT(1, &fbo);
+    }
+
+    /* Test 3: Check that extension is advertised */
+    {
+	const char *exts = (const char *)glGetString(GL_EXTENSIONS);
+	if (exts && strstr(exts, "GL_EXT_texture_integer"))
+	    printf("  PASS: GL_EXT_texture_integer in extension string\n");
+	else {
+	    fprintf(stderr, "  FAIL: GL_EXT_texture_integer not in extension string\n");
+	    g_failed++;
+	}
+    }
+}
+
+
+/* ------------------------------------------------------------------ */
 /* main                                                                */
 /* ------------------------------------------------------------------ */
 
@@ -2404,6 +2641,8 @@ main(void)
     test_fragment_program(W, H);
     test_glsl_shader(W, H);
     test_occlusion_query(W, H);
+    test_framebuffer_srgb(W, H);
+    test_texture_integer(W, H);
 
     printf("\n");
     if (g_failed == 0) {

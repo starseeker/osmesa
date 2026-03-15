@@ -307,6 +307,7 @@
 #define FEATURE_EXT_framebuffer_object _HAVE_FULL_GL
 #define FEATURE_EXT_pixel_buffer_object  _HAVE_FULL_GL
 #define FEATURE_EXT_texture_sRGB _HAVE_FULL_GL
+#define FEATURE_EXT_texture_integer _HAVE_FULL_GL
 #define FEATURE_EXT_timer_query  _HAVE_FULL_GL
 #define FEATURE_ATI_fragment_shader _HAVE_FULL_GL
 #define FEATURE_MESA_program_debug  _HAVE_FULL_GL

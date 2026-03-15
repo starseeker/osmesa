@@ -2381,10 +2381,28 @@
 #define CALL_FramebufferTextureLayer(disp, parameters) (*((disp)->FramebufferTextureLayer)) parameters
 #define GET_FramebufferTextureLayer(disp) ((disp)->FramebufferTextureLayer)
 #define SET_FramebufferTextureLayer(disp, fn) ((disp)->FramebufferTextureLayer = fn)
+#define CALL_ClearColorIiEXT(disp, parameters) (*((disp)->ClearColorIiEXT)) parameters
+#define GET_ClearColorIiEXT(disp) ((disp)->ClearColorIiEXT)
+#define SET_ClearColorIiEXT(disp, fn) ((disp)->ClearColorIiEXT = fn)
+#define CALL_ClearColorIuiEXT(disp, parameters) (*((disp)->ClearColorIuiEXT)) parameters
+#define GET_ClearColorIuiEXT(disp) ((disp)->ClearColorIuiEXT)
+#define SET_ClearColorIuiEXT(disp, fn) ((disp)->ClearColorIuiEXT = fn)
+#define CALL_TexParameterIivEXT(disp, parameters) (*((disp)->TexParameterIivEXT)) parameters
+#define GET_TexParameterIivEXT(disp) ((disp)->TexParameterIivEXT)
+#define SET_TexParameterIivEXT(disp, fn) ((disp)->TexParameterIivEXT = fn)
+#define CALL_TexParameterIuivEXT(disp, parameters) (*((disp)->TexParameterIuivEXT)) parameters
+#define GET_TexParameterIuivEXT(disp) ((disp)->TexParameterIuivEXT)
+#define SET_TexParameterIuivEXT(disp, fn) ((disp)->TexParameterIuivEXT = fn)
+#define CALL_GetTexParameterIivEXT(disp, parameters) (*((disp)->GetTexParameterIivEXT)) parameters
+#define GET_GetTexParameterIivEXT(disp) ((disp)->GetTexParameterIivEXT)
+#define SET_GetTexParameterIivEXT(disp, fn) ((disp)->GetTexParameterIivEXT = fn)
+#define CALL_GetTexParameterIuivEXT(disp, parameters) (*((disp)->GetTexParameterIuivEXT)) parameters
+#define GET_GetTexParameterIuivEXT(disp) ((disp)->GetTexParameterIuivEXT)
+#define SET_GetTexParameterIuivEXT(disp, fn) ((disp)->GetTexParameterIuivEXT = fn)
 
 #else
 
-#define driDispatchRemapTable_size 367
+#define driDispatchRemapTable_size 373
 extern int driDispatchRemapTable[ driDispatchRemapTable_size ];
 
 #define AttachShader_remap_index 0
@@ -2754,6 +2772,12 @@ extern int driDispatchRemapTable[ driDispatchRemapTable_size ];
 #define GetQueryObjectui64vEXT_remap_index 364
 #define RenderbufferStorageMultisample_remap_index 365
 #define FramebufferTextureLayer_remap_index 366
+#define ClearColorIiEXT_remap_index 367
+#define ClearColorIuiEXT_remap_index 368
+#define TexParameterIivEXT_remap_index 369
+#define TexParameterIuivEXT_remap_index 370
+#define GetTexParameterIivEXT_remap_index 371
+#define GetTexParameterIuivEXT_remap_index 372
 
 #define CALL_AttachShader(disp, parameters) CALL_by_offset(disp, (void (GLAPIENTRYP)(GLuint, GLuint)), driDispatchRemapTable[AttachShader_remap_index], parameters)
 #define GET_AttachShader(disp) GET_by_offset(disp, driDispatchRemapTable[AttachShader_remap_index])
@@ -3856,6 +3880,24 @@ extern int driDispatchRemapTable[ driDispatchRemapTable_size ];
 #define CALL_FramebufferTextureLayer(disp, parameters) CALL_by_offset(disp, (void (GLAPIENTRYP)(GLenum, GLenum, GLuint, GLint, GLint)), driDispatchRemapTable[FramebufferTextureLayer_remap_index], parameters)
 #define GET_FramebufferTextureLayer(disp) GET_by_offset(disp, driDispatchRemapTable[FramebufferTextureLayer_remap_index])
 #define SET_FramebufferTextureLayer(disp, fn) SET_by_offset(disp, driDispatchRemapTable[FramebufferTextureLayer_remap_index], fn)
+#define CALL_ClearColorIiEXT(disp, parameters) CALL_by_offset(disp, (void (GLAPIENTRYP)(GLint, GLint, GLint, GLint)), driDispatchRemapTable[ClearColorIiEXT_remap_index], parameters)
+#define GET_ClearColorIiEXT(disp) GET_by_offset(disp, driDispatchRemapTable[ClearColorIiEXT_remap_index])
+#define SET_ClearColorIiEXT(disp, fn) SET_by_offset(disp, driDispatchRemapTable[ClearColorIiEXT_remap_index], fn)
+#define CALL_ClearColorIuiEXT(disp, parameters) CALL_by_offset(disp, (void (GLAPIENTRYP)(GLuint, GLuint, GLuint, GLuint)), driDispatchRemapTable[ClearColorIuiEXT_remap_index], parameters)
+#define GET_ClearColorIuiEXT(disp) GET_by_offset(disp, driDispatchRemapTable[ClearColorIuiEXT_remap_index])
+#define SET_ClearColorIuiEXT(disp, fn) SET_by_offset(disp, driDispatchRemapTable[ClearColorIuiEXT_remap_index], fn)
+#define CALL_TexParameterIivEXT(disp, parameters) CALL_by_offset(disp, (void (GLAPIENTRYP)(GLenum, GLenum, const GLint *)), driDispatchRemapTable[TexParameterIivEXT_remap_index], parameters)
+#define GET_TexParameterIivEXT(disp) GET_by_offset(disp, driDispatchRemapTable[TexParameterIivEXT_remap_index])
+#define SET_TexParameterIivEXT(disp, fn) SET_by_offset(disp, driDispatchRemapTable[TexParameterIivEXT_remap_index], fn)
+#define CALL_TexParameterIuivEXT(disp, parameters) CALL_by_offset(disp, (void (GLAPIENTRYP)(GLenum, GLenum, const GLuint *)), driDispatchRemapTable[TexParameterIuivEXT_remap_index], parameters)
+#define GET_TexParameterIuivEXT(disp) GET_by_offset(disp, driDispatchRemapTable[TexParameterIuivEXT_remap_index])
+#define SET_TexParameterIuivEXT(disp, fn) SET_by_offset(disp, driDispatchRemapTable[TexParameterIuivEXT_remap_index], fn)
+#define CALL_GetTexParameterIivEXT(disp, parameters) CALL_by_offset(disp, (void (GLAPIENTRYP)(GLenum, GLenum, GLint *)), driDispatchRemapTable[GetTexParameterIivEXT_remap_index], parameters)
+#define GET_GetTexParameterIivEXT(disp) GET_by_offset(disp, driDispatchRemapTable[GetTexParameterIivEXT_remap_index])
+#define SET_GetTexParameterIivEXT(disp, fn) SET_by_offset(disp, driDispatchRemapTable[GetTexParameterIivEXT_remap_index], fn)
+#define CALL_GetTexParameterIuivEXT(disp, parameters) CALL_by_offset(disp, (void (GLAPIENTRYP)(GLenum, GLenum, GLuint *)), driDispatchRemapTable[GetTexParameterIuivEXT_remap_index], parameters)
+#define GET_GetTexParameterIuivEXT(disp) GET_by_offset(disp, driDispatchRemapTable[GetTexParameterIuivEXT_remap_index])
+#define SET_GetTexParameterIuivEXT(disp, fn) SET_by_offset(disp, driDispatchRemapTable[GetTexParameterIuivEXT_remap_index], fn)
 
 #endif /* !defined(IN_DRI_DRIVER) */
 

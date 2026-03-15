@@ -597,6 +597,9 @@ struct gl_colorbuffer_attrib {
     /*@}*/
 
     GLboolean DitherFlag;		/**< Dither enable flag */
+    GLboolean sRGBEnabled;  /**< GL_FRAMEBUFFER_SRGB enable */
+    GLint ClearColorI[4];     /**< Integer clear color (GL_EXT_texture_integer) */
+    GLuint ClearColorUI[4];   /**< Unsigned integer clear color */
 
     GLenum ClampFragmentColor; /**< GL_TRUE, GL_FALSE or GL_FIXED_ONLY_ARB */
     GLenum ClampReadColor;     /**< GL_TRUE, GL_FALSE or GL_FIXED_ONLY_ARB */
@@ -2493,6 +2496,9 @@ struct gl_extensions {
     GLboolean EXT_texture_lod_bias;
     GLboolean EXT_texture_mirror_clamp;
     GLboolean EXT_texture_sRGB;
+    GLboolean ARB_framebuffer_sRGB;
+    GLboolean EXT_framebuffer_sRGB;
+    GLboolean EXT_texture_integer;
     GLboolean EXT_timer_query;
     GLboolean EXT_vertex_array;
     GLboolean EXT_vertex_array_set;

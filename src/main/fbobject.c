@@ -706,6 +706,36 @@ _mesa_base_fbo_format(GLcontext *ctx, GLenum internalFormat)
 		return GL_DEPTH_STENCIL_EXT;
 	    else
 		return 0;
+#if FEATURE_EXT_texture_sRGB
+	case GL_SRGB8_EXT:
+	    if (ctx->Extensions.ARB_framebuffer_sRGB)
+		return GL_RGB;
+	    return 0;
+	case GL_SRGB8_ALPHA8_EXT:
+	    if (ctx->Extensions.ARB_framebuffer_sRGB)
+		return GL_RGBA;
+	    return 0;
+#endif
+#if FEATURE_EXT_texture_integer
+	case GL_RGBA8I_EXT:
+	case GL_RGBA16I_EXT:
+	case GL_RGBA32I_EXT:
+	case GL_RGBA8UI_EXT:
+	case GL_RGBA16UI_EXT:
+	case GL_RGBA32UI_EXT:
+	    if (ctx->Extensions.EXT_texture_integer)
+		return GL_RGBA;
+	    return 0;
+	case GL_RGB8I_EXT:
+	case GL_RGB16I_EXT:
+	case GL_RGB32I_EXT:
+	case GL_RGB8UI_EXT:
+	case GL_RGB16UI_EXT:
+	case GL_RGB32UI_EXT:
+	    if (ctx->Extensions.EXT_texture_integer)
+		return GL_RGB;
+	    return 0;
+#endif
 	/* XXX add floating point formats eventually */
 	default:
 	    return 0;
@@ -1590,7 +1620,17 @@ _mesa_GetFramebufferAttachmentParameterivEXT(GLenum target, GLenum attachment,
 			    "glGetFramebufferAttachmentParameterivEXT(pname)");
 		return;
 	    }
+#if FEATURE_EXT_texture_sRGB
+	    if (att->Type == GL_RENDERBUFFER_EXT && att->Renderbuffer &&
+		(att->Renderbuffer->_ActualFormat == GL_SRGB8_EXT ||
+		 att->Renderbuffer->_ActualFormat == GL_SRGB8_ALPHA8_EXT)) {
+		*params = GL_SRGB;
+	    } else {
+		*params = GL_LINEAR;
+	    }
+#else
 	    *params = GL_LINEAR;
+#endif
 	    return;
 	case GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE:
 	    /* All renderbuffer formats in this implementation are unsigned
@@ -1600,6 +1640,23 @@ _mesa_GetFramebufferAttachmentParameterivEXT(GLenum target, GLenum attachment,
 			    "glGetFramebufferAttachmentParameterivEXT(pname)");
 		return;
 	    }
+#if FEATURE_EXT_texture_integer
+	    if (att->Type == GL_RENDERBUFFER_EXT && att->Renderbuffer) {
+		GLenum fmt = att->Renderbuffer->_ActualFormat;
+		if (fmt == GL_RGBA8I_EXT || fmt == GL_RGBA16I_EXT ||
+		    fmt == GL_RGBA32I_EXT || fmt == GL_RGB8I_EXT ||
+		    fmt == GL_RGB16I_EXT || fmt == GL_RGB32I_EXT) {
+		    *params = GL_INT;
+		    return;
+		}
+		if (fmt == GL_RGBA8UI_EXT || fmt == GL_RGBA16UI_EXT ||
+		    fmt == GL_RGBA32UI_EXT || fmt == GL_RGB8UI_EXT ||
+		    fmt == GL_RGB16UI_EXT || fmt == GL_RGB32UI_EXT) {
+		    *params = GL_UNSIGNED_INT;
+		    return;
+		}
+	    }
+#endif
 	    *params = GL_UNSIGNED_NORMALIZED;
 	    return;
 	case GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE:

@@ -768,6 +768,15 @@ _mesa_set_enable(GLcontext *ctx, GLenum cap, GLboolean state)
 	    ctx->Multisample.SampleCoverageInvert = state;
 	    break;
 
+	/* GL_ARB_framebuffer_sRGB / GL_EXT_framebuffer_sRGB */
+	case GL_FRAMEBUFFER_SRGB_EXT:
+	    CHECK_EXTENSION(ARB_framebuffer_sRGB, cap);
+	    if (ctx->Color.sRGBEnabled == state)
+		return;
+	    FLUSH_VERTICES(ctx, _NEW_COLOR);
+	    ctx->Color.sRGBEnabled = state;
+	    break;
+
 	/* GL_IBM_rasterpos_clip */
 	case GL_RASTER_POSITION_UNCLIPPED_IBM:
 	    CHECK_EXTENSION(IBM_rasterpos_clip, cap);
@@ -1224,6 +1233,11 @@ _mesa_IsEnabled(GLenum cap)
 	case GL_SAMPLE_COVERAGE_INVERT_ARB:
 	    CHECK_EXTENSION(ARB_multisample);
 	    return ctx->Multisample.SampleCoverageInvert;
+
+	/* GL_ARB_framebuffer_sRGB / GL_EXT_framebuffer_sRGB */
+	case GL_FRAMEBUFFER_SRGB_EXT:
+	    CHECK_EXTENSION(ARB_framebuffer_sRGB);
+	    return ctx->Color.sRGBEnabled;
 
 	/* GL_IBM_rasterpos_clip */
 	case GL_RASTER_POSITION_UNCLIPPED_IBM:

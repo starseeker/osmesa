@@ -1571,9 +1571,279 @@ _mesa_choose_tex_format(GLcontext *ctx, GLint internalFormat,
     }
 #endif /* FEATURE_EXT_texture_sRGB */
 
+#if FEATURE_EXT_texture_integer
+    if (ctx->Extensions.EXT_texture_integer) {
+	switch (internalFormat) {
+	    case GL_RGBA8I_EXT:   return &_mesa_texformat_rgba_int8;
+	    case GL_RGBA8UI_EXT:  return &_mesa_texformat_rgba_uint8;
+	    case GL_RGBA16I_EXT:  return &_mesa_texformat_rgba_int16;
+	    case GL_RGBA16UI_EXT: return &_mesa_texformat_rgba_uint16;
+	    case GL_RGBA32I_EXT:  return &_mesa_texformat_rgba_int32;
+	    case GL_RGBA32UI_EXT: return &_mesa_texformat_rgba_uint32;
+	    case GL_RGB8I_EXT:    return &_mesa_texformat_rgb_int8;
+	    case GL_RGB8UI_EXT:   return &_mesa_texformat_rgb_uint8;
+	    case GL_RGB16I_EXT:   return &_mesa_texformat_rgb_int16;
+	    case GL_RGB16UI_EXT:  return &_mesa_texformat_rgb_uint16;
+	    case GL_RGB32I_EXT:   return &_mesa_texformat_rgb_int32;
+	    case GL_RGB32UI_EXT:  return &_mesa_texformat_rgb_uint32;
+	    default:
+		; /* fallthrough */
+	}
+    }
+#endif /* FEATURE_EXT_texture_integer */
+
     _mesa_problem(ctx, "unexpected format in _mesa_choose_tex_format()");
     return NULL;
 }
+
+
+#if FEATURE_EXT_texture_integer
+/* Integer texture formats: stored as typed integers, fetched as ubyte4/rgba */
+static void
+fetch_texel_2d_rgba_int8(const struct gl_texture_image *texImage,
+			 GLint i, GLint j, GLint k, GLchan *texel)
+{
+    const GLbyte *src = (const GLbyte *)texImage->Data
+	+ (k * texImage->Height + j) * texImage->Width * 4 + i * 4;
+    texel[RCOMP] = (GLchan)CLAMP(src[0], 0, CHAN_MAX);
+    texel[GCOMP] = (GLchan)CLAMP(src[1], 0, CHAN_MAX);
+    texel[BCOMP] = (GLchan)CLAMP(src[2], 0, CHAN_MAX);
+    texel[ACOMP] = (GLchan)CLAMP(src[3], 0, CHAN_MAX);
+}
+static void
+fetch_texel_2d_f_rgba_int8(const struct gl_texture_image *texImage,
+			   GLint i, GLint j, GLint k, GLfloat *texel)
+{
+    const GLbyte *src = (const GLbyte *)texImage->Data
+	+ (k * texImage->Height + j) * texImage->Width * 4 + i * 4;
+    texel[RCOMP] = src[0] / 127.0f;
+    texel[GCOMP] = src[1] / 127.0f;
+    texel[BCOMP] = src[2] / 127.0f;
+    texel[ACOMP] = src[3] / 127.0f;
+}
+static void
+store_texel_rgba_int8(struct gl_texture_image *texImage,
+		      GLint i, GLint j, GLint k, const void *texel)
+{
+    GLbyte *dst = (GLbyte *)texImage->Data
+	+ (k * texImage->Height + j) * texImage->Width * 4 + i * 4;
+    const GLbyte *src = (const GLbyte *)texel;
+    dst[0] = src[0];
+    dst[1] = src[1];
+    dst[2] = src[2];
+    dst[3] = src[3];
+}
+
+/* Minimal stub 1D/3D fetchers */
+static void
+fetch_texel_1d_rgba_int8(const struct gl_texture_image *texImage,
+			 GLint i, GLint j, GLint k, GLchan *texel)
+{ fetch_texel_2d_rgba_int8(texImage, i, j, k, texel); }
+static void
+fetch_texel_3d_rgba_int8(const struct gl_texture_image *texImage,
+			 GLint i, GLint j, GLint k, GLchan *texel)
+{ fetch_texel_2d_rgba_int8(texImage, i, j, k, texel); }
+static void
+fetch_texel_1d_f_rgba_int8(const struct gl_texture_image *texImage,
+			   GLint i, GLint j, GLint k, GLfloat *texel)
+{ fetch_texel_2d_f_rgba_int8(texImage, i, j, k, texel); }
+static void
+fetch_texel_3d_f_rgba_int8(const struct gl_texture_image *texImage,
+			   GLint i, GLint j, GLint k, GLfloat *texel)
+{ fetch_texel_2d_f_rgba_int8(texImage, i, j, k, texel); }
+
+const struct gl_texture_format _mesa_texformat_rgba_int8 = {
+    MESA_FORMAT_RGBA_INT8,
+    GL_RGBA,
+    GL_BYTE,
+    8, 8, 8, 8, 0, 0, 0, 0, 0,
+    4 * sizeof(GLbyte),
+    _mesa_texstore_rgba,
+    fetch_texel_1d_rgba_int8,
+    fetch_texel_2d_rgba_int8,
+    fetch_texel_3d_rgba_int8,
+    fetch_texel_1d_f_rgba_int8,
+    fetch_texel_2d_f_rgba_int8,
+    fetch_texel_3d_f_rgba_int8,
+    store_texel_rgba_int8
+};
+
+const struct gl_texture_format _mesa_texformat_rgba_uint8 = {
+    MESA_FORMAT_RGBA_UINT8,
+    GL_RGBA,
+    GL_UNSIGNED_BYTE,
+    8, 8, 8, 8, 0, 0, 0, 0, 0,
+    4 * sizeof(GLubyte),
+    _mesa_texstore_rgba,
+    fetch_texel_1d_rgba,
+    fetch_texel_2d_rgba,
+    fetch_texel_3d_rgba,
+    fetch_texel_1d_f_rgba,
+    fetch_texel_2d_f_rgba,
+    fetch_texel_3d_f_rgba,
+    store_texel_rgba
+};
+
+const struct gl_texture_format _mesa_texformat_rgba_int16 = {
+    MESA_FORMAT_RGBA_INT16,
+    GL_RGBA,
+    GL_SHORT,
+    16, 16, 16, 16, 0, 0, 0, 0, 0,
+    4 * sizeof(GLshort),
+    _mesa_texstore_rgba,
+    fetch_texel_1d_rgba,
+    fetch_texel_2d_rgba,
+    fetch_texel_3d_rgba,
+    fetch_texel_1d_f_rgba,
+    fetch_texel_2d_f_rgba,
+    fetch_texel_3d_f_rgba,
+    store_texel_rgba
+};
+
+const struct gl_texture_format _mesa_texformat_rgba_uint16 = {
+    MESA_FORMAT_RGBA_UINT16,
+    GL_RGBA,
+    GL_UNSIGNED_SHORT,
+    16, 16, 16, 16, 0, 0, 0, 0, 0,
+    4 * sizeof(GLushort),
+    _mesa_texstore_rgba,
+    fetch_texel_1d_rgba,
+    fetch_texel_2d_rgba,
+    fetch_texel_3d_rgba,
+    fetch_texel_1d_f_rgba,
+    fetch_texel_2d_f_rgba,
+    fetch_texel_3d_f_rgba,
+    store_texel_rgba
+};
+
+const struct gl_texture_format _mesa_texformat_rgba_int32 = {
+    MESA_FORMAT_RGBA_INT32,
+    GL_RGBA,
+    GL_INT,
+    32, 32, 32, 32, 0, 0, 0, 0, 0,
+    4 * sizeof(GLint),
+    _mesa_texstore_rgba,
+    fetch_texel_1d_rgba,
+    fetch_texel_2d_rgba,
+    fetch_texel_3d_rgba,
+    fetch_texel_1d_f_rgba,
+    fetch_texel_2d_f_rgba,
+    fetch_texel_3d_f_rgba,
+    store_texel_rgba
+};
+
+const struct gl_texture_format _mesa_texformat_rgba_uint32 = {
+    MESA_FORMAT_RGBA_UINT32,
+    GL_RGBA,
+    GL_UNSIGNED_INT,
+    32, 32, 32, 32, 0, 0, 0, 0, 0,
+    4 * sizeof(GLuint),
+    _mesa_texstore_rgba,
+    fetch_texel_1d_rgba,
+    fetch_texel_2d_rgba,
+    fetch_texel_3d_rgba,
+    fetch_texel_1d_f_rgba,
+    fetch_texel_2d_f_rgba,
+    fetch_texel_3d_f_rgba,
+    store_texel_rgba
+};
+
+const struct gl_texture_format _mesa_texformat_rgb_int8 = {
+    MESA_FORMAT_RGB_INT8,
+    GL_RGB,
+    GL_BYTE,
+    8, 8, 8, 0, 0, 0, 0, 0, 0,
+    3 * sizeof(GLbyte),
+    _mesa_texstore_rgba,
+    fetch_texel_1d_rgb,
+    fetch_texel_2d_rgb,
+    fetch_texel_3d_rgb,
+    fetch_texel_1d_f_rgb,
+    fetch_texel_2d_f_rgb,
+    fetch_texel_3d_f_rgb,
+    store_texel_rgb
+};
+
+const struct gl_texture_format _mesa_texformat_rgb_uint8 = {
+    MESA_FORMAT_RGB_UINT8,
+    GL_RGB,
+    GL_UNSIGNED_BYTE,
+    8, 8, 8, 0, 0, 0, 0, 0, 0,
+    3 * sizeof(GLubyte),
+    _mesa_texstore_rgba,
+    fetch_texel_1d_rgb,
+    fetch_texel_2d_rgb,
+    fetch_texel_3d_rgb,
+    fetch_texel_1d_f_rgb,
+    fetch_texel_2d_f_rgb,
+    fetch_texel_3d_f_rgb,
+    store_texel_rgb
+};
+
+const struct gl_texture_format _mesa_texformat_rgb_int16 = {
+    MESA_FORMAT_RGB_INT16,
+    GL_RGB,
+    GL_SHORT,
+    16, 16, 16, 0, 0, 0, 0, 0, 0,
+    3 * sizeof(GLshort),
+    _mesa_texstore_rgba,
+    fetch_texel_1d_rgb,
+    fetch_texel_2d_rgb,
+    fetch_texel_3d_rgb,
+    fetch_texel_1d_f_rgb,
+    fetch_texel_2d_f_rgb,
+    fetch_texel_3d_f_rgb,
+    store_texel_rgb
+};
+
+const struct gl_texture_format _mesa_texformat_rgb_uint16 = {
+    MESA_FORMAT_RGB_UINT16,
+    GL_RGB,
+    GL_UNSIGNED_SHORT,
+    16, 16, 16, 0, 0, 0, 0, 0, 0,
+    3 * sizeof(GLushort),
+    _mesa_texstore_rgba,
+    fetch_texel_1d_rgb,
+    fetch_texel_2d_rgb,
+    fetch_texel_3d_rgb,
+    fetch_texel_1d_f_rgb,
+    fetch_texel_2d_f_rgb,
+    fetch_texel_3d_f_rgb,
+    store_texel_rgb
+};
+
+const struct gl_texture_format _mesa_texformat_rgb_int32 = {
+    MESA_FORMAT_RGB_INT32,
+    GL_RGB,
+    GL_INT,
+    32, 32, 32, 0, 0, 0, 0, 0, 0,
+    3 * sizeof(GLint),
+    _mesa_texstore_rgba,
+    fetch_texel_1d_rgb,
+    fetch_texel_2d_rgb,
+    fetch_texel_3d_rgb,
+    fetch_texel_1d_f_rgb,
+    fetch_texel_2d_f_rgb,
+    fetch_texel_3d_f_rgb,
+    store_texel_rgb
+};
+
+const struct gl_texture_format _mesa_texformat_rgb_uint32 = {
+    MESA_FORMAT_RGB_UINT32,
+    GL_RGB,
+    GL_UNSIGNED_INT,
+    32, 32, 32, 0, 0, 0, 0, 0, 0,
+    3 * sizeof(GLuint),
+    _mesa_texstore_rgba,
+    fetch_texel_1d_rgb,
+    fetch_texel_2d_rgb,
+    fetch_texel_3d_rgb,
+    fetch_texel_1d_f_rgb,
+    fetch_texel_2d_f_rgb,
+    fetch_texel_3d_f_rgb,
+    store_texel_rgb
+};
+#endif /* FEATURE_EXT_texture_integer */
 
 /*
  * Local Variables:

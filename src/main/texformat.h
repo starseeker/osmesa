@@ -149,6 +149,27 @@ enum _format {
     MESA_FORMAT_INTENSITY_FLOAT32,
     MESA_FORMAT_INTENSITY_FLOAT16
     /*@}*/
+
+#if FEATURE_EXT_texture_integer
+    /**
+     * \name Integer (non-normalized) texture formats.
+     */
+    /*@{*/
+    ,
+    MESA_FORMAT_RGBA_INT8,
+    MESA_FORMAT_RGBA_INT16,
+    MESA_FORMAT_RGBA_INT32,
+    MESA_FORMAT_RGBA_UINT8,
+    MESA_FORMAT_RGBA_UINT16,
+    MESA_FORMAT_RGBA_UINT32,
+    MESA_FORMAT_RGB_INT8,
+    MESA_FORMAT_RGB_INT16,
+    MESA_FORMAT_RGB_INT32,
+    MESA_FORMAT_RGB_UINT8,
+    MESA_FORMAT_RGB_UINT16,
+    MESA_FORMAT_RGB_UINT32
+    /*@}*/
+#endif
 };
 
 
@@ -235,6 +256,24 @@ extern const struct gl_texture_format _mesa_texformat_rgba_dxt5;
 /*@{*/
 extern const struct gl_texture_format _mesa_null_texformat;
 /*@}*/
+
+#if FEATURE_EXT_texture_integer
+/** \name Integer (non-normalized) texture formats */
+/*@{*/
+extern const struct gl_texture_format _mesa_texformat_rgba_int8;
+extern const struct gl_texture_format _mesa_texformat_rgba_int16;
+extern const struct gl_texture_format _mesa_texformat_rgba_int32;
+extern const struct gl_texture_format _mesa_texformat_rgba_uint8;
+extern const struct gl_texture_format _mesa_texformat_rgba_uint16;
+extern const struct gl_texture_format _mesa_texformat_rgba_uint32;
+extern const struct gl_texture_format _mesa_texformat_rgb_int8;
+extern const struct gl_texture_format _mesa_texformat_rgb_int16;
+extern const struct gl_texture_format _mesa_texformat_rgb_int32;
+extern const struct gl_texture_format _mesa_texformat_rgb_uint8;
+extern const struct gl_texture_format _mesa_texformat_rgb_uint16;
+extern const struct gl_texture_format _mesa_texformat_rgb_uint32;
+/*@}*/
+#endif
 
 
 extern const struct gl_texture_format *

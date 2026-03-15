@@ -1855,6 +1855,32 @@ _mesa_GetBooleanv(GLenum pname, GLboolean *params)
 	    CHECK_EXT1(ARB_framebuffer_object, "GetBooleanv");
 	    params[0] = INT_TO_BOOLEAN(ctx->Const.MaxSamples);
 	    break;
+	case GL_FRAMEBUFFER_SRGB_CAPABLE_EXT:
+	    CHECK_EXT1(ARB_framebuffer_sRGB, "GetBooleanv");
+	    params[0] = ctx->Extensions.ARB_framebuffer_sRGB ? GL_TRUE : GL_FALSE;
+	    break;
+	case GL_RGBA_INTEGER_MODE_EXT:
+	    CHECK_EXT1(EXT_texture_integer, "GetBooleanv");
+	    /* Return GL_TRUE if the current draw buffer uses an integer format */
+	    {
+		const struct gl_renderbuffer *rb =
+		    ctx->DrawBuffer->_ColorDrawBuffers[0][0];
+		params[0] = (rb &&
+			     (rb->_ActualFormat == GL_RGBA8I_EXT ||
+			      rb->_ActualFormat == GL_RGBA8UI_EXT ||
+			      rb->_ActualFormat == GL_RGBA16I_EXT ||
+			      rb->_ActualFormat == GL_RGBA16UI_EXT ||
+			      rb->_ActualFormat == GL_RGBA32I_EXT ||
+			      rb->_ActualFormat == GL_RGBA32UI_EXT ||
+			      rb->_ActualFormat == GL_RGB8I_EXT ||
+			      rb->_ActualFormat == GL_RGB8UI_EXT ||
+			      rb->_ActualFormat == GL_RGB16I_EXT ||
+			      rb->_ActualFormat == GL_RGB16UI_EXT ||
+			      rb->_ActualFormat == GL_RGB32I_EXT ||
+			      rb->_ActualFormat == GL_RGB32UI_EXT))
+		    ? GL_TRUE : GL_FALSE;
+	    }
+	    break;
 	case GL_READ_FRAMEBUFFER_BINDING_EXT:
 	    CHECK_EXT1(EXT_framebuffer_blit, "GetBooleanv");
 	    params[0] = INT_TO_BOOLEAN(ctx->ReadBuffer->Name);
@@ -3677,6 +3703,31 @@ _mesa_GetFloatv(GLenum pname, GLfloat *params)
 	    CHECK_EXT1(ARB_framebuffer_object, "GetFloatv");
 	    params[0] = (GLfloat)(ctx->Const.MaxSamples);
 	    break;
+	case GL_FRAMEBUFFER_SRGB_CAPABLE_EXT:
+	    CHECK_EXT1(ARB_framebuffer_sRGB, "GetFloatv");
+	    params[0] = ctx->Extensions.ARB_framebuffer_sRGB ? 1.0f : 0.0f;
+	    break;
+	case GL_RGBA_INTEGER_MODE_EXT:
+	    CHECK_EXT1(EXT_texture_integer, "GetFloatv");
+	    {
+		const struct gl_renderbuffer *rb =
+		    ctx->DrawBuffer->_ColorDrawBuffers[0][0];
+		params[0] = (rb &&
+			     (rb->_ActualFormat == GL_RGBA8I_EXT ||
+			      rb->_ActualFormat == GL_RGBA8UI_EXT ||
+			      rb->_ActualFormat == GL_RGBA16I_EXT ||
+			      rb->_ActualFormat == GL_RGBA16UI_EXT ||
+			      rb->_ActualFormat == GL_RGBA32I_EXT ||
+			      rb->_ActualFormat == GL_RGBA32UI_EXT ||
+			      rb->_ActualFormat == GL_RGB8I_EXT ||
+			      rb->_ActualFormat == GL_RGB8UI_EXT ||
+			      rb->_ActualFormat == GL_RGB16I_EXT ||
+			      rb->_ActualFormat == GL_RGB16UI_EXT ||
+			      rb->_ActualFormat == GL_RGB32I_EXT ||
+			      rb->_ActualFormat == GL_RGB32UI_EXT))
+		    ? 1.0f : 0.0f;
+	    }
+	    break;
 	case GL_READ_FRAMEBUFFER_BINDING_EXT:
 	    CHECK_EXT1(EXT_framebuffer_blit, "GetFloatv");
 	    params[0] = (GLfloat)(ctx->ReadBuffer->Name);
@@ -5497,6 +5548,31 @@ _mesa_GetIntegerv(GLenum pname, GLint *params)
 	case GL_MAX_SAMPLES:
 	    CHECK_EXT1(ARB_framebuffer_object, "GetIntegerv");
 	    params[0] = ctx->Const.MaxSamples;
+	    break;
+	case GL_FRAMEBUFFER_SRGB_CAPABLE_EXT:
+	    CHECK_EXT1(ARB_framebuffer_sRGB, "GetIntegerv");
+	    params[0] = ctx->Extensions.ARB_framebuffer_sRGB ? 1 : 0;
+	    break;
+	case GL_RGBA_INTEGER_MODE_EXT:
+	    CHECK_EXT1(EXT_texture_integer, "GetIntegerv");
+	    {
+		const struct gl_renderbuffer *rb =
+		    ctx->DrawBuffer->_ColorDrawBuffers[0][0];
+		params[0] = (rb &&
+			     (rb->_ActualFormat == GL_RGBA8I_EXT ||
+			      rb->_ActualFormat == GL_RGBA8UI_EXT ||
+			      rb->_ActualFormat == GL_RGBA16I_EXT ||
+			      rb->_ActualFormat == GL_RGBA16UI_EXT ||
+			      rb->_ActualFormat == GL_RGBA32I_EXT ||
+			      rb->_ActualFormat == GL_RGBA32UI_EXT ||
+			      rb->_ActualFormat == GL_RGB8I_EXT ||
+			      rb->_ActualFormat == GL_RGB8UI_EXT ||
+			      rb->_ActualFormat == GL_RGB16I_EXT ||
+			      rb->_ActualFormat == GL_RGB16UI_EXT ||
+			      rb->_ActualFormat == GL_RGB32I_EXT ||
+			      rb->_ActualFormat == GL_RGB32UI_EXT))
+		    ? 1 : 0;
+	    }
 	    break;
 	case GL_READ_FRAMEBUFFER_BINDING_EXT:
 	    CHECK_EXT1(EXT_framebuffer_blit, "GetIntegerv");
