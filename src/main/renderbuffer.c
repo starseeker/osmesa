@@ -1032,7 +1032,7 @@ _mesa_soft_renderbuffer_storage(GLcontext *ctx, struct gl_renderbuffer *rb,
 	case GL_RGBA8I_EXT:
 	    rb->_ActualFormat = GL_RGBA8I_EXT;
 	    rb->_BaseFormat = GL_RGBA;
-	    rb->DataType = GL_UNSIGNED_BYTE;
+	    rb->DataType = GL_BYTE;
 	    rb->GetPointer = get_pointer_ubyte4;
 	    rb->GetRow = get_row_ubyte4;
 	    rb->GetValues = get_values_ubyte4;
@@ -1068,7 +1068,7 @@ _mesa_soft_renderbuffer_storage(GLcontext *ctx, struct gl_renderbuffer *rb,
 	case GL_RGBA16I_EXT:
 	    rb->_ActualFormat = GL_RGBA16I_EXT;
 	    rb->_BaseFormat = GL_RGBA;
-	    rb->DataType = GL_UNSIGNED_SHORT;
+	    rb->DataType = GL_SHORT;
 	    rb->GetPointer = get_pointer_ushort4;
 	    rb->GetRow = get_row_ushort4;
 	    rb->GetValues = get_values_ushort4;
@@ -1104,7 +1104,7 @@ _mesa_soft_renderbuffer_storage(GLcontext *ctx, struct gl_renderbuffer *rb,
 	case GL_RGBA32I_EXT:
 	    rb->_ActualFormat = GL_RGBA32I_EXT;
 	    rb->_BaseFormat = GL_RGBA;
-	    rb->DataType = GL_UNSIGNED_INT;
+	    rb->DataType = GL_INT;
 	    rb->GetPointer = get_pointer_uint;
 	    rb->GetRow = get_row_uint;
 	    rb->GetValues = get_values_uint;
@@ -1140,7 +1140,7 @@ _mesa_soft_renderbuffer_storage(GLcontext *ctx, struct gl_renderbuffer *rb,
 	case GL_RGB8I_EXT:
 	    rb->_ActualFormat = GL_RGB8I_EXT;
 	    rb->_BaseFormat = GL_RGB;
-	    rb->DataType = GL_UNSIGNED_BYTE;
+	    rb->DataType = GL_BYTE;
 	    rb->GetPointer = get_pointer_ubyte3;
 	    rb->GetRow = get_row_ubyte3;
 	    rb->GetValues = get_values_ubyte3;
@@ -1176,7 +1176,7 @@ _mesa_soft_renderbuffer_storage(GLcontext *ctx, struct gl_renderbuffer *rb,
 	case GL_RGB16I_EXT:
 	    rb->_ActualFormat = GL_RGB16I_EXT;
 	    rb->_BaseFormat = GL_RGB;
-	    rb->DataType = GL_UNSIGNED_SHORT;
+	    rb->DataType = GL_SHORT;
 	    rb->GetPointer = get_pointer_ushort4;
 	    rb->GetRow = get_row_ushort4;
 	    rb->GetValues = get_values_ushort4;
@@ -1212,7 +1212,7 @@ _mesa_soft_renderbuffer_storage(GLcontext *ctx, struct gl_renderbuffer *rb,
 	case GL_RGB32I_EXT:
 	    rb->_ActualFormat = GL_RGB32I_EXT;
 	    rb->_BaseFormat = GL_RGB;
-	    rb->DataType = GL_UNSIGNED_INT;
+	    rb->DataType = GL_INT;
 	    rb->GetPointer = get_pointer_uint;
 	    rb->GetRow = get_row_uint;
 	    rb->GetValues = get_values_uint;

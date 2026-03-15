@@ -148,16 +148,22 @@ Known limitations arising from the GL 2.0 context:
   GL_TEXTURE_2D_ARRAY require OpenGL 3.0 and are not available.
 
 * Integer framebuffer formats (e.g. GL_RGBA8I, GL_RGBA8UI):
-  These require GL_EXT_texture_integer (core in GL 3.0) and are not supported
-  as renderbuffer or texture attachment formats.
+  GL_EXT_texture_integer is now implemented. Integer renderbuffer formats
+  (GL_RGBA8I/UI, GL_RGBA16I/UI, GL_RGBA32I/UI, GL_RGB8I/UI, GL_RGB16I/UI,
+  GL_RGB32I/UI) are supported as FBO color attachments.  Note: GLSL integer
+  samplers (isampler2D, usampler2D) are not supported.
 
 * sRGB framebuffers (GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING):
-  GL_EXT_framebuffer_sRGB / GL_ARB_framebuffer_sRGB are not implemented.
-  All color attachments report GL_LINEAR encoding.
+  GL_ARB_framebuffer_sRGB / GL_EXT_framebuffer_sRGB are implemented.
+  GL_SRGB8_EXT and GL_SRGB8_ALPHA8_EXT are valid renderbuffer formats.
+  When GL_FRAMEBUFFER_SRGB is enabled, linear→sRGB conversion is applied
+  before storing color data to sRGB-format renderbuffers.
+  sRGB attachments report GL_SRGB encoding; linear attachments GL_LINEAR.
 
 * GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE:
-  All supported formats are fixed-point unsigned normalized (GL_UNSIGNED_
-  NORMALIZED).  Floating-point and signed integer types are not available.
+  Fixed-point unsigned normalized (GL_UNSIGNED_NORMALIZED) is supported for
+  all standard formats.  GL_EXT_texture_integer adds GL_INT and GL_UNSIGNED_INT
+  for integer format attachments.  Floating-point types are not available.
 
 * gl_FragDepth / GLSL depth output to FBO:
   Writing to gl_FragDepth in a GLSL fragment shader and reading back the
@@ -832,7 +838,7 @@ GL_ARB_framebuffer_no_attachments:                             MISSING
 GL_ARB_framebuffer_object:                                     OK
 --------------------------
 
-GL_ARB_framebuffer_sRGB:                                       MISSING
+GL_ARB_framebuffer_sRGB:                                       OK
 ------------------------
 
 GL_ARB_geometry_shader4:                                       MISSING
@@ -1759,7 +1765,7 @@ GL_EXT_framebuffer_object:                                     OK
   glIsRenderbufferEXT:                                         OK
   glRenderbufferStorageEXT:                                    OK
 
-GL_EXT_framebuffer_sRGB:                                       MISSING
+GL_EXT_framebuffer_sRGB:                                       OK
 ------------------------
 
 GL_EXT_geometry_point_size:                                    MISSING
@@ -2128,7 +2134,7 @@ GL_EXT_texture_format_BGRA8888:                                MISSING
 GL_EXT_texture_format_sRGB_override:                           MISSING
 ------------------------------------
 
-GL_EXT_texture_integer:                                        MISSING
+GL_EXT_texture_integer:                                        OK
 -----------------------
 
 GL_EXT_texture_lod_bias:                                       OK
