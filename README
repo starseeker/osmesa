@@ -174,6 +174,41 @@ Applications that check for GL_ARB_framebuffer_object in the extension string
 limitations.  All validation, completeness checks, and query functions conform
 to the GL_ARB_framebuffer_object specification.
 
+Relationship to GL_EXT_texture_integer and GL_ARB_framebuffer_sRGB:
+
+These two extensions (also implemented in this build) directly complement
+GL_ARB_framebuffer_object:
+
+  * GL_ARB_framebuffer_sRGB enables GL_SRGB8_EXT and GL_SRGB8_ALPHA8_EXT as
+    valid RBO internal formats, and completes the
+    GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING query (returns GL_SRGB instead of
+    always returning GL_LINEAR for sRGB-format attachments).
+
+  * GL_EXT_texture_integer adds twelve integer RBO formats (GL_RGBA8I/UI,
+    GL_RGBA16I/UI, GL_RGBA32I/UI, GL_RGB8I/UI, GL_RGB16I/UI, GL_RGB32I/UI) as
+    valid FBO color attachments, and completes the
+    GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE query (GL_INT / GL_UNSIGNED_INT
+    for integer format attachments, in addition to GL_UNSIGNED_NORMALIZED).
+
+For Obol (https://github.com/starseeker/obol), a 3D visualization library that
+uses OSMesa as a software-rasterizer backend, both code paths work:
+
+  * libosmesa advertises GL_ARB_framebuffer_object.  Obol detects this and uses
+    the no-suffix function names (glGenFramebuffers, glBindFramebuffer, etc.)
+    in preference to the EXT-suffixed fallback.
+
+  * A full integration test (OBOL_USE_SWRAST=ON, OBOL_USE_SYSTEM_GL=OFF)
+    against this osmesa build confirmed:
+      - 217/217 unit tests PASSED
+      - 105/105 render tests PASSED (primitives, textures, shaders, FBO-based
+        offscreen rendering, shadow maps, scene-as-texture, etc.)
+
+  The new GL_ARB_framebuffer_sRGB and GL_EXT_texture_integer extensions are
+  NOT required by Obol's fixed-function / GLSL 1.10 usage, but they make the
+  FBO query interface more complete and spec-accurate for any application that
+  inspects GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING or
+  GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE.
+
 For more detailed info about what is supported, here's what a (slightly
 modified) glewinfo reports when compiled against libosmesa (see examples/glew
 for the version used to produce this output):
