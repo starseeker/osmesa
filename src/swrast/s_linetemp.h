@@ -309,9 +309,13 @@ NAME(GLcontext *ctx, const SWvertex *vert0, const SWvertex *vert1)
 
     INIT_SPAN(span, GL_LINE, numPixels, interpFlags, SPAN_XY);
 
-    /* Need these for fragment prog texcoord interpolation */
-    span.attrStart[FRAG_ATTRIB_WPOS][3] = 1.0F;
-    span.attrStepX[FRAG_ATTRIB_WPOS][3] = 0.0F;
+    /* Need these for fragment prog texcoord interpolation.
+     * win[3] is 1/W_clip; use the actual per-vertex value (matching how
+     * s_tritemp.h computes it) so that perspective-correct varying
+     * interpolation works correctly over lines.  The old code hardcoded
+     * 1.0F / 0.0F, which left varyings as value/W_clip rather than value. */
+    span.attrStart[FRAG_ATTRIB_WPOS][3] = vert0->win[3];
+    span.attrStepX[FRAG_ATTRIB_WPOS][3] = (vert1->win[3] - vert0->win[3]) / numPixels;
     span.attrStepY[FRAG_ATTRIB_WPOS][3] = 0.0F;
 
     span.facing = swrast->PointLineFacing;

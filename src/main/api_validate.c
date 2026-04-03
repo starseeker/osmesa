@@ -105,9 +105,15 @@ _mesa_validate_DrawElements(GLcontext *ctx,
     if (ctx->NewState)
 	_mesa_update_state(ctx);
 
-    /* Always need vertex positions */
+    /* Always need vertex positions.  Accept either the legacy vertex array
+     * (Vertex.Enabled) or generic attribute 0 when a vertex program is
+     * active.  Use _Current rather than _Enabled: _Enabled is only set by
+     * glEnable(GL_VERTEX_PROGRAM_ARB), whereas _Current is non-NULL for both
+     * ARB/NV assembly vertex programs and GLSL programs activated via
+     * glUseProgramObjectARB / glUseProgram.  The old test against _Enabled
+     * silently rejected every GLSL + VBO draw call. */
     if (!ctx->Array.ArrayObj->Vertex.Enabled
-	&& !(ctx->VertexProgram._Enabled
+	&& !(ctx->VertexProgram._Current
 	     && ctx->Array.ArrayObj->VertexAttrib[0].Enabled))
 	return GL_FALSE;
 
@@ -184,9 +190,10 @@ _mesa_validate_DrawRangeElements(GLcontext *ctx, GLenum mode,
     if (ctx->NewState)
 	_mesa_update_state(ctx);
 
-    /* Always need vertex positions */
+    /* Always need vertex positions.  See comment in _mesa_validate_DrawElements
+     * for why _Current is tested rather than _Enabled. */
     if (!ctx->Array.ArrayObj->Vertex.Enabled
-	&& !(ctx->VertexProgram._Enabled
+	&& !(ctx->VertexProgram._Current
 	     && ctx->Array.ArrayObj->VertexAttrib[0].Enabled))
 	return GL_FALSE;
 

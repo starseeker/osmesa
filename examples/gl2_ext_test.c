@@ -2266,6 +2266,217 @@ test_glsl_shader(int W, int H)
 }
 
 /* ------------------------------------------------------------------ */
+/* Test 18b: glDrawElements with GLSL program (generic attrib 0)       */
+/* ------------------------------------------------------------------ */
+static void
+test_glsl_drawelements(int W, int H)
+{
+    printf("Test 18b: glDrawElements + GLSL (generic vertex attribute)\n");
+
+    if (!check_ext("GL_ARB_shader_objects") ||
+	!check_ext("GL_ARB_vertex_shader"))
+	return;
+
+    clear_errors();
+
+    /* Vertex shader reads gl_Vertex (attribute 0); fragment shader
+     * passes gl_Color through.  Vertex data is supplied via
+     * glVertexAttribPointer(0,...) so Vertex.Enabled is FALSE — the
+     * path that was incorrectly rejected by _mesa_validate_DrawElements. */
+    const char *vert =
+	"#version 110\n"
+	"void main() {\n"
+	"    gl_Position = gl_Vertex;\n"
+	"    gl_FrontColor = gl_Color;\n"
+	"}\n";
+    const char *frag =
+	"#version 110\n"
+	"void main() {\n"
+	"    gl_FragColor = gl_Color;\n"
+	"}\n";
+
+    GLuint prog = make_program(vert, frag);
+    if (!prog) {
+	fprintf(stderr, "  FAIL: GLSL program compilation/link failed\n");
+	g_failed++;
+	return;
+    }
+
+    glUseProgram(prog);
+    glViewport(0, 0, W, H);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor4f(0.0f, 0.0f, 1.0f, 1.0f);   /* blue via current vertex color */
+
+    /* Full-screen quad via generic attribute 0 + indexed draw */
+    static const GLfloat verts[] = {
+	-1.0f, -1.0f,
+	 1.0f, -1.0f,
+	 1.0f,  1.0f,
+	-1.0f,  1.0f,
+    };
+    static const GLubyte idx[] = { 0, 1, 2,  0, 2, 3 };
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, verts);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, idx);
+    glFinish();
+    glDisableVertexAttribArray(0);
+
+    glUseProgram(0);
+    glDeleteProgram(prog);
+
+    GLubyte px[4] = {0};
+    glReadPixels(W/2, H/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+
+    if (check_gl_error("glsl_drawelements")) {
+	fprintf(stderr, "  FAIL: GL error during GLSL DrawElements test\n");
+	g_failed++;
+	return;
+    }
+
+    if (px[0] < 50 && px[1] < 50 && px[2] > 200) {
+	printf("  PASS: glDrawElements+GLSL output blue (%d,%d,%d)\n",
+	       px[0], px[1], px[2]);
+    } else {
+	fprintf(stderr,
+		"  FAIL: glDrawElements+GLSL output (%d,%d,%d) expected ~(0,0,255)\n",
+		px[0], px[1], px[2]);
+	g_failed++;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* Test 18c: GLSL varying interpolation over GL_LINES                  */
+/* ------------------------------------------------------------------ */
+static void
+test_glsl_line_varying(int W, int H)
+{
+    printf("Test 18c: GLSL varying interpolation over GL_LINES\n");
+
+    if (!check_ext("GL_ARB_shader_objects") ||
+	!check_ext("GL_ARB_vertex_shader") ||
+	!check_ext("GL_ARB_fragment_shader"))
+	return;
+
+    clear_errors();
+
+    /*
+     * Vertex shader: pass position through and forward gl_Color as a varying.
+     * Fragment shader: output the interpolated varying as the fragment color.
+     *
+     * We draw a horizontal line across the full viewport width between two
+     * vertices that have different clip-space W values (achieved by setting
+     * gl_Position.w explicitly) so that perspective-correct interpolation
+     * is exercised.
+     *
+     * Vertex 0: gl_Position = (-1, 0, 0, 1)   color = (0, 0, 1, 1)  blue
+     * Vertex 1: gl_Position = ( 2, 0, 0, 2)   → NDC x = 1   color = (0, 1, 0, 1)  green
+     *
+     * After perspective division:
+     *   vert0: x_win ~ 0,    W_clip = 1,   win[3] = 1/W_clip = 1.0
+     *   vert1: x_win ~ W-1,  W_clip = 2,   win[3] = 1/W_clip = 0.5
+     *
+     * Perspective-correct color at the screen midpoint (x_screen = W/2):
+     *   t_screen = 0.5
+     *   t_correct = (t_screen * invw1) / ((1-t_screen)*invw0 + t_screen*invw1)
+     *             = (0.5 * 0.5) / (0.5*1.0 + 0.5*0.5)
+     *             = 0.25 / 0.75 = 1/3  ≈ 0.333
+     *   blue  component = (1 - 1/3) = 2/3 ≈ 170
+     *   green component = 1/3         ≈  85
+     *
+     * If the bug is present (WPOS.w hardcoded to 1.0), interpolation is linear:
+     *   t = 0.5 → blue = 128, green = 128.
+     *
+     * We therefore check that blue > green at the midpoint, which is only
+     * true for perspective-correct interpolation.
+     */
+    const char *vert =
+	"#version 110\n"
+	"varying vec4 vColor;\n"
+	"void main() {\n"
+	"    gl_Position = gl_Vertex;\n"
+	"    vColor = gl_Color;\n"
+	"}\n";
+    const char *frag =
+	"#version 110\n"
+	"varying vec4 vColor;\n"
+	"void main() {\n"
+	"    gl_FragColor = vColor;\n"
+	"}\n";
+
+    GLuint prog = make_program(vert, frag);
+    if (!prog) {
+	fprintf(stderr, "  FAIL: GLSL line-varying program compilation/link failed\n");
+	g_failed++;
+	return;
+    }
+
+    glUseProgram(prog);
+    glViewport(0, 0, W, H);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glDisable(GL_DEPTH_TEST);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    /*
+     * Vertex 0: clip pos (-1, 0, 0, 1) → NDC (-1, 0, 0) → left edge;  blue
+     * Vertex 1: clip pos ( 2, 0, 0, 2) → NDC ( 1, 0, 0) → right edge; green
+     */
+    glBegin(GL_LINES);
+    glColor4f(0.0f, 0.0f, 1.0f, 1.0f);  /* blue  at vert 0 */
+    glVertex4f(-1.0f, 0.0f, 0.0f, 1.0f);
+    glColor4f(0.0f, 1.0f, 0.0f, 1.0f);  /* green at vert 1 */
+    glVertex4f( 2.0f, 0.0f, 0.0f, 2.0f);
+    glEnd();
+    glFinish();
+
+    glUseProgram(0);
+    glDeleteProgram(prog);
+
+    /* Sample the midpoint of the line */
+    GLubyte px[4] = {0};
+    glReadPixels(W/2, H/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+
+    if (check_gl_error("glsl_line_varying")) {
+	fprintf(stderr, "  FAIL: GL error during GLSL line-varying test\n");
+	g_failed++;
+	return;
+    }
+
+    /* The line should have rendered some color at the midpoint */
+    if (px[0] == 0 && px[1] == 0 && px[2] == 0) {
+	fprintf(stderr, "  FAIL: no line pixels rendered at midpoint\n");
+	g_failed++;
+	return;
+    }
+
+    /*
+     * Perspective-correct: blue > green (blue ≈ 170, green ≈ 85).
+     * Linear (bug):        blue == green == 128.
+     */
+    if (px[2] > px[1]) {
+	printf("  PASS: GLSL line varying perspective-correct "
+	       "(blue=%d > green=%d at midpoint)\n", px[2], px[1]);
+    } else {
+	fprintf(stderr,
+		"  FAIL: GLSL line varying NOT perspective-correct "
+		"(blue=%d, green=%d; expected blue > green)\n",
+		px[2], px[1]);
+	g_failed++;
+    }
+}
+
+/* ------------------------------------------------------------------ */
 /* Test 19: GL_ARB_occlusion_query                                     */
 /* ------------------------------------------------------------------ */
 static void
@@ -2640,6 +2851,8 @@ main(void)
     test_vertex_program(W, H);
     test_fragment_program(W, H);
     test_glsl_shader(W, H);
+    test_glsl_drawelements(W, H);
+    test_glsl_line_varying(W, H);
     test_occlusion_query(W, H);
     test_framebuffer_srgb(W, H);
     test_texture_integer(W, H);
