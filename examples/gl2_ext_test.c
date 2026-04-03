@@ -2266,6 +2266,92 @@ test_glsl_shader(int W, int H)
 }
 
 /* ------------------------------------------------------------------ */
+/* Test 18b: glDrawElements with GLSL program (generic attrib 0)       */
+/* ------------------------------------------------------------------ */
+static void
+test_glsl_drawelements(int W, int H)
+{
+    printf("Test 18b: glDrawElements + GLSL (generic vertex attribute)\n");
+
+    if (!check_ext("GL_ARB_shader_objects") ||
+	!check_ext("GL_ARB_vertex_shader"))
+	return;
+
+    clear_errors();
+
+    /* Vertex shader reads gl_Vertex (attribute 0); fragment shader
+     * passes gl_Color through.  Vertex data is supplied via
+     * glVertexAttribPointer(0,...) so Vertex.Enabled is FALSE — the
+     * path that was incorrectly rejected by _mesa_validate_DrawElements. */
+    const char *vert =
+	"#version 110\n"
+	"void main() {\n"
+	"    gl_Position = gl_Vertex;\n"
+	"    gl_FrontColor = gl_Color;\n"
+	"}\n";
+    const char *frag =
+	"#version 110\n"
+	"void main() {\n"
+	"    gl_FragColor = gl_Color;\n"
+	"}\n";
+
+    GLuint prog = make_program(vert, frag);
+    if (!prog) {
+	fprintf(stderr, "  FAIL: GLSL program compilation/link failed\n");
+	g_failed++;
+	return;
+    }
+
+    glUseProgram(prog);
+    glViewport(0, 0, W, H);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor4f(0.0f, 0.0f, 1.0f, 1.0f);   /* blue via current vertex color */
+
+    /* Full-screen quad via generic attribute 0 + indexed draw */
+    static const GLfloat verts[] = {
+	-1.0f, -1.0f,
+	 1.0f, -1.0f,
+	 1.0f,  1.0f,
+	-1.0f,  1.0f,
+    };
+    static const GLubyte idx[] = { 0, 1, 2,  0, 2, 3 };
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, verts);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, idx);
+    glFinish();
+    glDisableVertexAttribArray(0);
+
+    glUseProgram(0);
+    glDeleteProgram(prog);
+
+    GLubyte px[4] = {0};
+    glReadPixels(W/2, H/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+
+    if (check_gl_error("glsl_drawelements")) {
+	fprintf(stderr, "  FAIL: GL error during GLSL DrawElements test\n");
+	g_failed++;
+	return;
+    }
+
+    if (px[0] < 50 && px[1] < 50 && px[2] > 200) {
+	printf("  PASS: glDrawElements+GLSL output blue (%d,%d,%d)\n",
+	       px[0], px[1], px[2]);
+    } else {
+	fprintf(stderr,
+		"  FAIL: glDrawElements+GLSL output (%d,%d,%d) expected ~(0,0,255)\n",
+		px[0], px[1], px[2]);
+	g_failed++;
+    }
+}
+
+/* ------------------------------------------------------------------ */
 /* Test 19: GL_ARB_occlusion_query                                     */
 /* ------------------------------------------------------------------ */
 static void
@@ -2640,6 +2726,7 @@ main(void)
     test_vertex_program(W, H);
     test_fragment_program(W, H);
     test_glsl_shader(W, H);
+    test_glsl_drawelements(W, H);
     test_occlusion_query(W, H);
     test_framebuffer_srgb(W, H);
     test_texture_integer(W, H);
