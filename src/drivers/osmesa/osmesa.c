@@ -627,7 +627,33 @@ do {							\
 #include "swrast/s_linetemp.h"
 #endif
 
+/**
+ * Draw a flat-shaded, Z-less, RGB line into an osmesa buffer using a
+ * <= depth comparison to match GL_LEQUAL.
+ */
+#define NAME flat_rgba_z_lequal_line
+#define CLIP_HACK 1
+#define INTERP_Z 1
+#define DEPTH_TYPE DEFAULT_SOFTWARE_DEPTH_TYPE
+#define SETUP_CODE					\
+   const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);	\
+   const GLchan *color = vert1->color;
 
+#define PLOT(X, Y)					\
+do {							\
+   if (Z <= *zPtr) {					\
+      GLchan *p = PIXELADDR4(X, Y);			\
+      PACK_RGBA(p, color[RCOMP], color[GCOMP],		\
+                   color[BCOMP], color[ACOMP]);		\
+      *zPtr = Z;					\
+   }							\
+} while (0)
+
+#ifdef WIN32
+#include "..\swrast\s_linetemp.h"
+#else
+#include "swrast/s_linetemp.h"
+#endif
 
 /**
  * Analyze context state to see if we can provide a fast line drawing
@@ -654,10 +680,12 @@ osmesa_choose_line_function(GLcontext *ctx)
 	osmesa->format != OSMESA_ARGB)     return NULL;
 
     if (swrast->_RasterMask==DEPTH_BIT
-	&& ctx->Depth.Func==GL_LESS
 	&& ctx->Depth.Mask==GL_TRUE
 	&& ctx->Visual.depthBits == DEFAULT_SOFTWARE_DEPTH_BITS) {
-	return (swrast_line_func) flat_rgba_z_line;
+	if (ctx->Depth.Func == GL_LESS)
+	    return (swrast_line_func) flat_rgba_z_line;
+	if (ctx->Depth.Func == GL_LEQUAL)
+	    return (swrast_line_func) flat_rgba_z_lequal_line;
     }
 
     if (swrast->_RasterMask == 0) {
