@@ -1310,15 +1310,17 @@ _swrast_clear_depth_buffer(GLcontext *ctx, struct gl_renderbuffer *rb)
 	    /* Optimized clear: when every byte of clearValue is identical
 	     * and rows are contiguous, a single memset covers the region.
 	     */
-	    if (height > 0 &&
+	    if (x == 0 &&
+		width == (GLint) rb->Width &&
+		height > 0 &&
 		((clearValue & 0xff) == ((clearValue >> 8) & 0xff)) &&
 		((clearValue & 0xff) == ((clearValue >> 16) & 0xff)) &&
 		((clearValue & 0xff) == ((clearValue >> 24) & 0xff))) {
 		GLboolean contiguous = GL_TRUE;
 		if (height > 1) {
-		    GLuint *row0 = (GLuint *) rb->GetPointer(ctx, rb, 0, 0);
-		    GLuint *row1 = (GLuint *) rb->GetPointer(ctx, rb, 0, 1);
-		    contiguous = (row0 + width == row1);
+		    GLuint *row0 = (GLuint *) rb->GetPointer(ctx, rb, 0, y);
+		    GLuint *row1 = (GLuint *) rb->GetPointer(ctx, rb, 0, y + 1);
+		    contiguous = (row0 + rb->Width == row1);
 		}
 		if (contiguous) {
 		    /* optimized case */
