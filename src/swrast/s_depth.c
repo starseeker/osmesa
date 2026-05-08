@@ -1321,13 +1321,14 @@ _swrast_clear_depth_buffer(GLcontext *ctx, struct gl_renderbuffer *rb)
 		if (height > 1) {
 		    GLuint *row0 = (GLuint *) rb->GetPointer(ctx, rb, 0, y);
 		    GLuint *row1 = (GLuint *) rb->GetPointer(ctx, rb, 0, y + 1);
-		    contiguous = (row0 + rb->Width == row1);
+		    contiguous = ((uintptr_t) row1 - (uintptr_t) row0 ==
+				  (uintptr_t) rb->Width * sizeof(GLuint));
 		}
 		if (contiguous) {
 		    /* optimized case */
 		    GLuint *dst = (GLuint *) rb->GetPointer(ctx, rb, x, y);
-		    if ((size_t) width <=
-			SIZE_MAX / (size_t) height / sizeof(GLuint)) {
+		    if ((size_t) height <=
+			SIZE_MAX / (size_t) width / sizeof(GLuint)) {
 			size_t byte_count =
 			    (size_t) width * (size_t) height * sizeof(GLuint);
 			memset(dst, (clearValue & 0xff), byte_count);

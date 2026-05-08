@@ -212,7 +212,7 @@ main(int argc, char **argv)
     }
 
     framebuffer_bytes = (size_t) width * (size_t) height * 4;
-    framebuffer = (GLubyte *) calloc(framebuffer_bytes, sizeof(GLubyte));
+    framebuffer = (GLubyte *) calloc(framebuffer_bytes, 1);
     if (!framebuffer) {
 	fprintf(stderr, "framebuffer allocation failed\n");
 	OSMesaDestroyContext(ctx);
