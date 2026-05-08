@@ -16,6 +16,10 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+#define FNV_OFFSET_BASIS 2166136261u
+#define FNV_PRIME 16777619u
+#define MAX_PARAM_VALUE (1L << 30)
+
 static double
 now_seconds(void)
 {
@@ -113,7 +117,7 @@ static unsigned long
 compute_checksum(const GLubyte *buffer, size_t bytes)
 {
     size_t i;
-    unsigned long checksum = 2166136261u;
+    unsigned long checksum = FNV_OFFSET_BASIS;
     size_t stride = bytes / 4096;
 
     if (stride == 0)
@@ -121,7 +125,7 @@ compute_checksum(const GLubyte *buffer, size_t bytes)
 
     for (i = 0; i < bytes; i += stride) {
 	checksum ^= buffer[i];
-	checksum *= 16777619u;
+	checksum *= FNV_PRIME;
     }
 
     return checksum;
@@ -132,7 +136,7 @@ parse_int_arg(const char *name, const char *value, GLint *out)
 {
     char *end = NULL;
     long parsed = strtol(value, &end, 10);
-    if (!value[0] || (end && *end) || parsed <= 0 || parsed > 1L << 30) {
+    if (!value[0] || (end && *end) || parsed <= 0 || parsed > MAX_PARAM_VALUE) {
 	fprintf(stderr, "invalid value for %s: %s\n", name, value);
 	return 0;
     }

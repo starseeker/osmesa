@@ -1325,8 +1325,9 @@ _swrast_clear_depth_buffer(GLcontext *ctx, struct gl_renderbuffer *rb)
 		if (contiguous) {
 		    /* optimized case */
 		    GLuint *dst = (GLuint *) rb->GetPointer(ctx, rb, x, y);
-		    size_t len = (size_t) width * (size_t) height * sizeof(GLuint);
-		    memset(dst, (clearValue & 0xff), len);
+		    size_t byte_count =
+			(size_t) width * (size_t) height * sizeof(GLuint);
+		    memset(dst, (clearValue & 0xff), byte_count);
 		    optimized = GL_TRUE;
 		}
 	    }
