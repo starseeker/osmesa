@@ -1305,12 +1305,27 @@ _swrast_clear_depth_buffer(GLcontext *ctx, struct gl_renderbuffer *rb)
 		}
 	    }
 	} else {
-	    GLint i, j;
 	    ASSERT(rb->DataType == GL_UNSIGNED_INT);
-	    for (i = 0; i < height; i++) {
-		GLuint *dst = (GLuint *) rb->GetPointer(ctx, rb, x, y + i);
-		for (j = 0; j < width; j++) {
-		    dst[j] = clearValue;
+	    /* Optimised clear: when every byte of clearValue is identical
+	     * and rows are contiguous, a single memset covers the region.
+	     */
+	    if (((clearValue & 0xff) == ((clearValue >> 8) & 0xff)) &&
+		((clearValue & 0xff) == ((clearValue >> 16) & 0xff)) &&
+		((clearValue & 0xff) == ((clearValue >> 24) & 0xff)) &&
+		((GLuint *) rb->GetPointer(ctx, rb, 0, 0) + width ==
+		 (GLuint *) rb->GetPointer(ctx, rb, 0, 1))) {
+		/* optimized case */
+		GLuint *dst = (GLuint *) rb->GetPointer(ctx, rb, x, y);
+		GLuint len = width * height * sizeof(GLuint);
+		memset(dst, (clearValue & 0xff), len);
+	    } else {
+		/* general case */
+		GLint i, j;
+		for (i = 0; i < height; i++) {
+		    GLuint *dst = (GLuint *) rb->GetPointer(ctx, rb, x, y + i);
+		    for (j = 0; j < width; j++) {
+			dst[j] = clearValue;
+		    }
 		}
 	    }
 	}
