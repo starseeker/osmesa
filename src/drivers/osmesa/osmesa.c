@@ -744,7 +744,7 @@ osmesa_choose_line_function(GLcontext *ctx)
 
     if (swrast->_RasterMask==DEPTH_BIT
 	&& ctx->Depth.Mask==GL_TRUE
-	&& ctx->Visual.depthBits == 32) {
+	&& ctx->Visual.depthBits > 16) {
 	if (ctx->Depth.Func == GL_LESS)
 	    return (swrast_line_func) flat_rgba_z32_line;
 	if (ctx->Depth.Func == GL_LEQUAL)
@@ -943,7 +943,7 @@ osmesa_choose_triangle_function(GLcontext *ctx)
     if (swrast->_RasterMask == DEPTH_BIT &&
 	ctx->Depth.Func == GL_LESS &&
 	ctx->Depth.Mask == GL_TRUE &&
-	ctx->Visual.depthBits == 32) {
+	ctx->Visual.depthBits > 16) {
 	if (ctx->Light.ShadeModel == GL_SMOOTH) {
 	    return (swrast_tri_func) smooth_rgba_z32_triangle;
 	} else {
