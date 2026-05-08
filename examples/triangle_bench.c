@@ -136,7 +136,7 @@ parse_int_arg(const char *name, const char *value, GLint *out)
 {
     char *end = NULL;
     long parsed = strtol(value, &end, 10);
-    if (!value[0] || (end && *end) || parsed <= 0 || parsed > MAX_PARAM_VALUE) {
+    if (!value[0] || *end || parsed <= 0 || parsed > MAX_PARAM_VALUE) {
 	fprintf(stderr, "invalid value for %s: %s\n", name, value);
 	return 0;
     }
@@ -156,6 +156,7 @@ main(int argc, char **argv)
     GLint i;
     OSMesaContext ctx;
     GLubyte *framebuffer;
+    size_t framebuffer_bytes;
     double start_time;
     double end_time;
     double elapsed;
@@ -203,8 +204,14 @@ main(int argc, char **argv)
 	return 1;
     }
 
-    framebuffer = (GLubyte *) calloc((size_t) width * (size_t) height * 4,
-				     sizeof(GLubyte));
+    if ((size_t) width > ((size_t) -1) / (size_t) height / 4) {
+	fprintf(stderr, "framebuffer size overflow\n");
+	OSMesaDestroyContext(ctx);
+	return 1;
+    }
+
+    framebuffer_bytes = (size_t) width * (size_t) height * 4;
+    framebuffer = (GLubyte *) calloc(framebuffer_bytes, sizeof(GLubyte));
     if (!framebuffer) {
 	fprintf(stderr, "framebuffer allocation failed\n");
 	OSMesaDestroyContext(ctx);
@@ -241,7 +248,7 @@ main(int argc, char **argv)
     elapsed = end_time - start_time;
     fps = (double) frames / elapsed;
     triangles_per_second = ((double) frames * (double) instances) / elapsed;
-    checksum = compute_checksum(framebuffer, (size_t) width * height * 4);
+    checksum = compute_checksum(framebuffer, framebuffer_bytes);
 
     printf("depth=%d frames=%d warmup=%d size=%dx%d instances=%d "
 	   "elapsed=%.6f fps=%.2f triangles_per_sec=%.2f checksum=%lu\n",
