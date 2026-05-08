@@ -656,7 +656,7 @@ do {							\
 #endif
 
 /**
- * Draw a flat-shaded, Z-less, RGB line into an osmesa buffer (32-bit depth).
+ * Draw a flat-shaded, Z-less, RGB line into an osmesa buffer (24/32-bit depth).
  */
 #define NAME flat_rgba_z32_line
 #define CLIP_HACK 1
@@ -683,7 +683,7 @@ do {							\
 #endif
 
 /**
- * Draw a flat-shaded, Z-lequal, RGB line into an osmesa buffer (32-bit depth).
+ * Draw a flat-shaded, Z-lequal, RGB line into an osmesa buffer (24/32-bit depth).
  */
 #define NAME flat_rgba_z32_lequal_line
 #define CLIP_HACK 1
@@ -836,7 +836,7 @@ osmesa_choose_line_function(GLcontext *ctx)
 
 
 /*
- * Smooth-shaded, z-less triangle, RGBA color (32-bit depth buffer).
+ * Smooth-shaded, z-less triangle, RGBA color (24/32-bit depth buffer).
  */
 #define NAME smooth_rgba_z32_triangle
 #define INTERP_Z 1
@@ -873,7 +873,7 @@ osmesa_choose_line_function(GLcontext *ctx)
 
 
 /*
- * Flat-shaded, z-less triangle, RGBA color (32-bit depth buffer).
+ * Flat-shaded, z-less triangle, RGBA color (24/32-bit depth buffer).
  */
 #define NAME flat_rgba_z32_triangle
 #define INTERP_Z 1
