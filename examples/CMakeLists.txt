@@ -20,6 +20,13 @@ add_executable(osdemo_fxaa osdemo_fxaa.c)
 target_link_libraries(osdemo_fxaa osmesa ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 set_property(TARGET osdemo_fxaa APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
 
+add_executable(triangle_bench triangle_bench.c)
+target_link_libraries(triangle_bench osmesa ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+set_property(TARGET triangle_bench APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
+if (O3_COMPILER_FLAG)
+  target_compile_options(triangle_bench PRIVATE "-O3")
+endif (O3_COMPILER_FLAG)
+
 # TODO -see if we can adapt this as an example:
 # https://github.com/danginsburg/opengles3-book/blob/master/Chapter_2/Hello_Triangle/Hello_Triangle.c
 

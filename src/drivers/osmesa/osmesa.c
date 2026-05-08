@@ -656,6 +656,60 @@ do {							\
 #endif
 
 /**
+ * Draw a flat-shaded, Z-less, RGB line into an osmesa buffer (24/32-bit depth).
+ */
+#define NAME flat_rgba_z32_line
+#define CLIP_HACK 1
+#define INTERP_Z 1
+#define DEPTH_TYPE GLuint
+#define SETUP_CODE					\
+   const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);	\
+   const GLchan *color = vert1->color;
+
+#define PLOT(X, Y)					\
+do {							\
+   if (Z < *zPtr) {					\
+      GLchan *p = PIXELADDR4(X, Y);			\
+      PACK_RGBA(p, color[RCOMP], color[GCOMP],		\
+                   color[BCOMP], color[ACOMP]);		\
+      *zPtr = Z;					\
+   }							\
+} while (0)
+
+#ifdef WIN32
+#include "..\\swrast\\s_linetemp.h"
+#else
+#include "swrast/s_linetemp.h"
+#endif
+
+/**
+ * Draw a flat-shaded, Z-lequal, RGB line into an osmesa buffer (24/32-bit depth).
+ */
+#define NAME flat_rgba_z32_lequal_line
+#define CLIP_HACK 1
+#define INTERP_Z 1
+#define DEPTH_TYPE GLuint
+#define SETUP_CODE					\
+   const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);	\
+   const GLchan *color = vert1->color;
+
+#define PLOT(X, Y)					\
+do {							\
+   if (Z <= *zPtr) {					\
+      GLchan *p = PIXELADDR4(X, Y);			\
+      PACK_RGBA(p, color[RCOMP], color[GCOMP],		\
+                   color[BCOMP], color[ACOMP]);		\
+      *zPtr = Z;					\
+   }							\
+} while (0)
+
+#ifdef WIN32
+#include "..\\swrast\\s_linetemp.h"
+#else
+#include "swrast/s_linetemp.h"
+#endif
+
+/**
  * Analyze context state to see if we can provide a fast line drawing
  * function.  Otherwise, return NULL.
  */
@@ -686,6 +740,15 @@ osmesa_choose_line_function(GLcontext *ctx)
 	    return (swrast_line_func) flat_rgba_z_line;
 	if (ctx->Depth.Func == GL_LEQUAL)
 	    return (swrast_line_func) flat_rgba_z_lequal_line;
+    }
+
+    if (swrast->_RasterMask==DEPTH_BIT
+	&& ctx->Depth.Mask==GL_TRUE
+	&& ctx->Visual.depthBits > 16) {
+	if (ctx->Depth.Func == GL_LESS)
+	    return (swrast_line_func) flat_rgba_z32_line;
+	if (ctx->Depth.Func == GL_LEQUAL)
+	    return (swrast_line_func) flat_rgba_z32_lequal_line;
     }
 
     if (swrast->_RasterMask == 0) {
@@ -772,6 +835,76 @@ osmesa_choose_line_function(GLcontext *ctx)
 #endif
 
 
+/*
+ * Smooth-shaded, z-less triangle, RGBA color (24/32-bit depth buffer).
+ */
+#define NAME smooth_rgba_z32_triangle
+#define INTERP_Z 1
+#define DEPTH_TYPE GLuint
+#define INTERP_RGB 1
+#define INTERP_ALPHA 1
+#define SETUP_CODE \
+   const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);
+#define RENDER_SPAN( span ) {					\
+   GLuint i;							\
+   GLchan *img = PIXELADDR4(span.x, span.y); 			\
+   if (zRow) {							\
+      for (i = 0; i < span.end; i++, img += 4) {		\
+         const GLuint z = FixedToDepth(span.z);			\
+         if (z < zRow[i]) {					\
+            PACK_RGBA(img, FixedToChan(span.red),		\
+               FixedToChan(span.green), FixedToChan(span.blue),	\
+               FixedToChan(span.alpha));				\
+            zRow[i] = z;					\
+         }							\
+         span.red += span.redStep;				\
+         span.green += span.greenStep;				\
+         span.blue += span.blueStep;				\
+         span.alpha += span.alphaStep;				\
+         span.z += span.zStep;					\
+      }                                                         \
+   }                                                            \
+}
+#ifdef WIN32
+#include "..\\swrast\\s_tritemp.h"
+#else
+#include "swrast/s_tritemp.h"
+#endif
+
+
+/*
+ * Flat-shaded, z-less triangle, RGBA color (24/32-bit depth buffer).
+ */
+#define NAME flat_rgba_z32_triangle
+#define INTERP_Z 1
+#define DEPTH_TYPE GLuint
+#define SETUP_CODE							\
+   const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);		\
+   GLuint pixel;							\
+   PACK_RGBA((GLchan *) &pixel, v2->color[0], v2->color[1],	\
+                                v2->color[2], v2->color[3]);
+
+#define RENDER_SPAN( span ) {					\
+   GLuint i;							\
+   GLuint *img = (GLuint *) PIXELADDR4(span.x, span.y);	\
+   if (zRow) {							\
+      for (i = 0; i < span.end; i++) {				\
+         const GLuint z = FixedToDepth(span.z);			\
+         if (z < zRow[i]) {					\
+            img[i] = pixel;					\
+            zRow[i] = z;					\
+         }							\
+         span.z += span.zStep;					\
+      }                                                 \
+   }								\
+}
+#ifdef WIN32
+#include "..\\swrast\\s_tritemp.h"
+#else
+#include "swrast/s_tritemp.h"
+#endif
+
+
 
 /**
  * Return pointer to an optimized triangle function if possible.
@@ -806,6 +939,18 @@ osmesa_choose_triangle_function(GLcontext *ctx)
 	    return (swrast_tri_func) flat_rgba_z_triangle;
 	}
     }
+
+    if (swrast->_RasterMask == DEPTH_BIT &&
+	ctx->Depth.Func == GL_LESS &&
+	ctx->Depth.Mask == GL_TRUE &&
+	ctx->Visual.depthBits > 16) {
+	if (ctx->Light.ShadeModel == GL_SMOOTH) {
+	    return (swrast_tri_func) smooth_rgba_z32_triangle;
+	} else {
+	    return (swrast_tri_func) flat_rgba_z32_triangle;
+	}
+    }
+
     return (swrast_tri_func) NULL;
 }
 

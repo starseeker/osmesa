@@ -24,6 +24,7 @@
 
 
 #include "glheader.h"
+#include <stdint.h>
 #include "context.h"
 #include "macros.h"
 #include "imports.h"
@@ -1305,12 +1306,44 @@ _swrast_clear_depth_buffer(GLcontext *ctx, struct gl_renderbuffer *rb)
 		}
 	    }
 	} else {
-	    GLint i, j;
+	    GLboolean optimized = GL_FALSE;
 	    ASSERT(rb->DataType == GL_UNSIGNED_INT);
-	    for (i = 0; i < height; i++) {
-		GLuint *dst = (GLuint *) rb->GetPointer(ctx, rb, x, y + i);
-		for (j = 0; j < width; j++) {
-		    dst[j] = clearValue;
+	    /* Optimized clear: when every byte of clearValue is identical
+	     * and rows are contiguous, a single memset covers the region.
+	     */
+	    if (x == 0 &&
+		width == (GLint) rb->Width &&
+		height > 0 &&
+		((clearValue & 0xff) == ((clearValue >> 8) & 0xff)) &&
+		((clearValue & 0xff) == ((clearValue >> 16) & 0xff)) &&
+		((clearValue & 0xff) == ((clearValue >> 24) & 0xff))) {
+		GLboolean contiguous = GL_TRUE;
+		if (height > 1) {
+		    GLuint *row0 = (GLuint *) rb->GetPointer(ctx, rb, 0, y);
+		    GLuint *row1 = (GLuint *) rb->GetPointer(ctx, rb, 0, y + 1);
+		    contiguous = ((uintptr_t) row1 - (uintptr_t) row0 ==
+				  (uintptr_t) rb->Width * sizeof(GLuint));
+		}
+		if (contiguous) {
+		    /* optimized case */
+		    GLuint *dst = (GLuint *) rb->GetPointer(ctx, rb, x, y);
+		    if ((size_t) height <=
+			SIZE_MAX / (size_t) width / sizeof(GLuint)) {
+			size_t byte_count =
+			    (size_t) width * (size_t) height * sizeof(GLuint);
+			memset(dst, (clearValue & 0xff), byte_count);
+			optimized = GL_TRUE;
+		    }
+		}
+	    }
+	    if (!optimized) {
+		/* general case */
+		GLint i, j;
+		for (i = 0; i < height; i++) {
+		    GLuint *dst = (GLuint *) rb->GetPointer(ctx, rb, x, y + i);
+		    for (j = 0; j < width; j++) {
+			dst[j] = clearValue;
+		    }
 		}
 	    }
 	}
