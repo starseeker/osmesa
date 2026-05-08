@@ -81,7 +81,7 @@ draw_scene(GLint width, GLint height, GLint instances, GLint frame)
 	    GLfloat angle;
 
 	    if (index >= instances)
-		return;
+		break;
 
 	    tx = ((GLfloat) col - ((GLfloat) side - 1.0f) * 0.5f) * spacing;
 	    ty = ((GLfloat) row - ((GLfloat) side - 1.0f) * 0.5f) * spacing;
