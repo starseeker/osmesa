@@ -3,7 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <sys/time.h>
+#endif
 
 #include "OSMesa/gl.h"
 #include "OSMesa/osmesa.h"
@@ -15,9 +19,17 @@
 static double
 now_seconds(void)
 {
+#ifdef _WIN32
+    LARGE_INTEGER counter;
+    LARGE_INTEGER frequency;
+    QueryPerformanceCounter(&counter);
+    QueryPerformanceFrequency(&frequency);
+    return (double) counter.QuadPart / (double) frequency.QuadPart;
+#else
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return (double) tv.tv_sec + (double) tv.tv_usec / 1000000.0;
+#endif
 }
 
 static void

@@ -1305,6 +1305,7 @@ _swrast_clear_depth_buffer(GLcontext *ctx, struct gl_renderbuffer *rb)
 		}
 	    }
 	} else {
+	    GLboolean optimized = GL_FALSE;
 	    ASSERT(rb->DataType == GL_UNSIGNED_INT);
 	    /* Optimized clear: when every byte of clearValue is identical
 	     * and rows are contiguous, a single memset covers the region.
@@ -1312,14 +1313,18 @@ _swrast_clear_depth_buffer(GLcontext *ctx, struct gl_renderbuffer *rb)
 	    if (height > 1 &&
 		((clearValue & 0xff) == ((clearValue >> 8) & 0xff)) &&
 		((clearValue & 0xff) == ((clearValue >> 16) & 0xff)) &&
-		((clearValue & 0xff) == ((clearValue >> 24) & 0xff)) &&
-		((GLuint *) rb->GetPointer(ctx, rb, 0, 0) + width ==
-		 (GLuint *) rb->GetPointer(ctx, rb, 0, 1))) {
-		/* optimized case */
-		GLuint *dst = (GLuint *) rb->GetPointer(ctx, rb, x, y);
-		size_t len = (size_t)width * height * sizeof(GLuint);
-		memset(dst, (clearValue & 0xff), len);
-	    } else {
+		((clearValue & 0xff) == ((clearValue >> 24) & 0xff))) {
+		GLuint *row0 = (GLuint *) rb->GetPointer(ctx, rb, 0, 0);
+		GLuint *row1 = (GLuint *) rb->GetPointer(ctx, rb, 0, 1);
+		if (row0 + width == row1) {
+		    /* optimized case */
+		    GLuint *dst = (GLuint *) rb->GetPointer(ctx, rb, x, y);
+		    size_t len = (size_t) width * height * sizeof(GLuint);
+		    memset(dst, (clearValue & 0xff), len);
+		    optimized = GL_TRUE;
+		}
+	    }
+	    if (!optimized) {
 		/* general case */
 		GLint i, j;
 		for (i = 0; i < height; i++) {
