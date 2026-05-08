@@ -1,5 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -204,7 +205,7 @@ main(int argc, char **argv)
 	return 1;
     }
 
-    if ((size_t) width > ((size_t) -1) / (size_t) height / 4) {
+    if ((size_t) width > SIZE_MAX / (size_t) height / 4) {
 	fprintf(stderr, "framebuffer size overflow\n");
 	OSMesaDestroyContext(ctx);
 	return 1;

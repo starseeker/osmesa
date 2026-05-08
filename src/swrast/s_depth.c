@@ -24,6 +24,7 @@
 
 
 #include "glheader.h"
+#include <stdint.h>
 #include "context.h"
 #include "macros.h"
 #include "imports.h"
@@ -1326,7 +1327,7 @@ _swrast_clear_depth_buffer(GLcontext *ctx, struct gl_renderbuffer *rb)
 		    /* optimized case */
 		    GLuint *dst = (GLuint *) rb->GetPointer(ctx, rb, x, y);
 		    if ((size_t) width <=
-			((size_t) -1) / (size_t) height / sizeof(GLuint)) {
+			SIZE_MAX / (size_t) height / sizeof(GLuint)) {
 			size_t byte_count =
 			    (size_t) width * (size_t) height * sizeof(GLuint);
 			memset(dst, (clearValue & 0xff), byte_count);
