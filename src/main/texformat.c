@@ -1605,10 +1605,10 @@ fetch_texel_2d_rgba_int8(const struct gl_texture_image *texImage,
 {
     const GLbyte *src = (const GLbyte *)texImage->Data
 	+ (k * texImage->Height + j) * texImage->Width * 4 + i * 4;
-    texel[RCOMP] = (GLchan)CLAMP(src[0], 0, CHAN_MAX);
-    texel[GCOMP] = (GLchan)CLAMP(src[1], 0, CHAN_MAX);
-    texel[BCOMP] = (GLchan)CLAMP(src[2], 0, CHAN_MAX);
-    texel[ACOMP] = (GLchan)CLAMP(src[3], 0, CHAN_MAX);
+    texel[RCOMP] = (GLchan)MAX2(src[0], 0);
+    texel[GCOMP] = (GLchan)MAX2(src[1], 0);
+    texel[BCOMP] = (GLchan)MAX2(src[2], 0);
+    texel[ACOMP] = (GLchan)MAX2(src[3], 0);
 }
 static void
 fetch_texel_2d_f_rgba_int8(const struct gl_texture_image *texImage,

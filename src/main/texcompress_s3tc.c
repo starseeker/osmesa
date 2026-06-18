@@ -54,6 +54,23 @@ static dxtCompressTexFuncExt ext_tx_compress_dxtn = NULL;
 
 typedef void (*GenericFunc)(void);
 
+static GLboolean
+s3tc_src_is_contiguous(const struct gl_pixelstore_attrib *srcPacking,
+		       GLint srcWidth, GLint srcComps,
+		       GLenum srcFormat, GLenum srcType)
+{
+    const GLint srcRowStride =
+	_mesa_image_row_stride(srcPacking, srcWidth, srcFormat, srcType);
+    const GLint tightRowStride = srcWidth * srcComps * (GLint) sizeof(GLchan);
+
+    return srcRowStride == tightRowStride &&
+	   srcPacking->SkipPixels == 0 &&
+	   srcPacking->SkipRows == 0 &&
+	   srcPacking->SkipImages == 0 &&
+	   srcPacking->ImageHeight == 0 &&
+	   !srcPacking->Invert;
+}
+
 void
 _mesa_init_texture_s3tc(GLcontext *ctx)
 {
@@ -83,7 +100,8 @@ texstore_rgb_dxt1(TEXSTORE_PARAMS)
     if (srcFormat != GL_RGB ||
 	srcType != CHAN_TYPE ||
 	ctx->_ImageTransferState ||
-	srcPacking->SwapBytes) {
+	srcPacking->SwapBytes ||
+	!s3tc_src_is_contiguous(srcPacking, srcWidth, 3, srcFormat, srcType)) {
 	/* convert image to RGB/GLchan */
 	tempImage = _mesa_make_temp_chan_image(ctx, dims,
 					       baseInternalFormat,
@@ -97,8 +115,6 @@ texstore_rgb_dxt1(TEXSTORE_PARAMS)
 	pixels = tempImage;
     } else {
 	pixels = (const GLchan *) srcAddr;
-	_mesa_image_row_stride(srcPacking, srcWidth, srcFormat,
-					      srcType) / sizeof(GLchan);
     }
 
     dst = _mesa_compressed_image_address(dstXoffset, dstYoffset, 0,
@@ -141,7 +157,8 @@ texstore_rgba_dxt1(TEXSTORE_PARAMS)
     if (srcFormat != GL_RGBA ||
 	srcType != CHAN_TYPE ||
 	ctx->_ImageTransferState ||
-	srcPacking->SwapBytes) {
+	srcPacking->SwapBytes ||
+	!s3tc_src_is_contiguous(srcPacking, srcWidth, 4, srcFormat, srcType)) {
 	/* convert image to RGBA/GLchan */
 	tempImage = _mesa_make_temp_chan_image(ctx, dims,
 					       baseInternalFormat,
@@ -155,8 +172,6 @@ texstore_rgba_dxt1(TEXSTORE_PARAMS)
 	pixels = tempImage;
     } else {
 	pixels = (const GLchan *) srcAddr;
-	_mesa_image_row_stride(srcPacking, srcWidth, srcFormat,
-					      srcType) / sizeof(GLchan);
     }
 
     dst = _mesa_compressed_image_address(dstXoffset, dstYoffset, 0,
@@ -198,7 +213,8 @@ texstore_rgba_dxt3(TEXSTORE_PARAMS)
     if (srcFormat != GL_RGBA ||
 	srcType != CHAN_TYPE ||
 	ctx->_ImageTransferState ||
-	srcPacking->SwapBytes) {
+	srcPacking->SwapBytes ||
+	!s3tc_src_is_contiguous(srcPacking, srcWidth, 4, srcFormat, srcType)) {
 	/* convert image to RGBA/GLchan */
 	tempImage = _mesa_make_temp_chan_image(ctx, dims,
 					       baseInternalFormat,
@@ -212,8 +228,6 @@ texstore_rgba_dxt3(TEXSTORE_PARAMS)
 	pixels = tempImage;
     } else {
 	pixels = (const GLchan *) srcAddr;
-	_mesa_image_row_stride(srcPacking, srcWidth, srcFormat,
-					      srcType) / sizeof(GLchan);
     }
 
     dst = _mesa_compressed_image_address(dstXoffset, dstYoffset, 0,
@@ -255,7 +269,8 @@ texstore_rgba_dxt5(TEXSTORE_PARAMS)
     if (srcFormat != GL_RGBA ||
 	srcType != CHAN_TYPE ||
 	ctx->_ImageTransferState ||
-	srcPacking->SwapBytes) {
+	srcPacking->SwapBytes ||
+	!s3tc_src_is_contiguous(srcPacking, srcWidth, 4, srcFormat, srcType)) {
 	/* convert image to RGBA/GLchan */
 	tempImage = _mesa_make_temp_chan_image(ctx, dims,
 					       baseInternalFormat,
@@ -269,8 +284,6 @@ texstore_rgba_dxt5(TEXSTORE_PARAMS)
 	pixels = tempImage;
     } else {
 	pixels = (const GLchan *) srcAddr;
-	_mesa_image_row_stride(srcPacking, srcWidth, srcFormat,
-					      srcType) / sizeof(GLchan);
     }
 
     dst = _mesa_compressed_image_address(dstXoffset, dstYoffset, 0,

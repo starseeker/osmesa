@@ -258,7 +258,7 @@ int main(int argc, char **argv)
     tNow = SDL_GetTicks();
     tLastFps = tNow;
 
-    SDL_SetWindowTitle(window, glGetString(GL_RENDERER));
+    SDL_SetWindowTitle(window, (const char *) glGetString(GL_RENDERER));
 
     // main loop:
     isRunning = 1;

@@ -156,8 +156,10 @@
  * Disabling tree-vectorization for the function body eliminates the bug.
  * The equivalent for MSVC is __declspec(noinline); no vectorization guard is
  * needed there because cl.exe does not auto-vectorize this loop in practice. */
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(__GNUC__) && !defined(__clang__)
 #  define NOINLINE __attribute__((noinline, optimize("no-tree-vectorize")))
+#elif defined(__clang__)
+#  define NOINLINE __attribute__((noinline))
 #elif defined(_MSC_VER) || defined(__MSC__)
 #  define NOINLINE __declspec(noinline)
 #else

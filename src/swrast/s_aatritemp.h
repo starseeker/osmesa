@@ -345,7 +345,7 @@
 	GLint iy;
 	for (iy = iyMin; iy < iyMax; iy++, x += dxdy) {
 	    GLint ix, left, startX = (GLint)(x + xAdj);
-	    GLuint count, n;
+	    GLuint n;
 	    GLfloat coverage = 0.0F;
 
 	    /* make sure we're not past the window edge */
@@ -363,7 +363,6 @@
 
 	    /* enter interior of triangle */
 	    ix = startX;
-	    count = 0;
 	    while (coverage > 0.0F) {
 		/* (cx,cy) = center of fragment */
 		const GLfloat cx = ix + 0.5F, cy = iy + 0.5F;
@@ -412,7 +411,6 @@
 		ATTRIB_LOOP_END
 #endif
 		ix--;
-		count++;
 		coverage = compute_coveragef(pMin, pMax, pMid, ix, iy);
 	    }
 

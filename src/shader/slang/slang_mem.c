@@ -73,19 +73,16 @@ _slang_new_mempool(GLuint initialSize)
 void
 _slang_delete_mempool(slang_mempool *pool)
 {
-    GLuint total = 0;
     while (pool) {
 	slang_mempool *next = pool->Next;
 	/*
 	printf("DELETE MEMPOOL %u / %u  count=%u largest=%u\n",
 	       pool->Used, pool->Size, pool->Count, pool->Largest);
 	*/
-	total += pool->Used;
 	free(pool->Data);
 	free(pool);
 	pool = next;
     }
-    /*printf("TOTAL ALLOCATED: %u\n", total);*/
 }
 
 

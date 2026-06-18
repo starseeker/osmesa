@@ -88,7 +88,7 @@ endif (SDL2_FOUND)
 find_package(X11)
 if (X11_FOUND)
   find_package(TCL)
-  if (TCL_FOUND)
+  if (TCL_FOUND AND TK_FOUND)
     include_directories(
       ${TCL_INCLUDE_PATH}
       ${X11_INCLUDE_DIR}
@@ -96,7 +96,7 @@ if (X11_FOUND)
     add_executable(tcltest tcl.cpp)
     target_link_libraries(tcltest osmesa ${TCL_LIBRARY} ${TK_LIBRARY} ${M_LIBRARY} ${X11_LIBRARIES})
     set_property(TARGET tcltest APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
-  endif (TCL_FOUND)
+  endif ()
 endif (X11_FOUND)
 
 # Local Variables:
