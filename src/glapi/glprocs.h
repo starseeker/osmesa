@@ -1127,39 +1127,39 @@ static const char gl_string_table[] =
 #else
 #  define MNAME(x) gl##x
 #endif
-extern void MNAME(_dispatch_stub_562)(GLenum pname, GLfloat * params);
-extern void MNAME(_dispatch_stub_563)(GLenum pname, GLint * params);
-extern void MNAME(_dispatch_stub_564)(GLenum pname, GLfloat param);
-extern void MNAME(_dispatch_stub_565)(GLenum pname, const GLfloat * params);
-extern void MNAME(_dispatch_stub_566)(GLenum pname, GLint param);
-extern void MNAME(_dispatch_stub_567)(GLenum pname, const GLint * params);
-extern void MNAME(_dispatch_stub_568)(GLclampf value, GLboolean invert);
-extern void MNAME(_dispatch_stub_569)(GLenum pattern);
-extern void MNAME(_dispatch_stub_580)(GLenum pname, GLdouble * params);
-extern void MNAME(_dispatch_stub_581)(GLenum pname, GLfloat * params);
-extern void MNAME(_dispatch_stub_606)(GLenum mode);
-extern void MNAME(_dispatch_stub_648)(const GLenum * mode, const GLint * first, const GLsizei * count, GLsizei primcount, GLint modestride);
-extern void MNAME(_dispatch_stub_649)(const GLenum * mode, const GLsizei * count, GLenum type, const GLvoid * const * indices, GLsizei primcount, GLint modestride);
-extern void MNAME(_dispatch_stub_650)(GLsizei n, const GLuint * fences);
-extern void MNAME(_dispatch_stub_651)(GLuint fence);
-extern void MNAME(_dispatch_stub_652)(GLsizei n, GLuint * fences);
-extern void MNAME(_dispatch_stub_653)(GLuint fence, GLenum pname, GLint * params);
-extern GLboolean MNAME(_dispatch_stub_654)(GLuint fence);
-extern void MNAME(_dispatch_stub_655)(GLuint fence, GLenum condition);
-extern GLboolean MNAME(_dispatch_stub_656)(GLuint fence);
-extern void MNAME(_dispatch_stub_737)(GLenum face);
-extern void MNAME(_dispatch_stub_738)(GLuint array);
-extern void MNAME(_dispatch_stub_739)(GLsizei n, const GLuint * arrays);
-extern void MNAME(_dispatch_stub_740)(GLsizei n, GLuint * arrays);
-extern GLboolean MNAME(_dispatch_stub_741)(GLuint array);
-extern void MNAME(_dispatch_stub_748)(GLclampd zmin, GLclampd zmax);
-extern void MNAME(_dispatch_stub_749)(GLenum modeRGB, GLenum modeA);
-extern void MNAME(_dispatch_stub_767)(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
-extern void MNAME(_dispatch_stub_768)(GLenum frontfunc, GLenum backfunc, GLint ref, GLuint mask);
-extern void MNAME(_dispatch_stub_769)(GLenum target, GLuint index, GLsizei count, const GLfloat * params);
-extern void MNAME(_dispatch_stub_770)(GLenum target, GLuint index, GLsizei count, const GLfloat * params);
-extern void MNAME(_dispatch_stub_771)(GLuint id, GLenum pname, GLint64EXT * params);
-extern void MNAME(_dispatch_stub_772)(GLuint id, GLenum pname, GLuint64EXT * params);
+extern void GLAPIENTRY MNAME(_dispatch_stub_562)(GLenum pname, GLfloat * params);
+extern void GLAPIENTRY MNAME(_dispatch_stub_563)(GLenum pname, GLint * params);
+extern void GLAPIENTRY MNAME(_dispatch_stub_564)(GLenum pname, GLfloat param);
+extern void GLAPIENTRY MNAME(_dispatch_stub_565)(GLenum pname, const GLfloat * params);
+extern void GLAPIENTRY MNAME(_dispatch_stub_566)(GLenum pname, GLint param);
+extern void GLAPIENTRY MNAME(_dispatch_stub_567)(GLenum pname, const GLint * params);
+extern void GLAPIENTRY MNAME(_dispatch_stub_568)(GLclampf value, GLboolean invert);
+extern void GLAPIENTRY MNAME(_dispatch_stub_569)(GLenum pattern);
+extern void GLAPIENTRY MNAME(_dispatch_stub_580)(GLenum pname, GLdouble * params);
+extern void GLAPIENTRY MNAME(_dispatch_stub_581)(GLenum pname, GLfloat * params);
+extern void GLAPIENTRY MNAME(_dispatch_stub_606)(GLenum mode);
+extern void GLAPIENTRY MNAME(_dispatch_stub_648)(const GLenum * mode, const GLint * first, const GLsizei * count, GLsizei primcount, GLint modestride);
+extern void GLAPIENTRY MNAME(_dispatch_stub_649)(const GLenum * mode, const GLsizei * count, GLenum type, const GLvoid * const * indices, GLsizei primcount, GLint modestride);
+extern void GLAPIENTRY MNAME(_dispatch_stub_650)(GLsizei n, const GLuint * fences);
+extern void GLAPIENTRY MNAME(_dispatch_stub_651)(GLuint fence);
+extern void GLAPIENTRY MNAME(_dispatch_stub_652)(GLsizei n, GLuint * fences);
+extern void GLAPIENTRY MNAME(_dispatch_stub_653)(GLuint fence, GLenum pname, GLint * params);
+extern GLboolean GLAPIENTRY MNAME(_dispatch_stub_654)(GLuint fence);
+extern void GLAPIENTRY MNAME(_dispatch_stub_655)(GLuint fence, GLenum condition);
+extern GLboolean GLAPIENTRY MNAME(_dispatch_stub_656)(GLuint fence);
+extern void GLAPIENTRY MNAME(_dispatch_stub_737)(GLenum face);
+extern void GLAPIENTRY MNAME(_dispatch_stub_738)(GLuint array);
+extern void GLAPIENTRY MNAME(_dispatch_stub_739)(GLsizei n, const GLuint * arrays);
+extern void GLAPIENTRY MNAME(_dispatch_stub_740)(GLsizei n, GLuint * arrays);
+extern GLboolean GLAPIENTRY MNAME(_dispatch_stub_741)(GLuint array);
+extern void GLAPIENTRY MNAME(_dispatch_stub_748)(GLclampd zmin, GLclampd zmax);
+extern void GLAPIENTRY MNAME(_dispatch_stub_749)(GLenum modeRGB, GLenum modeA);
+extern void GLAPIENTRY MNAME(_dispatch_stub_767)(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
+extern void GLAPIENTRY MNAME(_dispatch_stub_768)(GLenum frontfunc, GLenum backfunc, GLint ref, GLuint mask);
+extern void GLAPIENTRY MNAME(_dispatch_stub_769)(GLenum target, GLuint index, GLsizei count, const GLfloat * params);
+extern void GLAPIENTRY MNAME(_dispatch_stub_770)(GLenum target, GLuint index, GLsizei count, const GLfloat * params);
+extern void GLAPIENTRY MNAME(_dispatch_stub_771)(GLuint id, GLenum pname, GLint64EXT * params);
+extern void GLAPIENTRY MNAME(_dispatch_stub_772)(GLuint id, GLenum pname, GLuint64EXT * params);
 
 static const glprocs_table_t static_functions[] = {
     NAME_FUNC_OFFSET(0, glNewList, _gloffset_NewList),
