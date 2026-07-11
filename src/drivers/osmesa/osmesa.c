@@ -93,11 +93,11 @@ get_string(GLcontext *ctx, GLenum name)
     switch (name) {
 	case GL_RENDERER:
 #if CHAN_BITS == 32
-	    return (const GLubyte *) "Mesa OffScreen32";
+	    return (const GLubyte *) "Obol OSMesa32 Software Rasterizer";
 #elif CHAN_BITS == 16
-	    return (const GLubyte *) "Mesa OffScreen16";
+	    return (const GLubyte *) "Obol OSMesa16 Software Rasterizer";
 #else
-	    return (const GLubyte *) "Mesa OffScreen";
+	    return (const GLubyte *) "Obol OSMesa Software Rasterizer";
 #endif
 	default:
 	    return NULL;
