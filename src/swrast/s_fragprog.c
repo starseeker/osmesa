@@ -233,7 +233,11 @@ _swrast_exec_fragment_program(GLcontext *ctx, SWspan *span)
 
     run_program(ctx, span, 0, span->end);
 
-    if (program->Base.OutputsWritten & (1 << FRAG_RESULT_COLR)) {
+    /* gl_FragData[] writes are color outputs too.  Without marking the span
+     * as carrying shader-produced RGBA here, the generic span path restores
+     * the interpolated fixed-function color over gl_FragData[0]. */
+    if ((program->Base.OutputsWritten & (1 << FRAG_RESULT_COLR)) ||
+	(program->Base.OutputsWritten >> FRAG_RESULT_DATA0)) {
 	span->interpMask &= ~SPAN_RGBA;
 	span->arrayMask |= SPAN_RGBA;
     }

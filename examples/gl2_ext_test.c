@@ -2266,6 +2266,260 @@ test_glsl_shader(int W, int H)
 }
 
 /* ------------------------------------------------------------------ */
+/* Test 18a: GLSL 1.20 uniform structures                             */
+/* ------------------------------------------------------------------ */
+static void
+test_glsl_uniform_struct(int W, int H)
+{
+    static const char struct_decls[] =
+	"struct Nested { vec4 color; };\n"
+	"struct Params {\n"
+	"    mat4 vertexTransform;\n"
+	"    mat3 textureTransform;\n"
+	"    float opacity;\n"
+	"    int swizzle;\n"
+	"    Nested nested;\n"
+	"};\n"
+	"uniform Params params;\n";
+    char vert[1024];
+    char frag[1024];
+    const GLfloat mat4_identity[16] = {
+	1, 0, 0, 0,
+	0, 1, 0, 0,
+	0, 0, 1, 0,
+	0, 0, 0, 1
+    };
+    const GLfloat mat3_identity[9] = {
+	1, 0, 0,
+	0, 1, 0,
+	0, 0, 1
+    };
+    const GLfloat color[4] = { 0.1f, 0.8f, 0.2f, 1.0f };
+    const char *names[] = {
+	"params.vertexTransform",
+	"params.textureTransform",
+	"params.opacity",
+	"params.swizzle",
+	"params.nested.color"
+    };
+    GLint locations[5];
+    GLubyte px[4] = { 0 };
+    GLuint prog;
+    GLuint i;
+
+    printf("Test 18a: GLSL 1.20 uniform structures\n");
+    clear_errors();
+
+    snprintf(vert, sizeof(vert),
+	"#version 120\n%s"
+	"void main() {\n"
+	"    gl_Position = params.vertexTransform * gl_Vertex;\n"
+	"}\n", struct_decls);
+    snprintf(frag, sizeof(frag),
+	"#version 120\n%s"
+	"void main() {\n"
+	"    if (params.swizzle == 0)\n"
+	"        gl_FragColor = vec4(params.nested.color.rgb * params.opacity, 1.0);\n"
+	"    else\n"
+	"        gl_FragColor = params.nested.color.bgra;\n"
+	"}\n", struct_decls);
+
+    prog = make_program(vert, frag);
+    if (!prog) {
+	fprintf(stderr, "  FAIL: uniform-structure program compilation/link failed\n");
+	g_failed++;
+	return;
+    }
+
+    for (i = 0; i < sizeof(names) / sizeof(names[0]); i++) {
+	locations[i] = glGetUniformLocation(prog, names[i]);
+	if (locations[i] < 0) {
+	    fprintf(stderr, "  FAIL: no location for %s\n", names[i]);
+	    g_failed++;
+	    glDeleteProgram(prog);
+	    return;
+	}
+    }
+
+    glUseProgram(prog);
+    glUniformMatrix4fv(locations[0], 1, GL_FALSE, mat4_identity);
+    glUniformMatrix3fv(locations[1], 1, GL_FALSE, mat3_identity);
+    glUniform1f(locations[2], 1.0f);
+    glUniform1i(locations[3], 0);
+    glUniform4fv(locations[4], 1, color);
+
+    glViewport(0, 0, W, H);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBegin(GL_QUADS);
+    glVertex2f(-1.0f, -1.0f);
+    glVertex2f( 1.0f, -1.0f);
+    glVertex2f( 1.0f,  1.0f);
+    glVertex2f(-1.0f,  1.0f);
+    glEnd();
+    glFinish();
+    glReadPixels(W / 2, H / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+
+    glUseProgram(0);
+    glDeleteProgram(prog);
+
+    if (check_gl_error("glsl_uniform_struct")) {
+	fprintf(stderr, "  FAIL: GL error during uniform-structure test\n");
+	g_failed++;
+	return;
+    }
+    if (px[0] < 15 || px[0] > 40 ||
+	px[1] < 180 || px[1] > 225 ||
+	px[2] < 35 || px[2] > 70) {
+	fprintf(stderr,
+		"  FAIL: uniform-structure output (%d,%d,%d) expected ~(26,204,51)\n",
+		px[0], px[1], px[2]);
+	g_failed++;
+    } else {
+	printf("  PASS: uniform-structure output (%d,%d,%d)\n",
+	       px[0], px[1], px[2]);
+    }
+}
+
+/* Exercise the same GLSL 1.20 shape used by Qt's backing-store compositor:
+ * separate structure instances per stage, two generic attributes, a transformed
+ * texture coordinate, and a sampler bound to texture unit one.
+ */
+static void
+test_glsl_uniform_struct_texture(int W, int H)
+{
+    static const char *vert =
+	"#version 120\n"
+	"struct Params { mat4 vertexTransform; mat3 textureTransform; float opacity; int swizzle; };\n"
+	"uniform Params vertexParams;\n"
+	"attribute vec3 position;\n"
+	"attribute vec2 texcoord;\n"
+	"varying vec2 v_texcoord;\n"
+	"void main() {\n"
+	"    v_texcoord = (vertexParams.textureTransform * vec3(texcoord, 1.0)).xy;\n"
+	"    gl_Position = vertexParams.vertexTransform * vec4(position, 1.0);\n"
+	"}\n";
+    static const char *frag =
+	"#version 120\n"
+	"struct Params { mat4 vertexTransform; mat3 textureTransform; float opacity; int swizzle; };\n"
+	"uniform Params fragmentParams;\n"
+	"uniform sampler2D textureSampler;\n"
+	"varying vec2 v_texcoord;\n"
+	"void main() {\n"
+	"    vec4 c = texture2D(textureSampler, v_texcoord);\n"
+	"    c.a *= fragmentParams.opacity;\n"
+	"    if (fragmentParams.swizzle == 0) gl_FragData[0] = c;\n"
+	"    else gl_FragData[0] = c.bgra;\n"
+	"}\n";
+    static const GLfloat vertex_data[] = {
+	-1, -1, 0,  0, 0,
+	-1,  1, 0,  0, 1,
+	 1, -1, 0,  1, 0,
+	-1,  1, 0,  0, 1,
+	 1, -1, 0,  1, 0,
+	 1,  1, 0,  1, 1
+    };
+    static const GLubyte texel[] = { 26, 204, 51, 255 };
+    static const GLfloat mat4_identity[] = {
+	1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1
+    };
+    static const GLfloat mat3_identity[] = {
+	1, 0, 0,  0, 1, 0,  0, 0, 1
+    };
+    GLint vertex_transform;
+    GLint texture_transform;
+    GLint opacity;
+    GLint swizzle;
+    GLint sampler;
+    GLint position_attr;
+    GLint texcoord_attr;
+    GLuint texture = 0;
+    GLuint vbo = 0;
+    GLuint prog;
+    GLubyte px[4] = { 0 };
+
+    printf("Test 18aa: GLSL uniform-structure texture compositor\n");
+    clear_errors();
+    prog = make_program(vert, frag);
+    if (!prog) {
+	fprintf(stderr, "  FAIL: compositor-style program compilation/link failed\n");
+	g_failed++;
+	return;
+    }
+
+    glBindAttribLocation(prog, 0, "position");
+    glBindAttribLocation(prog, 1, "texcoord");
+
+    vertex_transform = glGetUniformLocation(prog, "vertexParams.vertexTransform");
+    texture_transform = glGetUniformLocation(prog, "vertexParams.textureTransform");
+    opacity = glGetUniformLocation(prog, "fragmentParams.opacity");
+    swizzle = glGetUniformLocation(prog, "fragmentParams.swizzle");
+    sampler = glGetUniformLocation(prog, "textureSampler");
+    position_attr = glGetAttribLocation(prog, "position");
+    texcoord_attr = glGetAttribLocation(prog, "texcoord");
+    if (vertex_transform < 0 || texture_transform < 0 || opacity < 0 ||
+	swizzle < 0 || sampler < 0 || position_attr < 0 || texcoord_attr < 0) {
+	fprintf(stderr, "  FAIL: compositor-style shader locations unavailable\n");
+	g_failed++;
+	glDeleteProgram(prog);
+	return;
+    }
+
+    glGenTextures(1, &texture);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA,
+		 GL_UNSIGNED_BYTE, texel);
+
+    glUseProgram(prog);
+    glUniformMatrix4fv(vertex_transform, 1, GL_FALSE, mat4_identity);
+    glUniformMatrix3fv(texture_transform, 1, GL_FALSE, mat3_identity);
+    glUniform1f(opacity, 1.0f);
+    glUniform1i(swizzle, 0);
+    glUniform1i(sampler, 1);
+    glViewport(0, 0, W, H);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data,
+		 GL_STATIC_DRAW);
+    glEnableVertexAttribArray(position_attr);
+    glEnableVertexAttribArray(texcoord_attr);
+    glVertexAttribPointer(position_attr, 3, GL_FLOAT, GL_FALSE,
+			 5 * sizeof(GLfloat), (const GLvoid *) 0);
+    glVertexAttribPointer(texcoord_attr, 2, GL_FLOAT, GL_FALSE,
+			 5 * sizeof(GLfloat),
+			 (const GLvoid *) (3 * sizeof(GLfloat)));
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glFinish();
+    glReadPixels(W / 2, H / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+
+    glDisableVertexAttribArray(position_attr);
+    glDisableVertexAttribArray(texcoord_attr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDeleteBuffers(1, &vbo);
+    glUseProgram(0);
+    glDeleteTextures(1, &texture);
+    glActiveTexture(GL_TEXTURE0);
+    glDeleteProgram(prog);
+
+    if (check_gl_error("glsl_uniform_struct_texture") ||
+	px[0] < 15 || px[0] > 40 || px[1] < 180 || px[1] > 225 ||
+	px[2] < 35 || px[2] > 70) {
+	fprintf(stderr,
+		"  FAIL: compositor-style output (%d,%d,%d), expected ~(26,204,51)\n",
+		px[0], px[1], px[2]);
+	g_failed++;
+    } else {
+	printf("  PASS: compositor-style output (%d,%d,%d)\n",
+	       px[0], px[1], px[2]);
+    }
+}
+
+/* ------------------------------------------------------------------ */
 /* Test 18b: glDrawElements with GLSL program (generic attrib 0)       */
 /* ------------------------------------------------------------------ */
 static void
@@ -2851,6 +3105,8 @@ main(void)
     test_vertex_program(W, H);
     test_fragment_program(W, H);
     test_glsl_shader(W, H);
+    test_glsl_uniform_struct(W, H);
+    test_glsl_uniform_struct_texture(W, H);
     test_glsl_drawelements(W, H);
     test_glsl_line_varying(W, H);
     test_occlusion_query(W, H);

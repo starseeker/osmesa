@@ -114,10 +114,10 @@ A note about supported OpenGL versions:
 Most documentation for the 7.x series of Mesa3D mentions OpenGL 2.1.  The reason
 libosmesa does not report that version is the ARB_shading_language_120 feature
 was "not quite done" in Mesa3D v7.0.4.  ARB_pixel_buffer_object and
-EXT_texture_sRGB ARE present, but without GLSL v1.20 proper OpenGL v2.1 support
-is a no-go.  Implementing what is missing (or backporting it from newer Mesa3D
-versions) would most likely be a significant effort, and is not currently in
-the scope of the libosmesa effort.
+EXT_texture_sRGB are present, and this fork supports GLSL 1.20 user-declared
+uniform structures whose scalar, vector, matrix, sampler, or nested-structure
+members are accessed individually.  Complete GLSL 1.20 conformance has not been
+audited, however, so advertising OpenGL 2.1 would still be premature.
 
 A note about GL_ARB_framebuffer_object under OpenGL 2.0:
 

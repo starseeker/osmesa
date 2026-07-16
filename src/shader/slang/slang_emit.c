@@ -1502,9 +1502,14 @@ emit_array_element(slang_emit_info *emitInfo, slang_ir_node *n)
  * Resolve storage for accessing a structure field.
  */
 static struct prog_instruction *
-    emit_struct_field(slang_emit_info *emitInfo, slang_ir_node *n)
+emit_struct_field(slang_emit_info *emitInfo, slang_ir_node *n)
 {
-    if (n->Store->File == PROGRAM_STATE_VAR) {
+    if (n->UniformName && n->Store->Index >= 0) {
+	/* User-defined uniform structures are flattened into separately named
+	 * leaves, so their storage is already fully resolved during codegen.
+	 */
+	return NULL;
+    } else if (n->Store->File == PROGRAM_STATE_VAR) {
 	n->Store->Index = _slang_alloc_statevar(n, emitInfo->prog->Parameters);
 	if (n->Store->Index < 0) {
 	    slang_info_log_error(emitInfo->log, "Error parsing state variable");

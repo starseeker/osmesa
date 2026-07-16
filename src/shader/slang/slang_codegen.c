@@ -59,6 +59,9 @@
 static slang_ir_node *
 _slang_gen_operation(slang_assemble_ctx * A, slang_operation *oper);
 
+static GLint
+sampler_to_texture_index(slang_type_specifier_type type);
+
 
 static USED GLboolean
 is_sampler_type(const slang_fully_specified_type *t)
@@ -76,6 +79,92 @@ is_sampler_type(const slang_fully_specified_type *t)
 	default:
 	    return GL_FALSE;
     }
+}
+
+
+/**
+ * Allocate a qualified structure-member name from the compiler mempool.
+ */
+static char *
+qualify_uniform_name(const char *prefix, const char *field)
+{
+    const size_t prefix_len = strlen(prefix);
+    const size_t field_len = strlen(field);
+    char *name = (char *) _slang_alloc(prefix_len + field_len + 2);
+
+    if (name)
+	_mesa_sprintf(name, "%s.%s", prefix, field);
+    return name;
+}
+
+
+/**
+ * Recursively add the basic leaves of a user-defined uniform structure.
+ * The OpenGL API exposes structure uniforms by their qualified leaf names,
+ * not by the aggregate name.
+ */
+static GLboolean
+add_uniform_struct(struct gl_program *prog, const slang_type_specifier *spec,
+		   const char *prefix)
+{
+    GLuint i;
+
+    assert(spec->type == SLANG_SPEC_STRUCT);
+    for (i = 0; i < spec->_struct->fields->num_variables; i++) {
+	const slang_variable *field = spec->_struct->fields->variables[i];
+	const char *field_name = (const char *) field->a_name;
+	char *name = qualify_uniform_name(prefix, field_name);
+	GLenum datatype;
+	GLint location;
+	GLint size;
+
+	if (!name)
+	    return GL_FALSE;
+	if (field->array_len) {
+	    /* Keep rejecting arrays until the array-location API path can
+	     * represent them without changing existing uniform-array behavior.
+	     */
+	    return GL_FALSE;
+	}
+	if (field->type.specifier.type == SLANG_SPEC_STRUCT) {
+	    if (!add_uniform_struct(prog, &field->type.specifier, name))
+		return GL_FALSE;
+	    continue;
+	}
+
+	datatype = _slang_gltype_from_specifier(&field->type.specifier);
+	if (datatype == GL_NONE)
+	    return GL_FALSE;
+	if (is_sampler_type(&field->type)) {
+	    location = _mesa_add_sampler(prog->Parameters, name, datatype);
+	} else {
+	    size = _slang_sizeof_type_specifier(&field->type.specifier);
+	    location = _mesa_add_uniform(prog->Parameters, name, size, datatype);
+	}
+	if (location < 0)
+	    return GL_FALSE;
+    }
+    return GL_TRUE;
+}
+
+
+/**
+ * Resolve a qualified basic uniform leaf to its program parameter storage.
+ */
+static slang_ir_storage *
+uniform_leaf_storage(slang_assemble_ctx *A, const slang_typeinfo *type,
+		     const char *name)
+{
+    const GLint location = _mesa_lookup_parameter_index(A->program->Parameters,
+							 -1, name);
+    const GLint sampler = sampler_to_texture_index(type->spec.type);
+    const GLint size = _slang_sizeof_type_specifier(&type->spec);
+
+    if (location < 0)
+	return NULL;
+    if (sampler >= 0)
+	return _slang_new_ir_storage(PROGRAM_SAMPLER, location, sampler);
+    return _slang_new_ir_storage(PROGRAM_UNIFORM, location, size);
 }
 
 
@@ -647,6 +736,9 @@ new_var(slang_assemble_ctx *A, slang_operation *oper, slang_atom name)
     n = new_node0(IR_VAR);
     if (n) {
 	_slang_attach_storage(n, var);
+	if (var->type.qualifier == SLANG_QUAL_UNIFORM &&
+	    var->type.specifier.type == SLANG_SPEC_STRUCT)
+	    n->UniformName = (const char *) var->a_name;
     }
     return n;
 }
@@ -2353,9 +2445,29 @@ _slang_gen_field(slang_assemble_ctx * A, slang_operation *oper)
 	    n->Field = (char *) oper->a_id;
 	    n->FieldOffset = fieldOffset;
 	    assert(n->FieldOffset >= 0);
-	    n->Store = _slang_new_ir_storage(base->Store->File,
-					     base->Store->Index,
-					     fieldSize);
+	    if (base->UniformName) {
+		char *name = qualify_uniform_name(base->UniformName,
+					  (const char *) oper->a_id);
+		if (!name)
+		    return NULL;
+		n->UniformName = name;
+		if (field_ti.spec.type == SLANG_SPEC_STRUCT) {
+		    n->Store = _slang_new_ir_storage(PROGRAM_UNIFORM, -1,
+						     fieldSize);
+		} else {
+		    n->Store = uniform_leaf_storage(A, &field_ti, name);
+		    if (!n->Store) {
+			slang_info_log_error(A->log,
+					     "uniform structure member %s has no storage",
+					     name);
+			return NULL;
+		    }
+		}
+	    } else {
+		n->Store = _slang_new_ir_storage(base->Store->File,
+						 base->Store->Index,
+						 fieldSize);
+	    }
 	}
 	return n;
 
@@ -2829,26 +2941,20 @@ _slang_codegen_global_variable(slang_assemble_ctx *A, slang_variable *var,
 	    /* user-defined uniform */
 	    if (datatype == GL_NONE) {
 		if (var->type.specifier.type == SLANG_SPEC_STRUCT) {
-		    _mesa_problem(NULL, "user-declared uniform structs not supported yet");
-		    /* XXX what we need to do is unroll the struct into its
-		     * basic types, creating a uniform variable for each.
-		     * For example:
-		     * struct foo {
-		     *   vec3 a;
-		     *   vec4 b;
-		     * };
-		     * uniform foo f;
-		     *
-		     * Should produce uniforms:
-		     * "f.a"  (GL_FLOAT_VEC3)
-		     * "f.b"  (GL_FLOAT_VEC4)
-		     */
+		    if (var->array_len ||
+			!add_uniform_struct(prog, &var->type.specifier, varName)) {
+			slang_info_log_error(A->log,
+					     "unsupported member in uniform structure %s",
+					     varName);
+			return GL_FALSE;
+		    }
+		    store = _slang_new_ir_storage(PROGRAM_UNIFORM, -1, size);
 		} else {
 		    slang_info_log_error(A->log,
 					 "invalid datatype for uniform variable %s",
 					 (char *) var->a_name);
+		    return GL_FALSE;
 		}
-		return GL_FALSE;
 	    } else {
 		GLint uniformLoc = _mesa_add_uniform(prog->Parameters, varName,
 						     size, datatype);
