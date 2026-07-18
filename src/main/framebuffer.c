@@ -647,20 +647,30 @@ update_color_read_buffer(GLcontext *ctx, struct gl_framebuffer *fb)
 void
 _mesa_update_framebuffer(GLcontext *ctx)
 {
-    struct gl_framebuffer *fb = ctx->DrawBuffer;
+    struct gl_framebuffer *drawFb = ctx->DrawBuffer;
+    struct gl_framebuffer *readFb = ctx->ReadBuffer;
 
     /* Completeness only matters for user-created framebuffers */
-    if (fb->Name != 0) {
-	_mesa_test_framebuffer_completeness(ctx, fb);
-	_mesa_update_framebuffer_visual(fb);
+    if (drawFb->Name != 0) {
+	_mesa_test_framebuffer_completeness(ctx, drawFb);
+	_mesa_update_framebuffer_visual(drawFb);
+    }
+    if (readFb != drawFb && readFb->Name != 0) {
+	_mesa_test_framebuffer_completeness(ctx, readFb);
+	_mesa_update_framebuffer_visual(readFb);
     }
 
-    update_color_draw_buffers(ctx, fb);
-    update_color_read_buffer(ctx, fb);
-    _mesa_update_depth_buffer(ctx, fb, BUFFER_DEPTH);
-    _mesa_update_stencil_buffer(ctx, fb, BUFFER_STENCIL);
+    update_color_draw_buffers(ctx, drawFb);
+    update_color_read_buffer(ctx, readFb);
+    _mesa_update_depth_buffer(ctx, drawFb, BUFFER_DEPTH);
+    _mesa_update_stencil_buffer(ctx, drawFb, BUFFER_STENCIL);
+    if (readFb != drawFb) {
+	_mesa_update_depth_buffer(ctx, readFb, BUFFER_DEPTH);
+	_mesa_update_stencil_buffer(ctx, readFb, BUFFER_STENCIL);
+	compute_depth_max(readFb);
+    }
 
-    compute_depth_max(fb);
+    compute_depth_max(drawFb);
 }
 
 
