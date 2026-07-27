@@ -75,6 +75,45 @@ _mesa_execute_program(GLcontext *ctx,
 		      const struct gl_program *program,
 		      struct gl_program_machine *machine);
 
+/**
+ * Pre-resolved straight-line program used by the software vertex pipeline.
+ * The object is intentionally opaque: it is valid only while the machine
+ * passed to _mesa_create_fast_program remains at the same address.
+ */
+struct gl_program_fast;
+
+extern struct gl_program_fast *
+_mesa_create_fast_program(GLcontext *ctx,
+			  const struct gl_program *program,
+			  struct gl_program_machine *machine);
+
+extern void
+_mesa_destroy_fast_program(struct gl_program_fast *program);
+
+extern GLboolean
+_mesa_execute_fast_program(const struct gl_program_fast *program);
+
+/**
+ * Execute the largest four-vertex prefix of a straight-line fast program.
+ *
+ * Input and output strides are byte strides.  The returned count is the
+ * number of vertices written; callers retain the scalar path for any tail or
+ * for programs whose control flow cannot be executed in lockstep.
+ */
+extern GLuint
+_mesa_execute_fast_program_batch(
+	const struct gl_program_fast *program,
+	GLuint count,
+	GLuint numInputs,
+	const GLuint *inputAttributes,
+	const GLuint *inputSizes,
+	const GLuint *inputStrides,
+	const GLubyte *const *inputData,
+	GLuint numOutputs,
+	const GLuint *outputAttributes,
+	GLubyte *const *outputData,
+	const GLuint *outputStrides);
+
 
 #endif /* PROG_EXECUTE_H */
 

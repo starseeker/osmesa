@@ -560,6 +560,71 @@ emit_arith(slang_emit_info *emitInfo, slang_ir_node *n)
 
 
 /**
+ * Emit a square matrix times vector multiplication as a linear combination
+ * of the matrix's columns.  GLSL matrices are column-major, so this reads
+ * uniform columns directly and needs only one MUL and N-1 MAD instructions.
+ */
+static struct prog_instruction *
+emit_mat_vec_mul(slang_emit_info *emitInfo, slang_ir_node *n)
+{
+    slang_ir_storage matrixSource;
+    slang_ir_storage vectorSource;
+    slang_ir_storage resultSource;
+    struct prog_instruction *inst = NULL;
+    GLuint vectorSwizzle;
+    GLuint resultMask;
+    GLint dimension;
+    GLint column;
+
+    emit(emitInfo, n->Children[0]);
+    emit(emitInfo, n->Children[1]);
+    if (!n->Children[0]->Store || !n->Children[1]->Store)
+	return NULL;
+
+    dimension = (GLint) n->Value[0];
+    assert(dimension >= 2 && dimension <= 4);
+    assert(n->Children[0]->Store->Size == dimension * dimension);
+
+    if (!n->Store)
+	if (!alloc_temp_storage(emitInfo, n, dimension))
+	    return NULL;
+
+    matrixSource = *n->Children[0]->Store;
+    vectorSource = *n->Children[1]->Store;
+    resultSource = *n->Store;
+    matrixSource.Size = 4;
+    matrixSource.Swizzle = SWIZZLE_XYZW;
+    resultSource.Size = 4;
+    resultSource.Swizzle = SWIZZLE_XYZW;
+    vectorSwizzle = vectorSource.Swizzle == SWIZZLE_NOOP
+	? SWIZZLE_XYZW : vectorSource.Swizzle;
+    vectorSource.Size = 1;
+    resultMask = (1U << dimension) - 1U;
+
+    for (column = 0; column < dimension; column++) {
+	const GLuint component = GET_SWZ(vectorSwizzle, column);
+
+	matrixSource.Index = n->Children[0]->Store->Index + column;
+	vectorSource.Swizzle = MAKE_SWIZZLE4(component, component,
+					     component, component);
+	inst = new_instruction(emitInfo,
+			       column == 0 ? OPCODE_MUL : OPCODE_MAD);
+	inst->DstReg.File = n->Store->File;
+	inst->DstReg.Index = n->Store->Index;
+	inst->DstReg.WriteMask = resultMask;
+	storage_to_src_reg(&inst->SrcReg[0], &matrixSource);
+	storage_to_src_reg(&inst->SrcReg[1], &vectorSource);
+	if (column != 0)
+	    storage_to_src_reg(&inst->SrcReg[2], &resultSource);
+    }
+
+    free_temp_storage(emitInfo->vt, n->Children[0]);
+    free_temp_storage(emitInfo->vt, n->Children[1]);
+    return inst;
+}
+
+
+/**
  * Emit code for == and != operators.  These could normally be handled
  * by emit_arith() except we need to be able to handle structure comparisons.
  */
@@ -1486,13 +1551,76 @@ emit_array_element(slang_emit_info *emitInfo, slang_ir_node *n)
 	/* Constant index */
 	const GLint arrayAddr = n->Children[0]->Store->Index;
 	const GLint index = (GLint) n->Children[1]->Value[0];
-	n->Store->Index = arrayAddr + index;
+	const GLint registerStride = (n->Store->Size + 3) / 4;
+	n->Store->Index = arrayAddr + index * registerStride;
     } else {
-	/* Variable index - PROBLEM */
+	/* Variable index.  Mesa program source registers already support
+	 * address-register-relative reads.  Materialize the indexed value
+	 * immediately after ARL, since the interpreter has only one address
+	 * register and a later indexed operand may overwrite it before an
+	 * enclosing expression consumes this value. */
 	const GLint arrayAddr = n->Children[0]->Store->Index;
-	const GLint index = 0;
-	_mesa_problem(NULL, "variable array indexes not supported yet!");
-	n->Store->Index = arrayAddr + index;
+	const GLint size = n->Store->Size;
+	const GLint registerStride = (size + 3) / 4;
+	slang_ir_storage source = *n->Store;
+	slang_ir_storage *result;
+	struct prog_instruction *inst;
+	GLint offset;
+
+	emit(emitInfo, n->Children[1]);
+	if (registerStride > 1) {
+	    slang_ir_node scaleNode;
+
+	    _mesa_bzero(&scaleNode, sizeof(scaleNode));
+	    if (!alloc_temp_storage(emitInfo, &scaleNode, 1))
+		return NULL;
+	    inst = new_instruction(emitInfo, OPCODE_MUL);
+	    storage_to_dst_reg(&inst->DstReg, scaleNode.Store, WRITEMASK_X);
+	    storage_to_src_reg(&inst->SrcReg[0], n->Children[1]->Store);
+	    constant_to_src_reg(&inst->SrcReg[1], (GLfloat) registerStride,
+				emitInfo);
+	    inst = new_instruction(emitInfo, OPCODE_ARL);
+	    inst->DstReg.File = PROGRAM_ADDRESS;
+	    inst->DstReg.Index = 0;
+	    inst->DstReg.WriteMask = WRITEMASK_X;
+	    storage_to_src_reg(&inst->SrcReg[0], scaleNode.Store);
+	    free_temp_storage(emitInfo->vt, &scaleNode);
+	} else {
+	    inst = new_instruction(emitInfo, OPCODE_ARL);
+	    inst->DstReg.File = PROGRAM_ADDRESS;
+	    inst->DstReg.Index = 0;
+	    inst->DstReg.WriteMask = WRITEMASK_X;
+	    storage_to_src_reg(&inst->SrcReg[0], n->Children[1]->Store);
+	}
+
+	result = _slang_new_ir_storage(PROGRAM_TEMPORARY, -1, size);
+	if (!result || !_slang_alloc_temp(emitInfo->vt, result)) {
+	    slang_info_log_error(emitInfo->log,
+				 "Ran out of registers indexing an array");
+	    if (result)
+		_slang_free(result);
+	    return NULL;
+	}
+	n->Store = result;
+
+	for (offset = 0; offset < size; offset += 4) {
+	    slang_ir_storage sourceChunk = source;
+	    slang_ir_storage resultChunk = *result;
+	    const GLint chunkSize = MIN2(size - offset, 4);
+
+	    sourceChunk.Index = arrayAddr + offset / 4;
+	    sourceChunk.Size = chunkSize;
+	    sourceChunk.Swizzle = SWIZZLE_NOOP;
+	    resultChunk.Index += offset / 4;
+	    resultChunk.Size = chunkSize;
+	    resultChunk.Swizzle = SWIZZLE_NOOP;
+
+	    inst = new_instruction(emitInfo, OPCODE_MOV);
+	    storage_to_dst_reg(&inst->DstReg, &resultChunk, WRITEMASK_XYZW);
+	    storage_to_src_reg(&inst->SrcReg[0], &sourceChunk);
+	    inst->SrcReg[0].RelAddr = GL_TRUE;
+	}
+	return inst;
     }
     return NULL; /* no instruction */
 }
@@ -1676,6 +1804,9 @@ emit(slang_emit_info *emitInfo, slang_ir_node *n)
 	/* trinary operators */
 	case IR_LRP:
 	    return emit_arith(emitInfo, n);
+
+	case IR_MAT_VEC_MUL:
+	    return emit_mat_vec_mul(emitInfo, n);
 
 	case IR_EQUAL:
 	case IR_NOTEQUAL:
@@ -1867,11 +1998,11 @@ _slang_emit_code(slang_ir_node *n, slang_var_table *vt,
 
     success = GL_TRUE;
 
-#if 0
-    printf("*********** End emit code (%u inst):\n", prog->NumInstructions);
-    _mesa_print_program(prog);
-    _mesa_print_program_parameters(ctx,prog);
-#endif
+    if (getenv("OSMESA_GLSL_DUMP")) {
+	printf("*********** End emit code (%u inst):\n", prog->NumInstructions);
+	_mesa_print_program(prog);
+	_mesa_print_program_parameters(ctx, prog);
+    }
 
     return success;
 }

@@ -2266,6 +2266,425 @@ test_glsl_shader(int W, int H)
 }
 
 /* ------------------------------------------------------------------ */
+/* Test 18aa: GLSL variable uniform-array indexing                     */
+/* ------------------------------------------------------------------ */
+static void
+test_glsl_uniform_array_index(int W, int H)
+{
+    const char *vert =
+	"#version 110\n"
+	"void main() { gl_Position = gl_Vertex; }\n";
+    const char *fragSingle =
+	"#version 110\n"
+	"uniform vec4 colors[2];\n"
+	"uniform int choice;\n"
+	"void main() { gl_FragColor = colors[choice]; }\n";
+    const char *fragPair =
+	"#version 110\n"
+	"uniform vec4 colors[2];\n"
+	"uniform int first;\n"
+	"uniform int second;\n"
+	"void main() { gl_FragColor = colors[first] + colors[second]; }\n";
+    const GLfloat colors[8] = {
+	1.0f, 0.0f, 0.0f, 1.0f,
+	0.0f, 1.0f, 0.0f, 1.0f
+    };
+    GLubyte px[4] = {0};
+    GLuint prog;
+    GLint colorsLoc;
+    GLint colorsBaseLoc;
+    GLint choiceLoc;
+
+    printf("Test 18aa: GLSL variable uniform-array indexing\n");
+    prog = make_program(vert, fragSingle);
+    if (!prog) {
+	fprintf(stderr, "  FAIL: uniform-array program compilation/link failed\n");
+	g_failed++;
+	return;
+    }
+
+    colorsLoc = glGetUniformLocation(prog, "colors[0]");
+    colorsBaseLoc = glGetUniformLocation(prog, "colors");
+    choiceLoc = glGetUniformLocation(prog, "choice");
+    if (colorsLoc < 0 || colorsBaseLoc != colorsLoc || choiceLoc < 0) {
+	fprintf(stderr,
+		"  FAIL: uniform-array locations unavailable "
+		"(colors[0]=%d, colors=%d, choice=%d)\n",
+		colorsLoc, colorsBaseLoc, choiceLoc);
+	glDeleteProgram(prog);
+	g_failed++;
+	return;
+    }
+
+    glUseProgram(prog);
+    glUniform4fv(colorsLoc, 2, colors);
+    glUniform1i(choiceLoc, 1);
+    glViewport(0, 0, W, H);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBegin(GL_QUADS);
+    glVertex2f(-1.0f, -1.0f);
+    glVertex2f( 1.0f, -1.0f);
+    glVertex2f( 1.0f,  1.0f);
+    glVertex2f(-1.0f,  1.0f);
+    glEnd();
+    glFinish();
+    glUseProgram(0);
+    glReadPixels(W/2, H/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+    glDeleteProgram(prog);
+
+    if (check_gl_error("glsl_uniform_array_index")) {
+	fprintf(stderr, "  FAIL: GL error during uniform-array indexing\n");
+	g_failed++;
+    } else if (px[0] < 50 && px[1] > 200 && px[2] < 50) {
+	printf("  PASS: variable index selected green array element\n");
+    } else {
+	fprintf(stderr,
+		"  FAIL: variable index output (%d,%d,%d), expected green\n",
+		px[0], px[1], px[2]);
+	g_failed++;
+    }
+
+    prog = make_program(vert, fragPair);
+    if (!prog) {
+	fprintf(stderr,
+		"  FAIL: paired uniform-array program compilation/link failed\n");
+	g_failed++;
+	return;
+    }
+
+    colorsLoc = glGetUniformLocation(prog, "colors[0]");
+    colorsBaseLoc = glGetUniformLocation(prog, "colors");
+    {
+	GLint firstLoc = glGetUniformLocation(prog, "first");
+	GLint secondLoc = glGetUniformLocation(prog, "second");
+	if (colorsLoc < 0 || colorsBaseLoc != colorsLoc ||
+	    firstLoc < 0 || secondLoc < 0) {
+	    fprintf(stderr,
+		    "  FAIL: paired uniform-array locations unavailable "
+		    "(colors[0]=%d, colors=%d, first=%d, second=%d)\n",
+		    colorsLoc, colorsBaseLoc, firstLoc, secondLoc);
+	    glDeleteProgram(prog);
+	    g_failed++;
+	    return;
+	}
+
+	glUseProgram(prog);
+	glUniform4fv(colorsLoc, 2, colors);
+	glUniform1i(firstLoc, 0);
+	glUniform1i(secondLoc, 1);
+    }
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBegin(GL_QUADS);
+    glVertex2f(-1.0f, -1.0f);
+    glVertex2f( 1.0f, -1.0f);
+    glVertex2f( 1.0f,  1.0f);
+    glVertex2f(-1.0f,  1.0f);
+    glEnd();
+    glFinish();
+    glUseProgram(0);
+    glReadPixels(W/2, H/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+    glDeleteProgram(prog);
+
+    if (check_gl_error("glsl_uniform_array_pair")) {
+	fprintf(stderr, "  FAIL: GL error during paired array indexing\n");
+	g_failed++;
+    } else if (px[0] > 200 && px[1] > 200 && px[2] < 50) {
+	printf("  PASS: independent variable indices produced yellow\n");
+    } else {
+	fprintf(stderr,
+		"  FAIL: paired index output (%d,%d,%d), expected yellow\n",
+		px[0], px[1], px[2]);
+	g_failed++;
+    }
+
+    {
+	const char *fragLighting =
+	    "#version 110\n"
+	    "uniform int count;\n"
+	    "uniform int kinds[2];\n"
+	    "uniform vec3 directions[2];\n"
+	    "uniform vec3 lightColors[2];\n"
+	    "void main() {\n"
+	    "  vec3 n = vec3(0.0, 0.0, 1.0);\n"
+	    "  vec3 color = vec3(0.25);\n"
+	    "  for (int i = 0; i < 2; i++) {\n"
+	    "    if (i >= count) break;\n"
+	    "    if (kinds[i] == 0) {\n"
+	    "      vec3 l = normalize(directions[i]);\n"
+	    "      color += lightColors[i] *\n"
+	    "               (max(0.0, dot(n, l)) * 0.75);\n"
+	    "    }\n"
+	    "  }\n"
+	    "  gl_FragColor = vec4(color, 1.0);\n"
+	    "}\n";
+	const GLint kinds[2] = {0, 0};
+	const GLfloat directions[6] = {0, 0, 1,  1, 0, 0};
+	const GLfloat lightColors[6] = {1, 1, 1,  0, 0, 0};
+	GLint countLoc;
+	GLint kindsLoc;
+	GLint directionsLoc;
+	GLint lightColorsLoc;
+
+	prog = make_program(vert, fragLighting);
+	if (!prog) {
+	    fprintf(stderr,
+		    "  FAIL: lighting-array program compilation/link failed\n");
+	    g_failed++;
+	    return;
+	}
+	countLoc = glGetUniformLocation(prog, "count");
+	kindsLoc = glGetUniformLocation(prog, "kinds");
+	directionsLoc = glGetUniformLocation(prog, "directions");
+	lightColorsLoc = glGetUniformLocation(prog, "lightColors");
+	if (countLoc < 0 || kindsLoc < 0 || directionsLoc < 0 ||
+	    lightColorsLoc < 0) {
+	    fprintf(stderr,
+		    "  FAIL: lighting-array base locations unavailable\n");
+	    glDeleteProgram(prog);
+	    g_failed++;
+	    return;
+	}
+
+	glUseProgram(prog);
+	glUniform1i(countLoc, 1);
+	glUniform1iv(kindsLoc, 2, kinds);
+	glUniform3fv(directionsLoc, 2, directions);
+	glUniform3fv(lightColorsLoc, 2, lightColors);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glBegin(GL_QUADS);
+	glVertex2f(-1.0f, -1.0f);
+	glVertex2f( 1.0f, -1.0f);
+	glVertex2f( 1.0f,  1.0f);
+	glVertex2f(-1.0f,  1.0f);
+	glEnd();
+	glFinish();
+	glUseProgram(0);
+	glReadPixels(W/2, H/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+	glDeleteProgram(prog);
+
+	if (check_gl_error("glsl_uniform_array_lighting")) {
+	    fprintf(stderr, "  FAIL: GL error during lighting-array test\n");
+	    g_failed++;
+	} else if (px[0] > 240 && px[1] > 240 && px[2] > 240) {
+	    printf("  PASS: looped lighting arrays produced white\n");
+	} else {
+	    fprintf(stderr,
+		    "  FAIL: lighting-array output (%d,%d,%d), expected white\n",
+		    px[0], px[1], px[2]);
+	    g_failed++;
+	}
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* Test 18ab: GLSL uniform matrix-vector multiplication                */
+/* ------------------------------------------------------------------ */
+static void
+test_glsl_uniform_matrix_vector(int W, int H)
+{
+    const char *vert =
+	"#version 110\n"
+	"uniform mat4 matrix;\n"
+	"uniform vec4 operand;\n"
+	"varying vec4 result;\n"
+	"void main() {\n"
+	"  gl_Position = gl_Vertex;\n"
+	"  result = matrix * operand;\n"
+	"}\n";
+    const char *frag =
+	"#version 110\n"
+	"varying vec4 result;\n"
+	"void main() { gl_FragColor = result; }\n";
+    const GLfloat matrix[16] = {
+	1.0f, 0.0f, 4.0f, 0.0f,
+	2.0f, 1.0f, 0.0f, 0.0f,
+	0.0f, 3.0f, 1.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 1.0f
+    };
+    const GLfloat operand[4] = {0.1f, 0.2f, 0.1f, 1.0f};
+    GLubyte px[4] = {0};
+    GLuint prog;
+    GLint matrixLoc;
+    GLint operandLoc;
+
+    printf("Test 18ab: GLSL uniform matrix-vector multiplication\n");
+    prog = make_program(vert, frag);
+    if (!prog) {
+	fprintf(stderr, "  FAIL: matrix-vector program compilation/link failed\n");
+	g_failed++;
+	return;
+    }
+
+    matrixLoc = glGetUniformLocation(prog, "matrix");
+    operandLoc = glGetUniformLocation(prog, "operand");
+    if (matrixLoc < 0 || operandLoc < 0) {
+	fprintf(stderr, "  FAIL: matrix-vector uniforms unavailable\n");
+	glDeleteProgram(prog);
+	g_failed++;
+	return;
+    }
+
+    glUseProgram(prog);
+    glUniformMatrix4fv(matrixLoc, 1, GL_FALSE, matrix);
+    glUniform4fv(operandLoc, 1, operand);
+    glViewport(0, 0, W, H);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBegin(GL_QUADS);
+    glVertex2f(-1.0f, -1.0f);
+    glVertex2f( 1.0f, -1.0f);
+    glVertex2f( 1.0f,  1.0f);
+    glVertex2f(-1.0f,  1.0f);
+    glEnd();
+    glFinish();
+    glUseProgram(0);
+    glReadPixels(W/2, H/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+    glDeleteProgram(prog);
+
+    if (check_gl_error("glsl_uniform_matrix_vector")) {
+	fprintf(stderr, "  FAIL: GL error during matrix-vector test\n");
+	g_failed++;
+    } else if (px[0] > 120 && px[0] < 136 &&
+	       px[1] > 120 && px[1] < 136 &&
+	       px[2] > 120 && px[2] < 136 && px[3] > 250) {
+	printf("  PASS: uniform matrix-vector output (%d,%d,%d,%d)\n",
+	       px[0], px[1], px[2], px[3]);
+    } else {
+	fprintf(stderr,
+		"  FAIL: matrix-vector output (%d,%d,%d,%d), expected gray\n",
+		px[0], px[1], px[2], px[3]);
+	g_failed++;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* Test 18ac: GLSL uniform shared between vertex and fragment stages   */
+/* ------------------------------------------------------------------ */
+static void
+test_glsl_shared_uniform_stages(int W, int H)
+{
+    const char *vert =
+	"attribute vec3 position;\n"
+	"attribute vec3 normal;\n"
+	"uniform mat4 model;\n"
+	"uniform mat4 viewProj;\n"
+	"uniform vec4 tint;\n"
+	"uniform int hasNormal;\n"
+	"uniform int popLevel;\n"
+	"varying vec3 result;\n"
+	"void main() {\n"
+	"  gl_Position = viewProj * model * vec4(position, 1.0);\n"
+	"  result = (hasNormal != 0) ? normal : vec3(0.0, 0.0, 1.0);\n"
+	"  if (popLevel < -100) result = vec3(1.0, 0.0, 0.0);\n"
+	"}\n";
+    const char *frag =
+	"uniform vec4 tint;\n"
+	"uniform int hasNormal;\n"
+	"varying vec3 result;\n"
+	"void main() {\n"
+	"  if (hasNormal == 0)\n"
+	"    gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);\n"
+	"  else\n"
+	"    gl_FragColor = vec4((result * 0.5 + vec3(0.5)) * tint.rgb,\n"
+	"                        tint.a);\n"
+	"}\n";
+    static const GLfloat positions[] = {
+	-1.0f, -1.0f, 0.0f,
+	 1.0f, -1.0f, 0.0f,
+	 0.0f,  1.0f, 0.0f
+    };
+    static const GLfloat normals[] = {
+	0.0f, 1.0f, 0.0f,
+	0.0f, 1.0f, 0.0f,
+	0.0f, 1.0f, 0.0f
+    };
+    static const GLubyte indices[] = {0, 1, 2};
+    static const GLfloat identity[] = {
+	1, 0, 0, 0,  0, 1, 0, 0,
+	0, 0, 1, 0,  0, 0, 0, 1
+    };
+    static const GLfloat white[] = {1, 1, 1, 1};
+    GLubyte px[4] = {0};
+    GLint stored = 0;
+    GLuint prog;
+    GLint positionLoc;
+    GLint normalLoc;
+    GLint uniformLoc;
+    GLint popLevelLoc;
+
+    printf("Test 18ac: GLSL cross-stage shared uniform\n");
+    prog = make_program(vert, frag);
+    if (!prog) {
+	fprintf(stderr, "  FAIL: cross-stage uniform program failed\n");
+	g_failed++;
+	return;
+    }
+    glBindAttribLocation(prog, 0, "position");
+    glBindAttribLocation(prog, 1, "normal");
+    glLinkProgram(prog);
+    positionLoc = glGetAttribLocation(prog, "position");
+    normalLoc = glGetAttribLocation(prog, "normal");
+    uniformLoc = glGetUniformLocation(prog, "hasNormal");
+    popLevelLoc = glGetUniformLocation(prog, "popLevel");
+    if (positionLoc != 0 || normalLoc != 1 ||
+	uniformLoc < 0 || popLevelLoc < 0) {
+	fprintf(stderr,
+		"  FAIL: cross-stage locations pos=%d norm=%d uniform=%d "
+		"pop=%d\n",
+		positionLoc, normalLoc, uniformLoc, popLevelLoc);
+	glDeleteProgram(prog);
+	g_failed++;
+	return;
+    }
+
+    glUseProgramObjectARB(prog);
+    glUniformMatrix4fv(glGetUniformLocation(prog, "model"), 1, GL_FALSE,
+		       identity);
+    glUniformMatrix4fv(glGetUniformLocation(prog, "viewProj"), 1, GL_FALSE,
+		       identity);
+    glUniform4fv(glGetUniformLocation(prog, "tint"), 1, white);
+    glUniform1iARB(uniformLoc, 1);
+    glUniform1iARB(popLevelLoc, -1);
+    glGetUniformiv(prog, uniformLoc, &stored);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glEnableVertexAttribArray((GLuint) positionLoc);
+    glEnableVertexAttribArray((GLuint) normalLoc);
+    glVertexAttribPointer((GLuint) positionLoc, 3, GL_FLOAT, GL_FALSE, 0,
+			  positions);
+    glVertexAttribPointer((GLuint) normalLoc, 3, GL_FLOAT, GL_FALSE, 0,
+			  normals);
+    glViewport(0, 0, W, H);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, indices);
+    glFinish();
+    glReadPixels(W / 2, H / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+    glDisableVertexAttribArray((GLuint) normalLoc);
+    glDisableVertexAttribArray((GLuint) positionLoc);
+    glUseProgram(0);
+    glDeleteProgram(prog);
+
+    if (check_gl_error("glsl_shared_uniform_stages")) {
+	fprintf(stderr, "  FAIL: GL error during cross-stage uniform test\n");
+	g_failed++;
+    } else if (stored == 1 &&
+	       px[0] > 115 && px[0] < 140 &&
+	       px[1] > 240 &&
+	       px[2] > 115 && px[2] < 140) {
+	printf("  PASS: shared uniform reached both stages (%d,%d,%d)\n",
+	       px[0], px[1], px[2]);
+    } else {
+	fprintf(stderr,
+		"  FAIL: shared uniform stored=%d output=(%d,%d,%d), "
+		"expected green-normal encoding\n",
+		stored, px[0], px[1], px[2]);
+	g_failed++;
+    }
+}
+
+/* ------------------------------------------------------------------ */
 /* Test 18a: GLSL 1.20 uniform structures                             */
 /* ------------------------------------------------------------------ */
 static void
@@ -2731,6 +3150,688 @@ test_glsl_line_varying(int W, int H)
 }
 
 /* ------------------------------------------------------------------ */
+/* Test 18d: dFdx/dFdy of a perspective-correct varying               */
+/* ------------------------------------------------------------------ */
+static void
+test_glsl_perspective_derivatives(int W, int H)
+{
+    const char *vert =
+	"#version 110\n"
+	"varying vec3 vPosition;\n"
+	"void main() {\n"
+	"  vPosition = gl_Vertex.xyz;\n"
+	"  gl_Position = vec4(gl_Vertex.xy, 0.0, gl_Vertex.z);\n"
+	"}\n";
+    const char *frag =
+	"#version 110\n"
+	"varying vec3 vPosition;\n"
+	"void main() {\n"
+	"  vec3 n = normalize(cross(dFdx(vPosition), dFdy(vPosition)));\n"
+	"  gl_FragColor = vec4(n * 0.5 + vec3(0.5), 1.0);\n"
+	"}\n";
+    GLubyte px[4] = {0};
+    GLuint prog;
+
+    printf("Test 18d: GLSL perspective-varying derivatives\n");
+    prog = make_program(vert, frag);
+    if (!prog) {
+	fprintf(stderr, "  FAIL: derivative program compilation/link failed\n");
+	g_failed++;
+	return;
+    }
+
+    glUseProgram(prog);
+    glViewport(0, 0, W, H);
+    glDisable(GL_DEPTH_TEST);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBegin(GL_TRIANGLES);
+    glVertex3f(-1.0f, -1.0f, 1.0f);
+    glVertex3f( 2.0f, -2.0f, 2.0f);
+    glVertex3f( 0.0f,  3.0f, 3.0f);
+    glEnd();
+    glFinish();
+    glUseProgram(0);
+    glReadPixels(W/2, H/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+    glDeleteProgram(prog);
+
+    /* The world-space triangle normal is normalize((-6,-5,13)).
+     * Mapping it from [-1,1] to [0,255] gives approximately (77,85,237). */
+    if (check_gl_error("glsl_perspective_derivatives")) {
+	fprintf(stderr, "  FAIL: GL error during derivative test\n");
+	g_failed++;
+    } else if (px[0] > 65 && px[0] < 90 &&
+	       px[1] > 70 && px[1] < 100 &&
+	       px[2] > 225 && px[2] < 250) {
+	printf("  PASS: perspective derivatives produced normal (%d,%d,%d)\n",
+	       px[0], px[1], px[2]);
+    } else {
+	fprintf(stderr,
+		"  FAIL: derivative normal (%d,%d,%d), expected ~(77,85,237)\n",
+		px[0], px[1], px[2]);
+	g_failed++;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* Test 18e: Obol CAD shaded GLSL contract                             */
+/* ------------------------------------------------------------------ */
+static int
+relink_obol_cad_program(GLuint program, int has_normal)
+{
+    GLint linked = GL_FALSE;
+    char log[512] = {0};
+
+    glBindAttribLocation(program, 0, "a_pos");
+    if (has_normal)
+	glBindAttribLocation(program, 1, "a_norm");
+    glLinkProgram(program);
+    glGetProgramiv(program, GL_LINK_STATUS, &linked);
+    if (linked)
+	return 1;
+    glGetProgramInfoLog(program, sizeof(log), NULL, log);
+    fprintf(stderr, "  Obol attribute-binding relink failed: %s\n", log);
+    return 0;
+}
+
+static void
+test_glsl_obol_cad_shading(int W, int H)
+{
+    const char *faceVert =
+	"attribute vec3 a_pos;\n"
+	"void main() { gl_Position = vec4(a_pos, 1.0); }\n";
+    const char *faceFrag =
+	"void main() {\n"
+	"  if (gl_FrontFacing)\n"
+	"    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
+	"  else\n"
+	"    gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);\n"
+	"}\n";
+    const char *vert =
+	"attribute vec3 a_pos;\n"
+	"attribute vec3 a_norm;\n"
+	"uniform mat4  u_model;\n"
+	"uniform mat4  u_viewProj;\n"
+	"uniform vec4  u_color;\n"
+	"uniform int   u_hasNorm;\n"
+	"uniform int   u_popLevel;\n"
+	"uniform float u_popMask;\n"
+	"uniform vec3  u_popMin;\n"
+	"uniform vec3  u_popMax;\n"
+	"varying vec3  v_norm;\n"
+	"varying vec3  v_worldPos;\n"
+	"varying vec4  v_color;\n"
+	"vec3 popPosition(vec3 p) {\n"
+	"  if (u_popLevel < 0 || u_popLevel >= 15) return p;\n"
+	"  vec3 extent = u_popMax - u_popMin;\n"
+	"  vec3 safeExtent = max(extent, vec3(1.0e-30));\n"
+	"  vec3 scaled = (p - u_popMin) / safeExtent * 65535.0;\n"
+	"  vec3 low = floor(floor(scaled) / u_popMask);\n"
+	"  vec3 high = ceil(ceil(scaled) / u_popMask);\n"
+	"  return ((low + high) * (0.5 * u_popMask / 65535.0)) *\n"
+	"         extent + u_popMin;\n"
+	"}\n"
+	"void main() {\n"
+	"  vec4 wp = u_model * vec4(popPosition(a_pos), 1.0);\n"
+	"  gl_Position = u_viewProj * wp;\n"
+	"  v_worldPos = wp.xyz;\n"
+	"  if (u_hasNorm != 0) {\n"
+	"    v_norm = mat3(u_model[0].xyz, u_model[1].xyz,\n"
+	"                  u_model[2].xyz) * a_norm;\n"
+	"  } else {\n"
+	"    v_norm = vec3(0.0, 0.0, 1.0);\n"
+	"  }\n"
+	"  v_color = u_color;\n"
+	"}\n";
+    const char *frag =
+	"uniform int   u_numLights;\n"
+	"uniform int   u_hasNorm;\n"
+	"uniform int   u_ltype[8];\n"
+	"uniform vec3  u_lvec[8];\n"
+	"uniform vec3  u_laxis[8];\n"
+	"uniform vec3  u_lcolor[8];\n"
+	"uniform float u_lcos[8];\n"
+	"varying vec3  v_norm;\n"
+	"varying vec3  v_worldPos;\n"
+	"varying vec4  v_color;\n"
+	"void main() {\n"
+	"  vec3 n;\n"
+	"  if (u_hasNorm != 0) {\n"
+	"    n = normalize(v_norm);\n"
+	"    if (!gl_FrontFacing) n = -n;\n"
+	"  } else {\n"
+	"    vec3 fn = cross(dFdx(v_worldPos), dFdy(v_worldPos));\n"
+	"    float fl = length(fn);\n"
+	"    n = (fl > 0.0) ? fn / fl : vec3(0.0, 0.0, 1.0);\n"
+	"  }\n"
+	"  vec3 col = v_color.rgb * 0.25;\n"
+	"  for (int i = 0; i < 8; i++) {\n"
+	"    if (i >= u_numLights) break;\n"
+	"    vec3 L;\n"
+	"    float atten = 1.0;\n"
+	"    if (u_ltype[i] == 0) {\n"
+	"      L = normalize(u_lvec[i]);\n"
+	"    } else {\n"
+	"      vec3 d = u_lvec[i] - v_worldPos;\n"
+	"      float dl = length(d);\n"
+	"      L = (dl > 0.0) ? d / dl : vec3(0.0, 0.0, 1.0);\n"
+	"      if (u_ltype[i] == 2) {\n"
+	"        float c = dot(normalize(u_laxis[i]), -L);\n"
+	"        if (c < u_lcos[i]) atten = 0.0;\n"
+	"      }\n"
+	"    }\n"
+	"    float ndl = max(0.0, dot(n, L));\n"
+	"    col += v_color.rgb * u_lcolor[i] * (ndl * 0.75 * atten);\n"
+	"  }\n"
+	"  gl_FragColor = vec4(col, v_color.a);\n"
+	"}\n";
+    const char *normalDebugFrag =
+	"uniform int u_hasNorm;\n"
+	"varying vec3 v_norm;\n"
+	"void main() {\n"
+	"  vec3 n = normalize(v_norm);\n"
+	"  if (!gl_FrontFacing) n = -n;\n"
+	"  gl_FragColor = (u_hasNorm == 0) ?\n"
+	"    vec4(1.0, 1.0, 0.0, 1.0) :\n"
+	"    vec4(n * 0.5 + vec3(0.5), 1.0);\n"
+	"}\n";
+    static const GLfloat positions[] = {
+	-1.0f, -1.0f, 0.0f,
+	 1.0f, -1.0f, 0.0f,
+	 0.0f,  1.0f, 0.0f
+    };
+    static const GLfloat normals[] = {
+	0.0f, 1.0f, 0.0f,
+	0.0f, 1.0f, 0.0f,
+	0.0f, 1.0f, 0.0f
+    };
+    static const GLfloat rotationNormals[] = {
+	0.0f, 0.0f, 1.0f,
+	0.0f, 0.0f, 1.0f,
+	0.0f, 0.0f, 1.0f
+    };
+    static const GLubyte indices[] = {0, 1, 2};
+    static const GLubyte reverseIndices[] = {0, 2, 1};
+    static const GLuint vboIndices[] = {0, 1, 2};
+    static const GLfloat identity[] = {
+	1, 0, 0, 0,  0, 1, 0, 0,
+	0, 0, 1, 0,  0, 0, 0, 1
+    };
+    static const GLfloat rotateY90[] = {
+	0, 0, -1, 0,  0, 1, 0, 0,
+	1, 0,  0, 0,  0, 0, 0, 1
+    };
+    static const GLfloat rotateYMinus90[] = {
+	 0, 0, 1, 0,  0, 1, 0, 0,
+	-1, 0, 0, 0,  0, 0, 0, 1
+    };
+    static const GLfloat white[] = {1, 1, 1, 1};
+    static const GLfloat lightVector[] = {0, 1, 0};
+    static const GLfloat backLightVector[] = {0,-1, 0};
+    static const GLfloat rotatedLightVector[] = {1, 0, 0};
+    static const GLfloat lightAxis[] = {0, 0, -1};
+    static const GLfloat lightColor[] = {1, 1, 1};
+    static const GLfloat popMinimum[] = {-1, -1, -1};
+    static const GLfloat popMaximum[] = {1, 1, 1};
+    const GLint lightType = 0;
+    const GLfloat lightCos = -2.0f;
+    GLubyte px[4] = {0};
+    GLubyte backPx[4] = {0};
+    GLubyte normalDebugPx[4] = {0};
+    GLubyte rotatedPx[4] = {0};
+    GLubyte backLitPx[4] = {0};
+    GLuint prog;
+    GLuint positionBuffer = 0;
+    GLuint normalBuffer = 0;
+    GLuint indexBuffer = 0;
+    GLint posLoc;
+    GLint normLoc;
+
+    printf("Test 18e: Obol CAD shaded GLSL contract\n");
+    clear_errors();
+    glViewport(0, 0, W, H);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
+    glFrontFace(GL_CCW);
+
+    prog = make_program(faceVert, faceFrag);
+    if (!prog || !relink_obol_cad_program(prog, 0)) {
+	fprintf(stderr, "  FAIL: gl_FrontFacing program failed\n");
+	if (prog)
+	    glDeleteProgram(prog);
+	g_failed++;
+	return;
+    }
+    posLoc = glGetAttribLocation(prog, "a_pos");
+    glUseProgram(prog);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glEnableVertexAttribArray((GLuint) posLoc);
+    glVertexAttribPointer((GLuint) posLoc, 3, GL_FLOAT, GL_FALSE, 0,
+			  positions);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, indices);
+    glFinish();
+    glReadPixels(W / 2, H / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, reverseIndices);
+    glFinish();
+    glReadPixels(W / 2, H / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, backPx);
+    glDisableVertexAttribArray((GLuint) posLoc);
+    glUseProgram(0);
+    glDeleteProgram(prog);
+    if (px[0] < 240 || px[1] > 15 || px[2] > 15) {
+	fprintf(stderr,
+		"  FAIL: front-facing triangle reported (%d,%d,%d), expected red\n",
+		px[0], px[1], px[2]);
+	g_failed++;
+    } else {
+	printf("  PASS: gl_FrontFacing identified the front face\n");
+    }
+    if (backPx[0] > 15 || backPx[1] > 15 || backPx[2] < 240) {
+	fprintf(stderr,
+		"  FAIL: back-facing triangle reported (%d,%d,%d), expected blue\n",
+		backPx[0], backPx[1], backPx[2]);
+	g_failed++;
+    } else {
+	printf("  PASS: gl_FrontFacing identified the back face\n");
+    }
+
+    /*
+     * Obol's integrated normal diagnostic uses a conditional expression
+     * after normalizing and possibly flipping the varying.  Keep this exact
+     * shape here: it previously selected the zero-uniform arm even though
+     * glGetUniformiv and the fragment interpreter both observed one.
+     */
+    prog = make_program(vert, normalDebugFrag);
+    if (!prog || !relink_obol_cad_program(prog, 1)) {
+	fprintf(stderr, "  FAIL: Obol normal-debug program failed\n");
+	if (prog)
+	    glDeleteProgram(prog);
+	g_failed++;
+	return;
+    }
+    posLoc = glGetAttribLocation(prog, "a_pos");
+    normLoc = glGetAttribLocation(prog, "a_norm");
+    glUseProgram(prog);
+    glUniformMatrix4fv(glGetUniformLocation(prog, "u_model"), 1, GL_FALSE,
+		       identity);
+    glUniformMatrix4fv(glGetUniformLocation(prog, "u_viewProj"), 1, GL_FALSE,
+		       identity);
+    glUniform1i(glGetUniformLocation(prog, "u_hasNorm"), 1);
+    glUniform1i(glGetUniformLocation(prog, "u_popLevel"), 15);
+    glUniform1f(glGetUniformLocation(prog, "u_popMask"), 1.0f);
+    glUniform3fv(glGetUniformLocation(prog, "u_popMin"), 1, popMinimum);
+    glUniform3fv(glGetUniformLocation(prog, "u_popMax"), 1, popMaximum);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glEnableVertexAttribArray((GLuint) posLoc);
+    glEnableVertexAttribArray((GLuint) normLoc);
+    glVertexAttribPointer((GLuint) posLoc, 3, GL_FLOAT, GL_FALSE, 0,
+			  positions);
+    glVertexAttribPointer((GLuint) normLoc, 3, GL_FLOAT, GL_FALSE, 0,
+			  normals);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, indices);
+    glFinish();
+    glReadPixels(W / 2, H / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+		 normalDebugPx);
+    glDisableVertexAttribArray((GLuint) normLoc);
+    glDisableVertexAttribArray((GLuint) posLoc);
+    glUseProgram(0);
+    glDeleteProgram(prog);
+    if (normalDebugPx[0] > 115 && normalDebugPx[0] < 140 &&
+	normalDebugPx[1] > 240 &&
+	normalDebugPx[2] > 115 && normalDebugPx[2] < 140) {
+	printf("  PASS: Obol normal-debug conditional selected normal "
+	       "(%d,%d,%d)\n", normalDebugPx[0], normalDebugPx[1],
+	       normalDebugPx[2]);
+    } else {
+	fprintf(stderr,
+		"  FAIL: Obol normal-debug conditional produced (%d,%d,%d), "
+		"expected green-normal encoding\n",
+		normalDebugPx[0], normalDebugPx[1], normalDebugPx[2]);
+	g_failed++;
+    }
+
+    prog = make_program(vert, frag);
+    if (!prog || !relink_obol_cad_program(prog, 1)) {
+	fprintf(stderr, "  FAIL: Obol shaded program failed\n");
+	if (prog)
+	    glDeleteProgram(prog);
+	g_failed++;
+	return;
+    }
+    posLoc = glGetAttribLocation(prog, "a_pos");
+    normLoc = glGetAttribLocation(prog, "a_norm");
+    if (posLoc < 0 || normLoc < 0) {
+	fprintf(stderr, "  FAIL: Obol position/normal attributes unavailable\n");
+	glDeleteProgram(prog);
+	g_failed++;
+	return;
+    }
+    glUseProgram(prog);
+#define SET_MAT4(_name, _value) \
+    glUniformMatrix4fv(glGetUniformLocation(prog, (_name)), 1, GL_FALSE, (_value))
+#define SET_INT(_name, _value) \
+    glUniform1i(glGetUniformLocation(prog, (_name)), (_value))
+    SET_MAT4("u_model", identity);
+    SET_MAT4("u_viewProj", identity);
+    glUniform4fv(glGetUniformLocation(prog, "u_color"), 1, white);
+    SET_INT("u_hasNorm", 1);
+    SET_INT("u_popLevel", 15);
+    glUniform1f(glGetUniformLocation(prog, "u_popMask"), 1.0f);
+    glUniform3fv(glGetUniformLocation(prog, "u_popMin"), 1, popMinimum);
+    glUniform3fv(glGetUniformLocation(prog, "u_popMax"), 1, popMaximum);
+    SET_INT("u_numLights", 1);
+    glUniform1iv(glGetUniformLocation(prog, "u_ltype"), 1, &lightType);
+    glUniform3fv(glGetUniformLocation(prog, "u_lvec"), 1, lightVector);
+    glUniform3fv(glGetUniformLocation(prog, "u_laxis"), 1, lightAxis);
+    glUniform3fv(glGetUniformLocation(prog, "u_lcolor"), 1, lightColor);
+    glUniform1fv(glGetUniformLocation(prog, "u_lcos"), 1, &lightCos);
+#undef SET_INT
+#undef SET_MAT4
+
+    glGenBuffers(1, &positionBuffer);
+    glGenBuffers(1, &normalBuffer);
+    glGenBuffers(1, &indexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vboIndices), vboIndices,
+		 GL_STATIC_DRAW);
+    glEnableVertexAttribArray((GLuint) posLoc);
+    glEnableVertexAttribArray((GLuint) normLoc);
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
+    glVertexAttribPointer((GLuint) posLoc, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
+    glVertexAttribPointer((GLuint) normLoc, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
+    glFinish();
+    glReadPixels(W / 2, H / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+
+    glUniform3fv(glGetUniformLocation(prog, "u_lvec"), 1,
+		 backLightVector);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
+    glFinish();
+    /*
+     * Reversing the element order while retaining +Z normals makes this a
+     * back face.  The Obol shader must flip that normal to -Z, toward the
+     * corresponding -Z light.
+     */
+    {
+	static const GLuint reverseVboIndices[] = {0, 2, 1};
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(reverseVboIndices),
+		     reverseVboIndices, GL_STATIC_DRAW);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
+	glFinish();
+	glReadPixels(W / 2, H / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+		     backLitPx);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vboIndices), vboIndices,
+		     GL_STATIC_DRAW);
+    }
+
+    glUniformMatrix4fv(glGetUniformLocation(prog, "u_model"), 1, GL_FALSE,
+		       rotateY90);
+    glUniformMatrix4fv(glGetUniformLocation(prog, "u_viewProj"), 1, GL_FALSE,
+		       rotateYMinus90);
+    glUniform3fv(glGetUniformLocation(prog, "u_lvec"), 1,
+		 rotatedLightVector);
+    glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(rotationNormals), rotationNormals,
+		 GL_STATIC_DRAW);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
+    glFinish();
+    glReadPixels(W / 2, H / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, rotatedPx);
+    glDisableVertexAttribArray((GLuint) posLoc);
+    glDisableVertexAttribArray((GLuint) normLoc);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glDeleteBuffers(1, &positionBuffer);
+    glDeleteBuffers(1, &normalBuffer);
+    glDeleteBuffers(1, &indexBuffer);
+    glUseProgram(0);
+    glDeleteProgram(prog);
+
+    if (check_gl_error("glsl_obol_cad_shading")) {
+	fprintf(stderr, "  FAIL: GL error during Obol shaded test\n");
+	g_failed++;
+    } else if (px[0] > 240 && px[1] > 240 && px[2] > 240) {
+	printf("  PASS: Obol shaded contract produced white (%d,%d,%d)\n",
+	       px[0], px[1], px[2]);
+    } else {
+	fprintf(stderr,
+		"  FAIL: Obol shaded contract produced (%d,%d,%d), "
+		"expected white\n", px[0], px[1], px[2]);
+	g_failed++;
+    }
+    if (rotatedPx[0] > 240 && rotatedPx[1] > 240 &&
+	rotatedPx[2] > 240) {
+	printf("  PASS: transformed Obol normal produced white (%d,%d,%d)\n",
+	       rotatedPx[0], rotatedPx[1], rotatedPx[2]);
+    } else {
+	fprintf(stderr,
+		"  FAIL: transformed Obol normal produced (%d,%d,%d), "
+		"expected white\n",
+		rotatedPx[0], rotatedPx[1], rotatedPx[2]);
+	g_failed++;
+    }
+    if (backLitPx[0] > 240 && backLitPx[1] > 240 &&
+	backLitPx[2] > 240) {
+	printf("  PASS: Obol back-face normal flip produced white (%d,%d,%d)\n",
+	       backLitPx[0], backLitPx[1], backLitPx[2]);
+    } else {
+	fprintf(stderr,
+		"  FAIL: Obol back-face normal flip produced (%d,%d,%d), "
+		"expected white\n",
+		backLitPx[0], backLitPx[1], backLitPx[2]);
+	g_failed++;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* Test 18f: branchless Obol PoP specialization                        */
+/* ------------------------------------------------------------------ */
+static void
+test_glsl_obol_pop_specialized(int W, int H)
+{
+    const char *vert =
+	"#version 110\n"
+	"uniform vec3 u_testPosition;\n"
+	"uniform vec3 u_popEncodeScale;\n"
+	"uniform vec3 u_popDecodeScale;\n"
+	"uniform vec3 u_popMin;\n"
+	"varying vec3 v_snapped;\n"
+	"void main() {\n"
+	"  vec3 scaled = (u_testPosition - u_popMin) * u_popEncodeScale;\n"
+	"  vec3 low = floor(scaled);\n"
+	"  vec3 high = ceil(scaled);\n"
+	"  v_snapped = (low + high) * u_popDecodeScale + u_popMin;\n"
+	"  gl_Position = gl_Vertex;\n"
+	"}\n";
+    const char *frag =
+	"#version 110\n"
+	"uniform vec3 u_popMin;\n"
+	"uniform vec3 u_popExtent;\n"
+	"varying vec3 v_snapped;\n"
+	"void main() {\n"
+	"  gl_FragColor = vec4((v_snapped - u_popMin) / u_popExtent, 1.0);\n"
+	"}\n";
+    const GLfloat minimum[3] = {-2.0f, -2.0f, -2.0f};
+    const GLfloat maximum[3] = {2.0f, 2.0f, 2.0f};
+    const GLfloat position[3] = {0.123f, -0.777f, 1.333f};
+    const GLfloat mask = 64.0f;
+    GLfloat encode[3], decode[3], extent[3];
+    GLubyte expected[3], px[4] = {0};
+    GLuint program;
+    int axis;
+
+    printf("Test 18f: branchless Obol PoP specialization\n");
+    for (axis = 0; axis < 3; ++axis) {
+	const GLfloat scaled =
+	    (position[axis] - minimum[axis]) /
+	    (maximum[axis] - minimum[axis]) * 65535.0f;
+	const GLfloat low = floorf(floorf(scaled) / mask);
+	const GLfloat high = ceilf(ceilf(scaled) / mask);
+	const GLfloat snapped = (low + high) * 0.5f * mask;
+	GLfloat normalized = snapped / 65535.0f;
+	extent[axis] = maximum[axis] - minimum[axis];
+	encode[axis] = 65535.0f / (extent[axis] * mask);
+	decode[axis] = 0.5f * mask * extent[axis] / 65535.0f;
+	if (normalized < 0.0f)
+	    normalized = 0.0f;
+	else if (normalized > 1.0f)
+	    normalized = 1.0f;
+	expected[axis] = (GLubyte) (normalized * 255.0f + 0.5f);
+    }
+
+    program = make_program(vert, frag);
+    if (!program) {
+	fprintf(stderr, "  FAIL: specialized Obol PoP program failed\n");
+	g_failed++;
+	return;
+    }
+    glUseProgram(program);
+    glUniform3fv(glGetUniformLocation(program, "u_testPosition"), 1,
+		 position);
+    glUniform3fv(glGetUniformLocation(program, "u_popEncodeScale"), 1,
+		 encode);
+    glUniform3fv(glGetUniformLocation(program, "u_popDecodeScale"), 1,
+		 decode);
+    glUniform3fv(glGetUniformLocation(program, "u_popMin"), 1, minimum);
+    glUniform3fv(glGetUniformLocation(program, "u_popExtent"), 1, extent);
+    glViewport(0, 0, W, H);
+    glDisable(GL_DEPTH_TEST);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBegin(GL_QUADS);
+    glVertex2f(-1.0f, -1.0f);
+    glVertex2f( 1.0f, -1.0f);
+    glVertex2f( 1.0f,  1.0f);
+    glVertex2f(-1.0f,  1.0f);
+    glEnd();
+    glFinish();
+    glReadPixels(W / 2, H / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+    glUseProgram(0);
+    glDeleteProgram(program);
+
+    if (check_gl_error("glsl_obol_pop_specialized")) {
+	fprintf(stderr, "  FAIL: GL error during specialized Obol PoP test\n");
+	g_failed++;
+    } else if (abs((int)px[0] - (int)expected[0]) <= 2 &&
+	       abs((int)px[1] - (int)expected[1]) <= 2 &&
+	       abs((int)px[2] - (int)expected[2]) <= 2) {
+	printf("  PASS: branchless PoP snap produced (%d,%d,%d)\n",
+	       px[0], px[1], px[2]);
+    } else {
+	fprintf(stderr,
+		"  FAIL: branchless PoP snap produced (%d,%d,%d), "
+		"expected (%d,%d,%d)\n",
+		px[0], px[1], px[2],
+		expected[0], expected[1], expected[2]);
+	g_failed++;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* Test 18g: batched GLSL vertex execution plus scalar tail            */
+/* ------------------------------------------------------------------ */
+static void
+test_glsl_vertex_batch_tail(int W, int H)
+{
+    const char *vert =
+	"#version 110\n"
+	"void main() {\n"
+	"  vec4 quarter = gl_Vertex * vec4(0.25);\n"
+	"  gl_Position = quarter + gl_Vertex * vec4(0.75);\n"
+	"  gl_FrontColor = gl_Color;\n"
+	"}\n";
+    const char *frag =
+	"#version 110\n"
+	"void main() { gl_FragColor = gl_Color; }\n";
+    GLfloat positions[5][4];
+    static const GLfloat colors[5][4] = {
+	{1.0f, 0.0f, 0.0f, 1.0f},
+	{0.0f, 1.0f, 0.0f, 1.0f},
+	{0.0f, 0.0f, 1.0f, 1.0f},
+	{1.0f, 1.0f, 0.0f, 1.0f},
+	{1.0f, 0.0f, 1.0f, 1.0f}
+    };
+    GLubyte expected[5][3] = {
+	{255, 0, 0}, {0, 255, 0}, {0, 0, 255},
+	{255, 255, 0}, {255, 0, 255}
+    };
+    GLuint program;
+    int i;
+    int ok = 1;
+
+    printf("Test 18g: batched GLSL vertex execution with scalar tail\n");
+    program = make_program(vert, frag);
+    if (!program) {
+	fprintf(stderr, "  FAIL: batch-tail GLSL program failed\n");
+	g_failed++;
+	return;
+    }
+
+    for (i = 0; i < 5; ++i) {
+	const int x = (i + 1) * W / 6;
+	positions[i][0] = (2.0f * ((GLfloat)x + 0.5f) / W) - 1.0f;
+	positions[i][1] =
+	    (2.0f * ((GLfloat)(H / 2) + 0.5f) / H) - 1.0f;
+	positions[i][2] = 0.0f;
+	positions[i][3] = 1.0f;
+    }
+
+    glViewport(0, 0, W, H);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+    glDisable(GL_DITHER);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(program);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glVertexPointer(4, GL_FLOAT, 0, positions);
+    glColorPointer(4, GL_FLOAT, 0, colors);
+    glDrawArrays(GL_POINTS, 0, 5);
+    glFinish();
+
+    for (i = 0; i < 5; ++i) {
+	const int x = (i + 1) * W / 6;
+	GLubyte px[4] = {0};
+	glReadPixels(x, H / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+	if (abs((int)px[0] - (int)expected[i][0]) > 1 ||
+	    abs((int)px[1] - (int)expected[i][1]) > 1 ||
+	    abs((int)px[2] - (int)expected[i][2]) > 1) {
+	    fprintf(stderr,
+		    "  FAIL: batch-tail vertex %d produced (%d,%d,%d), "
+		    "expected (%d,%d,%d)\n",
+		    i, px[0], px[1], px[2],
+		    expected[i][0], expected[i][1], expected[i][2]);
+	    ok = 0;
+	}
+    }
+
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glUseProgram(0);
+    glDeleteProgram(program);
+    if (check_gl_error("glsl_vertex_batch_tail"))
+	ok = 0;
+    if (ok)
+	printf("  PASS: four batched vertices and one scalar tail matched\n");
+    else
+	g_failed++;
+}
+
+/* ------------------------------------------------------------------ */
 /* Test 19: GL_ARB_occlusion_query                                     */
 /* ------------------------------------------------------------------ */
 static void
@@ -3105,10 +4206,17 @@ main(void)
     test_vertex_program(W, H);
     test_fragment_program(W, H);
     test_glsl_shader(W, H);
+    test_glsl_uniform_array_index(W, H);
+    test_glsl_uniform_matrix_vector(W, H);
+    test_glsl_shared_uniform_stages(W, H);
     test_glsl_uniform_struct(W, H);
     test_glsl_uniform_struct_texture(W, H);
     test_glsl_drawelements(W, H);
     test_glsl_line_varying(W, H);
+    test_glsl_perspective_derivatives(W, H);
+    test_glsl_obol_cad_shading(W, H);
+    test_glsl_obol_pop_specialized(W, H);
+    test_glsl_vertex_batch_tail(W, H);
     test_occlusion_query(W, H);
     test_framebuffer_srgb(W, H);
     test_texture_integer(W, H);

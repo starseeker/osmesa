@@ -59,10 +59,23 @@ struct vp_stage_data {
     GLvector4f ndcCoords;              /**< normalized device coords */
     GLubyte *clipmask;                 /**< clip flags */
     GLubyte ormask, andmask;           /**< for clipping */
+
+    /* The decoded fast VM contains pointers into its machine.  Keep both at
+     * the context-owned pipeline-stage lifetime so repeated TNL batches do
+     * not allocate and resolve the same shader again. */
+    struct gl_program_machine machine;
+    struct gl_program_fast *fastProgram;
+    const struct gl_program *fastProgramSource;
+    const struct prog_instruction *fastProgramInstructions;
+    GLuint fastProgramInstructionCount;
 };
 
 
 #define VP_STAGE_DATA(stage) ((struct vp_stage_data *)(stage->privatePtr))
+
+static GLboolean
+run_vp(GLcontext *ctx, struct tnl_pipeline_stage *stage);
+
 
 
 static void
@@ -198,15 +211,30 @@ vp_fetch_texel(GLcontext *ctx, const GLfloat texcoord[4], GLfloat lambda,
 void
 _tnl_program_string(GLcontext *ctx, GLenum target, struct gl_program *program)
 {
-    /* No-op.
-     * If we had derived anything from the program that was private to this
-     * stage we'd recompute/validate it here.
-     */
+    TNLcontext *tnl = TNL_CONTEXT(ctx);
+    GLuint i;
+
+    (void) target;
+    for (i = 0; i < tnl->pipeline.nr_stages; ++i) {
+	struct tnl_pipeline_stage *stage = &tnl->pipeline.stages[i];
+	struct vp_stage_data *store;
+
+	if (stage->run != run_vp || !stage->privatePtr)
+	    continue;
+	store = VP_STAGE_DATA(stage);
+	if (store->fastProgramSource != program)
+	    continue;
+	_mesa_destroy_fast_program(store->fastProgram);
+	store->fastProgram = NULL;
+	store->fastProgramSource = NULL;
+	store->fastProgramInstructions = NULL;
+	store->fastProgramInstructionCount = 0;
+    }
 }
 
 
 /**
- * Initialize virtual machine state prior to executing vertex program.
+ * Initialize virtual machine state which is invariant across a vertex batch.
  */
 static void
 init_machine(GLcontext *ctx, struct gl_program_machine *machine)
@@ -215,7 +243,19 @@ init_machine(GLcontext *ctx, struct gl_program_machine *machine)
     memcpy(machine->VertAttribs, ctx->Current.Attrib,
 	   MAX_VERTEX_PROGRAM_ATTRIBS * 4 * sizeof(GLfloat));
 
-    if (ctx->VertexProgram._Current->IsNVProgram) {
+    machine->FetchTexelLod = vp_fetch_texel;
+    machine->FetchTexelDeriv = NULL; /* not used by vertex programs */
+}
+
+
+/**
+ * Reset virtual machine state which is private to one shader invocation.
+ */
+static void
+reset_machine(const struct gl_vertex_program *program,
+	      struct gl_program_machine *machine)
+{
+    if (program->IsNVProgram) {
 	GLuint i;
 	/* Output/result regs are initialized to [0,0,0,1] */
 	for (i = 0; i < MAX_NV_VERTEX_PROGRAM_OUTPUTS; i++) {
@@ -240,9 +280,6 @@ init_machine(GLcontext *ctx, struct gl_program_machine *machine)
 
     /* init call stack */
     machine->StackDepth = 0;
-
-    machine->FetchTexelLod = vp_fetch_texel;
-    machine->FetchTexelDeriv = NULL; /* not used by vertex programs */
 }
 
 
@@ -300,8 +337,14 @@ run_vp(GLcontext *ctx, struct tnl_pipeline_stage *stage)
     struct vp_stage_data *store = VP_STAGE_DATA(stage);
     struct vertex_buffer *VB = &tnl->vb;
     struct gl_vertex_program *program = ctx->VertexProgram._Current;
-    struct gl_program_machine machine = { 0 };
+    struct gl_program_machine *machine = &store->machine;
     GLuint outputs[VERT_RESULT_MAX], numOutputs;
+    GLuint outputStrides[VERT_RESULT_MAX];
+    GLubyte *outputData[VERT_RESULT_MAX];
+    GLuint inputs[VERT_ATTRIB_MAX], inputSizes[VERT_ATTRIB_MAX];
+    GLuint inputStrides[VERT_ATTRIB_MAX], numInputs;
+    const GLubyte *inputData[VERT_ATTRIB_MAX];
+    GLuint batchCount;
     GLuint i, j;
 
     if (!program)
@@ -322,12 +365,57 @@ run_vp(GLcontext *ctx, struct tnl_pipeline_stage *stage)
 	}
     }
 
+    /* Make a compact list of shader inputs and keep moving cursors instead
+     * of testing every possible attribute and multiplying its stride for
+     * every vertex. */
+    numInputs = 0;
+    for (i = 0; i < VERT_ATTRIB_MAX; i++) {
+	if (program->Base.InputsRead & (1 << i)) {
+	    inputs[numInputs] = i;
+	    inputSizes[numInputs] = VB->AttribPtr[i]->size;
+	    inputStrides[numInputs] = VB->AttribPtr[i]->stride;
+	    inputData[numInputs] = (const GLubyte *) VB->AttribPtr[i]->data;
+	    numInputs++;
+	}
+    }
+
     map_textures(ctx, program);
+    init_machine(ctx, machine);
+    if (store->fastProgramSource != &program->Base ||
+	store->fastProgramInstructions != program->Base.Instructions ||
+	store->fastProgramInstructionCount != program->Base.NumInstructions) {
+	_mesa_destroy_fast_program(store->fastProgram);
+	store->fastProgram = _mesa_create_fast_program(
+	    ctx, &program->Base, machine);
+	/* Remember unsupported programs as well.  Re-running the decoder on
+	 * every vertex batch cannot make an unchanged program supported. */
+	store->fastProgramSource = &program->Base;
+	store->fastProgramInstructions = program->Base.Instructions;
+	store->fastProgramInstructionCount = program->Base.NumInstructions;
+    } else {
+	/* The general interpreter normally installs these on entry; the
+	 * persistent fast VM needs current context pointers refreshed here. */
+	machine->CurProgram = &program->Base;
+	machine->EnvParams = ctx->VertexProgram.Parameters;
+    }
 
-    for (i = 0; i < VB->Count; i++) {
-	GLuint attr;
+    for (j = 0; j < numOutputs; ++j) {
+	const GLuint attr = outputs[j];
+	outputData[j] = (GLubyte *) store->results[attr].data;
+	outputStrides[j] = store->results[attr].stride;
+    }
+    batchCount = _mesa_execute_fast_program_batch(store->fastProgram,
+	VB->Count, numInputs, inputs, inputSizes, inputStrides, inputData,
+	numOutputs, outputs, outputData, outputStrides);
+    if (batchCount) {
+	/* The scalar tail keeps moving input cursors, so start each one after
+	 * the prefix already consumed by the lockstep executor. */
+	for (j = 0; j < numInputs; ++j)
+	    inputData[j] += batchCount * inputStrides[j];
+    }
 
-	init_machine(ctx, &machine);
+    for (i = batchCount; i < VB->Count; i++) {
+	reset_machine(program, machine);
 
 #if 0
 	printf("Input  %d: %f, %f, %f, %f\n", i,
@@ -348,23 +436,23 @@ run_vp(GLcontext *ctx, struct tnl_pipeline_stage *stage)
 #endif
 
 	/* the vertex array case */
-	for (attr = 0; attr < VERT_ATTRIB_MAX; attr++) {
-	    if (program->Base.InputsRead & (1 << attr)) {
-		const GLubyte *ptr = (const GLubyte*) VB->AttribPtr[attr]->data;
-		const GLuint size = VB->AttribPtr[attr]->size;
-		const GLuint stride = VB->AttribPtr[attr]->stride;
-		const GLfloat *data = (GLfloat *)(ptr + stride * i);
-		COPY_CLEAN_4V(machine.VertAttribs[attr], size, data);
-	    }
+	for (j = 0; j < numInputs; j++) {
+	    const GLuint attr = inputs[j];
+	    const GLfloat *data = (const GLfloat *) inputData[j];
+	    COPY_CLEAN_4V(machine->VertAttribs[attr], inputSizes[j], data);
+	    inputData[j] += inputStrides[j];
 	}
 
 	/* execute the program */
-	_mesa_execute_program(ctx, &program->Base, &machine);
+	if (store->fastProgram)
+	    _mesa_execute_fast_program(store->fastProgram);
+	else
+	    _mesa_execute_program(ctx, &program->Base, machine);
 
 	/* copy the output registers into the VB->attribs arrays */
 	for (j = 0; j < numOutputs; j++) {
 	    const GLuint attr = outputs[j];
-	    COPY_4V(store->results[attr].data[i], machine.Outputs[attr]);
+	    COPY_4V(store->results[attr].data[i], machine->Outputs[attr]);
 	}
 #if 0
 	printf("HPOS: %f %f %f %f\n",
@@ -471,7 +559,7 @@ init_vp(GLcontext *ctx, struct tnl_pipeline_stage *stage)
     const GLuint size = VB->Size;
     GLuint i;
 
-    stage->privatePtr = malloc(sizeof(*store));
+    stage->privatePtr = calloc(1, sizeof(*store));
     store = VP_STAGE_DATA(stage);
     if (!store)
 	return GL_FALSE;
@@ -501,6 +589,7 @@ vp_stage_dtr(struct tnl_pipeline_stage *stage)
     if (store) {
 	GLuint i;
 
+	_mesa_destroy_fast_program(store->fastProgram);
 	/* free the vertex program result arrays */
 	for (i = 0; i < VERT_RESULT_MAX; i++)
 	    _mesa_vector4f_free(&store->results[i]);

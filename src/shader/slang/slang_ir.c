@@ -35,6 +35,7 @@ static const slang_ir_info IrInfo[] = {
     { IR_ADD, "IR_ADD", OPCODE_ADD, 4, 2 },
     { IR_SUB, "IR_SUB", OPCODE_SUB, 4, 2 },
     { IR_MUL, "IR_MUL", OPCODE_MUL, 4, 2 },
+    { IR_MAT_VEC_MUL, "IR_MAT_VEC_MUL", OPCODE_NOP, 4, 2 },
     { IR_DIV, "IR_DIV", OPCODE_NOP, 0, 2 }, /* XXX broke */
     { IR_DOT4, "IR_DOT_4", OPCODE_DP4, 1, 2 },
     { IR_DOT3, "IR_DOT_3", OPCODE_DP3, 1, 2 },

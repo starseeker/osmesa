@@ -2621,6 +2621,58 @@ _slang_check_matmul_optimization(slang_assemble_ctx *A, slang_operation *oper)
 
 
 /**
+ * Return the dimension for a square-matrix times matching-vector operation,
+ * or zero for every other multiplication.
+ */
+static GLint
+square_matrix_vector_dimension(slang_assemble_ctx *A, slang_operation *oper)
+{
+    slang_operation *matrixOper = &oper->children[0];
+    slang_typeinfo matrixType;
+    slang_typeinfo vectorType;
+    GLint dimension = 0;
+
+    /* Built-in gl_*Matrix state variables have special packed storage and
+     * are already handled by _slang_check_matmul_optimization(). */
+    if (matrixOper->type == SLANG_OPER_SUBSCRIPT)
+	matrixOper = &matrixOper->children[0];
+    if (matrixOper->type != SLANG_OPER_IDENTIFIER)
+	return 0;
+    if (matrixOper->a_id &&
+	strncmp((const char *) matrixOper->a_id, "gl_", 3) == 0)
+	return 0;
+
+    slang_typeinfo_construct(&matrixType);
+    slang_typeinfo_construct(&vectorType);
+    if (!_slang_typeof_operation(A, &oper->children[0], &matrixType) ||
+	!_slang_typeof_operation(A, &oper->children[1], &vectorType))
+	goto done;
+
+    switch (matrixType.spec.type) {
+	case SLANG_SPEC_MAT2:
+	    if (vectorType.spec.type == SLANG_SPEC_VEC2)
+		dimension = 2;
+	    break;
+	case SLANG_SPEC_MAT3:
+	    if (vectorType.spec.type == SLANG_SPEC_VEC3)
+		dimension = 3;
+	    break;
+	case SLANG_SPEC_MAT4:
+	    if (vectorType.spec.type == SLANG_SPEC_VEC4)
+		dimension = 4;
+	    break;
+	default:
+	    break;
+    }
+
+done:
+    slang_typeinfo_destruct(&matrixType);
+    slang_typeinfo_destruct(&vectorType);
+    return dimension;
+}
+
+
+/**
  * Generate IR tree for a slang_operation (AST node)
  */
 static slang_ir_node *
@@ -2746,7 +2798,17 @@ _slang_gen_operation(slang_assemble_ctx * A, slang_operation *oper)
 	}
 	case SLANG_OPER_MULTIPLY: {
 	    slang_ir_node *n;
+	    GLint dimension;
 	    assert(oper->num_children == 2);
+	    dimension = square_matrix_vector_dimension(A, oper);
+	    if (dimension) {
+		n = new_node2(IR_MAT_VEC_MUL,
+			      _slang_gen_operation(A, &oper->children[0]),
+			      _slang_gen_operation(A, &oper->children[1]));
+		if (n)
+		    n->Value[0] = (GLfloat) dimension;
+		return n;
+	    }
 	    _slang_check_matmul_optimization(A, oper);
 	    n = _slang_gen_function_call_name(A, "*", oper, NULL);
 	    return n;

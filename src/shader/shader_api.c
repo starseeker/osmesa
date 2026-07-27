@@ -48,8 +48,6 @@
 #include "slang_compile.h"
 #include "slang_link.h"
 
-
-
 /**
  * Allocate a new gl_shader_program object, initialize it.
  */
@@ -1058,8 +1056,11 @@ _mesa_get_uniform_location(GLcontext *ctx, GLuint program, const GLchar *name)
 {
     struct gl_shader_program *shProg
 	= _mesa_lookup_shader_program(ctx, program);
+    if (!name)
+	return -1;
     if (shProg) {
 	GLuint loc;
+	const size_t nameLen = strlen(name);
 	for (loc = 0; loc < shProg->Uniforms->NumParameters; loc++) {
 	    const struct gl_program_parameter *u
 		    = shProg->Uniforms->Parameters + loc;
@@ -1070,6 +1071,34 @@ _mesa_get_uniform_location(GLcontext *ctx, GLuint program, const GLchar *name)
 	    if ((u->Type == PROGRAM_UNIFORM ||
 		 u->Type == PROGRAM_SAMPLER) && !strcmp(u->Name, name)) {
 		return loc;
+	    }
+	}
+	/* Active array uniforms are stored under their canonical "name[0]"
+	 * spelling.  The GLSL API also accepts the base array name and returns
+	 * the location of its first element. */
+	if (!strchr(name, '[')) {
+	    for (loc = 0; loc < shProg->Uniforms->NumParameters; loc++) {
+		const struct gl_program_parameter *u
+			= shProg->Uniforms->Parameters + loc;
+		if ((u->Type == PROGRAM_UNIFORM ||
+		     u->Type == PROGRAM_SAMPLER) &&
+		    u->Name && strlen(u->Name) == nameLen + 3 &&
+		    strncmp(u->Name, name, nameLen) == 0 &&
+		    strcmp(u->Name + nameLen, "[0]") == 0) {
+		    return loc;
+		}
+	    }
+	} else if (nameLen > 3 && strcmp(name + nameLen - 3, "[0]") == 0) {
+	    const size_t baseLen = nameLen - 3;
+	    for (loc = 0; loc < shProg->Uniforms->NumParameters; loc++) {
+		const struct gl_program_parameter *u
+			= shProg->Uniforms->Parameters + loc;
+		if ((u->Type == PROGRAM_UNIFORM ||
+		     u->Type == PROGRAM_SAMPLER) &&
+		    u->Name && strlen(u->Name) == baseLen &&
+		    strncmp(u->Name, name, baseLen) == 0) {
+		    return loc;
+		}
 	    }
 	}
     }

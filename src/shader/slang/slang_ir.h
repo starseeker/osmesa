@@ -79,6 +79,7 @@ typedef enum {
     IR_ADD,
     IR_SUB,
     IR_MUL,
+    IR_MAT_VEC_MUL, /* square matrix times matching vector */
     IR_DIV,
     IR_DOT4,
     IR_DOT3,
