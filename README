@@ -34,6 +34,42 @@ avoid accidentally including system versions of gl.h.
 
 
 --------------------------------------------------------------------------------
+Programmable software execution
+
+GLSL programs are lowered to Mesa program instructions.  The complete scalar
+interpreter remains the correctness reference and handles the full supported
+instruction set.  At link/use time, eligible programs also receive a
+pre-resolved execution plan which avoids repeated register resolution and
+dispatches straight-line vertex work and structured fragment work in
+four-lane SSE2 groups.  Fragment conditionals are predicated per lane, and
+programs or outputs outside the SIMD contract fall back to the scalar
+interpreter.
+
+The SIMD executor is deliberately an optimization, not a different rendering
+contract.  `examples/fragment_bench` reports framebuffer hashes as well as
+timing for fixed-function, pass-through, normal, and derivative face-normal
+shaders.  `gl2_ext_test` exercises the scalar tail, batched vertex execution,
+fragment derivatives, front-facing state, and other GLSL contracts.
+
+Useful diagnostic controls are:
+
+* `OSMESA_DISABLE_FAST_PROGRAM_VM=1`
+* `OSMESA_DISABLE_FAST_VERTEX_VM=1`
+* `OSMESA_DISABLE_FAST_FRAGMENT_VM=1`
+* `OSMESA_DISABLE_FAST_VERTEX_BATCH=1`
+* `OSMESA_DISABLE_FAST_FRAGMENT_SIMD=1`
+* `OSMESA_FRAGMENT_STATS=1`
+
+This is still a span rasterizer, not a tiled JIT renderer.  Small triangles
+frequently produce one-pixel spans which cannot fill a four-lane packet, and
+the retained instruction plan still incurs interpreter dispatch.  Applications
+should therefore benchmark programmable and fixed-function paths for their
+workload rather than assuming that GLSL is faster in software.  Closing that
+remaining structural gap requires a masked quad/tile rasterizer and
+ISA-dispatched compiled shader kernels, not wider arithmetic alone.
+
+
+--------------------------------------------------------------------------------
 Fast Approximate Anti-Aliasing
 
 VTK-style Fast Approximate Anti-Aliasing) has been integrated into OSMesa as an

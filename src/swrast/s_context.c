@@ -777,6 +777,11 @@ _swrast_CreateContext(GLcontext *ctx)
 
     swrast->AllowVertexFog = GL_TRUE;
     swrast->AllowPixelFog = GL_TRUE;
+    {
+	const char *stats = getenv("OSMESA_FRAGMENT_STATS");
+	swrast->FragProgStatsEnabled =
+	    stats && stats[0] != '\0' && stats[0] != '0';
+    }
 
     /* Optimized Accum buffer */
     swrast->_IntegerAccumMode = GL_FALSE;
@@ -831,11 +836,28 @@ _swrast_DestroyContext(GLcontext *ctx)
     if (SWRAST_DEBUG) {
 	_mesa_debug(ctx, "_swrast_DestroyContext\n");
     }
+    if (swrast->FragProgStatsEnabled) {
+	fprintf(stderr,
+		"OSMesa fragment stats: simd_groups=%llu "
+		"simd_fragments=%llu eligible_spans=%llu "
+		"scalar_fragments=%llu scalar_single_tails=%llu "
+		"simd_two_tails=%llu simd_three_tails=%llu "
+		"simd_fallbacks=%llu\n",
+		swrast->FragProgSimdGroups,
+		swrast->FragProgSimdFragments,
+		swrast->FragProgSimdEligibleSpans,
+		swrast->FragProgScalarFragments,
+		swrast->FragProgScalarSingleTails,
+		swrast->FragProgSimdTwoTails,
+		swrast->FragProgSimdThreeTails,
+		swrast->FragProgSimdFallbacks);
+    }
 
     free(swrast->SpanArrays);
     if (swrast->ZoomedArrays)
 	free(swrast->ZoomedArrays);
     free(swrast->TexelBuffer);
+    _mesa_destroy_fast_program(swrast->FragProgFast);
     free(swrast);
 
     ctx->swrast_context = 0;

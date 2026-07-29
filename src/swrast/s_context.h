@@ -231,6 +231,19 @@ typedef struct {
 
     /** State used during execution of fragment programs */
     struct gl_program_machine FragProgMachine;
+    struct gl_program_fast *FragProgFast;
+    const struct gl_program *FragProgFastSource;
+    const struct prog_instruction *FragProgFastInstructions;
+    GLuint FragProgFastInstructionCount;
+    GLboolean FragProgStatsEnabled;
+    unsigned long long FragProgSimdGroups;
+    unsigned long long FragProgSimdFragments;
+    unsigned long long FragProgSimdEligibleSpans;
+    unsigned long long FragProgScalarFragments;
+    unsigned long long FragProgScalarSingleTails;
+    unsigned long long FragProgSimdTwoTails;
+    unsigned long long FragProgSimdThreeTails;
+    unsigned long long FragProgSimdFallbacks;
 
 } SWcontext;
 

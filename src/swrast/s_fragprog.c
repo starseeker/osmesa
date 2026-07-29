@@ -160,6 +160,62 @@ init_machine(GLcontext *ctx, struct gl_program_machine *machine,
 
 
 /**
+ * Execute and commit one fragment through the complete scalar path.
+ */
+static void
+run_scalar_fragment(GLcontext *ctx,
+		    SWspan *span,
+		    const struct gl_fragment_program *program,
+		    struct gl_program_fast *fast,
+		    struct gl_program_machine *machine,
+		    GLbitfield outputsWritten,
+		    GLuint column)
+{
+    SWcontext *swrast = SWRAST_CONTEXT(ctx);
+
+    init_machine(ctx, machine, program, span, column);
+    if (fast ? _mesa_execute_fast_program(fast) :
+	_mesa_execute_program(ctx, &program->Base, machine)) {
+
+	/* Store result color */
+	if (outputsWritten & (1 << FRAG_RESULT_COLR)) {
+	    COPY_4V(span->array->attribs[FRAG_ATTRIB_COL0][column],
+		    machine->Outputs[FRAG_RESULT_COLR]);
+	} else {
+	    /* Multiple drawbuffers / render targets
+	     * Note that colors beyond 0 and 1 will overwrite other
+	     * attributes, such as FOGC, TEX0, TEX1, etc.  That's OK.
+	     */
+	    GLuint output;
+	    for (output = 0; output < swrast->_NumColorOutputs; output++) {
+		if (outputsWritten & (1 << (FRAG_RESULT_DATA0 + output))) {
+		    COPY_4V(
+			span->array->attribs[FRAG_ATTRIB_COL0 + output][column],
+			machine->Outputs[FRAG_RESULT_DATA0 + output]);
+		}
+	    }
+	}
+
+	/* Store result depth/z */
+	if (outputsWritten & (1 << FRAG_RESULT_DEPR)) {
+	    const GLfloat depth = machine->Outputs[FRAG_RESULT_DEPR][2];
+	    if (depth <= 0.0)
+		span->array->z[column] = 0;
+	    else if (depth >= 1.0)
+		span->array->z[column] = ctx->DrawBuffer->_DepthMax;
+	    else
+		span->array->z[column] =
+		    IROUND(depth * ctx->DrawBuffer->_DepthMaxF);
+	}
+    } else {
+	/* killed fragment */
+	span->array->mask[column] = GL_FALSE;
+	span->writeAll = GL_FALSE;
+    }
+}
+
+
+/**
  * Run fragment program on the pixels in span from 'start' to 'end' - 1.
  */
 static void
@@ -169,47 +225,138 @@ run_program(GLcontext *ctx, SWspan *span, GLuint start, GLuint end)
     const struct gl_fragment_program *program = ctx->FragmentProgram._Current;
     const GLbitfield outputsWritten = program->Base.OutputsWritten;
     struct gl_program_machine *machine = &swrast->FragProgMachine;
+    struct gl_program_fast *fast;
+    GLuint columns[4];
+    GLuint columnCount = 0;
+    GLboolean useSimd;
     GLuint i;
 
+    if (swrast->FragProgFastSource != &program->Base ||
+	swrast->FragProgFastInstructions != program->Base.Instructions ||
+	swrast->FragProgFastInstructionCount !=
+	    program->Base.NumInstructions) {
+	_mesa_destroy_fast_program(swrast->FragProgFast);
+	swrast->FragProgFast = _mesa_create_fast_program(
+	    ctx, &program->Base, machine);
+	swrast->FragProgFastSource = &program->Base;
+	swrast->FragProgFastInstructions = program->Base.Instructions;
+	swrast->FragProgFastInstructionCount =
+	    program->Base.NumInstructions;
+    }
+    fast = swrast->FragProgFast;
+    useSimd =
+	outputsWritten == (1u << FRAG_RESULT_COLR) &&
+	_mesa_fast_fragment_simd_supported(fast);
+    if (useSimd && swrast->FragProgStatsEnabled)
+	++swrast->FragProgSimdEligibleSpans;
+
     for (i = start; i < end; i++) {
-	if (span->array->mask[i]) {
-	    init_machine(ctx, machine, program, span, i);
+	if (!span->array->mask[i])
+	    continue;
 
-	    if (_mesa_execute_program(ctx, &program->Base, machine)) {
+	if (!useSimd) {
+	    if (swrast->FragProgStatsEnabled)
+		++swrast->FragProgScalarFragments;
+	    run_scalar_fragment(ctx, span, program, fast, machine,
+				outputsWritten, i);
+	    continue;
+	}
 
-		/* Store result color */
-		if (outputsWritten & (1 << FRAG_RESULT_COLR)) {
-		    COPY_4V(span->array->attribs[FRAG_ATTRIB_COL0][i],
-			    machine->Outputs[FRAG_RESULT_COLR]);
-		} else {
-		    /* Multiple drawbuffers / render targets
-		     * Note that colors beyond 0 and 1 will overwrite other
-		     * attributes, such as FOGC, TEX0, TEX1, etc.  That's OK.
-		     */
-		    GLuint output;
-		    for (output = 0; output < swrast->_NumColorOutputs; output++) {
-			if (outputsWritten & (1 << (FRAG_RESULT_DATA0 + output))) {
-			    COPY_4V(span->array->attribs[FRAG_ATTRIB_COL0+output][i],
-				    machine->Outputs[FRAG_RESULT_DATA0 + output]);
-			}
-		    }
-		}
+	columns[columnCount++] = i;
+	if (columnCount == 4) {
+	    GLfloat colors[4][4];
+	    GLuint lane;
 
-		/* Store result depth/z */
-		if (outputsWritten & (1 << FRAG_RESULT_DEPR)) {
-		    const GLfloat depth = machine->Outputs[FRAG_RESULT_DEPR][2];
-		    if (depth <= 0.0)
-			span->array->z[i] = 0;
-		    else if (depth >= 1.0)
-			span->array->z[i] = ctx->DrawBuffer->_DepthMax;
-		    else
-			span->array->z[i] = IROUND(depth * ctx->DrawBuffer->_DepthMaxF);
-		}
-	    } else {
-		/* killed fragment */
-		span->array->mask[i] = GL_FALSE;
-		span->writeAll = GL_FALSE;
+	    /* init_machine establishes span pointers, derivatives, texture
+	     * callbacks, and invocation defaults.  Facing is itself a fragment
+	     * input, so initialize all four gathered columns before the SIMD
+	    * executor loads its component-major state. */
+	    if (ctx->Shader.CurrentProgram) {
+		machine->Attribs = span->array->attribs;
+		for (lane = 0; lane < 4; ++lane)
+		    machine->Attribs[FRAG_ATTRIB_FOGC][columns[lane]][1] =
+			1.0F - span->facing;
 	    }
+	    init_machine(ctx, machine, program, span, columns[0]);
+
+	    if (_mesa_execute_fast_fragment_program_simd(
+		    fast, columns, colors)) {
+		if (swrast->FragProgStatsEnabled)
+		{
+		    ++swrast->FragProgSimdGroups;
+		    swrast->FragProgSimdFragments += 4;
+		}
+		for (lane = 0; lane < 4; ++lane)
+		    COPY_4V(
+			span->array->attribs[FRAG_ATTRIB_COL0][columns[lane]],
+			colors[lane]);
+	    } else {
+		if (swrast->FragProgStatsEnabled) {
+		    ++swrast->FragProgSimdFallbacks;
+		    swrast->FragProgScalarFragments += 4;
+		}
+		/* Eligibility is conservative, but retaining this fallback makes
+		 * a rejected SIMD execution observationally identical to the
+		 * established scalar path. */
+		for (lane = 0; lane < 4; ++lane)
+		    run_scalar_fragment(ctx, span, program, fast, machine,
+					outputsWritten, columns[lane]);
+	    }
+	    columnCount = 0;
+	}
+    }
+
+    if (useSimd && columnCount >= 2) {
+	GLfloat colors[4][4];
+	const GLuint actualCount = columnCount;
+	GLuint lane;
+
+	/* A two- or three-fragment tail is still cheaper as one SIMD program
+	 * invocation than as independent scalar interpreter runs.  Duplicate
+	 * the final source column into inactive lanes; only actual lanes are
+	 * committed, so derivatives and framebuffer ordering are unchanged. */
+	while (columnCount < 4) {
+	    columns[columnCount] = columns[actualCount - 1];
+	    ++columnCount;
+	}
+	if (ctx->Shader.CurrentProgram) {
+	    machine->Attribs = span->array->attribs;
+	    for (lane = 0; lane < actualCount; ++lane)
+		machine->Attribs[FRAG_ATTRIB_FOGC][columns[lane]][1] =
+		    1.0F - span->facing;
+	}
+	init_machine(ctx, machine, program, span, columns[0]);
+	if (_mesa_execute_fast_fragment_program_simd(fast, columns, colors)) {
+	    if (swrast->FragProgStatsEnabled) {
+		++swrast->FragProgSimdGroups;
+		swrast->FragProgSimdFragments += actualCount;
+		if (actualCount == 2)
+		    ++swrast->FragProgSimdTwoTails;
+		else
+		    ++swrast->FragProgSimdThreeTails;
+	    }
+	    for (lane = 0; lane < actualCount; ++lane)
+		COPY_4V(
+		    span->array->attribs[FRAG_ATTRIB_COL0][columns[lane]],
+		    colors[lane]);
+	} else {
+	    if (swrast->FragProgStatsEnabled) {
+		++swrast->FragProgSimdFallbacks;
+		swrast->FragProgScalarFragments += actualCount;
+	    }
+	    for (lane = 0; lane < actualCount; ++lane)
+		run_scalar_fragment(ctx, span, program, fast, machine,
+				    outputsWritten, columns[lane]);
+	}
+    } else {
+	for (i = 0; i < columnCount; ++i) {
+	    if (swrast->FragProgStatsEnabled) {
+		++swrast->FragProgScalarFragments;
+		if (useSimd)
+		    ++swrast->FragProgScalarSingleTails;
+	    }
+	    run_scalar_fragment(ctx, span, program, fast, machine,
+				outputsWritten, columns[i]);
 	}
     }
 }

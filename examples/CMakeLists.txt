@@ -34,6 +34,13 @@ if (O3_COMPILER_FLAG)
   target_compile_options(shader_bench PRIVATE "-O3")
 endif (O3_COMPILER_FLAG)
 
+add_executable(fragment_bench fragment_bench.c)
+target_link_libraries(fragment_bench osmesa ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+set_property(TARGET fragment_bench APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
+if (O3_COMPILER_FLAG)
+  target_compile_options(fragment_bench PRIVATE "-O3")
+endif (O3_COMPILER_FLAG)
+
 # TODO -see if we can adapt this as an example:
 # https://github.com/danginsburg/opengles3-book/blob/master/Chapter_2/Hello_Triangle/Hello_Triangle.c
 

@@ -45,6 +45,14 @@
 #include "prog_print.h"
 #include "slang_library_noise.h"
 
+#if defined(__SSE2__) || defined(_M_X64) || \
+    (defined(_MSC_VER) && defined(_M_IX86_FP) && _M_IX86_FP >= 2)
+#include <emmintrin.h>
+#define MESA_FAST_PROGRAM_SIMD 1
+#else
+#define MESA_FAST_PROGRAM_SIMD 0
+#endif
+
 
 /* debug predicate */
 #define DEBUG_PROG 0
@@ -474,9 +482,11 @@ store_vector4(const struct prog_instruction *inst,
  */
 struct gl_fast_source {
     const GLfloat *value;
+    const struct prog_src_register *original;
     GLubyte component[4];
     GLubyte modifiers;
     GLubyte file;
+    GLubyte dynamic;
     GLint index;
 };
 
@@ -498,6 +508,8 @@ struct gl_program_fast {
     struct gl_program_machine *machine;
     GLuint count;
     GLboolean batchSupported;
+    GLboolean fragmentSimdSupported;
+    GLbitfield fragmentInputMask;
 };
 
 static GLboolean
@@ -506,17 +518,24 @@ fast_opcode_supported(gl_inst_opcode opcode)
     switch (opcode) {
 	case OPCODE_ABS:
 	case OPCODE_ADD:
+	case OPCODE_ARL:
+	case OPCODE_BGNLOOP:
 	case OPCODE_BGNSUB:
+	case OPCODE_BRK:
 	case OPCODE_CAL:
+	case OPCODE_DDX:
+	case OPCODE_DDY:
 	case OPCODE_DP3:
 	case OPCODE_DP4:
 	case OPCODE_ELSE:
 	case OPCODE_END:
 	case OPCODE_ENDIF:
+	case OPCODE_ENDLOOP:
 	case OPCODE_ENDSUB:
 	case OPCODE_FLR:
 	case OPCODE_FRC:
 	case OPCODE_IF:
+	case OPCODE_INT:
 	case OPCODE_MAD:
 	case OPCODE_MAX:
 	case OPCODE_MIN:
@@ -525,11 +544,14 @@ fast_opcode_supported(gl_inst_opcode opcode)
 	case OPCODE_NOP:
 	case OPCODE_RCP:
 	case OPCODE_RET:
+	case OPCODE_RSQ:
 	case OPCODE_SEQ:
 	case OPCODE_SGE:
+	case OPCODE_SGT:
 	case OPCODE_SLT:
 	case OPCODE_SNE:
 	case OPCODE_SUB:
+	case OPCODE_XPD:
 	    return GL_TRUE;
 	default:
 	    return GL_FALSE;
@@ -569,15 +591,60 @@ fast_batch_opcode_supported(gl_inst_opcode opcode)
     }
 }
 
+/* This is deliberately a smaller language than the scalar fast VM.  SIMD
+ * eligibility is established once, when the program is resolved, instead of
+ * rediscovering it in every span.  The generated Obol directional-light
+ * shaders fit this straight-line arithmetic subset; programs with texture
+ * access, loops, calls, kills, or lane-dependent control flow retain the
+ * complete scalar interpreter. */
+static GLboolean
+fast_fragment_simd_opcode_supported(gl_inst_opcode opcode)
+{
+    switch (opcode) {
+	case OPCODE_ABS:
+	case OPCODE_ADD:
+	case OPCODE_DDX:
+	case OPCODE_DDY:
+	case OPCODE_DP3:
+	case OPCODE_DP4:
+	case OPCODE_ELSE:
+	case OPCODE_END:
+	case OPCODE_ENDIF:
+	case OPCODE_IF:
+	case OPCODE_MAD:
+	case OPCODE_MAX:
+	case OPCODE_MIN:
+	case OPCODE_MOV:
+	case OPCODE_MUL:
+	case OPCODE_NOP:
+	case OPCODE_RCP:
+	case OPCODE_RSQ:
+	case OPCODE_SEQ:
+	case OPCODE_SGE:
+	case OPCODE_SGT:
+	case OPCODE_SLT:
+	case OPCODE_SNE:
+	case OPCODE_SUB:
+	case OPCODE_XPD:
+	    return GL_TRUE;
+	default:
+	    return GL_FALSE;
+    }
+}
+
 static GLboolean
 fast_opcode_writes_result(gl_inst_opcode opcode)
 {
     switch (opcode) {
 	case OPCODE_BGNSUB:
+	case OPCODE_ARL:
+	case OPCODE_BGNLOOP:
+	case OPCODE_BRK:
 	case OPCODE_CAL:
 	case OPCODE_ELSE:
 	case OPCODE_END:
 	case OPCODE_ENDIF:
+	case OPCODE_ENDLOOP:
 	case OPCODE_ENDSUB:
 	case OPCODE_IF:
 	case OPCODE_NOP:
@@ -592,7 +659,9 @@ static GLboolean
 fast_opcode_has_branch_target(gl_inst_opcode opcode)
 {
     return opcode == OPCODE_CAL ||
+	opcode == OPCODE_BRK ||
 	opcode == OPCODE_ELSE ||
+	opcode == OPCODE_ENDLOOP ||
 	opcode == OPCODE_IF;
 }
 
@@ -622,7 +691,13 @@ _mesa_create_fast_program(GLcontext *ctx,
     if (!program || !machine || !program->NumInstructions)
 	return NULL;
     {
-	const char *disable = getenv("OSMESA_DISABLE_FAST_VERTEX_VM");
+	const char *disable = getenv("OSMESA_DISABLE_FAST_PROGRAM_VM");
+	if (disable && disable[0] != '\0' && disable[0] != '0')
+	    return NULL;
+	disable = getenv(
+	    program->Target == GL_VERTEX_PROGRAM_ARB ?
+	    "OSMESA_DISABLE_FAST_VERTEX_VM" :
+	    "OSMESA_DISABLE_FAST_FRAGMENT_VM");
 	if (disable && disable[0] != '\0' && disable[0] != '0')
 	    return NULL;
     }
@@ -643,14 +718,21 @@ _mesa_create_fast_program(GLcontext *ctx,
      * programs use the ARB target and are safe candidates for lockstep
      * execution. */
     fast->batchSupported = program->Target == GL_VERTEX_PROGRAM_ARB;
+    fast->fragmentSimdSupported =
+	MESA_FAST_PROGRAM_SIMD &&
+	program->Target == GL_FRAGMENT_PROGRAM_ARB;
     {
 	const char *disable = getenv("OSMESA_DISABLE_FAST_VERTEX_BATCH");
 	if (disable && disable[0] != '\0' && disable[0] != '0')
 	    fast->batchSupported = GL_FALSE;
+	disable = getenv("OSMESA_DISABLE_FAST_FRAGMENT_SIMD");
+	if (disable && disable[0] != '\0' && disable[0] != '0')
+	    fast->fragmentSimdSupported = GL_FALSE;
     }
 
     machine->CurProgram = program;
-    machine->EnvParams = ctx->VertexProgram.Parameters;
+    machine->EnvParams = program->Target == GL_VERTEX_PROGRAM_ARB ?
+	ctx->VertexProgram.Parameters : ctx->FragmentProgram.Parameters;
     for (i = 0; i < program->NumInstructions; ++i) {
 	const struct prog_instruction *instruction = program->Instructions + i;
 	struct gl_fast_instruction *out = fast->instructions + i;
@@ -674,6 +756,8 @@ _mesa_create_fast_program(GLcontext *ctx,
 	if (!fast_batch_opcode_supported(instruction->Opcode) ||
 	    instruction->CondUpdate)
 	    fast->batchSupported = GL_FALSE;
+	if (!fast_fragment_simd_opcode_supported(instruction->Opcode))
+	    fast->fragmentSimdSupported = GL_FALSE;
 	out->destinationFile = instruction->DstReg.File;
 	out->destinationIndex = instruction->DstReg.Index;
 	out->condUpdate = instruction->CondUpdate;
@@ -691,13 +775,38 @@ _mesa_create_fast_program(GLcontext *ctx,
 	    const struct prog_src_register *input =
 		instruction->SrcReg + source;
 	    struct gl_fast_source *resolved = out->source + source;
-	    if (input->RelAddr)
-		goto unsupported;
-	    resolved->value = get_register_pointer(input, machine);
+	    resolved->original = input;
 	    resolved->file = input->File;
 	    resolved->index = input->Index;
-	    if (!resolved->value)
+	    resolved->dynamic = input->RelAddr ||
+		(input->File == PROGRAM_INPUT &&
+		 program->Target != GL_VERTEX_PROGRAM_ARB);
+	    resolved->value = resolved->dynamic ?
+		NULL : get_register_pointer(input, machine);
+	    if (!resolved->dynamic && !resolved->value)
 		goto unsupported;
+	    if (resolved->dynamic)
+		fast->batchSupported = GL_FALSE;
+	    if (fast->fragmentSimdSupported) {
+		if (input->RelAddr)
+		    fast->fragmentSimdSupported = GL_FALSE;
+		else if (input->File == PROGRAM_INPUT) {
+		    if (input->Index < 0 ||
+			input->Index >= FRAG_ATTRIB_MAX)
+			fast->fragmentSimdSupported = GL_FALSE;
+		    else
+			fast->fragmentInputMask |= 1u << input->Index;
+		} else if (input->File != PROGRAM_TEMPORARY &&
+			   input->File != PROGRAM_OUTPUT &&
+			   input->File != PROGRAM_LOCAL_PARAM &&
+			   input->File != PROGRAM_ENV_PARAM &&
+			   input->File != PROGRAM_STATE_VAR &&
+			   input->File != PROGRAM_CONSTANT &&
+			   input->File != PROGRAM_UNIFORM &&
+			   input->File != PROGRAM_NAMED_PARAM) {
+		    fast->fragmentSimdSupported = GL_FALSE;
+		}
+	    }
 	    resolved->component[0] =
 		(GLubyte) GET_SWZ(input->Swizzle, 0);
 	    resolved->component[1] =
@@ -710,6 +819,17 @@ _mesa_create_fast_program(GLcontext *ctx,
 		(input->NegateBase ? 1u : 0u) |
 		(input->Abs ? 2u : 0u) |
 		(input->NegateAbs ? 4u : 0u);
+	}
+	if (fast->fragmentSimdSupported &&
+	    (instruction->Opcode == OPCODE_DDX ||
+	     instruction->Opcode == OPCODE_DDY)) {
+	    const struct prog_src_register *input = instruction->SrcReg;
+	    if (input->File != PROGRAM_INPUT || input->RelAddr ||
+		input->Index < 0 || input->Index >= FRAG_ATTRIB_MAX) {
+		fast->fragmentSimdSupported = GL_FALSE;
+	    } else {
+		fast->fragmentInputMask |= 1u << FRAG_ATTRIB_WPOS;
+	    }
 	}
     }
     return fast;
@@ -729,9 +849,12 @@ _mesa_destroy_fast_program(struct gl_program_fast *program)
 }
 
 static INLINE void
-fast_fetch_vector4(const struct gl_fast_source *source, GLfloat result[4])
+fast_fetch_vector4(const struct gl_fast_source *source,
+		   const struct gl_program_machine *machine,
+		   GLfloat result[4])
 {
-    const GLfloat *value = source->value;
+    const GLfloat *value = source->dynamic ?
+	get_register_pointer(source->original, machine) : source->value;
     const GLuint modifiers = source->modifiers;
 
     result[0] = value[source->component[0]];
@@ -761,9 +884,12 @@ fast_fetch_vector4(const struct gl_fast_source *source, GLfloat result[4])
 }
 
 static INLINE GLfloat
-fast_fetch_vector1(const struct gl_fast_source *source)
+fast_fetch_vector1(const struct gl_fast_source *source,
+		   const struct gl_program_machine *machine)
 {
-    GLfloat result = source->value[source->component[0]];
+    const GLfloat *value = source->dynamic ?
+	get_register_pointer(source->original, machine) : source->value;
+    GLfloat result = value[source->component[0]];
     const GLuint modifiers = source->modifiers;
     if (modifiers & 1u)
 	result = -result;
@@ -849,23 +975,32 @@ _mesa_execute_fast_program(const struct gl_program_fast *program)
 
 	switch (instruction->opcode) {
 	    case OPCODE_ABS:
-		fast_fetch_vector4(instruction->source, a);
+		fast_fetch_vector4(instruction->source, machine, a);
 		result[0] = FABSF(a[0]);
 		result[1] = FABSF(a[1]);
 		result[2] = FABSF(a[2]);
 		result[3] = FABSF(a[3]);
 		break;
 	    case OPCODE_ADD:
-		fast_fetch_vector4(instruction->source, a);
-		fast_fetch_vector4(instruction->source + 1, b);
+		fast_fetch_vector4(instruction->source, machine, a);
+		fast_fetch_vector4(instruction->source + 1, machine, b);
 		result[0] = a[0] + b[0];
 		result[1] = a[1] + b[1];
 		result[2] = a[2] + b[2];
 		result[3] = a[3] + b[3];
 		break;
+	    case OPCODE_ARL:
+		fast_fetch_vector4(instruction->source, machine, a);
+		machine->AddressReg[0][0] = (GLint) FLOORF(a[0]);
+		continue;
+	    case OPCODE_BGNLOOP:
 	    case OPCODE_BGNSUB:
 	    case OPCODE_ENDIF:
 	    case OPCODE_ENDSUB:
+		continue;
+	    case OPCODE_BRK:
+		if (fast_eval_condition(machine, instruction))
+		    pc = instruction->branchTarget - 1;
 		continue;
 	    case OPCODE_CAL:
 		if (fast_eval_condition(machine, instruction)) {
@@ -876,29 +1011,40 @@ _mesa_execute_fast_program(const struct gl_program_fast *program)
 		}
 		continue;
 	    case OPCODE_DP3:
-		fast_fetch_vector4(instruction->source, a);
-		fast_fetch_vector4(instruction->source + 1, b);
+		fast_fetch_vector4(instruction->source, machine, a);
+		fast_fetch_vector4(instruction->source + 1, machine, b);
 		result[0] = result[1] = result[2] = result[3] = DOT3(a, b);
 		break;
 	    case OPCODE_DP4:
-		fast_fetch_vector4(instruction->source, a);
-		fast_fetch_vector4(instruction->source + 1, b);
+		fast_fetch_vector4(instruction->source, machine, a);
+		fast_fetch_vector4(instruction->source + 1, machine, b);
 		result[0] = result[1] = result[2] = result[3] = DOT4(a, b);
+		break;
+	    case OPCODE_DDX:
+		fetch_vector4_deriv(NULL, instruction->source->original,
+				   machine, 'X', result);
+		break;
+	    case OPCODE_DDY:
+		fetch_vector4_deriv(NULL, instruction->source->original,
+				   machine, 'Y', result);
 		break;
 	    case OPCODE_END:
 		return GL_TRUE;
 	    case OPCODE_ELSE:
 		pc = instruction->branchTarget - 1;
 		continue;
+	    case OPCODE_ENDLOOP:
+		pc = instruction->branchTarget - 1;
+		continue;
 	    case OPCODE_FLR:
-		fast_fetch_vector4(instruction->source, a);
+		fast_fetch_vector4(instruction->source, machine, a);
 		result[0] = FLOORF(a[0]);
 		result[1] = FLOORF(a[1]);
 		result[2] = FLOORF(a[2]);
 		result[3] = FLOORF(a[3]);
 		break;
 	    case OPCODE_FRC:
-		fast_fetch_vector4(instruction->source, a);
+		fast_fetch_vector4(instruction->source, machine, a);
 		result[0] = a[0] - FLOORF(a[0]);
 		result[1] = a[1] - FLOORF(a[1]);
 		result[2] = a[2] - FLOORF(a[2]);
@@ -908,37 +1054,44 @@ _mesa_execute_fast_program(const struct gl_program_fast *program)
 		if (!fast_eval_condition(machine, instruction))
 		    pc = instruction->branchTarget - 1;
 		continue;
+	    case OPCODE_INT:
+		fast_fetch_vector4(instruction->source, machine, a);
+		result[0] = (GLfloat)(GLint) a[0];
+		result[1] = (GLfloat)(GLint) a[1];
+		result[2] = (GLfloat)(GLint) a[2];
+		result[3] = (GLfloat)(GLint) a[3];
+		break;
 	    case OPCODE_MAD:
-		fast_fetch_vector4(instruction->source, a);
-		fast_fetch_vector4(instruction->source + 1, b);
-		fast_fetch_vector4(instruction->source + 2, c);
+		fast_fetch_vector4(instruction->source, machine, a);
+		fast_fetch_vector4(instruction->source + 1, machine, b);
+		fast_fetch_vector4(instruction->source + 2, machine, c);
 		result[0] = a[0] * b[0] + c[0];
 		result[1] = a[1] * b[1] + c[1];
 		result[2] = a[2] * b[2] + c[2];
 		result[3] = a[3] * b[3] + c[3];
 		break;
 	    case OPCODE_MAX:
-		fast_fetch_vector4(instruction->source, a);
-		fast_fetch_vector4(instruction->source + 1, b);
+		fast_fetch_vector4(instruction->source, machine, a);
+		fast_fetch_vector4(instruction->source + 1, machine, b);
 		result[0] = MAX2(a[0], b[0]);
 		result[1] = MAX2(a[1], b[1]);
 		result[2] = MAX2(a[2], b[2]);
 		result[3] = MAX2(a[3], b[3]);
 		break;
 	    case OPCODE_MIN:
-		fast_fetch_vector4(instruction->source, a);
-		fast_fetch_vector4(instruction->source + 1, b);
+		fast_fetch_vector4(instruction->source, machine, a);
+		fast_fetch_vector4(instruction->source + 1, machine, b);
 		result[0] = MIN2(a[0], b[0]);
 		result[1] = MIN2(a[1], b[1]);
 		result[2] = MIN2(a[2], b[2]);
 		result[3] = MIN2(a[3], b[3]);
 		break;
 	    case OPCODE_MOV:
-		fast_fetch_vector4(instruction->source, result);
+		fast_fetch_vector4(instruction->source, machine, result);
 		break;
 	    case OPCODE_MUL:
-		fast_fetch_vector4(instruction->source, a);
-		fast_fetch_vector4(instruction->source + 1, b);
+		fast_fetch_vector4(instruction->source, machine, a);
+		fast_fetch_vector4(instruction->source + 1, machine, b);
 		result[0] = a[0] * b[0];
 		result[1] = a[1] * b[1];
 		result[2] = a[2] * b[2];
@@ -948,7 +1101,7 @@ _mesa_execute_fast_program(const struct gl_program_fast *program)
 		continue;
 	    case OPCODE_RCP: {
 		const GLfloat reciprocal =
-		    1.0F / fast_fetch_vector1(instruction->source);
+		    1.0F / fast_fetch_vector1(instruction->source, machine);
 		result[0] = result[1] = result[2] = result[3] = reciprocal;
 		break;
 	    }
@@ -959,13 +1112,21 @@ _mesa_execute_fast_program(const struct gl_program_fast *program)
 		    pc = machine->CallStack[--machine->StackDepth] - 1;
 		}
 		continue;
+	    case OPCODE_RSQ: {
+		const GLfloat value =
+		    FABSF(fast_fetch_vector1(instruction->source, machine));
+		const GLfloat reciprocal = INV_SQRTF(value);
+		result[0] = result[1] = result[2] = result[3] = reciprocal;
+		break;
+	    }
 	    case OPCODE_SEQ:
 	    case OPCODE_SGE:
+	    case OPCODE_SGT:
 	    case OPCODE_SLT:
 	    case OPCODE_SNE: {
 		GLuint component;
-		fast_fetch_vector4(instruction->source, a);
-		fast_fetch_vector4(instruction->source + 1, b);
+		fast_fetch_vector4(instruction->source, machine, a);
+		fast_fetch_vector4(instruction->source + 1, machine, b);
 		for (component = 0; component < 4; ++component) {
 		    switch (instruction->opcode) {
 			case OPCODE_SEQ:
@@ -975,6 +1136,10 @@ _mesa_execute_fast_program(const struct gl_program_fast *program)
 			case OPCODE_SGE:
 			    result[component] =
 				(a[component] >= b[component]) ? 1.0F : 0.0F;
+			    break;
+			case OPCODE_SGT:
+			    result[component] =
+				(a[component] > b[component]) ? 1.0F : 0.0F;
 			    break;
 			case OPCODE_SLT:
 			    result[component] =
@@ -989,12 +1154,20 @@ _mesa_execute_fast_program(const struct gl_program_fast *program)
 		break;
 	    }
 	    case OPCODE_SUB:
-		fast_fetch_vector4(instruction->source, a);
-		fast_fetch_vector4(instruction->source + 1, b);
+		fast_fetch_vector4(instruction->source, machine, a);
+		fast_fetch_vector4(instruction->source + 1, machine, b);
 		result[0] = a[0] - b[0];
 		result[1] = a[1] - b[1];
 		result[2] = a[2] - b[2];
 		result[3] = a[3] - b[3];
+		break;
+	    case OPCODE_XPD:
+		fast_fetch_vector4(instruction->source, machine, a);
+		fast_fetch_vector4(instruction->source + 1, machine, b);
+		result[0] = a[1] * b[2] - a[2] * b[1];
+		result[1] = a[2] * b[0] - a[0] * b[2];
+		result[2] = a[0] * b[1] - a[1] * b[0];
+		result[3] = 1.0F;
 		break;
 	    default:
 		return GL_FALSE;
@@ -1004,7 +1177,848 @@ _mesa_execute_fast_program(const struct gl_program_fast *program)
     return GL_TRUE;
 }
 
+#if MESA_FAST_PROGRAM_SIMD
+
+#if defined(__GNUC__) || defined(__clang__)
+#define FAST_FRAGMENT_SIMD_INLINE \
+    static __inline__ __attribute__((always_inline))
+#elif defined(_MSC_VER) || defined(__MSC__)
+#define FAST_FRAGMENT_SIMD_INLINE static __forceinline
+#else
+#define FAST_FRAGMENT_SIMD_INLINE static INLINE
+#endif
+
+/* Four fragments are held component-major: each host vector contains one
+ * shader component for four independently covered span columns.  This is a
+ * genuine SIMD executor, not four scalar interpreter invocations hidden
+ * behind a batching loop. */
+struct gl_fast_fragment_simd_machine {
+    __m128 inputs[FRAG_ATTRIB_MAX][4];
+    __m128 temporaries[MAX_PROGRAM_TEMPS][4];
+    __m128 outputs[MAX_PROGRAM_OUTPUTS][4];
+    __m128 conditionValues[4];
+    GLubyte temporaryValid[MAX_PROGRAM_TEMPS];
+    GLubyte outputValid[MAX_PROGRAM_OUTPUTS];
+};
+
+FAST_FRAGMENT_SIMD_INLINE __m128
+fast_fragment_simd_abs(__m128 value)
+{
+    return _mm_andnot_ps(_mm_set1_ps(-0.0F), value);
+}
+
+FAST_FRAGMENT_SIMD_INLINE __m128
+fast_fragment_simd_select(__m128 mask, __m128 ifTrue, __m128 ifFalse)
+{
+    return _mm_or_ps(_mm_and_ps(mask, ifTrue),
+		     _mm_andnot_ps(mask, ifFalse));
+}
+
+FAST_FRAGMENT_SIMD_INLINE void
+fast_fragment_simd_apply_modifiers(const struct gl_fast_source *source,
+				   __m128 value[4])
+{
+    const __m128 sign = _mm_set1_ps(-0.0F);
+    GLuint component;
+
+    if (source->modifiers & 1u) {
+	for (component = 0; component < 4; ++component)
+	    value[component] = _mm_xor_ps(value[component], sign);
+    }
+    if (source->modifiers & 2u) {
+	for (component = 0; component < 4; ++component)
+	    value[component] = _mm_andnot_ps(sign, value[component]);
+    }
+    if (source->modifiers & 4u) {
+	for (component = 0; component < 4; ++component)
+	    value[component] = _mm_xor_ps(value[component], sign);
+    }
+}
+
+FAST_FRAGMENT_SIMD_INLINE void
+fast_fragment_simd_fetch_vector4(
+    const struct gl_fast_source *source,
+    const struct gl_fast_fragment_simd_machine *state,
+    __m128 result[4])
+{
+    GLuint component;
+
+    switch (source->file) {
+	case PROGRAM_INPUT:
+	    for (component = 0; component < 4; ++component)
+		result[component] =
+		    state->inputs[source->index][source->component[component]];
+	    break;
+	case PROGRAM_TEMPORARY:
+	    for (component = 0; component < 4; ++component)
+		result[component] =
+		    state->temporaries[source->index]
+			[source->component[component]];
+	    break;
+	case PROGRAM_OUTPUT:
+	    for (component = 0; component < 4; ++component)
+		result[component] =
+		    state->outputs[source->index][source->component[component]];
+	    break;
+	default:
+	    for (component = 0; component < 4; ++component)
+		result[component] =
+		    _mm_set1_ps(source->value[source->component[component]]);
+	    break;
+    }
+
+    fast_fragment_simd_apply_modifiers(source, result);
+}
+
+FAST_FRAGMENT_SIMD_INLINE void
+fast_fragment_simd_fetch_derivative(
+    const struct gl_fast_source *source,
+    const struct gl_program_machine *machine,
+    const struct gl_fast_fragment_simd_machine *state,
+    GLboolean xDerivative,
+    __m128 result[4])
+{
+    const GLuint input = source->index;
+    GLuint component;
+
+    if (input >= machine->NumDeriv) {
+	for (component = 0; component < 4; ++component)
+	    result[component] = _mm_setzero_ps();
+    } else {
+	const GLfloat (*derivative)[4] =
+	    xDerivative ? machine->DerivX : machine->DerivY;
+	const GLfloat dw = derivative[FRAG_ATTRIB_WPOS][3];
+	const __m128 invQ =
+	    _mm_div_ps(_mm_set1_ps(1.0F),
+		       state->inputs[FRAG_ATTRIB_WPOS][3]);
+	const __m128 dW = _mm_set1_ps(dw);
+
+	for (component = 0; component < 4; ++component) {
+	    const GLuint selected = source->component[component];
+	    result[component] =
+		_mm_mul_ps(
+		    _mm_sub_ps(_mm_set1_ps(derivative[input][selected]),
+			       _mm_mul_ps(
+				   state->inputs[input][selected], dW)),
+		    invQ);
+	}
+    }
+
+    fast_fragment_simd_apply_modifiers(source, result);
+}
+
+FAST_FRAGMENT_SIMD_INLINE void
+fast_fragment_simd_store_vector4(
+    const struct gl_fast_instruction *instruction,
+    struct gl_fast_fragment_simd_machine *state,
+    const __m128 value[4],
+    __m128 active)
+{
+    __m128 *destination;
+    GLubyte *valid;
+    const GLint activeBits = _mm_movemask_ps(active);
+    GLuint component;
+
+    if (!activeBits)
+	return;
+
+    if (instruction->destinationFile == PROGRAM_TEMPORARY) {
+	destination = state->temporaries[instruction->destinationIndex];
+	valid = state->temporaryValid + instruction->destinationIndex;
+    } else {
+	destination = state->outputs[instruction->destinationIndex];
+	valid = state->outputValid + instruction->destinationIndex;
+    }
+
+    for (component = 0; component < 4; ++component) {
+	const GLuint componentMask = 1u << component;
+	if (!(instruction->writeMask & componentMask))
+	    continue;
+	if (activeBits == 15 || !(*valid & componentMask))
+	    destination[component] = value[component];
+	else
+	    destination[component] = fast_fragment_simd_select(
+		active, value[component], destination[component]);
+	*valid |= componentMask;
+    }
+
+    if (instruction->condUpdate) {
+	for (component = 0; component < 4; ++component) {
+	    if (!(instruction->writeMask & (1u << component)))
+		continue;
+	    if (activeBits == 15)
+		state->conditionValues[component] = value[component];
+	    else
+		state->conditionValues[component] = fast_fragment_simd_select(
+		    active, value[component],
+		    state->conditionValues[component]);
+	}
+    }
+}
+
+FAST_FRAGMENT_SIMD_INLINE __m128
+fast_fragment_simd_test_condition(__m128 value, GLuint condition)
+{
+    const __m128 zero = _mm_setzero_ps();
+
+    switch (condition) {
+	case COND_EQ:
+	    return _mm_cmpeq_ps(value, zero);
+	case COND_NE:
+	    return _mm_cmpneq_ps(value, zero);
+	case COND_LT:
+	    return _mm_cmplt_ps(value, zero);
+	case COND_GE:
+	    return _mm_cmpge_ps(value, zero);
+	case COND_LE:
+	    return _mm_cmple_ps(value, zero);
+	case COND_GT:
+	    return _mm_cmpgt_ps(value, zero);
+	case COND_TR:
+	    return _mm_castsi128_ps(_mm_set1_epi32(-1));
+	case COND_FL:
+	    return zero;
+	default:
+	    return _mm_castsi128_ps(_mm_set1_epi32(-1));
+    }
+}
+
+FAST_FRAGMENT_SIMD_INLINE __m128
+fast_fragment_simd_eval_condition(
+    const struct gl_fast_fragment_simd_machine *state,
+    const struct gl_fast_instruction *instruction)
+{
+    const GLuint swizzle = instruction->condSwizzle;
+    const GLuint condition = instruction->condMask;
+    __m128 result = fast_fragment_simd_test_condition(
+	state->conditionValues[GET_SWZ(swizzle, 0)], condition);
+    result = _mm_or_ps(
+	result, fast_fragment_simd_test_condition(
+	    state->conditionValues[GET_SWZ(swizzle, 1)], condition));
+    result = _mm_or_ps(
+	result, fast_fragment_simd_test_condition(
+	    state->conditionValues[GET_SWZ(swizzle, 2)], condition));
+    result = _mm_or_ps(
+	result, fast_fragment_simd_test_condition(
+	    state->conditionValues[GET_SWZ(swizzle, 3)], condition));
+    return result;
+}
+
+#undef FAST_FRAGMENT_SIMD_INLINE
+#endif /* MESA_FAST_PROGRAM_SIMD */
+
+GLboolean
+_mesa_fast_fragment_simd_supported(const struct gl_program_fast *program)
+{
+    return program && program->fragmentSimdSupported;
+}
+
+GLboolean
+_mesa_execute_fast_fragment_program_simd(
+    const struct gl_program_fast *program,
+    const GLuint columns[4],
+    GLfloat output[4][4])
+{
+#if MESA_FAST_PROGRAM_SIMD
+    struct gl_fast_fragment_simd_machine state;
+    struct {
+	__m128 parent;
+	__m128 condition;
+    } ifStack[MAX_PROGRAM_CALL_DEPTH];
+    struct gl_program_machine *machine;
+    __m128 active = _mm_castsi128_ps(_mm_set1_epi32(-1));
+    GLuint ifDepth = 0;
+    GLuint attribute;
+    GLuint pc;
+
+    if (!program || !program->fragmentSimdSupported || !columns || !output)
+	return GL_FALSE;
+
+    machine = program->machine;
+    _mesa_bzero(state.temporaryValid, sizeof(state.temporaryValid));
+    _mesa_bzero(state.outputValid, sizeof(state.outputValid));
+    for (attribute = 0; attribute < 4; ++attribute)
+	state.conditionValues[attribute] = _mm_setzero_ps();
+    for (attribute = 0; attribute < FRAG_ATTRIB_MAX; ++attribute) {
+	GLuint component;
+	if (!(program->fragmentInputMask & (1u << attribute)))
+	    continue;
+	for (component = 0; component < 4; ++component) {
+	    state.inputs[attribute][component] =
+		_mm_set_ps(machine->Attribs[attribute][columns[3]][component],
+			   machine->Attribs[attribute][columns[2]][component],
+			   machine->Attribs[attribute][columns[1]][component],
+			   machine->Attribs[attribute][columns[0]][component]);
+	}
+    }
+
+    for (pc = 0; pc < program->count; ++pc) {
+	const struct gl_fast_instruction *instruction =
+	    program->instructions + pc;
+	__m128 a[4], b[4], c[4], result[4];
+	GLuint component;
+
+	switch (instruction->opcode) {
+	    case OPCODE_ABS:
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source, &state, a);
+		for (component = 0; component < 4; ++component)
+		    result[component] = fast_fragment_simd_abs(a[component]);
+		break;
+	    case OPCODE_ADD:
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source, &state, a);
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source + 1, &state, b);
+		for (component = 0; component < 4; ++component)
+		    result[component] = _mm_add_ps(a[component], b[component]);
+		break;
+	    case OPCODE_DDX:
+		fast_fragment_simd_fetch_derivative(
+		    instruction->source, machine, &state, GL_TRUE, result);
+		break;
+	    case OPCODE_DDY:
+		fast_fragment_simd_fetch_derivative(
+		    instruction->source, machine, &state, GL_FALSE, result);
+		break;
+	    case OPCODE_DP3: {
+		__m128 dot;
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source, &state, a);
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source + 1, &state, b);
+		dot = _mm_add_ps(
+		    _mm_add_ps(_mm_mul_ps(a[0], b[0]),
+			       _mm_mul_ps(a[1], b[1])),
+		    _mm_mul_ps(a[2], b[2]));
+		for (component = 0; component < 4; ++component)
+		    result[component] = dot;
+		break;
+	    }
+	    case OPCODE_DP4: {
+		__m128 dot;
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source, &state, a);
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source + 1, &state, b);
+		dot = _mm_add_ps(
+		    _mm_add_ps(_mm_mul_ps(a[0], b[0]),
+			       _mm_mul_ps(a[1], b[1])),
+		    _mm_add_ps(_mm_mul_ps(a[2], b[2]),
+			       _mm_mul_ps(a[3], b[3])));
+		for (component = 0; component < 4; ++component)
+		    result[component] = dot;
+		break;
+	    }
+	    case OPCODE_ELSE:
+		if (!ifDepth)
+		    return GL_FALSE;
+		active = _mm_andnot_ps(ifStack[ifDepth - 1].condition,
+				       ifStack[ifDepth - 1].parent);
+		continue;
+	    case OPCODE_END: {
+		GLfloat componentValues[4];
+		GLuint lane;
+		if (ifDepth ||
+		    state.outputValid[FRAG_RESULT_COLR] != WRITEMASK_XYZW)
+		    return GL_FALSE;
+		for (component = 0; component < 4; ++component) {
+		    _mm_storeu_ps(componentValues,
+				  state.outputs[FRAG_RESULT_COLR][component]);
+		    for (lane = 0; lane < 4; ++lane)
+			output[lane][component] = componentValues[lane];
+		}
+		return GL_TRUE;
+	    }
+	    case OPCODE_ENDIF:
+		if (!ifDepth)
+		    return GL_FALSE;
+		active = ifStack[--ifDepth].parent;
+		continue;
+	    case OPCODE_IF:
+		if (ifDepth >= MAX_PROGRAM_CALL_DEPTH)
+		    return GL_FALSE;
+		ifStack[ifDepth].parent = active;
+		ifStack[ifDepth].condition =
+		    fast_fragment_simd_eval_condition(&state, instruction);
+		active = _mm_and_ps(active, ifStack[ifDepth].condition);
+		++ifDepth;
+		continue;
+	    case OPCODE_MAD:
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source, &state, a);
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source + 1, &state, b);
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source + 2, &state, c);
+		for (component = 0; component < 4; ++component)
+		    result[component] =
+			_mm_add_ps(_mm_mul_ps(a[component], b[component]),
+				   c[component]);
+		break;
+	    case OPCODE_MAX:
+	    case OPCODE_MIN:
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source, &state, a);
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source + 1, &state, b);
+		for (component = 0; component < 4; ++component) {
+		    const __m128 select = instruction->opcode == OPCODE_MAX ?
+			_mm_cmpgt_ps(a[component], b[component]) :
+			_mm_cmplt_ps(a[component], b[component]);
+		    result[component] = fast_fragment_simd_select(
+			select, a[component], b[component]);
+		}
+		break;
+	    case OPCODE_MOV:
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source, &state, result);
+		break;
+	    case OPCODE_MUL:
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source, &state, a);
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source + 1, &state, b);
+		for (component = 0; component < 4; ++component)
+		    result[component] = _mm_mul_ps(a[component], b[component]);
+		break;
+	    case OPCODE_NOP:
+		continue;
+	    case OPCODE_RCP: {
+		__m128 reciprocal;
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source, &state, a);
+		reciprocal = _mm_div_ps(_mm_set1_ps(1.0F), a[0]);
+		for (component = 0; component < 4; ++component)
+		    result[component] = reciprocal;
+		break;
+	    }
+	    case OPCODE_RSQ: {
+		__m128 reciprocal;
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source, &state, a);
+		reciprocal =
+		    _mm_div_ps(_mm_set1_ps(1.0F),
+			       _mm_sqrt_ps(fast_fragment_simd_abs(a[0])));
+		for (component = 0; component < 4; ++component)
+		    result[component] = reciprocal;
+		break;
+	    }
+	    case OPCODE_SEQ:
+	    case OPCODE_SGE:
+	    case OPCODE_SGT:
+	    case OPCODE_SLT:
+	    case OPCODE_SNE:
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source, &state, a);
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source + 1, &state, b);
+		for (component = 0; component < 4; ++component) {
+		    __m128 condition;
+		    if (instruction->opcode == OPCODE_SEQ)
+			condition = _mm_cmpeq_ps(a[component], b[component]);
+		    else if (instruction->opcode == OPCODE_SGE)
+			condition = _mm_cmpge_ps(a[component], b[component]);
+		    else if (instruction->opcode == OPCODE_SGT)
+			condition = _mm_cmpgt_ps(a[component], b[component]);
+		    else if (instruction->opcode == OPCODE_SLT)
+			condition = _mm_cmplt_ps(a[component], b[component]);
+		    else
+			condition = _mm_cmpneq_ps(a[component], b[component]);
+		    result[component] =
+			_mm_and_ps(condition, _mm_set1_ps(1.0F));
+		}
+		break;
+	    case OPCODE_SUB:
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source, &state, a);
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source + 1, &state, b);
+		for (component = 0; component < 4; ++component)
+		    result[component] = _mm_sub_ps(a[component], b[component]);
+		break;
+	    case OPCODE_XPD:
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source, &state, a);
+		fast_fragment_simd_fetch_vector4(
+		    instruction->source + 1, &state, b);
+		result[0] =
+		    _mm_sub_ps(_mm_mul_ps(a[1], b[2]),
+			       _mm_mul_ps(a[2], b[1]));
+		result[1] =
+		    _mm_sub_ps(_mm_mul_ps(a[2], b[0]),
+			       _mm_mul_ps(a[0], b[2]));
+		result[2] =
+		    _mm_sub_ps(_mm_mul_ps(a[0], b[1]),
+			       _mm_mul_ps(a[1], b[0]));
+		result[3] = _mm_set1_ps(1.0F);
+		break;
+	    default:
+		return GL_FALSE;
+	}
+	fast_fragment_simd_store_vector4(
+	    instruction, &state, result, active);
+    }
+
+    return GL_FALSE;
+#else
+    (void) program;
+    (void) columns;
+    (void) output;
+    return GL_FALSE;
+#endif
+}
+
 #define FAST_BATCH_WIDTH 4
+
+#if MESA_FAST_PROGRAM_SIMD
+
+struct gl_fast_vertex_simd_machine {
+    __m128 inputs[VERT_ATTRIB_MAX][4];
+    __m128 temporaries[MAX_PROGRAM_TEMPS][4];
+    __m128 outputs[MAX_PROGRAM_OUTPUTS][4];
+};
+
+#if defined(__GNUC__) || defined(__clang__)
+#define FAST_VERTEX_SIMD_INLINE \
+    static __inline__ __attribute__((always_inline))
+#elif defined(_MSC_VER) || defined(__MSC__)
+#define FAST_VERTEX_SIMD_INLINE static __forceinline
+#else
+#define FAST_VERTEX_SIMD_INLINE static INLINE
+#endif
+
+FAST_VERTEX_SIMD_INLINE void
+fast_vertex_simd_apply_modifiers(const struct gl_fast_source *source,
+				 __m128 value[4])
+{
+    const __m128 sign = _mm_set1_ps(-0.0F);
+    GLuint component;
+
+    if (source->modifiers & 1u) {
+	for (component = 0; component < 4; ++component)
+	    value[component] = _mm_xor_ps(value[component], sign);
+    }
+    if (source->modifiers & 2u) {
+	for (component = 0; component < 4; ++component)
+	    value[component] = _mm_andnot_ps(sign, value[component]);
+    }
+    if (source->modifiers & 4u) {
+	for (component = 0; component < 4; ++component)
+	    value[component] = _mm_xor_ps(value[component], sign);
+    }
+}
+
+FAST_VERTEX_SIMD_INLINE void
+fast_vertex_simd_fetch_vector4(
+    const struct gl_fast_source *source,
+    const struct gl_fast_vertex_simd_machine *state,
+    __m128 result[4])
+{
+    GLuint component;
+
+    switch (source->file) {
+	case PROGRAM_INPUT:
+	    for (component = 0; component < 4; ++component)
+		result[component] =
+		    state->inputs[source->index][source->component[component]];
+	    break;
+	case PROGRAM_TEMPORARY:
+	    for (component = 0; component < 4; ++component)
+		result[component] =
+		    state->temporaries[source->index]
+			[source->component[component]];
+	    break;
+	case PROGRAM_OUTPUT:
+	    for (component = 0; component < 4; ++component)
+		result[component] =
+		    state->outputs[source->index][source->component[component]];
+	    break;
+	default:
+	    for (component = 0; component < 4; ++component)
+		result[component] =
+		    _mm_set1_ps(source->value[source->component[component]]);
+	    break;
+    }
+    fast_vertex_simd_apply_modifiers(source, result);
+}
+
+FAST_VERTEX_SIMD_INLINE void
+fast_vertex_simd_store_vector4(
+    const struct gl_fast_instruction *instruction,
+    struct gl_fast_vertex_simd_machine *state,
+    const __m128 value[4])
+{
+    __m128 *destination =
+	instruction->destinationFile == PROGRAM_TEMPORARY ?
+	state->temporaries[instruction->destinationIndex] :
+	state->outputs[instruction->destinationIndex];
+    GLuint component;
+
+    for (component = 0; component < 4; ++component) {
+	if (instruction->writeMask & (1u << component))
+	    destination[component] = value[component];
+    }
+}
+
+/* SSE2 has no packed floor operation.  Keep Mesa's exact FLOORF behavior
+ * rather than using a range-limited float-to-int approximation; PoP snapping
+ * depends on this operation at large model coordinates. */
+FAST_VERTEX_SIMD_INLINE __m128
+fast_vertex_simd_floor(__m128 value)
+{
+    GLfloat lane[4];
+    _mm_storeu_ps(lane, value);
+    lane[0] = FLOORF(lane[0]);
+    lane[1] = FLOORF(lane[1]);
+    lane[2] = FLOORF(lane[2]);
+    lane[3] = FLOORF(lane[3]);
+    return _mm_loadu_ps(lane);
+}
+
+static GLuint
+fast_program_batch_simd(
+    const struct gl_program_fast *program,
+    GLuint count,
+    GLuint numInputs,
+    const GLuint *inputAttributes,
+    const GLuint *inputSizes,
+    const GLuint *inputStrides,
+    const GLubyte *const *inputData,
+    GLuint numOutputs,
+    const GLuint *outputAttributes,
+    GLubyte *const *outputData,
+    const GLuint *outputStrides)
+{
+    struct gl_fast_vertex_simd_machine state;
+    const GLuint batchCount = count - count % FAST_BATCH_WIDTH;
+    GLuint base;
+
+    if (!program || !program->batchSupported || !batchCount ||
+	(numInputs && (!inputAttributes || !inputSizes || !inputStrides ||
+		       !inputData)) ||
+	(numOutputs && (!outputAttributes || !outputData || !outputStrides)))
+	return 0;
+
+    for (base = 0; base < batchCount; base += FAST_BATCH_WIDTH) {
+	GLuint input;
+	GLuint outputIndex;
+	GLuint pc;
+
+	for (input = 0; input < numInputs; ++input) {
+	    const GLuint attribute = inputAttributes[input];
+	    const GLuint size = MIN2(inputSizes[input], 4);
+	    const GLubyte *data = inputData[input] + base * inputStrides[input];
+	    GLuint component;
+	    if (attribute >= VERT_ATTRIB_MAX)
+		return base;
+	    for (component = 0; component < 4; ++component) {
+		if (component < size) {
+		    state.inputs[attribute][component] =
+			_mm_set_ps(
+			    *(const GLfloat *)(data + 3 * inputStrides[input] +
+					       component * sizeof(GLfloat)),
+			    *(const GLfloat *)(data + 2 * inputStrides[input] +
+					       component * sizeof(GLfloat)),
+			    *(const GLfloat *)(data + inputStrides[input] +
+					       component * sizeof(GLfloat)),
+			    *(const GLfloat *)(data +
+					       component * sizeof(GLfloat)));
+		} else {
+		    state.inputs[attribute][component] =
+			_mm_set1_ps(component == 3 ? 1.0F : 0.0F);
+		}
+	    }
+	}
+
+	for (pc = 0; pc < program->count; ++pc) {
+	    const struct gl_fast_instruction *instruction =
+		program->instructions + pc;
+	    __m128 a[4], b[4], c[4], result[4];
+	    GLuint component;
+
+	    switch (instruction->opcode) {
+		case OPCODE_ABS:
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source, &state, a);
+		    for (component = 0; component < 4; ++component)
+			result[component] = fast_fragment_simd_abs(a[component]);
+		    break;
+		case OPCODE_ADD:
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source, &state, a);
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source + 1, &state, b);
+		    for (component = 0; component < 4; ++component)
+			result[component] =
+			    _mm_add_ps(a[component], b[component]);
+		    break;
+		case OPCODE_DP3: {
+		    __m128 dot;
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source, &state, a);
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source + 1, &state, b);
+		    dot = _mm_add_ps(
+			_mm_add_ps(_mm_mul_ps(a[0], b[0]),
+				   _mm_mul_ps(a[1], b[1])),
+			_mm_mul_ps(a[2], b[2]));
+		    for (component = 0; component < 4; ++component)
+			result[component] = dot;
+		    break;
+		}
+		case OPCODE_DP4: {
+		    __m128 dot;
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source, &state, a);
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source + 1, &state, b);
+		    dot = _mm_add_ps(
+			_mm_add_ps(_mm_mul_ps(a[0], b[0]),
+				   _mm_mul_ps(a[1], b[1])),
+			_mm_add_ps(_mm_mul_ps(a[2], b[2]),
+				   _mm_mul_ps(a[3], b[3])));
+		    for (component = 0; component < 4; ++component)
+			result[component] = dot;
+		    break;
+		}
+		case OPCODE_END:
+		    pc = program->count;
+		    continue;
+		case OPCODE_FLR:
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source, &state, a);
+		    for (component = 0; component < 4; ++component)
+			result[component] =
+			    fast_vertex_simd_floor(a[component]);
+		    break;
+		case OPCODE_FRC:
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source, &state, a);
+		    for (component = 0; component < 4; ++component)
+			result[component] =
+			    _mm_sub_ps(a[component],
+				       fast_vertex_simd_floor(a[component]));
+		    break;
+		case OPCODE_MAD:
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source, &state, a);
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source + 1, &state, b);
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source + 2, &state, c);
+		    for (component = 0; component < 4; ++component)
+			result[component] =
+			    _mm_add_ps(
+				_mm_mul_ps(a[component], b[component]),
+				c[component]);
+		    break;
+		case OPCODE_MAX:
+		case OPCODE_MIN:
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source, &state, a);
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source + 1, &state, b);
+		    for (component = 0; component < 4; ++component) {
+			const __m128 select =
+			    instruction->opcode == OPCODE_MAX ?
+			    _mm_cmpgt_ps(a[component], b[component]) :
+			    _mm_cmplt_ps(a[component], b[component]);
+			result[component] = fast_fragment_simd_select(
+			    select, a[component], b[component]);
+		    }
+		    break;
+		case OPCODE_MOV:
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source, &state, result);
+		    break;
+		case OPCODE_MUL:
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source, &state, a);
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source + 1, &state, b);
+		    for (component = 0; component < 4; ++component)
+			result[component] =
+			    _mm_mul_ps(a[component], b[component]);
+		    break;
+		case OPCODE_NOP:
+		    continue;
+		case OPCODE_RCP: {
+		    __m128 reciprocal;
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source, &state, a);
+		    reciprocal = _mm_div_ps(_mm_set1_ps(1.0F), a[0]);
+		    for (component = 0; component < 4; ++component)
+			result[component] = reciprocal;
+		    break;
+		}
+		case OPCODE_SEQ:
+		case OPCODE_SGE:
+		case OPCODE_SLT:
+		case OPCODE_SNE:
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source, &state, a);
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source + 1, &state, b);
+		    for (component = 0; component < 4; ++component) {
+			__m128 condition;
+			if (instruction->opcode == OPCODE_SEQ)
+			    condition =
+				_mm_cmpeq_ps(a[component], b[component]);
+			else if (instruction->opcode == OPCODE_SGE)
+			    condition =
+				_mm_cmpge_ps(a[component], b[component]);
+			else if (instruction->opcode == OPCODE_SLT)
+			    condition =
+				_mm_cmplt_ps(a[component], b[component]);
+			else
+			    condition =
+				_mm_cmpneq_ps(a[component], b[component]);
+			result[component] =
+			    _mm_and_ps(condition, _mm_set1_ps(1.0F));
+		    }
+		    break;
+		case OPCODE_SUB:
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source, &state, a);
+		    fast_vertex_simd_fetch_vector4(
+			instruction->source + 1, &state, b);
+		    for (component = 0; component < 4; ++component)
+			result[component] =
+			    _mm_sub_ps(a[component], b[component]);
+		    break;
+		default:
+		    return base;
+	    }
+	    fast_vertex_simd_store_vector4(instruction, &state, result);
+	}
+
+	for (outputIndex = 0; outputIndex < numOutputs; ++outputIndex) {
+	    const GLuint attribute = outputAttributes[outputIndex];
+	    GLfloat componentValues[4][FAST_BATCH_WIDTH];
+	    GLuint component;
+	    GLuint lane;
+	    if (attribute >= MAX_PROGRAM_OUTPUTS)
+		return base;
+	    for (component = 0; component < 4; ++component)
+		_mm_storeu_ps(componentValues[component],
+			      state.outputs[attribute][component]);
+	    for (lane = 0; lane < FAST_BATCH_WIDTH; ++lane) {
+		GLfloat *destination = (GLfloat *)
+		    (outputData[outputIndex] +
+		     (base + lane) * outputStrides[outputIndex]);
+		destination[0] = componentValues[0][lane];
+		destination[1] = componentValues[1][lane];
+		destination[2] = componentValues[2][lane];
+		destination[3] = componentValues[3][lane];
+	    }
+	}
+    }
+    return batchCount;
+}
+
+#undef FAST_VERTEX_SIMD_INLINE
+#endif /* MESA_FAST_PROGRAM_SIMD */
 
 /* Component-major storage lets the compiler operate on four independent
  * vertices with one host vector instruction.  The state is deliberately
@@ -1114,6 +2128,11 @@ _mesa_execute_fast_program_batch(
     GLubyte *const *outputData,
     const GLuint *outputStrides)
 {
+#if MESA_FAST_PROGRAM_SIMD
+    return fast_program_batch_simd(
+	program, count, numInputs, inputAttributes, inputSizes, inputStrides,
+	inputData, numOutputs, outputAttributes, outputData, outputStrides);
+#else
     struct gl_fast_batch_machine state;
     const GLuint batchCount = count - count % FAST_BATCH_WIDTH;
     GLuint base;
@@ -1304,6 +2323,7 @@ _mesa_execute_fast_program_batch(
 	}
     }
     return batchCount;
+#endif
 }
 
 #undef FAST_BATCH_WIDTH

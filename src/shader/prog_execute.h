@@ -94,6 +94,26 @@ extern GLboolean
 _mesa_execute_fast_program(const struct gl_program_fast *program);
 
 /**
+ * Report whether a pre-resolved fragment program can execute four fragments
+ * at a time in the software rasterizer's SIMD span path.
+ */
+extern GLboolean
+_mesa_fast_fragment_simd_supported(const struct gl_program_fast *program);
+
+/**
+ * Execute one four-fragment group from the retained fragment machine.
+ *
+ * columns names four active elements in machine->Attribs.  Results are
+ * returned lane-major as RGBA values from FRAG_RESULT_COLR.  GL_FALSE means
+ * the caller must execute the same fragments with the scalar VM.
+ */
+extern GLboolean
+_mesa_execute_fast_fragment_program_simd(
+	const struct gl_program_fast *program,
+	const GLuint columns[4],
+	GLfloat output[4][4]);
+
+/**
  * Execute the largest four-vertex prefix of a straight-line fast program.
  *
  * Input and output strides are byte strides.  The returned count is the
