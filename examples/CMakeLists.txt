@@ -41,6 +41,12 @@ if (O3_COMPILER_FLAG)
   target_compile_options(fragment_bench PRIVATE "-O3")
 endif (O3_COMPILER_FLAG)
 
+# Regression for software-TNL VBO draws whose first vertex is well above
+# zero.  CAD wire batches issue many small ranges from one large retained VBO.
+add_executable(vbo_range_test vbo_range_test.c)
+target_link_libraries(vbo_range_test osmesa ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+set_property(TARGET vbo_range_test APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
+
 # TODO -see if we can adapt this as an example:
 # https://github.com/danginsburg/opengles3-book/blob/master/Chapter_2/Hello_Triangle/Hello_Triangle.c
 

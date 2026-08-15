@@ -256,11 +256,10 @@ _mesa_buffer_data(GLcontext *ctx, GLenum target, GLsizeiptrARB size,
 {
     void * new_data;
 
-    (void) ctx;
     (void) target;
 
     new_data = _mesa_realloc(bufObj->Data, bufObj->Size, size);
-    if (new_data) {
+    if (new_data || size == 0) {
 	bufObj->Data = (GLubyte *) new_data;
 	bufObj->Size = size;
 	bufObj->Usage = usage;
@@ -268,6 +267,12 @@ _mesa_buffer_data(GLcontext *ctx, GLenum target, GLsizeiptrARB size,
 	if (data) {
 	    memcpy(bufObj->Data, data, size);
 	}
+    } else {
+	/* glBufferData is specified to report allocation failure.  More
+	 * importantly, _mesa_realloc now preserves the preceding store, so a
+	 * failed grow can never leave a live buffer object pointing at freed
+	 * memory. */
+	_mesa_error(ctx, GL_OUT_OF_MEMORY, "glBufferDataARB");
     }
 }
 

@@ -187,6 +187,8 @@ _mesa_align_realloc(void *oldBuffer, size_t oldSize, size_t newSize,
 #else
     const size_t copySize = (oldSize < newSize) ? oldSize : newSize;
     void *newBuf = _mesa_align_malloc(newSize, alignment);
+    if (!newBuf && newSize != 0)
+	return NULL;
     if (newBuf && oldBuffer && copySize > 0) {
 	memcpy(newBuf, oldBuffer, copySize);
     }
@@ -202,13 +204,16 @@ _mesa_align_realloc(void *oldBuffer, size_t oldSize, size_t newSize,
 void *
 _mesa_realloc(void *oldBuffer, size_t oldSize, size_t newSize)
 {
-    const size_t copySize = (oldSize < newSize) ? oldSize : newSize;
-    void *newBuffer = malloc(newSize);
-    if (newBuffer && oldBuffer && copySize > 0)
-	memcpy(newBuffer, oldBuffer, copySize);
-    if (oldBuffer)
+    (void) oldSize;
+    /* Match realloc(3): a failed grow must leave the old allocation live.
+     * The former allocate/copy/free sequence freed oldBuffer even when the
+     * new allocation failed, leaving buffer objects with dangling Data
+     * pointers and their old Size. */
+    if (newSize == 0) {
 	free(oldBuffer);
-    return newBuffer;
+	return NULL;
+    }
+    return realloc(oldBuffer, newSize);
 }
 
 /**
