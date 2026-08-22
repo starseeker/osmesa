@@ -50,6 +50,19 @@
 
 typedef void (*_glapi_warning_func)(void *ctx, const char *str, ...);
 
+/*
+ * glapi.h is commonly included before glthread.h (context.h is one such
+ * path).  Establish the same THREADS feature test here so
+ * GET_CURRENT_CONTEXT() never gets compiled in single-thread-only form for
+ * a threaded build.  Once _glapi_check_multithread() moves the current
+ * context into TSD, consulting only _glapi_Context yields NULL and causes
+ * core entry points to dereference a nonexistent context.
+ */
+#if (defined(PTHREADS) || defined(SOLARIS_THREADS) || \
+     defined(WIN32_THREADS) || defined(USE_XTHREADS)) && !defined(THREADS)
+# define THREADS
+#endif
+
 
 #if defined(USE_MGL_NAMESPACE)
 #define _glapi_set_dispatch _mglapi_set_dispatch

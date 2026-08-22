@@ -47,6 +47,14 @@ add_executable(vbo_range_test vbo_range_test.c)
 target_link_libraries(vbo_range_test osmesa ${M_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 set_property(TARGET vbo_range_test APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
 
+# OSMesa promotes its current context and dispatch pointers from process-global
+# storage to thread-local storage after observing a second rendering thread.
+# Keep a direct regression for core GL entry points after that transition.
+add_executable(thread_context_test thread_context_test.c)
+target_link_libraries(thread_context_test osmesa ${M_LIBRARY} Threads::Threads)
+set_property(TARGET thread_context_test APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
+add_test(NAME osmesa_thread_context COMMAND thread_context_test)
+
 # TODO -see if we can adapt this as an example:
 # https://github.com/danginsburg/opengles3-book/blob/master/Chapter_2/Hello_Triangle/Hello_Triangle.c
 
