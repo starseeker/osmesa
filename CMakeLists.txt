@@ -10,9 +10,11 @@ check_cxx_compiler_flag(-O3 O3_COMPILER_FLAG)
 option(OSMESA_FAST "Use faster math (with reduced consistency cross platform)" ON)
 
 find_package(Threads REQUIRED)
-if (CMAKE_USE_PTHREADS_INIT)
+if (WIN32)
+  add_definitions(-DWIN32_THREADS)
+elseif (CMAKE_USE_PTHREADS_INIT)
   add_definitions(-DPTHREADS)
-endif (CMAKE_USE_PTHREADS_INIT)
+endif ()
 
 include(CheckLibraryExists)
 check_library_exists(m cos "" HAVE_M_LIBRARY)

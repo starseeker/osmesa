@@ -1,6 +1,11 @@
-#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <pthread.h>
+#endif
 
 #include <OSMesa/gl.h>
 #include <OSMesa/osmesa.h>
@@ -26,7 +31,11 @@ exercise_display_lists(void)
     return glGetError() != GL_NO_ERROR;
 }
 
+#ifdef _WIN32
+static DWORD WINAPI
+#else
 static void *
+#endif
 worker_main(void *arg)
 {
     struct thread_binding *binding = (struct thread_binding *)arg;
@@ -38,7 +47,11 @@ worker_main(void *arg)
 	binding->failed = 1;
     if (!OSMesaMakeCurrent(NULL, NULL, 0, 0, 0))
 	binding->failed = 1;
+#ifdef _WIN32
+	return 0;
+#else
     return NULL;
+#endif
 }
 
 int
@@ -48,7 +61,11 @@ main(void)
     struct thread_binding worker = {NULL, NULL, WIDTH, HEIGHT, 0};
     OSMesaContext main_context = NULL;
     unsigned char *main_buffer = NULL;
+#ifdef _WIN32
+    HANDLE thread = NULL;
+#else
     pthread_t thread;
+#endif
     int failed = 0;
 
     main_context = OSMesaCreateContextExt(OSMESA_RGBA, 24, 0, 0, NULL);
@@ -68,6 +85,20 @@ main(void)
 	goto cleanup;
     }
 
+#ifdef _WIN32
+    thread = CreateThread(NULL, 0, worker_main, &worker, 0, NULL);
+    if (!thread) {
+	fprintf(stderr, "failed to start OSMesa worker thread\n");
+	failed = 1;
+	goto cleanup;
+    }
+    if (WaitForSingleObject(thread, INFINITE) != WAIT_OBJECT_0 ||
+	worker.failed) {
+	fprintf(stderr, "worker-thread context exercise failed\n");
+	failed = 1;
+    }
+    CloseHandle(thread);
+#else
     if (pthread_create(&thread, NULL, worker_main, &worker) != 0) {
 	fprintf(stderr, "failed to start OSMesa worker thread\n");
 	failed = 1;
@@ -78,6 +109,7 @@ main(void)
 	failed = 1;
 	goto cleanup;
     }
+#endif
 
     /* The second thread makes glapi switch to TSD.  Core entry points on the
      * original thread must consult that TSD rather than the cleared global. */

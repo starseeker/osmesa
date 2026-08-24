@@ -233,14 +233,21 @@ check_c_compiler_flag(-Werror=c++-compat HAVE_CXX_COMPAT_FLAG)
 if (HAVE_CXX_COMPAT_FLAG)
   target_compile_options(osmesa PRIVATE "-Werror=c++-compat")
 endif (HAVE_CXX_COMPAT_FLAG)
-check_c_compiler_flag(-Wall HAVE_WALL_FLAG)
-if (HAVE_WALL_FLAG)
-  target_compile_options(osmesa PRIVATE "-Wall")
-endif (HAVE_WALL_FLAG)
-check_c_compiler_flag(-Wsign-compare HAVE_WSIGN_COMPARE_FLAG)
-if (HAVE_WSIGN_COMPARE_FLAG)
-  target_compile_options(osmesa PRIVATE "-Wsign-compare")
-endif (HAVE_WSIGN_COMPARE_FLAG)
+# MSVC accepts the -Wall spelling, but interprets it as /Wall.  That enables
+# several thousand diagnostics about padding, generated/template code, and
+# other implementation details that are not enabled by the normal MSVC
+# warning level.  Keep these GNU/Clang warnings enabled without turning the
+# Windows build into a warning flood.
+if (NOT MSVC)
+  check_c_compiler_flag(-Wall HAVE_WALL_FLAG)
+  if (HAVE_WALL_FLAG)
+    target_compile_options(osmesa PRIVATE "-Wall")
+  endif (HAVE_WALL_FLAG)
+  check_c_compiler_flag(-Wsign-compare HAVE_WSIGN_COMPARE_FLAG)
+  if (HAVE_WSIGN_COMPARE_FLAG)
+    target_compile_options(osmesa PRIVATE "-Wsign-compare")
+  endif (HAVE_WSIGN_COMPARE_FLAG)
+endif ()
 check_c_compiler_flag(-fvisibility=hidden HAVE_VISIBILITY_HIDDEN_FLAG)
 if (HAVE_VISIBILITY_HIDDEN_FLAG)
   target_compile_options(osmesa PRIVATE "-fvisibility=hidden")
@@ -252,4 +259,3 @@ endif (HAVE_VISIBILITY_HIDDEN_FLAG)
 # indent-tabs-mode: t
 # End:
 # ex: shiftwidth=2 tabstop=8
-
