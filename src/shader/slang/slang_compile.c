@@ -192,9 +192,9 @@ parse_float(slang_parse_ctx * C, float *number)
     parse_identifier_str(C, &fractional);
     parse_identifier_str(C, &exponent);
 
-    whole = (char *) _slang_alloc((strlen(integral) +
-				   strlen(fractional) +
-				   strlen(exponent) + 3) * sizeof(char));
+    whole = (char *) _slang_alloc((GLuint)(strlen(integral) +
+					   strlen(fractional) +
+					   strlen(exponent) + 3));
     if (whole == NULL) {
 	slang_info_log_memory(C->L);
 	return 0;
@@ -2056,7 +2056,7 @@ compile_object(grammar * id, const char *source, slang_code_object * object,
 	}
 
 	/* disable language extensions */
-#if NEW_SLANG /* allow-built-ins */
+#if defined(NEW_SLANG) && NEW_SLANG /* allow-built-ins */
 	grammar_set_reg8(*id, (const byte *) "parsing_builtin", 1);
 #else
 	grammar_set_reg8(*id, (const byte *) "parsing_builtin", 0);

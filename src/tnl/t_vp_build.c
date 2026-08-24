@@ -287,7 +287,7 @@ struct tnl_program {
 
 static const struct ureg undef = {
     PROGRAM_UNDEFINED,
-    ~0,
+    ~0u,
     0,
     0,
     0
@@ -880,8 +880,8 @@ static struct ureg calculate_light_attenuation(struct tnl_program *p,
  */
 static void build_lighting(struct tnl_program *p)
 {
-    const GLboolean twoside = p->state->light_twoside;
-    const GLboolean separate = p->state->separate_specular;
+    const GLboolean twoside = (GLboolean)p->state->light_twoside;
+    const GLboolean separate = (GLboolean)p->state->separate_specular;
     GLuint nr_lights = 0, count = 0;
     struct ureg normal = get_eye_normal(p);
     struct ureg lit = get_temp(p);

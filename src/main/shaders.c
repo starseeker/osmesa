@@ -399,7 +399,7 @@ _mesa_ShaderSourceARB(GLhandleARB shaderObj, GLsizei count,
 	    return;
 	}
 	if (length == NULL || length[i] < 0)
-	    offsets[i] = strlen(string[i]);
+	    offsets[i] = (GLuint)strlen(string[i]);
 	else
 	    offsets[i] = length[i];
 	/* accumulate string lengths */

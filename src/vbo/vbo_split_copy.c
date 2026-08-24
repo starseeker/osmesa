@@ -180,7 +180,7 @@ static void flush(struct copy_context *copy)
     /* Clear the vertex cache:
      */
     for (i = 0; i < ELT_TABLE_SIZE; i++)
-	copy->vert_cache[i].in = ~0;
+	copy->vert_cache[i].in = ~0u;
 }
 
 
@@ -199,7 +199,7 @@ static void begin(struct copy_context *copy, GLenum mode, GLboolean begin_flag)
 /* Use a hashtable to attempt to identify recently-emitted vertices
  * and avoid re-emitting them.
  */
-static GLuint elt(struct copy_context *copy, GLuint elt_idx)
+static GLboolean elt(struct copy_context *copy, GLuint elt_idx)
 {
     GLuint elt = copy->srcelt[elt_idx];
     GLuint slot = elt & (ELT_TABLE_SIZE-1);
@@ -554,7 +554,7 @@ void vbo_split_copy(GLcontext *ctx,
     /* Clear the vertex cache:
      */
     for (i = 0; i < ELT_TABLE_SIZE; i++)
-	copy.vert_cache[i].in = ~0;
+	copy.vert_cache[i].in = ~0u;
 
 
     replay_init(&copy);

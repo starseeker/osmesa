@@ -377,11 +377,11 @@ _slang_count_temporaries(struct gl_program *prog)
 	const GLuint numSrc = _mesa_num_inst_src_regs(inst->Opcode);
 	for (j = 0; j < numSrc; j++) {
 	    if (inst->SrcReg[j].File == PROGRAM_TEMPORARY) {
-		if (maxIndex < inst->SrcReg[j].Index)
+		if (maxIndex < (GLint)inst->SrcReg[j].Index)
 		    maxIndex = inst->SrcReg[j].Index;
 	    }
 	    if (inst->DstReg.File == PROGRAM_TEMPORARY) {
-		if (maxIndex < inst->DstReg.Index)
+		if (maxIndex < (GLint)inst->DstReg.Index)
 		    maxIndex = inst->DstReg.Index;
 	    }
 	}

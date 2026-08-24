@@ -317,7 +317,7 @@ _slang_adapt_call(slang_operation *callOper, const slang_function *fun,
     const int numParams = fun->param_count - haveRetValue;
     int i;
 
-#ifdef SLANG_DEBUG
+#if SLANG_DEBUG
     printf("Adapt %d args to %d parameters\n",
 	    callOper->num_children, numParams);
 #endif
@@ -354,7 +354,7 @@ _slang_adapt_call(slang_operation *callOper, const slang_function *fun,
 		if (argSz > 1) {
 		    slang_operation origArg;
 		    /* break up arg[i] into components */
-#ifdef SLANG_DEBUG
+#if SLANG_DEBUG
 		    printf("Break up arg %d from 1 to %d elements\n", i, argSz);
 #endif
 		    slang_operation_construct(&origArg);
@@ -439,7 +439,7 @@ _slang_adapt_call(slang_operation *callOper, const slang_function *fun,
 	slang_typeinfo_destruct(&argType);
     }
 
-#ifdef SLANG_DEBUG
+#if SLANG_DEBUG
 	printf("===== New call to %s with adapted arguments ===============\n",
 	       (char*) fun->header.a_name);
 	slang_print_tree(callOper, 5);

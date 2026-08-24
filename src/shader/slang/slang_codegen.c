@@ -88,8 +88,8 @@ is_sampler_type(const slang_fully_specified_type *t)
 static char *
 qualify_uniform_name(const char *prefix, const char *field)
 {
-    const size_t prefix_len = strlen(prefix);
-    const size_t field_len = strlen(field);
+    const GLuint prefix_len = (GLuint)strlen(prefix);
+    const GLuint field_len = (GLuint)strlen(field);
     char *name = (char *) _slang_alloc(prefix_len + field_len + 2);
 
     if (name)
@@ -2953,8 +2953,6 @@ _slang_gen_operation(slang_assemble_ctx * A, slang_operation *oper)
 			  oper->type);
 	    return new_node0(IR_NOP);
     }
-
-    return NULL;
 }
 
 

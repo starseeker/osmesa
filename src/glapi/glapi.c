@@ -473,7 +473,7 @@ add_function_name(const char * funcName)
     struct _glapi_function * entry = NULL;
 
     if (NumExtEntryPoints < MAX_EXTENSION_FUNCS) {
-	_glapi_proc entrypoint = generate_entrypoint(~0);
+	_glapi_proc entrypoint = generate_entrypoint(~0u);
 	if (entrypoint != NULL) {
 	    entry = & ExtEntryTable[NumExtEntryPoints];
 	    size_t nlen = strlen(funcName);
@@ -482,7 +482,7 @@ add_function_name(const char * funcName)
 	    ncpy[nlen] = '\0';
 	    ExtEntryTable[NumExtEntryPoints].name = ncpy;
 	    ExtEntryTable[NumExtEntryPoints].parameter_signature = NULL;
-	    ExtEntryTable[NumExtEntryPoints].dispatch_offset = ~0;
+	    ExtEntryTable[NumExtEntryPoints].dispatch_offset = ~0u;
 	    ExtEntryTable[NumExtEntryPoints].dispatch_stub = entrypoint;
 	    NumExtEntryPoints++;
 	}

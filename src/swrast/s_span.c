@@ -247,10 +247,10 @@ interpolate_colors(SWspan *span)
 	    GLubyte(*rgba)[4] = span->array->color.sz1.rgba;
 	    if (span->interpMask & SPAN_FLAT) {
 		GLubyte color[4];
-		color[RCOMP] = FixedToInt(span->red);
-		color[GCOMP] = FixedToInt(span->green);
-		color[BCOMP] = FixedToInt(span->blue);
-		color[ACOMP] = FixedToInt(span->alpha);
+		color[RCOMP] = (GLubyte)FixedToInt(span->red);
+		color[GCOMP] = (GLubyte)FixedToInt(span->green);
+		color[BCOMP] = (GLubyte)FixedToInt(span->blue);
+		color[ACOMP] = (GLubyte)FixedToInt(span->alpha);
 		for (i = 0; i < n; i++) {
 		    COPY_4UBV(rgba[i], color);
 		}
@@ -280,10 +280,10 @@ interpolate_colors(SWspan *span)
 	    GLushort(*rgba)[4] = span->array->color.sz2.rgba;
 	    if (span->interpMask & SPAN_FLAT) {
 		GLushort color[4];
-		color[RCOMP] = FixedToInt(span->red);
-		color[GCOMP] = FixedToInt(span->green);
-		color[BCOMP] = FixedToInt(span->blue);
-		color[ACOMP] = FixedToInt(span->alpha);
+		color[RCOMP] = (GLushort)FixedToInt(span->red);
+		color[GCOMP] = (GLushort)FixedToInt(span->green);
+		color[BCOMP] = (GLushort)FixedToInt(span->blue);
+		color[ACOMP] = (GLushort)FixedToInt(span->alpha);
 		for (i = 0; i < n; i++) {
 		    COPY_4V(rgba[i], color);
 		}
@@ -321,7 +321,7 @@ interpolate_colors(SWspan *span)
 	    b = span->blue;
 	    a = span->alpha;
 	    if (span->interpMask & SPAN_FLAT) {
-		dr = dg = db = da = 0.0;
+		dr = dg = db = da = 0.0F;
 	    } else {
 		dr = span->redStep;
 		dg = span->greenStep;
@@ -1310,7 +1310,7 @@ shade_texture_span(GLcontext *ctx, SWspan *span)
 	inputsRead = ctx->FragmentProgram._Current->Base.InputsRead;
     } else {
 	/* XXX we could be a bit smarter about this */
-	inputsRead = ~0;
+	inputsRead = ~0u;
     }
 
     if ((inputsRead & FRAG_BIT_COL0) && (span->interpMask & SPAN_RGBA))

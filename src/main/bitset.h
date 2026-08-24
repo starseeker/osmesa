@@ -56,7 +56,7 @@
 #define BITSET_SET(x, b) ((x)[BITSET_BITWORD(b)] |= BITSET_BIT(b))
 #define BITSET_CLEAR(x, b) ((x)[BITSET_BITWORD(b)] &= ~BITSET_BIT(b))
 
-#define BITSET_MASK(b) ((b) == BITSET_WORDBITS ? ~0 : BITSET_BIT(b) - 1)
+#define BITSET_MASK(b) ((b) == BITSET_WORDBITS ? ~0u : BITSET_BIT(b) - 1)
 #define BITSET_RANGE(b, e) (BITSET_MASK((e) + 1) & ~BITSET_MASK(b))
 
 /* bit range operations
@@ -102,7 +102,7 @@
 #define BITSET64_SET(x, b) ((x)[BITSET64_BITWORD(b)] |= BITSET64_BIT(b))
 #define BITSET64_CLEAR(x, b) ((x)[BITSET64_BITWORD(b)] &= ~BITSET64_BIT(b))
 
-#define BITSET64_MASK(b) ((b) == BITSET64_WORDBITS ? ~0 : BITSET64_BIT(b) - 1)
+#define BITSET64_MASK(b) ((b) == BITSET64_WORDBITS ? ~0u : BITSET64_BIT(b) - 1)
 #define BITSET64_RANGE(b, e) (BITSET64_MASK((e) + 1) & ~BITSET64_MASK(b))
 
 /* bit range operations

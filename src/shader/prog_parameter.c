@@ -601,7 +601,7 @@ _mesa_longest_parameter_name(const struct gl_program_parameter_list *list,
 	return 0;
     for (i = 0; i < list->NumParameters; i++) {
 	if (list->Parameters[i].Type == type) {
-	    GLuint len = strlen(list->Parameters[i].Name);
+	    GLuint len = (GLuint)strlen(list->Parameters[i].Name);
 	    if (len > maxLen)
 		maxLen = len;
 	}

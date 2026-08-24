@@ -55,7 +55,7 @@ _swsetup_CreateContext(GLcontext *ctx)
 
     ctx->swsetup_context = swsetup;
 
-    swsetup->NewState = ~0;
+    swsetup->NewState = ~0u;
     _swsetup_trifuncs_init(ctx);
 
     _tnl_init_vertices(ctx, ctx->Const.MaxArrayLockSize + 12,
@@ -240,9 +240,9 @@ _swsetup_Wakeup(GLcontext *ctx)
     tnl->Driver.Render.BuildVertices = _tnl_build_vertices;
     tnl->Driver.Render.Multipass = 0;
 
-    _tnl_invalidate_vertices(ctx, ~0);
+    _tnl_invalidate_vertices(ctx, ~0u);
     _tnl_need_projected_coords(ctx, GL_TRUE);
-    _swsetup_InvalidateState(ctx, ~0);
+    _swsetup_InvalidateState(ctx, ~0u);
 
     swsetup->verts = (SWvertex *)tnl->clipspace.vertex_buf;
     RENDERINPUTS_ZERO(swsetup->last_index_bitset);

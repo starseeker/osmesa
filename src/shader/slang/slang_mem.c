@@ -207,7 +207,7 @@ _slang_strdup(const char *s)
 {
     if (s) {
 	size_t l = strlen(s);
-	char *s2 = (char *) _slang_alloc(l + 1);
+	char *s2 = (char *) _slang_alloc((GLuint)(l + 1));
 	if (s2)
 	    strcpy(s2, s);
 	return s2;

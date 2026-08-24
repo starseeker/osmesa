@@ -137,10 +137,12 @@ void vbo_rebase_prims(GLcontext *ctx,
 		tmp_indices = rebase_GLuint(ptr, ib->count, min_index);
 		break;
 	    case GL_UNSIGNED_SHORT:
-		tmp_indices = rebase_GLushort(ptr, ib->count, min_index);
+		assert(min_index <= 0xffffu);
+		tmp_indices = rebase_GLushort(ptr, ib->count, (GLushort)min_index);
 		break;
 	    case GL_UNSIGNED_BYTE:
-		tmp_indices = rebase_GLubyte(ptr, ib->count, min_index);
+		assert(min_index <= 0xffu);
+		tmp_indices = rebase_GLubyte(ptr, ib->count, (GLubyte)min_index);
 		break;
 	}
 

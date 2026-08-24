@@ -244,7 +244,7 @@ void _tnl_invalidate_vertex_state(GLcontext *ctx, GLuint new_state)
 {
     if (new_state & (_DD_NEW_TRI_LIGHT_TWOSIDE|_DD_NEW_TRI_UNFILLED)) {
 	struct tnl_clipspace *vtx = GET_VERTEX_STATE(ctx);
-	vtx->new_inputs = ~0;
+	vtx->new_inputs = ~0u;
 	vtx->interp = choose_interp_func;
 	vtx->copy_pv = choose_copy_pv_func;
     }
@@ -255,7 +255,7 @@ static void invalidate_funcs(struct tnl_clipspace *vtx)
     vtx->emit = choose_emit_func;
     vtx->interp = choose_interp_func;
     vtx->copy_pv = choose_copy_pv_func;
-    vtx->new_inputs = ~0;
+    vtx->new_inputs = ~0u;
 }
 
 GLuint _tnl_install_attrs(GLcontext *ctx, const struct tnl_attr_map *map,
@@ -269,7 +269,7 @@ GLuint _tnl_install_attrs(GLcontext *ctx, const struct tnl_attr_map *map,
     assert(nr < _TNL_ATTRIB_MAX);
     assert(nr == 0 || map[0].attrib == VERT_ATTRIB_POS);
 
-    vtx->new_inputs = ~0;
+    vtx->new_inputs = ~0u;
     vtx->need_viewport = GL_FALSE;
 
     if (vp) {

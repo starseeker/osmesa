@@ -43,7 +43,7 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "vbo_context.h"
 
-#ifdef ERROR
+#if defined(ERROR)
 #undef ERROR
 #endif
 
@@ -524,7 +524,7 @@ static void GLAPIENTRY vbo_exec_Begin(GLenum mode)
 	 * begin/end pairs.
 	 */
 	if (exec->vtx.vertex_size && !exec->vtx.attrsz[0])
-	    vbo_exec_FlushVertices(ctx, ~0);
+	    vbo_exec_FlushVertices(ctx, ~0u);
 
 	i = exec->vtx.prim_count++;
 	exec->vtx.prim[i].mode = mode;

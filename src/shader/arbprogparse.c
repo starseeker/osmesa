@@ -546,13 +546,13 @@ var_cache_create(struct var_cache **va)
     if (*va) {
 	(**va).name = NULL;
 	(**va).type = vt_none;
-	(**va).attrib_binding = ~0;
+	(**va).attrib_binding = ~0u;
 	(**va).attrib_is_generic = 0;
-	(**va).temp_binding = ~0;
-	(**va).output_binding = ~0;
-	(**va).param_binding_type = ~0;
-	(**va).param_binding_begin = ~0;
-	(**va).param_binding_length = ~0;
+	(**va).temp_binding = ~0u;
+	(**va).output_binding = ~0u;
+	(**va).param_binding_type = ~0u;
+	(**va).param_binding_begin = ~0u;
+	(**va).param_binding_length = ~0u;
 	(**va).alias_binding = NULL;
 	(**va).next = NULL;
     }
@@ -3877,7 +3877,7 @@ _mesa_parse_arb_fragment_program(GLcontext* ctx, GLenum target,
 	_mesa_free_parameter_list(program->Base.Parameters);
     program->Base.Parameters    = ap.Base.Parameters;
 
-#if DEBUG_FP
+#if defined(DEBUG_FP) && DEBUG_FP
     _mesa_printf("____________Fragment program %u ________\n", program->Base.ID);
     _mesa_print_program(&program->Base);
 #endif
@@ -3930,7 +3930,7 @@ _mesa_parse_arb_vertex_program(GLcontext *ctx, GLenum target,
 	_mesa_free_parameter_list(program->Base.Parameters);
     program->Base.Parameters = ap.Base.Parameters;
 
-#if DEBUG_VP
+#if defined(DEBUG_VP) && DEBUG_VP
     _mesa_printf("____________Vertex program %u __________\n", program->Base.Id);
     _mesa_print_program(&program->Base);
 #endif

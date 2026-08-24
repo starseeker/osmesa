@@ -80,7 +80,7 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "vbo_context.h"
 
 
-#ifdef ERROR
+#if defined(ERROR)
 #undef ERROR
 #endif
 
@@ -274,7 +274,7 @@ static void _save_compile_vertex_list(GLcontext *ctx)
      */
     memcpy(node->attrsz, save->attrsz, sizeof(node->attrsz));
     node->vertex_size = save->vertex_size;
-    node->buffer_offset = (save->buffer - save->vertex_store->buffer) * sizeof(GLfloat);
+    node->buffer_offset = (GLuint)((save->buffer - save->vertex_store->buffer) * sizeof(GLfloat));
     node->count = save->vert_count;
     node->wrap_count = save->copied.nr;
     node->dangling_attr_ref = save->dangling_attr_ref;

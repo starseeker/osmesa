@@ -86,7 +86,7 @@ slang_function_construct(slang_function * func)
     _slang_variable_scope_ctr(func->parameters);
     func->param_count = 0;
     func->body = NULL;
-    func->address = ~0;
+    func->address = ~0u;
     slang_fixup_table_init(&func->fixups);
     return 1;
 }

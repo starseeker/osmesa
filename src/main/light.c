@@ -1339,7 +1339,7 @@ _mesa_init_lighting(GLcontext *ctx)
     ctx->Light.ColorMaterialMode = GL_AMBIENT_AND_DIFFUSE;
     ctx->Light.ColorMaterialBitmask = _mesa_material_bitmask(ctx,
 				      GL_FRONT_AND_BACK,
-				      GL_AMBIENT_AND_DIFFUSE, ~0,
+				      GL_AMBIENT_AND_DIFFUSE, ~0u,
 				      NULL);
 
     ctx->Light.ColorMaterialEnabled = GL_FALSE;

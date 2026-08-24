@@ -268,7 +268,7 @@ OSMesaGetColorBuffer(OSMesaContext c, GLint *width, GLint *height,
 /**
  * This typedef is new in Mesa 6.3.
  */
-typedef void (*OSMESAproc)();
+typedef void (*OSMESAproc)(void);
 
 
 /*

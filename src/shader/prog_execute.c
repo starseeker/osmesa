@@ -292,7 +292,7 @@ fetch_texel(GLcontext *ctx,
      */
     if (machine->NumDeriv > 0 &&
 	inst->SrcReg[0].File == PROGRAM_INPUT &&
-	inst->SrcReg[0].Index == FRAG_ATTRIB_TEX0 + inst->TexSrcUnit) {
+	(GLuint)inst->SrcReg[0].Index == FRAG_ATTRIB_TEX0 + inst->TexSrcUnit) {
 	/* simple texture fetch for which we should have derivatives */
 	GLuint attr = inst->SrcReg[0].Index;
 	machine->FetchTexelDeriv(ctx, texcoord,

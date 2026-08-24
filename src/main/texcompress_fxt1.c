@@ -322,12 +322,13 @@ typedef struct {
 
 #define FX64_SHL(a, c)                                 \
    do {                                                \
-       if ((c) >= 32) {                                \
-          a.hi = a.lo << ((c) - 32);                   \
+       const GLuint shift = (c);                       \
+       if (shift >= 32) {                              \
+          a.hi = a.lo << (shift - 32);                 \
           a.lo = 0;                                    \
        } else {                                        \
-          a.hi = (a.hi << (c)) | (a.lo >> (32 - (c))); \
-          a.lo <<= (c);                                \
+          a.hi = (a.hi << shift) | (a.lo >> (32 - shift)); \
+          a.lo <<= shift;                              \
        }                                               \
    } while (0)
 

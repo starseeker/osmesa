@@ -172,7 +172,7 @@ _tnl_wakeup(GLcontext *ctx)
 {
     /* Assume we haven't been getting state updates either:
      */
-    _tnl_InvalidateState(ctx, ~0);
+    _tnl_InvalidateState(ctx, ~0u);
 
 #if 0
     if (ctx->Light.ColorMaterialEnabled) {

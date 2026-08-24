@@ -1055,7 +1055,7 @@ GLboolean _ae_create_context(GLcontext *ctx)
     if (!ctx->aelt_context)
 	return GL_FALSE;
 
-    AE_CONTEXT(ctx)->NewState = ~0;
+    AE_CONTEXT(ctx)->NewState = ~0u;
     return GL_TRUE;
 }
 

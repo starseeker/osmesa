@@ -174,6 +174,9 @@ static void vbo_exec_bind_arrays(GLcontext *ctx)
 	    memcpy(arrays + 16, vbo->generic_currval, 16 * sizeof(arrays[0]));
 	    map = vbo->map_vp_arb;
 	    break;
+	default:
+	    ASSERT(0);
+	    return;
     }
 
     /* Make all active attributes (including edgeflag) available as

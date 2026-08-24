@@ -149,7 +149,7 @@ prepare_materials(GLcontext *ctx,
 
     /* FIXME: Is this already done?
      */
-    _mesa_update_material(ctx, ~0);
+    _mesa_update_material(ctx, ~0u);
     _mesa_validate_all_lighting_tables(ctx);
 
     return store->mat_count;

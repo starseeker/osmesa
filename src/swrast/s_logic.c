@@ -52,7 +52,7 @@ do {						\
       case GL_SET:				\
          for (i = 0; i < n; i++) {		\
 	    if (mask[i / MASKSTRIDE]) {		\
-	       src[i] = ~0;			\
+	       src[i] = ~0u;			\
 	    }					\
 	 }					\
 	 break;					\

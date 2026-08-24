@@ -42,7 +42,7 @@ void _tnl_install_pipeline(GLcontext *ctx,
     TNLcontext *tnl = TNL_CONTEXT(ctx);
     GLuint i;
 
-    tnl->pipeline.new_state = ~0;
+    tnl->pipeline.new_state = ~0u;
 
     /* Create a writeable copy of each stage.
      */
@@ -113,7 +113,7 @@ static GLuint check_output_changes(GLcontext *ctx)
 
     return tnl->pipeline.output_changes;
 #else
-    return ~0;
+    return ~0u;
 #endif
 }
 

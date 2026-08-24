@@ -847,7 +847,7 @@ _mesa_get_programiv(GLcontext *ctx, GLuint program,
 	    *params = shProg->Validated;
 	    break;
 	case GL_INFO_LOG_LENGTH:
-	    *params = shProg->InfoLog ? strlen(shProg->InfoLog) + 1 : 0;
+	    *params = shProg->InfoLog ? (GLint)strlen(shProg->InfoLog) + 1 : 0;
 	    break;
 	case GL_ATTACHED_SHADERS:
 	    *params = shProg->NumShaders;
@@ -899,10 +899,10 @@ _mesa_get_shaderiv(GLcontext *ctx, GLuint name, GLenum pname, GLint *params)
 	    *params = shader->CompileStatus;
 	    break;
 	case GL_INFO_LOG_LENGTH:
-	    *params = shader->InfoLog ? strlen(shader->InfoLog) + 1 : 0;
+	    *params = shader->InfoLog ? (GLint)strlen(shader->InfoLog) + 1 : 0;
 	    break;
 	case GL_SHADER_SOURCE_LENGTH:
-	    *params = shader->Source ? strlen((char *) shader->Source) + 1 : 0;
+	    *params = shader->Source ? (GLint)strlen((char *) shader->Source) + 1 : 0;
 	    break;
 	default:
 	    _mesa_error(ctx, GL_INVALID_ENUM, "glGetShaderiv(pname)");

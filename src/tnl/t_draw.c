@@ -367,8 +367,8 @@ void _tnl_draw_prims(GLcontext *ctx,
 	 */
 	struct split_limits limits;
 	limits.max_verts = max;
-	limits.max_vb_size = ~0;
-	limits.max_indices = ~0;
+	limits.max_vb_size = ~0u;
+	limits.max_indices = ~0u;
 
 	/* This will split the buffers one way or another and
 	 * recursively call back into this function.

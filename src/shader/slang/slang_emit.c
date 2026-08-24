@@ -1041,10 +1041,10 @@ emit_move(slang_emit_info *emitInfo, slang_ir_node *n)
 	const slang_ir_storage *rhs = n->Children[1]->Store;
 	const GLboolean scalar_ok = (rhs->Size != 1) ||
 	    (inst->DstReg.WriteMask ==
-	     (WRITEMASK_X << GET_SWZ(rhs->Swizzle, 0)));
+	     (GLuint)(WRITEMASK_X << GET_SWZ(rhs->Swizzle, 0)));
 	if (_slang_is_temp(emitInfo->vt, rhs) &&
-	    (inst->DstReg.File == rhs->File) &&
-	    (inst->DstReg.Index == rhs->Index) &&
+	    (inst->DstReg.File == (GLuint)rhs->File) &&
+	    (inst->DstReg.Index == (GLint)rhs->Index) &&
 	    scalar_ok) {
 	    /* Peephole optimization:
 	     * The Right-Hand-Side has its results in a temporary place.
@@ -1129,8 +1129,8 @@ emit_cond(slang_emit_info *emitInfo, slang_ir_node *n)
     if (emitInfo->EmitCondCodes) {
 	if (inst &&
 	    n->Children[0]->Store &&
-	    inst->DstReg.File == n->Children[0]->Store->File &&
-	    inst->DstReg.Index == n->Children[0]->Store->Index) {
+	    inst->DstReg.File == (GLuint)n->Children[0]->Store->File &&
+	    inst->DstReg.Index == (GLint)n->Children[0]->Store->Index) {
 	    /* The previous instruction wrote to the register who's value
 	     * we're testing.  Just fix that instruction so that the
 	     * condition codes are computed.

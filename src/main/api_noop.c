@@ -541,7 +541,7 @@ _mesa_noop_Materialfv(GLenum face, GLenum pname, const GLfloat *params)
     GET_CURRENT_CONTEXT(ctx);
     GLint i, nr;
     struct gl_material *mat = &ctx->Light.Material;
-    GLuint bitmask = _mesa_material_bitmask(ctx, face, pname, ~0,
+    GLuint bitmask = _mesa_material_bitmask(ctx, face, pname, ~0u,
 					    "_mesa_noop_Materialfv");
 
     if (ctx->Light.ColorMaterialEnabled)

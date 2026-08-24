@@ -205,7 +205,7 @@ execute_expression(slang_string *output, const byte *code, GLuint *pi, GLint *re
 	    case OP_PUSHINT:
 		i++;
 		PUSH(atoi((const char *)(&code[i])));
-		i += strlen((const char *)(&code[i])) + 1;
+		i += (GLuint)strlen((const char *)(&code[i])) + 1;
 		break;
 	    case OP_LOGICALOR:
 		BINARY(||);
@@ -755,7 +755,7 @@ parse_if(slang_string *output, const byte *prod, GLuint *pi, GLint *result, pp_s
     GLuint len;
 
     text = (const char *)(&prod[*pi]);
-    len = strlen(text);
+    len = (GLuint)strlen(text);
 
     if (state->cond.top->effective) {
 	slang_string expr;
@@ -882,7 +882,7 @@ preprocess_source(slang_string *output, const char *source, grammar pid, grammar
 
 		    /* Parse macro name. */
 		    id = (const char *)(&prod[i]);
-		    idlen = strlen(id);
+		    idlen = (GLuint)strlen(id);
 		    if (state.cond.top->effective) {
 			pp_annotate(output, "// #define %s(", id);
 
@@ -905,7 +905,7 @@ preprocess_source(slang_string *output, const char *source, grammar pid, grammar
 			    pp_symbol *param;
 
 			    id = (const char *)(&prod[i]);
-			    idlen = strlen(id);
+			    idlen = (GLuint)strlen(id);
 			    pp_annotate(output, "%s, ", id);
 			    param = pp_symbols_push(&symbol->parameters);
 			    if (param == NULL)
@@ -917,7 +917,7 @@ preprocess_source(slang_string *output, const char *source, grammar pid, grammar
 
 		    /* Parse macro replacement. */
 		    id = (const char *)(&prod[i]);
-		    idlen = strlen(id);
+		    idlen = (GLuint)strlen(id);
 		    if (state.cond.top->effective) {
 			pp_annotate(output, ") %s", id);
 			slang_string_pushs(&symbol->replacement, id, idlen);
@@ -928,7 +928,7 @@ preprocess_source(slang_string *output, const char *source, grammar pid, grammar
 
 		case TOKEN_UNDEF:
 		    id = (const char *)(&prod[i]);
-		    i += strlen(id) + 1;
+		    i += (GLuint)strlen(id) + 1;
 		    if (state.cond.top->effective) {
 			pp_symbol *symbol;
 
@@ -1017,7 +1017,7 @@ preprocess_source(slang_string *output, const char *source, grammar pid, grammar
 		case TOKEN_EXTENSION:
 		    /* Parse the extension name. */
 		    id = (const char *)(&prod[i]);
-		    i += strlen(id) + 1;
+		    i += (GLuint)strlen(id) + 1;
 		    if (state.cond.top->effective)
 			pp_annotate(output, "// #extension %s: ", id);
 
@@ -1078,7 +1078,7 @@ preprocess_source(slang_string *output, const char *source, grammar pid, grammar
 
 		case TOKEN_LINE:
 		    id = (const char *)(&prod[i]);
-		    i += strlen(id) + 1;
+		    i += (GLuint)strlen(id) + 1;
 
 		    if (state.cond.top->effective) {
 			slang_string buffer;

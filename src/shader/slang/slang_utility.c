@@ -121,7 +121,7 @@ slang_string_pushi(slang_string *self, GLint i)
     char buffer[12];
 
     _mesa_sprintf(buffer, "%d", i);
-    slang_string_pushs(self, buffer, strlen(buffer));
+    slang_string_pushs(self, buffer, (GLuint)strlen(buffer));
 }
 
 const char *

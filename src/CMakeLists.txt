@@ -222,6 +222,12 @@ set_property(TARGET osmesa APPEND PROPERTY COMPILE_DEFINITIONS "UTIL_ARCH_LITTLE
 set_property(TARGET osmesa APPEND PROPERTY COMPILE_DEFINITIONS "LIBRARYBUILD")
 set_property(TARGET osmesa APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_EXPORTS")
 set_property(TARGET osmesa APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
+if (MSVC)
+  # The library has portable formatting/string wrappers whose APIs predate
+  # Microsoft's checked-CRT alternatives.  Keep their cross-platform
+  # behavior without treating the CRT deprecation notices as build errors.
+  target_compile_definitions(osmesa PRIVATE _CRT_SECURE_NO_WARNINGS)
+endif ()
 if (OSMESA_FAST AND O3_COMPILER_FLAG)
   target_compile_options(osmesa PRIVATE "-O3")
 elseif (O2_COMPILER_FLAG)

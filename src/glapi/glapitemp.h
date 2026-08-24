@@ -27,7 +27,7 @@
  */
 
 
-#  if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3)) && defined(__ELF__)
+#  if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3)) && defined(__ELF__)
 #    define HIDDEN  __attribute__((visibility("hidden")))
 #  else
 #    define HIDDEN

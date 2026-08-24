@@ -287,7 +287,7 @@ static GLboolean run_render(GLcontext *ctx,
     ASSERT(tnl->Driver.Render.ClippedPolygon);
     ASSERT(tnl->Driver.Render.Finish);
 
-    tnl->Driver.Render.BuildVertices(ctx, 0, VB->Count, ~0);
+    tnl->Driver.Render.BuildVertices(ctx, 0, VB->Count, ~0u);
 
     if (VB->ClipOrMask) {
 	tab = VB->Elts ? clip_render_tab_elts : clip_render_tab_verts;

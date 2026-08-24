@@ -463,8 +463,8 @@ _swrast_invalidate_state(GLcontext *ctx, GLbitfield new_state)
      */
     if (++swrast->StateChanges > 10) {
 	swrast->InvalidateState = _swrast_sleep;
-	swrast->NewState = ~0;
-	new_state = ~0;
+	swrast->NewState = ~0u;
+	new_state = ~0u;
     }
 
     if (new_state & swrast->InvalidateTriangleMask)
@@ -759,7 +759,7 @@ _swrast_CreateContext(GLcontext *ctx)
     if (!swrast)
 	return GL_FALSE;
 
-    swrast->NewState = ~0;
+    swrast->NewState = ~0u;
 
     swrast->choose_point = _swrast_choose_point;
     swrast->choose_line = _swrast_choose_line;

@@ -129,6 +129,9 @@ static void vbo_bind_vertex_list(GLcontext *ctx,
 	    memcpy(arrays + 16, vbo->generic_currval, 16 * sizeof(arrays[0]));
 	    map = vbo->map_vp_arb;
 	    break;
+	default:
+	    ASSERT(0);
+	    return;
     }
 
     for (attr = 0; attr < VERT_ATTRIB_MAX; attr++) {
