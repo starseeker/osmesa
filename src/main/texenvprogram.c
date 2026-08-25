@@ -302,7 +302,7 @@ struct ureg {
 
 static const struct ureg undef = {
     PROGRAM_UNDEFINED,
-    ~0u,
+    0xffu,
     0,
     0,
     0,

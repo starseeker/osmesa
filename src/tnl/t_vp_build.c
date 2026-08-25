@@ -287,7 +287,7 @@ struct tnl_program {
 
 static const struct ureg undef = {
     PROGRAM_UNDEFINED,
-    ~0u,
+    -1,
     0,
     0,
     0
