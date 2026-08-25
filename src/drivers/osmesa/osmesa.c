@@ -53,6 +53,8 @@
 #include "vbo/vbo.h"
 #include "fxaa/fxaa_cpu.h"
 
+#include <stdint.h>
+
 
 
 /**
@@ -767,6 +769,94 @@ osmesa_choose_line_function(GLcontext *ctx)
 /*****                 Optimized triangle rendering               *****/
 /**********************************************************************/
 
+/*
+ * s_tritemp normally emits framebuffer-clipped spans, but fixed-point edge
+ * rounding can still place an endpoint one pixel outside the buffer.  The
+ * optimized OSMesa functions bypass the generic span clipping stage, so they
+ * must validate the final integer span before forming either color or depth
+ * pointers.  Keep this check here rather than burdening the generic template's
+ * hot path.
+ */
+static INLINE GLboolean
+osmesa_clip_triangle_span(const OSMesaContext osmesa,
+	GLint spanX, GLint spanY, GLuint spanLength,
+	GLint *clippedX, GLuint *skipped, GLuint *clippedLength)
+{
+    const int64_t start = spanX;
+    const int64_t end = start + (int64_t)spanLength;
+    int64_t clippedStart;
+    int64_t clippedEnd;
+
+    if (!osmesa || !osmesa->rb || spanY < 0 ||
+	spanY >= (GLint)osmesa->rb->Height || end <= 0 ||
+	start >= (int64_t)osmesa->rb->Width)
+	return GL_FALSE;
+
+    clippedStart = start < 0 ? 0 : start;
+    clippedEnd = end > (int64_t)osmesa->rb->Width ?
+	(int64_t)osmesa->rb->Width : end;
+    if (clippedEnd <= clippedStart)
+	return GL_FALSE;
+
+    *clippedX = (GLint)clippedStart;
+    *skipped = (GLuint)(clippedStart - start);
+    *clippedLength = (GLuint)(clippedEnd - clippedStart);
+    return GL_TRUE;
+}
+
+#define OSMESA_RENDER_SMOOTH_Z_SPAN(span) do {                         \
+    GLint clippedX;                                                     \
+    GLuint i, skipped, clippedLength;                                   \
+    if (osmesa_clip_triangle_span(osmesa, (span).x, (span).y,           \
+	    (span).end, &clippedX, &skipped, &clippedLength)) {           \
+	DEPTH_TYPE *depth = (DEPTH_TYPE *)                                \
+	    zrb->GetPointer(ctx, zrb, clippedX, (span).y);                 \
+	GLchan *img = PIXELADDR4(clippedX, (span).y);                     \
+	GLfixed zValue = (GLfixed)((int64_t)(span).z +                    \
+	    (int64_t)(span).zStep * skipped);                             \
+	GLfixed red = (GLfixed)((int64_t)(span).red +                     \
+	    (int64_t)(span).redStep * skipped);                           \
+	GLfixed green = (GLfixed)((int64_t)(span).green +                 \
+	    (int64_t)(span).greenStep * skipped);                         \
+	GLfixed blue = (GLfixed)((int64_t)(span).blue +                   \
+	    (int64_t)(span).blueStep * skipped);                          \
+	GLfixed alpha = (GLfixed)((int64_t)(span).alpha +                 \
+	    (int64_t)(span).alphaStep * skipped);                         \
+	for (i = 0; depth && i < clippedLength; i++, img += 4) {          \
+	    const GLuint z = FixedToDepth(zValue);                        \
+	    if (z < depth[i]) {                                           \
+		PACK_RGBA(img, FixedToChan(red), FixedToChan(green),        \
+		    FixedToChan(blue), FixedToChan(alpha));                 \
+		depth[i] = z;                                               \
+	    }                                                               \
+	    red += (span).redStep; green += (span).greenStep;              \
+	    blue += (span).blueStep; alpha += (span).alphaStep;             \
+	    zValue += (span).zStep;                                         \
+	}                                                                   \
+    }                                                                       \
+} while (0)
+
+#define OSMESA_RENDER_FLAT_Z_SPAN(span) do {                           \
+    GLint clippedX;                                                     \
+    GLuint i, skipped, clippedLength;                                   \
+    if (osmesa_clip_triangle_span(osmesa, (span).x, (span).y,           \
+	    (span).end, &clippedX, &skipped, &clippedLength)) {           \
+	DEPTH_TYPE *depth = (DEPTH_TYPE *)                                \
+	    zrb->GetPointer(ctx, zrb, clippedX, (span).y);                 \
+	GLuint *img = (GLuint *)PIXELADDR4(clippedX, (span).y);           \
+	GLfixed zValue = (GLfixed)((int64_t)(span).z +                    \
+	    (int64_t)(span).zStep * skipped);                             \
+	for (i = 0; depth && i < clippedLength; i++) {                    \
+	    const GLuint z = FixedToDepth(zValue);                        \
+	    if (z < depth[i]) {                                           \
+		img[i] = pixel;                                             \
+		depth[i] = z;                                               \
+	    }                                                               \
+	    zValue += (span).zStep;                                         \
+	}                                                                   \
+    }                                                                       \
+} while (0)
+
 
 /*
  * Smooth-shaded, z-less triangle, RGBA color.
@@ -778,26 +868,7 @@ osmesa_choose_line_function(GLcontext *ctx)
 #define INTERP_ALPHA 1
 #define SETUP_CODE \
    const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);
-#define RENDER_SPAN( span ) {					\
-   GLuint i;							\
-   GLchan *img = PIXELADDR4(span.x, span.y); 			\
-   if (zRow) {							\
-      for (i = 0; i < span.end; i++, img += 4) {		\
-         const GLuint z = FixedToDepth(span.z);			\
-         if (z < zRow[i]) {					\
-            PACK_RGBA(img, FixedToChan(span.red),		\
-               FixedToChan(span.green), FixedToChan(span.blue),	\
-               FixedToChan(span.alpha));			\
-            zRow[i] = z;					\
-         }							\
-         span.red += span.redStep;				\
-         span.green += span.greenStep;				\
-         span.blue += span.blueStep;				\
-         span.alpha += span.alphaStep;				\
-         span.z += span.zStep;					\
-      }                                                         \
-   }                                                            \
-}
+#define RENDER_SPAN(span) OSMESA_RENDER_SMOOTH_Z_SPAN(span)
 #include "swrast/s_tritemp.h"
 
 
@@ -814,20 +885,7 @@ osmesa_choose_line_function(GLcontext *ctx)
    PACK_RGBA((GLchan *) &pixel, v2->color[0], v2->color[1],	\
                                 v2->color[2], v2->color[3]);
 
-#define RENDER_SPAN( span ) {				\
-   GLuint i;						\
-   GLuint *img = (GLuint *) PIXELADDR4(span.x, span.y);	\
-   if (zRow) {						\
-      for (i = 0; i < span.end; i++) {			\
-         const GLuint z = FixedToDepth(span.z);		\
-         if (z < zRow[i]) {				\
-            img[i] = pixel;				\
-            zRow[i] = z;				\
-         }						\
-         span.z += span.zStep;				\
-      }                                                 \
-   }							\
-}
+#define RENDER_SPAN(span) OSMESA_RENDER_FLAT_Z_SPAN(span)
 #include "swrast/s_tritemp.h"
 
 
@@ -841,26 +899,7 @@ osmesa_choose_line_function(GLcontext *ctx)
 #define INTERP_ALPHA 1
 #define SETUP_CODE \
    const OSMesaContext osmesa = OSMESA_CONTEXT(ctx);
-#define RENDER_SPAN( span ) {					\
-   GLuint i;							\
-   GLchan *img = PIXELADDR4(span.x, span.y); 			\
-   if (zRow) {							\
-      for (i = 0; i < span.end; i++, img += 4) {		\
-         const GLuint z = FixedToDepth(span.z);			\
-         if (z < zRow[i]) {					\
-            PACK_RGBA(img, FixedToChan(span.red),		\
-               FixedToChan(span.green), FixedToChan(span.blue),	\
-               FixedToChan(span.alpha));				\
-            zRow[i] = z;					\
-         }							\
-         span.red += span.redStep;				\
-         span.green += span.greenStep;				\
-         span.blue += span.blueStep;				\
-         span.alpha += span.alphaStep;				\
-         span.z += span.zStep;					\
-      }                                                         \
-   }                                                            \
-}
+#define RENDER_SPAN(span) OSMESA_RENDER_SMOOTH_Z_SPAN(span)
 #include "swrast/s_tritemp.h"
 
 
@@ -876,21 +915,11 @@ osmesa_choose_line_function(GLcontext *ctx)
    PACK_RGBA((GLchan *) &pixel, v2->color[0], v2->color[1],	\
                                 v2->color[2], v2->color[3]);
 
-#define RENDER_SPAN( span ) {					\
-   GLuint i;							\
-   GLuint *img = (GLuint *) PIXELADDR4(span.x, span.y);	\
-   if (zRow) {							\
-      for (i = 0; i < span.end; i++) {				\
-         const GLuint z = FixedToDepth(span.z);			\
-         if (z < zRow[i]) {					\
-            img[i] = pixel;					\
-            zRow[i] = z;					\
-         }							\
-         span.z += span.zStep;					\
-      }                                                 \
-   }								\
-}
+#define RENDER_SPAN(span) OSMESA_RENDER_FLAT_Z_SPAN(span)
 #include "swrast/s_tritemp.h"
+
+#undef OSMESA_RENDER_SMOOTH_Z_SPAN
+#undef OSMESA_RENDER_FLAT_Z_SPAN
 
 
 

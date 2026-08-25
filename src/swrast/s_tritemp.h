@@ -880,8 +880,16 @@ static void NAME(GLcontext *ctx, const SWvertex *v0,
 			    fdzOuter = (GLint)(span.attrStepY[FRAG_ATTRIB_WPOS][2] + dxOuter * span.attrStepX[FRAG_ATTRIB_WPOS][2]);
 			}
 #  ifdef DEPTH_TYPE
-			zRow = (DEPTH_TYPE *)
-			       zrb->GetPointer(ctx, zrb, InterpToInt(fxLeftEdge), span.y);
+			{
+			    const GLint zX = InterpToInt(fxLeftEdge);
+			    if (zrb && zX >= 0 && span.y >= 0 &&
+				zX < (GLint)ctx->DrawBuffer->Width &&
+				span.y < (GLint)ctx->DrawBuffer->Height)
+				zRow = (DEPTH_TYPE *)
+				    zrb->GetPointer(ctx, zrb, zX, span.y);
+			    else
+				zRow = NULL;
+			}
 			dZRowOuter = (ctx->DrawBuffer->Width + idxOuter) * sizeof(DEPTH_TYPE);
 #  endif
 		    }
@@ -1186,7 +1194,8 @@ static void NAME(GLcontext *ctx, const SWvertex *v0,
 #endif
 #ifdef INTERP_Z
 #  ifdef DEPTH_TYPE
-			zRow = (DEPTH_TYPE *)((GLubyte *) zRow + dZRowOuter);
+			if (zRow)
+			    zRow = (DEPTH_TYPE *)((GLubyte *)zRow + dZRowOuter);
 #  endif
 			zLeft += fdzOuter;
 #endif
@@ -1230,7 +1239,8 @@ static void NAME(GLcontext *ctx, const SWvertex *v0,
 #endif
 #ifdef INTERP_Z
 #  ifdef DEPTH_TYPE
-			zRow = (DEPTH_TYPE *)((GLubyte *) zRow + dZRowInner);
+			if (zRow)
+			    zRow = (DEPTH_TYPE *)((GLubyte *)zRow + dZRowInner);
 #  endif
 			zLeft += fdzInner;
 #endif
