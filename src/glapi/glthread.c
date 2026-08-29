@@ -185,6 +185,45 @@ _glthread_SetTSD(_glthread_TSD *tsd, void *ptr)
  */
 #ifdef WIN32_THREADS
 
+void
+_glthread_InitMutex(_glthread_Mutex *mutex)
+{
+    LONG state = InterlockedCompareExchange(&mutex->state, 1, 0);
+
+    if (state == 0) {
+        InitializeCriticalSection(&mutex->section);
+        InterlockedExchange(&mutex->state, 2);
+    } else {
+        while (InterlockedCompareExchange(&mutex->state, 2, 2) != 2)
+            SwitchToThread();
+    }
+}
+
+
+void
+_glthread_DestroyMutex(_glthread_Mutex *mutex)
+{
+    if (InterlockedCompareExchange(&mutex->state, 2, 2) == 2) {
+        DeleteCriticalSection(&mutex->section);
+        InterlockedExchange(&mutex->state, 0);
+    }
+}
+
+
+void
+_glthread_LockMutex(_glthread_Mutex *mutex)
+{
+    _glthread_InitMutex(mutex);
+    EnterCriticalSection(&mutex->section);
+}
+
+
+void
+_glthread_UnlockMutex(_glthread_Mutex *mutex)
+{
+    LeaveCriticalSection(&mutex->section);
+}
+
 void InsteadOf_exit(int nCode)
 {
     DWORD dwErr=GetLastError();

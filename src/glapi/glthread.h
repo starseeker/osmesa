@@ -163,13 +163,23 @@ typedef struct {
 
 typedef HANDLE _glthread_Thread;
 
-typedef CRITICAL_SECTION _glthread_Mutex;
+typedef struct {
+    volatile LONG state;
+    CRITICAL_SECTION section;
+} _glthread_Mutex;
 
-#define _glthread_DECLARE_STATIC_MUTEX(name)  /*static*/ _glthread_Mutex name = {0,0,0,0,0,0}
-#define _glthread_INIT_MUTEX(name)  InitializeCriticalSection(&name)
-#define _glthread_DESTROY_MUTEX(name)  DeleteCriticalSection(&name)
-#define _glthread_LOCK_MUTEX(name)  EnterCriticalSection(&name)
-#define _glthread_UNLOCK_MUTEX(name)  LeaveCriticalSection(&name)
+extern void _glthread_InitMutex(_glthread_Mutex *mutex);
+extern void _glthread_DestroyMutex(_glthread_Mutex *mutex);
+extern void _glthread_LockMutex(_glthread_Mutex *mutex);
+extern void _glthread_UnlockMutex(_glthread_Mutex *mutex);
+
+/* A zero initializer is valid for both static and calloc'd mutexes.  The
+ * first use initializes the CRITICAL_SECTION before entering it. */
+#define _glthread_DECLARE_STATIC_MUTEX(name)  static _glthread_Mutex name = {0}
+#define _glthread_INIT_MUTEX(name)  _glthread_InitMutex(&(name))
+#define _glthread_DESTROY_MUTEX(name)  _glthread_DestroyMutex(&(name))
+#define _glthread_LOCK_MUTEX(name)  _glthread_LockMutex(&(name))
+#define _glthread_UNLOCK_MUTEX(name)  _glthread_UnlockMutex(&(name))
 
 #endif /* WIN32_THREADS */
 
