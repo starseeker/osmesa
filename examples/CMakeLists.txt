@@ -55,6 +55,14 @@ target_link_libraries(thread_context_test osmesa ${M_LIBRARY} Threads::Threads)
 set_property(TARGET thread_context_test APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
 add_test(NAME osmesa_thread_context COMMAND thread_context_test)
 
+# Constant-material lighting must match per-vertex material processing even
+# when a flat batch repeats its normals.  Also accepts grid/frame counts as
+# arguments for local throughput measurements without a timing-based CI gate.
+add_executable(lighting_reuse_test lighting_reuse_test.c)
+target_link_libraries(lighting_reuse_test osmesa ${M_LIBRARY})
+set_property(TARGET lighting_reuse_test APPEND PROPERTY COMPILE_DEFINITIONS "GL_DLL_IMPORTS")
+add_test(NAME osmesa_lighting_reuse COMMAND lighting_reuse_test)
+
 # TODO -see if we can adapt this as an example:
 # https://github.com/danginsburg/opengles3-book/blob/master/Chapter_2/Hello_Triangle/Hello_Triangle.c
 

@@ -536,6 +536,9 @@ static void TAG(light_fast_rgba)(GLcontext *ctx,
     const GLuint nr = VB->AttribPtr[_TNL_ATTRIB_NORMAL]->count;
 #endif
     const struct gl_light *light;
+#if !(IDX & LIGHT_MATERIAL)
+    const GLfloat *previousNormal = NULL;
+#endif
 
 #ifdef TRACE
     fprintf(stderr, "%s %d\n", __func__, nr);
@@ -562,6 +565,21 @@ static void TAG(light_fast_rgba)(GLcontext *ctx,
     for (j = 0; j < nr; j++, STRIDE_F(normal,nstride)) {
 
 	GLfloat sum[2][3];
+
+#if !(IDX & LIGHT_MATERIAL)
+	/* Directional lighting with constant materials depends only on the
+	 * normal.  Flat triangle batches repeat it for all three corners.
+	 * Keep reuse local to this call so no light/material state can go stale. */
+	if (previousNormal &&
+	    memcmp(normal, previousNormal, 3 * sizeof(GLfloat)) == 0) {
+	    COPY_4V(Fcolor[j], Fcolor[j - 1]);
+#if IDX & LIGHT_TWOSIDE
+	    COPY_4V(Bcolor[j], Bcolor[j - 1]);
+#endif
+	    continue;
+	}
+	previousNormal = normal;
+#endif
 
 #if IDX & LIGHT_MATERIAL
 	update_materials(ctx, store);
